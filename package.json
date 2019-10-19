@@ -2,8 +2,8 @@
   "name": "reactronic-toolkit-react",
   "version": "0.19.10",
   "description": "Reactronic Toolkit for React",
-  "main": "build/dist/source/.index.js",
-  "types": "build/dist/source/.index.d.ts",
+  "main": "build/dist/source/index.js",
+  "types": "build/dist/source/index.d.ts",
   "files": [
     "build/dist/source/**/*.*"
   ],
