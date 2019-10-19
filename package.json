@@ -1,0 +1,49 @@
+{
+  "name": "reactronic-toolkit-react",
+  "version": "0.19.10",
+  "description": "Reactronic Toolkit for React",
+  "main": "build/dist/source/.index.js",
+  "types": "build/dist/source/.index.d.ts",
+  "files": [
+    "build/dist/source/**/*.*"
+  ],
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/nezaboodka/reactronic-toolkit-react.git"
+  },
+  "keywords": [
+    "nezaboodka",
+    "reactronic",
+    "state management",
+    "rendering",
+    "consistent",
+    "reactive",
+    "reactivity",
+    "transactional",
+    "asynchronous"
+  ],
+  "author": "Yury Chetyrko <ychetyrko@gmail.com> (https://github.com/ychetyrko)",
+  "license": "MIT",
+  "bugs": {
+    "url": "https://github.com/nezaboodka/reactronic-toolkit-react/issues"
+  },
+  "homepage": "https://github.com/nezaboodka/reactronic-toolkit-react/blob/master/README.md#readme",
+  "dependencies": {
+    "react": "^16.10.2",
+    "reactronic": "^0.19.402"
+  },
+  "devDependencies": {
+    "@types/node": "12.7.11",
+    "@types/react": "16.9.5",
+    "typescript": "3.6.3",
+    "ts-node": "8.4.1",
+    "eslint": "6.5.1",
+    "@typescript-eslint/parser": "2.3.2",
+    "@typescript-eslint/eslint-plugin": "2.3.2"
+  },
+  "scripts": {
+    "build": "eslint **/*.ts **/*.tsx **/*.js && tsc",
+    "fix": "eslint --fix **/*.ts **/*.tsx **/*.js",
+    "pack": "eslint **/*.ts **/*.tsx **/*.js && tsc --sourceMap false --removeComments true"
+  }
+}
