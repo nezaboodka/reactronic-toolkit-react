@@ -7,33 +7,39 @@ import * as React from 'react'
 import { State, stateless, action, Action } from 'reactronic'
 
 export class EventTargetGroup extends State {
-  constructor(readonly event: string) { super() }
   isActive: boolean = false;
+  @stateless readonly event: string
+  @stateless private refs = new Map<any, EventTarget>()
   @stateless private members = new Set<EventTarget>()
-  @stateless private keepActive: Event | null = null
+  @stateless private inside: Event | null = null
+
+  constructor(event: string) {
+    super()
+    this.event = event
+  }
 
   static create(event: string): EventTargetGroup {
     return Action.run('EventTargetGroup.create', () => new EventTargetGroup(event))
   }
 
   useIncludeCallback(): (...args: any[]) => any {
-    return React.useCallback(element => this.includeMember(element), [])
+    const ref = React.useCallback(element => {
+      this.use(ref, element)
+    }, [])
+    return ref
   }
 
   @action
   setActive(value: boolean): void {
     if (this.isActive !== value) {
       this.isActive = value
-      if (!value) {
-        this.members.forEach(m =>
-          m.removeEventListener(this.event, this.capture, true))
-        document.removeEventListener(this.event, this.capture, true)
-        document.removeEventListener(this.event, this.handle, false)
-        this.members.clear()
-      }
-      else {
+      if (value) { // start tracking
         document.addEventListener(this.event, this.capture, true)
         document.addEventListener(this.event, this.handle, false)
+      }
+      else { // stop tracking
+        document.removeEventListener(this.event, this.capture, true)
+        document.removeEventListener(this.event, this.handle, false)
       }
     }
   }
@@ -41,23 +47,32 @@ export class EventTargetGroup extends State {
   // Internal
 
   @action
-  private includeMember(m: EventTarget | null): void {
+  private use(key: any, m: EventTarget | null): void {
     if (m !== null) {
+      this.refs.set(key, m)
       this.members.add(m)
       m.addEventListener(this.event, this.capture, true)
+    }
+    else {
+      const m = this.refs.get(key)
+      if (m) {
+        m.removeEventListener(this.event, this.capture, true)
+        this.members.delete(m)
+        this.refs.delete(key)
+      }
     }
   }
 
   @action // just to perform binding
   private capture(e: Event): void {
     if (e.currentTarget && this.members.has(e.currentTarget))
-      this.keepActive = e
+      this.inside = e
   }
 
   @action // just to perform binding
   private handle(e: Event): void {
-    if (this.keepActive !== e)
+    if (this.inside !== e)
       this.setActive(false)
-    this.keepActive = null
+    this.inside = null
   }
 }
