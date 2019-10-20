@@ -6,6 +6,7 @@
 import { State, stateless, action, Action } from 'reactronic'
 
 export class EventTargetGroup extends State {
+  constructor(readonly event: string) { super() }
   isActive: boolean = false;
   @stateless private members = new Set<EventTarget>()
   @stateless private keepActive: Event | null = null
@@ -15,43 +16,41 @@ export class EventTargetGroup extends State {
     if (this.isActive !== value) {
       this.isActive = value
       if (!value) {
-        this.members.forEach(m => {
-          m.removeEventListener('pointerdown', this.pointerDownCapture, true)
-          m.removeEventListener('pointerdown', this.pointerDownBubble, false)
-        })
-        document.removeEventListener('pointerdown', this.pointerDownCapture, true)
-        document.removeEventListener('pointerdown', this.pointerDownBubble, false)
+        this.members.forEach(m =>
+          m.removeEventListener(this.event, this.capture, true))
+        document.removeEventListener(this.event, this.capture, true)
+        document.removeEventListener(this.event, this.handle, false)
         this.members.clear()
       }
       else {
-        document.addEventListener('pointerdown', this.pointerDownCapture, true)
-        document.addEventListener('pointerdown', this.pointerDownBubble, false)
+        document.addEventListener(this.event, this.capture, true)
+        document.addEventListener(this.event, this.handle, false)
       }
     }
   }
 
   @action
-  include(member: EventTarget | null): void {
-    if (member !== null) {
-      this.members.add(member)
-      member.addEventListener('pointerdown', this.pointerDownCapture, true)
-      member.addEventListener('pointerdown', this.pointerDownBubble, false)
+  includeMember(m: EventTarget | null): void {
+    if (m !== null) {
+      this.members.add(m)
+      m.addEventListener(this.event, this.capture, true)
     }
   }
 
   @action // just to perform binding
-  private pointerDownCapture(e: Event): void {
+  private capture(e: Event): void {
     if (e.currentTarget && this.members.has(e.currentTarget))
       this.keepActive = e
   }
 
   @action // just to perform binding
-  private pointerDownBubble(e: Event): void {
+  private handle(e: Event): void {
     if (this.keepActive !== e)
       this.setActive(false)
+    this.keepActive = null
   }
 
-  static create(): EventTargetGroup {
-    return Action.run('ActiveGroup.create', () => new EventTargetGroup())
+  static create(event: string): EventTargetGroup {
+    return Action.run('EventTargetGroup.create', () => new EventTargetGroup(event))
   }
 }
