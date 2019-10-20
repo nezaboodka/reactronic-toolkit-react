@@ -11,6 +11,7 @@ export class EventTargetGroup extends State {
   @stateless readonly event: string
   @stateless private refs = new Map<any, EventTarget>()
   @stateless private members = new Set<EventTarget>()
+  @stateless private focus: HTMLElement | null = null
   @stateless private inside: Event | null = null
 
   constructor(event: string) {
@@ -22,9 +23,11 @@ export class EventTargetGroup extends State {
     return Action.run('EventTargetGroup.create', () => new EventTargetGroup(event))
   }
 
-  useMemberRef(): (...args: any[]) => any {
+  useMemberRef(focus: boolean = false): (...args: any[]) => any {
     const ref = React.useCallback(element => {
       this.use(ref, element)
+      if (focus)
+        this.focus = element
     }, [])
     return ref
   }
@@ -36,6 +39,8 @@ export class EventTargetGroup extends State {
       if (value) { // start tracking
         document.addEventListener(this.event, this.capture, true)
         document.addEventListener(this.event, this.handle, false)
+        if (this.focus)
+          this.focus.focus()
       }
       else { // stop tracking
         document.removeEventListener(this.event, this.capture, true)
