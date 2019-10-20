@@ -3,6 +3,7 @@
 // Copyright (C) 2019 Yury Chetyrko <ychetyrko@gmail.com>
 // License: https://raw.githubusercontent.com/nezaboodka/reactronic/master/LICENSE
 
+import * as React from 'react'
 import { State, stateless, action, Action } from 'reactronic'
 
 export class EventTargetGroup extends State {
@@ -10,6 +11,14 @@ export class EventTargetGroup extends State {
   isActive: boolean = false;
   @stateless private members = new Set<EventTarget>()
   @stateless private keepActive: Event | null = null
+
+  static create(event: string): EventTargetGroup {
+    return Action.run('EventTargetGroup.create', () => new EventTargetGroup(event))
+  }
+
+  useIncludeCallback(): (...args: any[]) => any {
+    return React.useCallback(element => this.includeMember(element), [])
+  }
 
   @action
   setActive(value: boolean): void {
@@ -29,8 +38,10 @@ export class EventTargetGroup extends State {
     }
   }
 
+  // Internal
+
   @action
-  includeMember(m: EventTarget | null): void {
+  private includeMember(m: EventTarget | null): void {
     if (m !== null) {
       this.members.add(m)
       m.addEventListener(this.event, this.capture, true)
@@ -48,9 +59,5 @@ export class EventTargetGroup extends State {
     if (this.keepActive !== e)
       this.setActive(false)
     this.keepActive = null
-  }
-
-  static create(event: string): EventTargetGroup {
-    return Action.run('EventTargetGroup.create', () => new EventTargetGroup(event))
   }
 }
