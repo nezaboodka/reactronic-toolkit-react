@@ -4,18 +4,23 @@
 // License: https://raw.githubusercontent.com/nezaboodka/reactronic/master/LICENSE
 
 import * as React from 'react'
-import { trigger, separate, Cache } from 'reactronic'
+import { trigger, cached, separate, Cache } from 'reactronic'
 
 export class Component<T> extends React.Component<T> {
+  @cached
+  render(): JSX.Element {
+    return <div>to be overridden in derived class</div>
+  }
+
   @trigger
   keepFresh(): void {
     if (Cache.of(this.render).invalid)
       separate(() => this.setState({}))
   }
 
-  // @cached
-  // render(): JSX.Element {
-  // }
+  componentDidMount(): void {
+    this.keepFresh() // initial trigger run
+  }
 
   componentWillUnmount(): void {
     separate(Cache.unmount, this)
