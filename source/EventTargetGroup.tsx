@@ -22,7 +22,7 @@ export class EventTargetGroup extends State {
     return Action.run('EventTargetGroup.create', () => new EventTargetGroup(event))
   }
 
-  useIncludeCallback(): (...args: any[]) => any {
+  useMemberRef(): (...args: any[]) => any {
     const ref = React.useCallback(element => {
       this.use(ref, element)
     }, [])
