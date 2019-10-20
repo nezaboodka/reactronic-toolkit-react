@@ -4,3 +4,4 @@
 // License: https://raw.githubusercontent.com/nezaboodka/reactronic/master/LICENSE
 
 export { reactive } from './reactive'
+export { EventTargetGroup } from './EventTargetGroup'
