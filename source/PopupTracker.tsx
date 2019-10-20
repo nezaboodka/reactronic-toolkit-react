@@ -6,6 +6,14 @@
 import * as React from 'react'
 import { State, stateless, action, Action } from 'reactronic'
 
+class PopupTrackerInfo {
+  constructor(readonly event: string) { }
+  refs = new Map<any, EventTarget>()
+  members = new Set<EventTarget>()
+  focus: HTMLElement | null = null
+  memberEvent: Event | null = null
+}
+
 export class PopupTracker extends State {
   isActive: boolean = false
   @stateless readonly info: PopupTrackerInfo
@@ -76,12 +84,4 @@ export class PopupTracker extends State {
       this.setActive(false)
     this.info.memberEvent = null
   }
-}
-
-class PopupTrackerInfo {
-  constructor(readonly event: string) { }
-  refs = new Map<any, EventTarget>()
-  members = new Set<EventTarget>()
-  focus: HTMLElement | null = null
-  memberEvent: Event | null = null
 }
