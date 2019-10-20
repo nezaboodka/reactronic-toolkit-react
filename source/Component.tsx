@@ -14,8 +14,12 @@ export class Component<P> extends React.Component<P> {
 
   @trigger
   keepFresh(): void {
-    if (Cache.of(this.render).invalid)
+    if (this.shouldComponentUpdate())
       separate(() => this.setState({}))
+  }
+
+  shouldComponentUpdate(): boolean {
+    return Cache.of(this.render).invalid
   }
 
   componentDidMount(): void {
@@ -24,9 +28,5 @@ export class Component<P> extends React.Component<P> {
 
   componentWillUnmount(): void {
     separate(Cache.unmount, this)
-  }
-
-  shouldComponentUpdate(): boolean {
-    return Cache.of(this.render).invalid
   }
 }
