@@ -18,15 +18,15 @@ export class Component<P> extends React.Component<P> {
       separate(() => this.setState({}))
   }
 
-  shouldComponentUpdate(): boolean {
-    return Cache.of(this.render).invalid
-  }
-
   componentDidMount(): void {
     this.keepFresh() // initial trigger run
   }
 
   componentWillUnmount(): void {
     separate(Cache.unmount, this)
+  }
+
+  shouldComponentUpdate(): boolean {
+    return Cache.of(this.render).invalid
   }
 }
