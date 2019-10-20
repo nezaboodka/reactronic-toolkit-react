@@ -5,7 +5,7 @@
   "main": "build/dist/source/index.js",
   "types": "build/dist/source/index.d.ts",
   "files": [
-    "build/dist/source/**/*.*"
+    "build/dist/source/**/*"
   ],
   "repository": {
     "type": "git",
