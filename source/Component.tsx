@@ -6,7 +6,7 @@
 import * as React from 'react'
 import { trigger, cached, separate, Cache } from 'reactronic'
 
-export class Component<T> extends React.Component<T> {
+export class Component<P> extends React.Component<P> {
   @cached
   render(): JSX.Element {
     return <div>to be overridden in derived class</div>
@@ -16,6 +16,10 @@ export class Component<T> extends React.Component<T> {
   keepFresh(): void {
     if (Cache.of(this.render).invalid)
       separate(() => this.setState({}))
+  }
+
+  shouldComponentUpdate(): boolean {
+    return Cache.of(this.render).invalid
   }
 
   componentDidMount(): void {
