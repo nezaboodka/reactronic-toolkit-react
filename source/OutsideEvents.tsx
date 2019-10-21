@@ -31,14 +31,14 @@ export class OutsideEvents {
     }
   }
 
-  useMemberCallback(): (...args: any[]) => any {
+  useCallbackToSetMembership(): (...args: any[]) => any {
     const ref = React.useCallback(element => {
-      this.member(ref, element)
+      this.membership(ref, element)
     }, [])
     return ref
   }
 
-  member(key: any, member: EventTarget | null): void {
+  membership(key: any, member: EventTarget | null): void {
     if (member !== null) {
       this.refs.set(key, member)
       this.members.add(member)
