@@ -4,19 +4,19 @@
 // License: https://raw.githubusercontent.com/nezaboodka/reactronic/master/LICENSE
 
 import { State, stateless, action, Action } from 'reactronic'
-import { OutsideEvent } from './OutsideEvent'
+import { OutsideEvents } from './OutsideEvents'
 
 export class PopupMonitor extends State {
-  @stateless readonly outsideEvent: OutsideEvent
+  @stateless readonly outsideEvent: OutsideEvents
   private activated: boolean = false
 
-  constructor(event: string) {
+  constructor(...events: string[]) {
     super()
-    this.outsideEvent = new OutsideEvent(event)
+    this.outsideEvent = new OutsideEvents(events)
   }
 
-  static create(event: string): PopupMonitor {
-    return Action.run('PopupMonitor.create', () => new PopupMonitor(event))
+  static create(...events: string[]): PopupMonitor {
+    return Action.run('PopupMonitor.create', () => new PopupMonitor(...events))
   }
 
   get isActive(): boolean { return this.activated }

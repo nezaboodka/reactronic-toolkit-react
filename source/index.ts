@@ -4,5 +4,5 @@
 // License: https://raw.githubusercontent.com/nezaboodka/reactronic/master/LICENSE
 
 export { reactive } from './reactive'
-export { OutsideEvent } from './OutsideEvent'
+export { OutsideEvents } from './OutsideEvents'
 export { PopupMonitor } from './PopupMonitor'

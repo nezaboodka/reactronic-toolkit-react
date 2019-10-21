@@ -5,8 +5,8 @@
 
 import * as React from 'react'
 
-export class OutsideEvent {
-  constructor(private event: string) { }
+export class OutsideEvents {
+  constructor(private events: string[]) { }
   private refs = new Map<any, EventTarget>()
   private members = new Set<EventTarget>()
   private memberEvent: Event | null = null
@@ -16,13 +16,17 @@ export class OutsideEvent {
   set onOutside(handler: ((e: Event) => void) | undefined) {
     if (this.outside !== handler) {
       if (this.outside !== undefined) {
-        document.removeEventListener(this.event, this.bubble, false)
-        document.removeEventListener(this.event, this.capture, true)
+        for (const x of this.events) {
+          document.removeEventListener(x, this.bubble, false)
+          document.removeEventListener(x, this.capture, true)
+        }
       }
       this.outside = handler
       if (handler !== undefined) {
-        document.addEventListener(this.event, this.capture, true)
-        document.addEventListener(this.event, this.bubble, false)
+        for (const x of this.events) {
+          document.addEventListener(x, this.capture, true)
+          document.addEventListener(x, this.bubble, false)
+        }
       }
     }
   }
@@ -38,12 +42,14 @@ export class OutsideEvent {
     if (member !== null) {
       this.refs.set(key, member)
       this.members.add(member)
-      member.addEventListener(this.event, this.capture, true)
+      for (const x of this.events)
+        member.addEventListener(x, this.capture, true)
     }
     else {
       const m = this.refs.get(key)
       if (m) {
-        m.removeEventListener(this.event, this.capture, true)
+        for (const x of this.events)
+          m.removeEventListener(x, this.capture, true)
         this.members.delete(m)
         this.refs.delete(key)
       }
