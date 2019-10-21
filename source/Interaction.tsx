@@ -82,37 +82,37 @@ export class Interaction extends State {
   }
 
   @action
-  listen(element: HTMLElement | undefined): void {
+  setElement(element: HTMLElement | undefined, listen: boolean): void {
     const existing = this.element
     if (element !== existing) {
       if (existing !== undefined) {
-        existing.removeEventListener('blur', this.onBlur)
-        existing.removeEventListener('pointerenter', this.onPointerEnter)
-        existing.removeEventListener('pointerleave', this.onPointerLeave)
-        existing.removeEventListener('pointerdown', this.onPointerDown)
-        existing.removeEventListener('pointermove', this.onPointerMove)
-        existing.removeEventListener('pointerup', this.onPointerUp)
-        existing.removeEventListener('wheel', this.onWheel)
-        existing.removeEventListener('keydown', this.onKeyDown)
-        existing.removeEventListener('keyup', this.onKeyUp)
-        existing.removeEventListener('touchstart', this.onTouchStart)
-        existing.removeEventListener('touchend', this.onTouchEnd)
-        existing.removeEventListener('blur', this.onBlur)
+        existing.removeEventListener('blur', this.onBlur, false)
+        existing.removeEventListener('pointerenter', this.onPointerEnter, false)
+        existing.removeEventListener('pointerleave', this.onPointerLeave, false)
+        existing.removeEventListener('pointerdown', this.onPointerDown, false)
+        existing.removeEventListener('pointermove', this.onPointerMove, false)
+        existing.removeEventListener('pointerup', this.onPointerUp, false)
+        existing.removeEventListener('wheel', this.onWheel, false)
+        existing.removeEventListener('keydown', this.onKeyDown, false)
+        existing.removeEventListener('keyup', this.onKeyUp, false)
+        existing.removeEventListener('touchstart', this.onTouchStart, false)
+        existing.removeEventListener('touchend', this.onTouchEnd, false)
+        existing.removeEventListener('blur', this.onBlur, false)
       }
       this.element = element
-      if (element) {
-        element.addEventListener('blur', this.onBlur)
-        element.addEventListener('pointerenter', this.onPointerEnter)
-        element.addEventListener('pointerleave', this.onPointerLeave)
-        element.addEventListener('pointerdown', this.onPointerDown)
-        element.addEventListener('pointermove', this.onPointerMove)
-        element.addEventListener('pointerup', this.onPointerUp)
-        element.addEventListener('wheel', this.onWheel)
-        element.addEventListener('keydown', this.onKeyDown)
-        element.addEventListener('keyup', this.onKeyUp)
-        element.addEventListener('touchstart', this.onTouchStart)
-        element.addEventListener('touchend', this.onTouchEnd)
-        element.addEventListener('blur', this.onBlur)
+      if (element && listen) {
+        element.addEventListener('blur', this.onBlur, false)
+        element.addEventListener('pointerenter', this.onPointerEnter, false)
+        element.addEventListener('pointerleave', this.onPointerLeave, false)
+        element.addEventListener('pointerdown', this.onPointerDown, false)
+        element.addEventListener('pointermove', this.onPointerMove, false)
+        element.addEventListener('pointerup', this.onPointerUp, false)
+        element.addEventListener('wheel', this.onWheel, false)
+        element.addEventListener('keydown', this.onKeyDown, false)
+        element.addEventListener('keyup', this.onKeyUp, false)
+        element.addEventListener('touchstart', this.onTouchStart, false)
+        element.addEventListener('touchend', this.onTouchEnd, false)
+        element.addEventListener('blur', this.onBlur, false)
       }
     }
   }
