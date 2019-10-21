@@ -35,9 +35,7 @@ export enum InteractionResult {
 
 export class Interaction extends State {
   element?: HTMLElement
-  // Keyboard
   modifiers: InteractionModifiers
-  // Pointer
   hovered: boolean
   touched: boolean
   captured: boolean
@@ -61,9 +59,7 @@ export class Interaction extends State {
   constructor() {
     super()
     this.element = undefined
-    // Keyboard
     this.modifiers = InteractionModifiers.None
-    // Pointer
     this.hovered = false
     this.touched = false
     this.captured = false
