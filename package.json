@@ -42,8 +42,8 @@
     "@typescript-eslint/eslint-plugin": "2.3.2"
   },
   "scripts": {
-    "build": "eslint **/*.ts **/*.tsx **/*.js && tsc",
-    "fix": "eslint --fix **/*.ts **/*.tsx **/*.js",
-    "pack": "eslint **/*.ts **/*.tsx **/*.js && tsc --sourceMap false --removeComments true"
+    "build": "eslint **/*.ts **/*.tsx && tsc",
+    "fix": "eslint --fix **/*.ts **/*.tsx",
+    "pack": "eslint **/*.ts **/*.tsx && tsc --sourceMap false --removeComments true"
   }
 }
