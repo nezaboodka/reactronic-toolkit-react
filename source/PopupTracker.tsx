@@ -56,11 +56,11 @@ export class PopupTracker extends State {
   // Internal
 
   @action
-  private use(key: any, m: EventTarget | null): void {
-    if (m !== null) {
-      this.info.refs.set(key, m)
-      this.info.members.add(m)
-      m.addEventListener(this.info.event, this.capture, true)
+  private use(key: any, member: EventTarget | null): void {
+    if (member !== null) {
+      this.info.refs.set(key, member)
+      this.info.members.add(member)
+      member.addEventListener(this.info.event, this.capture, true)
     }
     else {
       const m = this.info.refs.get(key)
