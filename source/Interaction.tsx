@@ -5,6 +5,13 @@
 
 import { State, action } from 'reactronic'
 
+export enum InteractionButton {
+  None = 0,
+  Left = 1,
+  Right = 2,
+  Middle = 4,
+}
+
 export enum InteractionModifiers {
   None = 0,
   Ctrl = 1,
@@ -16,14 +23,7 @@ export enum InteractionModifiers {
   ShiftAlt = 2 + 4,
 }
 
-export enum InteractionButton {
-  None = 0,
-  Left = 1,
-  Right = 2,
-  Middle = 4,
-}
-
-export enum InteractionResult {
+export enum InteractionOperation {
   None = 0,
   Touch = 1,
   Click = 2,
@@ -34,51 +34,65 @@ export enum InteractionResult {
 }
 
 export class Interaction extends State {
+  // Configuration
+  draggingThreshold: number
   element?: HTMLElement
-  modifiers: InteractionModifiers
+  // Overall status
   active: boolean
   touched: boolean
   captured: boolean
+  // Keyboard and mouse
+  keyDown: string
+  buttonDown: InteractionButton
+  modifiers: InteractionModifiers
+  // Position
   x: number
   y: number
   previousX: number
   previousY: number
   scrollDeltaX: number
   scrollDeltaY: number
-  draggingThreshold: number
+  // Dragging
   dragging: boolean
   draggingStartX: number
   draggingStartY: number
   draggingStartModifiers: InteractionModifiers
-  buttonDown: InteractionButton
   // Result
-  result: InteractionResult
+  resultKey: string
   resultButton: InteractionButton
   resultModifiers: InteractionModifiers
+  resultOperation: InteractionOperation
 
   constructor() {
     super()
+    // Configuration
+    this.draggingThreshold = 4
     this.element = undefined
-    this.modifiers = InteractionModifiers.None
+    // Overall status
     this.active = false
     this.touched = false
     this.captured = false
+    // Keyboard and mouse
+    this.keyDown = ''
     this.buttonDown = InteractionButton.None
+    this.modifiers = InteractionModifiers.None
+    // Position
     this.x = 0
     this.y = 0
     this.previousX = 0
     this.previousY = 0
     this.scrollDeltaX = 0
     this.scrollDeltaY = 0
-    this.draggingThreshold = 4
+    // Dragging
     this.dragging = false
     this.draggingStartX = 0
     this.draggingStartY = 0
     this.draggingStartModifiers = InteractionModifiers.None
     // Result
-    this.result = InteractionResult.None
+    this.resultKey = ''
     this.resultButton = 0
     this.resultModifiers = InteractionModifiers.None
+    this.resultOperation = InteractionOperation.None
   }
 
   @action
@@ -168,7 +182,7 @@ export class Interaction extends State {
         this.dragging = true
       }
       if (this.dragging)
-        this.updateResult(InteractionResult.Drag)
+        this.updateResult(InteractionOperation.Drag)
     }
     else {
       this.clearResult()
@@ -187,7 +201,7 @@ export class Interaction extends State {
         this.element.releasePointerCapture(e.pointerId)
         this.captured = false
       }
-      this.updateResult(this.dragging ? InteractionResult.Drop : InteractionResult.Click)
+      this.updateResult(this.dragging ? InteractionOperation.Drop : InteractionOperation.Click)
       this.dragging = false
       this.buttonDown = InteractionButton.None
     }
@@ -200,7 +214,7 @@ export class Interaction extends State {
     if (!this.dragging && this.buttonDown === InteractionButton.None) {
       this.scrollDeltaX = e.deltaX
       this.scrollDeltaY = e.deltaY
-      this.updateResult(InteractionResult.Scroll)
+      this.updateResult(InteractionOperation.Scroll)
     }
     e.preventDefault()
   }
@@ -244,7 +258,7 @@ export class Interaction extends State {
   clearResult(): void {
     this.scrollDeltaX = 0
     this.scrollDeltaY = 0
-    this.result = InteractionResult.None
+    this.resultOperation = InteractionOperation.None
     this.resultButton = InteractionButton.None
     this.resultModifiers = InteractionModifiers.None
   }
@@ -264,9 +278,9 @@ export class Interaction extends State {
     this.modifiers = Interaction.extractModifierKeys(e)
   }
 
-  private updateResult(result: InteractionResult): void {
-    this.result = result
-    this.resultButton = result === InteractionResult.Scroll ? InteractionButton.None : this.buttonDown
+  private updateResult(result: InteractionOperation): void {
+    this.resultOperation = result
+    this.resultButton = result === InteractionOperation.Scroll ? InteractionButton.None : this.buttonDown
     this.resultModifiers = this.modifiers
   }
 
@@ -285,7 +299,7 @@ export class Interaction extends State {
     this.draggingStartY = 0
     this.draggingStartModifiers = InteractionModifiers.None
     this.buttonDown = InteractionButton.None
-    this.result = InteractionResult.None
+    this.resultOperation = InteractionOperation.None
     this.resultButton = InteractionButton.None
     this.resultModifiers = InteractionModifiers.None
   }
