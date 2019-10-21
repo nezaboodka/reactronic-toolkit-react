@@ -5,16 +5,9 @@
 
 import { State, action } from 'reactronic'
 
-export enum InteractionButton {
+export enum KeyboardModifiers {
   None = 0,
-  Left = 1,
-  Right = 2,
-  Middle = 4,
-}
-
-export enum InteractionModifiers {
-  None = 0,
-  Ctrl = 1,
+  Control = 1,
   Shift = 2,
   Alt = 4,
   CtrlShift = 1 + 2,
@@ -23,7 +16,14 @@ export enum InteractionModifiers {
   ShiftAlt = 2 + 4,
 }
 
-export enum InteractionOperation {
+export enum PointerButton {
+  None = 0,
+  Left = 1,
+  Right = 2,
+  Middle = 4,
+}
+
+export enum UserOperation {
   None = 0,
   Touch = 1,
   Click = 2,
@@ -37,62 +37,62 @@ export class Interaction extends State {
   // Configuration
   draggingThreshold: number
   element?: HTMLElement
-  // Overall status
+  // Common
   active: boolean
   touched: boolean
   captured: boolean
-  // Keyboard and mouse
-  keyDown: string
-  buttonDown: InteractionButton
-  modifiers: InteractionModifiers
-  // Position
+  // Keyboard
+  keyboardButtonDown: string
+  keyboardModifiers: KeyboardModifiers
+  // Pointer
   x: number
   y: number
   previousX: number
   previousY: number
   scrollDeltaX: number
   scrollDeltaY: number
+  pointerButtonDown: PointerButton
   // Dragging
   dragging: boolean
   draggingStartX: number
   draggingStartY: number
-  draggingStartModifiers: InteractionModifiers
+  draggingStartModifiers: KeyboardModifiers
   // Result
-  resultKey: string
-  resultButton: InteractionButton
-  resultModifiers: InteractionModifiers
-  resultOperation: InteractionOperation
+  resultKeyboardButton: string
+  resultKeyboardModifiers: KeyboardModifiers
+  resultPointerButton: PointerButton
+  resultOperation: UserOperation
 
   constructor() {
     super()
     // Configuration
     this.draggingThreshold = 4
     this.element = undefined
-    // Overall status
+    // Common
     this.active = false
     this.touched = false
     this.captured = false
-    // Keyboard and mouse
-    this.keyDown = ''
-    this.buttonDown = InteractionButton.None
-    this.modifiers = InteractionModifiers.None
-    // Position
+    // Keyboard
+    this.keyboardButtonDown = ''
+    this.keyboardModifiers = KeyboardModifiers.None
+    // Pointer
     this.x = 0
     this.y = 0
     this.previousX = 0
     this.previousY = 0
     this.scrollDeltaX = 0
     this.scrollDeltaY = 0
+    this.pointerButtonDown = PointerButton.None
     // Dragging
     this.dragging = false
     this.draggingStartX = 0
     this.draggingStartY = 0
-    this.draggingStartModifiers = InteractionModifiers.None
+    this.draggingStartModifiers = KeyboardModifiers.None
     // Result
-    this.resultKey = ''
-    this.resultButton = 0
-    this.resultModifiers = InteractionModifiers.None
-    this.resultOperation = InteractionOperation.None
+    this.resultKeyboardButton = ''
+    this.resultKeyboardModifiers = KeyboardModifiers.None
+    this.resultPointerButton = PointerButton.None
+    this.resultOperation = UserOperation.None
   }
 
   @action
@@ -157,7 +157,7 @@ export class Interaction extends State {
   @action
   onPointerDown(e: PointerEvent): void {
     this.updateButtonDown(e)
-    if (this.buttonDown !== InteractionButton.None) {
+    if (this.pointerButtonDown !== PointerButton.None) {
       if (this.element) {
         this.element.setPointerCapture(e.pointerId)
         this.captured = true
@@ -175,14 +175,14 @@ export class Interaction extends State {
   @action
   onPointerMove(e: PointerEvent): void {
     this.updatePosition(e)
-    if (this.captured && this.buttonDown !== InteractionButton.None && this.buttonDown === e.buttons) {
+    if (this.captured && this.pointerButtonDown !== PointerButton.None && this.pointerButtonDown === e.buttons) {
       if (!this.dragging &&
         (Math.abs(this.x - this.draggingStartX) > this.draggingThreshold ||
           Math.abs(this.y - this.draggingStartY) > this.draggingThreshold)) {
         this.dragging = true
       }
       if (this.dragging)
-        this.updateResult(InteractionOperation.Drag)
+        this.updateResult(UserOperation.Drag)
     }
     else {
       this.clearResult()
@@ -194,16 +194,16 @@ export class Interaction extends State {
   onPointerUp(e: PointerEvent): void {
     this.updatePosition(e)
     const clickOrDrop = this.captured &&
-      this.buttonDown !== InteractionButton.None &&
-      e.buttons === InteractionButton.None
+      this.pointerButtonDown !== PointerButton.None &&
+      e.buttons === PointerButton.None
     if (clickOrDrop) {
       if (this.element) {
         this.element.releasePointerCapture(e.pointerId)
         this.captured = false
       }
-      this.updateResult(this.dragging ? InteractionOperation.Drop : InteractionOperation.Click)
+      this.updateResult(this.dragging ? UserOperation.Drop : UserOperation.Click)
       this.dragging = false
-      this.buttonDown = InteractionButton.None
+      this.pointerButtonDown = PointerButton.None
     }
     e.preventDefault()
   }
@@ -211,37 +211,38 @@ export class Interaction extends State {
   @action
   onWheel(e: WheelEvent): void {
     this.updatePosition(e)
-    if (!this.dragging && this.buttonDown === InteractionButton.None) {
+    if (!this.dragging && this.pointerButtonDown === PointerButton.None) {
       this.scrollDeltaX = e.deltaX
       this.scrollDeltaY = e.deltaY
-      this.updateResult(InteractionOperation.Scroll)
+      this.updateResult(UserOperation.Scroll)
     }
     e.preventDefault()
   }
 
   @action
   onKeyDown(e: KeyboardEvent): void {
+    this.keyboardButtonDown = e.key
     if (e.key === 'Escape') {
       this.clearResult()
       this.dragging = false
-      this.buttonDown = InteractionButton.None
+      this.pointerButtonDown = PointerButton.None
     }
     else if (e.key === 'Control')
-      this.modifiers = this.modifiers | InteractionModifiers.Ctrl
+      this.keyboardModifiers = this.keyboardModifiers | KeyboardModifiers.Control
     else if (e.key === 'Shift')
-      this.modifiers = this.modifiers | InteractionModifiers.Shift
+      this.keyboardModifiers = this.keyboardModifiers | KeyboardModifiers.Shift
     else if (e.key === 'Alt')
-      this.modifiers = this.modifiers | InteractionModifiers.Alt
+      this.keyboardModifiers = this.keyboardModifiers | KeyboardModifiers.Alt
   }
 
   @action
   onKeyUp(e: KeyboardEvent): void {
     if (e.key === 'Control')
-      this.modifiers = this.modifiers & ~InteractionModifiers.Ctrl
+      this.keyboardModifiers = this.keyboardModifiers & ~KeyboardModifiers.Control
     else if (e.key === 'Shift')
-      this.modifiers = this.modifiers & ~InteractionModifiers.Shift
+      this.keyboardModifiers = this.keyboardModifiers & ~KeyboardModifiers.Shift
     else if (e.key === 'Alt')
-      this.modifiers = this.modifiers & ~InteractionModifiers.Alt
+      this.keyboardModifiers = this.keyboardModifiers & ~KeyboardModifiers.Alt
   }
 
   @action
@@ -258,16 +259,16 @@ export class Interaction extends State {
   clearResult(): void {
     this.scrollDeltaX = 0
     this.scrollDeltaY = 0
-    this.resultOperation = InteractionOperation.None
-    this.resultButton = InteractionButton.None
-    this.resultModifiers = InteractionModifiers.None
+    this.resultPointerButton = PointerButton.None
+    this.resultKeyboardModifiers = KeyboardModifiers.None
+    this.resultOperation = UserOperation.None
   }
 
   private updateButtonDown(e: PointerEvent): void {
     if (e.buttons === 1 || e.buttons === 2 || e.buttons === 4)
-      this.buttonDown = e.buttons
+      this.pointerButtonDown = e.buttons
     else
-      this.buttonDown = InteractionButton.None
+      this.pointerButtonDown = PointerButton.None
   }
 
   private updatePosition(e: PointerEvent | WheelEvent): void {
@@ -275,55 +276,61 @@ export class Interaction extends State {
     this.previousY = this.y
     this.x = e.offsetX
     this.y = e.offsetY
-    this.modifiers = Interaction.extractModifierKeys(e)
+    this.keyboardModifiers = Interaction.extractModifierKeys(e)
   }
 
-  private updateResult(result: InteractionOperation): void {
-    this.resultOperation = result
-    this.resultButton = result === InteractionOperation.Scroll ? InteractionButton.None : this.buttonDown
-    this.resultModifiers = this.modifiers
+  private updateResult(operation: UserOperation): void {
+    this.resultPointerButton = operation === UserOperation.Scroll ? PointerButton.None : this.pointerButtonDown
+    this.resultKeyboardModifiers = this.keyboardModifiers
+    this.resultOperation = operation
   }
 
   private clearAll(): void {
     this.active = false
-    this.modifiers = InteractionModifiers.None
     this.touched = false
+    // Keyboard
+    this.keyboardButtonDown = ''
+    this.keyboardModifiers = KeyboardModifiers.None
+    // Pointer
     this.x = 0
     this.y = 0
     this.previousX = 0
     this.previousY = 0
     this.scrollDeltaX = 0
     this.scrollDeltaY = 0
+    this.pointerButtonDown = PointerButton.None
+    // Dragging
     this.dragging = false
     this.draggingStartX = 0
     this.draggingStartY = 0
-    this.draggingStartModifiers = InteractionModifiers.None
-    this.buttonDown = InteractionButton.None
-    this.resultOperation = InteractionOperation.None
-    this.resultButton = InteractionButton.None
-    this.resultModifiers = InteractionModifiers.None
+    this.draggingStartModifiers = KeyboardModifiers.None
+    // Result
+    this.resultKeyboardButton = ''
+    this.resultKeyboardModifiers = KeyboardModifiers.None
+    this.resultPointerButton = PointerButton.None
+    this.resultOperation = UserOperation.None
   }
 
   private clearDraggingStart(): void {
     this.draggingStartX = 0
     this.draggingStartY = 0
-    this.draggingStartModifiers = InteractionModifiers.None
+    this.draggingStartModifiers = KeyboardModifiers.None
   }
 
-  private static extractModifierKeys(e: PointerEvent | KeyboardEvent | WheelEvent): InteractionModifiers {
-    let modifiers = InteractionModifiers.None
+  private static extractModifierKeys(e: PointerEvent | KeyboardEvent | WheelEvent): KeyboardModifiers {
+    let modifiers = KeyboardModifiers.None
     if (e.ctrlKey)
-      modifiers = modifiers | InteractionModifiers.Ctrl
+      modifiers = modifiers | KeyboardModifiers.Control
     else
-      modifiers = modifiers & ~InteractionModifiers.Ctrl
+      modifiers = modifiers & ~KeyboardModifiers.Control
     if (e.shiftKey)
-      modifiers = modifiers | InteractionModifiers.Shift
+      modifiers = modifiers | KeyboardModifiers.Shift
     else
-      modifiers = modifiers & ~InteractionModifiers.Shift
+      modifiers = modifiers & ~KeyboardModifiers.Shift
     if (e.altKey)
-      modifiers = modifiers | InteractionModifiers.Alt
+      modifiers = modifiers | KeyboardModifiers.Alt
     else
-      modifiers = modifiers & ~InteractionModifiers.Alt
+      modifiers = modifiers & ~KeyboardModifiers.Alt
     return modifiers
   }
 }
