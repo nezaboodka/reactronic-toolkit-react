@@ -67,5 +67,5 @@ function getComponentName(): string {
   const i = lines.findIndex(x => x.indexOf('.reactiveRender') >= 0) || 6
   let result: string = lines[i + 1] || ''
   result = (result.match(/^\s*at\s*(\S+)/) || [])[1]
-  return `<${result}>`
+  return result !== undefined ? `<${result}>` : '<Rx>'
 }
