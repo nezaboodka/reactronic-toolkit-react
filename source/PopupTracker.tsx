@@ -29,11 +29,28 @@ export class PopupTracker extends State {
 
   useMemberRef(focus: boolean = false): (...args: any[]) => any {
     const ref = React.useCallback(element => {
-      this.use(ref, element)
-      if (focus)
-        this.info.focus = element
+      this.member(ref, element, focus)
     }, [])
     return ref
+  }
+
+  @action
+  member(key: any, member: EventTarget | null, focus: boolean): void {
+    if (member !== null) {
+      this.info.refs.set(key, member)
+      this.info.members.add(member)
+      member.addEventListener(this.info.event, this.capture, true)
+    }
+    else {
+      const m = this.info.refs.get(key)
+      if (m) {
+        m.removeEventListener(this.info.event, this.capture, true)
+        this.info.members.delete(m)
+        this.info.refs.delete(key)
+      }
+    }
+    if (focus)
+      this.info.focus = member as HTMLElement
   }
 
   @action
@@ -54,23 +71,6 @@ export class PopupTracker extends State {
   }
 
   // Internal
-
-  @action
-  private use(key: any, member: EventTarget | null): void {
-    if (member !== null) {
-      this.info.refs.set(key, member)
-      this.info.members.add(member)
-      member.addEventListener(this.info.event, this.capture, true)
-    }
-    else {
-      const m = this.info.refs.get(key)
-      if (m) {
-        m.removeEventListener(this.info.event, this.capture, true)
-        this.info.members.delete(m)
-        this.info.refs.delete(key)
-      }
-    }
-  }
 
   @action // just to perform binding
   private capture(e: Event): void {
