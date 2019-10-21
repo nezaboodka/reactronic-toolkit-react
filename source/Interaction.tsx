@@ -119,7 +119,7 @@ export class Interaction extends State {
   onPointerEnter(e: PointerEvent): void {
     this.updateButtonDown(e)
     this.updatePosition(e)
-    this.resetAction()
+    this.reset()
     this.resetDraggingStart()
     this.hovered = true
   }
@@ -128,7 +128,7 @@ export class Interaction extends State {
   onPointerLeave(e: PointerEvent): void {
     this.updateButtonDown(e)
     this.updatePosition(e)
-    this.resetAction()
+    this.reset()
     this.resetDraggingStart()
     this.hovered = false
   }
@@ -148,7 +148,7 @@ export class Interaction extends State {
     }
     else if (this.element)
       this.element.releasePointerCapture(e.pointerId)
-    this.resetAction()
+    this.reset()
   }
 
   @action
@@ -165,7 +165,7 @@ export class Interaction extends State {
       }
     }
     else {
-      this.resetAction()
+      this.reset()
       this.resetDraggingStart()
     }
   }
@@ -199,7 +199,7 @@ export class Interaction extends State {
   @action
   onKeyDown(e: KeyboardEvent): void {
     if (e.key === 'Escape') {
-      this.resetAction()
+      this.reset()
       this.dragging = false
       this.buttonDown = InteractionButton.None
     }
@@ -229,8 +229,17 @@ export class Interaction extends State {
 
   @action
   onBlur(e: FocusEvent): void {
-    this.reset()
+    this.resetAll()
     this.hovered = false
+  }
+
+  @action
+  reset(): void {
+    this.scrollDeltaX = 0
+    this.scrollDeltaY = 0
+    this.result = InteractionResult.None
+    this.resultButton = InteractionButton.None
+    this.resultModifiers = InteractionModifiers.None
   }
 
   private updateButtonDown(e: PointerEvent): void {
@@ -254,7 +263,7 @@ export class Interaction extends State {
     this.resultModifiers = this.modifiers
   }
 
-  private reset(): void {
+  private resetAll(): void {
     this.buttonDown = 0
     this.buttonDown = InteractionButton.None
     this.modifiers = InteractionModifiers.None
@@ -269,13 +278,6 @@ export class Interaction extends State {
     this.draggingStartX = 0
     this.draggingStartY = 0
     this.draggingStartModifiers = InteractionModifiers.None
-    this.result = InteractionResult.None
-    this.resultButton = 0
-    this.resultModifiers = InteractionModifiers.None
-  }
-
-  private resetAction(): void {
-    this.scrollDeltaY = 0
     this.result = InteractionResult.None
     this.resultButton = 0
     this.resultModifiers = InteractionModifiers.None
