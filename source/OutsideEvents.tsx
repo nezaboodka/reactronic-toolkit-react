@@ -8,8 +8,8 @@ import * as React from 'react'
 export class OutsideEvents {
   constructor(private events: string[]) { }
   private refs = new Map<any, EventTarget>()
-  private members = new Set<EventTarget>()
-  private memberEvent: Event | null = null
+  private participants = new Set<EventTarget>()
+  private participantEvent: Event | null = null
   private outside?: (e: Event) => void = undefined
 
   get onOutside(): ((e: Event) => void) | undefined { return this.outside }
@@ -31,26 +31,26 @@ export class OutsideEvents {
     }
   }
 
-  useCallbackToSetMembership(): (...args: any[]) => any {
+  useCallbackToParticipate(): (...args: any[]) => any {
     const ref = React.useCallback(element => {
-      this.membership(ref, element)
+      this.participate(ref, element)
     }, [])
     return ref
   }
 
-  membership(key: any, member: EventTarget | null): void {
-    if (member !== null) {
-      this.refs.set(key, member)
-      this.members.add(member)
+  participate(key: any, element: EventTarget | null): void {
+    if (element !== null) {
+      this.refs.set(key, element)
+      this.participants.add(element)
       for (const x of this.events)
-        member.addEventListener(x, this.capture, true)
+        element.addEventListener(x, this.capture, true)
     }
     else {
-      const m = this.refs.get(key)
-      if (m) {
+      const old = this.refs.get(key)
+      if (old) {
         for (const x of this.events)
-          m.removeEventListener(x, this.capture, true)
-        this.members.delete(m)
+          old.removeEventListener(x, this.capture, true)
+        this.participants.delete(old)
         this.refs.delete(key)
       }
     }
@@ -59,13 +59,13 @@ export class OutsideEvents {
   // Internal
 
   private capture = (e: Event): void => {
-    if (e.currentTarget && this.members.has(e.currentTarget))
-      this.memberEvent = e
+    if (e.currentTarget && this.participants.has(e.currentTarget))
+      this.participantEvent = e
   }
 
   private bubble = (e: Event): void => {
-    if (this.memberEvent !== e && this.outside)
+    if (this.participantEvent !== e && this.outside)
       this.outside(e)
-    this.memberEvent = null
+    this.participantEvent = null
   }
 }
