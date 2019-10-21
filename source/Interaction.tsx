@@ -42,8 +42,8 @@ export class Interaction extends State {
   touched: boolean
   captured: boolean
   // Keyboard
-  keyboardButtonDown: string
-  keyboardModifiers: KeyboardModifiers
+  keyDown: string
+  modifiers: KeyboardModifiers
   // Pointer
   x: number
   y: number
@@ -58,8 +58,8 @@ export class Interaction extends State {
   draggingStartY: number
   draggingStartModifiers: KeyboardModifiers
   // Result
-  resultKeyboardButton: string
-  resultKeyboardModifiers: KeyboardModifiers
+  resultKey: string
+  resultModifiers: KeyboardModifiers
   resultPointerButton: PointerButton
   resultOperation: UserOperation
 
@@ -73,8 +73,8 @@ export class Interaction extends State {
     this.touched = false
     this.captured = false
     // Keyboard
-    this.keyboardButtonDown = ''
-    this.keyboardModifiers = KeyboardModifiers.None
+    this.keyDown = ''
+    this.modifiers = KeyboardModifiers.None
     // Pointer
     this.x = 0
     this.y = 0
@@ -89,8 +89,8 @@ export class Interaction extends State {
     this.draggingStartY = 0
     this.draggingStartModifiers = KeyboardModifiers.None
     // Result
-    this.resultKeyboardButton = ''
-    this.resultKeyboardModifiers = KeyboardModifiers.None
+    this.resultKey = ''
+    this.resultModifiers = KeyboardModifiers.None
     this.resultPointerButton = PointerButton.None
     this.resultOperation = UserOperation.None
   }
@@ -221,28 +221,28 @@ export class Interaction extends State {
 
   @action
   onKeyDown(e: KeyboardEvent): void {
-    this.keyboardButtonDown = e.key
+    this.keyDown = e.key
     if (e.key === 'Escape') {
       this.clearResult()
       this.dragging = false
       this.pointerButtonDown = PointerButton.None
     }
     else if (e.key === 'Control')
-      this.keyboardModifiers = this.keyboardModifiers | KeyboardModifiers.Control
+      this.modifiers = this.modifiers | KeyboardModifiers.Control
     else if (e.key === 'Shift')
-      this.keyboardModifiers = this.keyboardModifiers | KeyboardModifiers.Shift
+      this.modifiers = this.modifiers | KeyboardModifiers.Shift
     else if (e.key === 'Alt')
-      this.keyboardModifiers = this.keyboardModifiers | KeyboardModifiers.Alt
+      this.modifiers = this.modifiers | KeyboardModifiers.Alt
   }
 
   @action
   onKeyUp(e: KeyboardEvent): void {
     if (e.key === 'Control')
-      this.keyboardModifiers = this.keyboardModifiers & ~KeyboardModifiers.Control
+      this.modifiers = this.modifiers & ~KeyboardModifiers.Control
     else if (e.key === 'Shift')
-      this.keyboardModifiers = this.keyboardModifiers & ~KeyboardModifiers.Shift
+      this.modifiers = this.modifiers & ~KeyboardModifiers.Shift
     else if (e.key === 'Alt')
-      this.keyboardModifiers = this.keyboardModifiers & ~KeyboardModifiers.Alt
+      this.modifiers = this.modifiers & ~KeyboardModifiers.Alt
   }
 
   @action
@@ -260,7 +260,7 @@ export class Interaction extends State {
     this.scrollDeltaX = 0
     this.scrollDeltaY = 0
     this.resultPointerButton = PointerButton.None
-    this.resultKeyboardModifiers = KeyboardModifiers.None
+    this.resultModifiers = KeyboardModifiers.None
     this.resultOperation = UserOperation.None
   }
 
@@ -276,12 +276,12 @@ export class Interaction extends State {
     this.previousY = this.y
     this.x = e.offsetX
     this.y = e.offsetY
-    this.keyboardModifiers = Interaction.extractModifierKeys(e)
+    this.modifiers = Interaction.extractModifierKeys(e)
   }
 
   private updateResult(operation: UserOperation): void {
     this.resultPointerButton = operation === UserOperation.Scroll ? PointerButton.None : this.pointerButtonDown
-    this.resultKeyboardModifiers = this.keyboardModifiers
+    this.resultModifiers = this.modifiers
     this.resultOperation = operation
   }
 
@@ -289,8 +289,8 @@ export class Interaction extends State {
     this.active = false
     this.touched = false
     // Keyboard
-    this.keyboardButtonDown = ''
-    this.keyboardModifiers = KeyboardModifiers.None
+    this.keyDown = ''
+    this.modifiers = KeyboardModifiers.None
     // Pointer
     this.x = 0
     this.y = 0
@@ -305,8 +305,8 @@ export class Interaction extends State {
     this.draggingStartY = 0
     this.draggingStartModifiers = KeyboardModifiers.None
     // Result
-    this.resultKeyboardButton = ''
-    this.resultKeyboardModifiers = KeyboardModifiers.None
+    this.resultKey = ''
+    this.resultModifiers = KeyboardModifiers.None
     this.resultPointerButton = PointerButton.None
     this.resultOperation = UserOperation.None
   }
