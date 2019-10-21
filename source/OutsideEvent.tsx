@@ -52,12 +52,12 @@ export class OutsideEvent {
 
   // Internal
 
-  private capture(e: Event): void {
+  private capture = (e: Event): void => {
     if (e.currentTarget && this.members.has(e.currentTarget))
       this.memberEvent = e
   }
 
-  private bubble(e: Event): void {
+  private bubble = (e: Event): void => {
     if (this.memberEvent !== e && this.outside)
       this.outside(e)
     this.memberEvent = null
