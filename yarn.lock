@@ -725,10 +725,10 @@ react@^16.10.2:
     object-assign "^4.1.1"
     prop-types "^15.6.2"
 
-reactronic@^0.19.402:
-  version "0.19.402"
-  resolved "https://registry.yarnpkg.com/reactronic/-/reactronic-0.19.402.tgz#ab4048ee5a759293b48812a50b02a1d1e46b502c"
-  integrity sha512-5da2FQ5goW4iMK8EpQP5YKmjsfwK3sMD2hzvFHMP3sYL84uVOgeJNo7MQhSksfJ7FWAxlYrGYjUO7yJqWMv4KQ==
+reactronic@^0.19.409:
+  version "0.19.409"
+  resolved "https://registry.yarnpkg.com/reactronic/-/reactronic-0.19.409.tgz#39acdeec7bb82f6093f74fbb7ad6f7d743eb750e"
+  integrity sha512-DnAJ+Ge12OG3gXIkGVbCoj5eyCpMQpaKWvdPg10nxyeIQGj648E/2TtkfWtzgQHoIZuRCTlzCul3PzlFe+ifhA==
 
 regexpp@^2.0.1:
   version "2.0.1"

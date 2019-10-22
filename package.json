@@ -30,7 +30,7 @@
   "homepage": "https://github.com/nezaboodka/reactronic-toolkit-react/blob/master/README.md#readme",
   "dependencies": {
     "react": "^16.10.2",
-    "reactronic": "^0.19.402"
+    "reactronic": "^0.19.409"
   },
   "devDependencies": {
     "@types/node": "12.7.11",
