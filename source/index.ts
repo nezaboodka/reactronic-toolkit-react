@@ -5,5 +5,4 @@
 
 export * from './reactive'
 export * from './OutsideEvents'
-export * from './PopupMonitor'
 export * from './Interaction'
