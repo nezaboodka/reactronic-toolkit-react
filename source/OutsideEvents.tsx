@@ -12,8 +12,8 @@ export class OutsideEvents {
   private participantEvent: Event | null = null
   private outside?: (e: Event) => void = undefined
 
-  get onOutside(): ((e: Event) => void) | undefined { return this.outside }
-  set onOutside(handler: ((e: Event) => void) | undefined) {
+  get onOutsideEvent(): ((e: Event) => void) | undefined { return this.outside }
+  set onOutsideEvent(handler: ((e: Event) => void) | undefined) {
     if (this.outside !== handler) {
       if (this.outside !== undefined) {
         for (const x of this.events) {
