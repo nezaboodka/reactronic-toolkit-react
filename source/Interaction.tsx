@@ -246,12 +246,12 @@ export class Interaction extends State {
   }
 
   @action
-  onTouchStart(e: TouchEvent): void {
+  onTouchStart(e: Event): void {
     this.touched = true
   }
 
   @action
-  onTouchEnd(e: TouchEvent): void {
+  onTouchEnd(e: Event): void {
     this.touched = false
   }
 
