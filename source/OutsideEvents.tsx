@@ -7,7 +7,7 @@ import * as React from 'react'
 
 export class OutsideEvents {
   constructor(private events: string[]) { }
-  private refs = new Map<any, EventTarget>()
+  private keys = new Map<any, EventTarget>()
   private participants = new Set<EventTarget>()
   private participantEvent: Event | null = null
   private outside?: (e: Event) => void = undefined
@@ -40,18 +40,18 @@ export class OutsideEvents {
 
   participate(key: any, element: EventTarget | null): void {
     if (element !== null) {
-      this.refs.set(key, element)
+      this.keys.set(key, element)
       this.participants.add(element)
       for (const x of this.events)
         element.addEventListener(x, this.capture, true)
     }
     else {
-      const old = this.refs.get(key)
+      const old = this.keys.get(key)
       if (old) {
         for (const x of this.events)
           old.removeEventListener(x, this.capture, true)
         this.participants.delete(old)
-        this.refs.delete(key)
+        this.keys.delete(key)
       }
     }
   }
