@@ -6,14 +6,14 @@
 import * as React from 'react'
 import { State, Action, Cache, stateless, trigger, cached, separate, Tools as RT, Trace } from 'reactronic'
 
-export function reactive(render: (counter: number) => JSX.Element, trace?: Partial<Trace>): JSX.Element {
+export function reactive(render: (counter: number) => JSX.Element, trace?: Partial<Trace>, action?: Action): JSX.Element {
   const [state, refresh] = React.useState<ReactState>(
     !trace ? createReactState : () => createReactState(trace))
   const rx = state.rx
   rx.counter = state.counter
   rx.refresh = refresh // just in case React will change refresh on each rendering
   React.useEffect(rx.unmountEffect, [])
-  return rx.jsx(render)
+  return rx.jsx(render, action)
 }
 
 // Internal
@@ -22,8 +22,8 @@ type ReactState = { rx: Rx, counter: number }
 
 class Rx extends State {
   @cached
-  jsx(render: (counter: number) => JSX.Element): JSX.Element {
-    return render(this.counter)
+  jsx(render: (counter: number) => JSX.Element, action?: Action): JSX.Element {
+    return action ? action.inspect(() => render(this.counter)) : render(this.counter)
   }
 
   @trigger
