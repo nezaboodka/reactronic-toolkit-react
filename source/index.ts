@@ -5,4 +5,4 @@
 
 export * from './reactive'
 export * from './OutsideEvents'
-export * from './Interaction'
+export * from './UserInput'

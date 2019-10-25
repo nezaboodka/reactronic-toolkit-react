@@ -33,7 +33,7 @@ export enum UserOperation {
   Drop = 6,
 }
 
-export class Interaction extends State {
+export class UserInput extends State {
   // Configuration
   draggingThreshold: number
   element?: HTMLElement
@@ -165,7 +165,7 @@ export class Interaction extends State {
       this.updatePosition(e)
       this.draggingStartX = e.offsetX
       this.draggingStartY = e.offsetY
-      this.draggingStartModifiers = Interaction.extractModifierKeys(e)
+      this.draggingStartModifiers = UserInput.extractModifierKeys(e)
     }
     else if (this.element)
       this.element.releasePointerCapture(e.pointerId)
@@ -276,7 +276,7 @@ export class Interaction extends State {
     this.previousY = this.y
     this.x = e.offsetX
     this.y = e.offsetY
-    this.modifiers = Interaction.extractModifierKeys(e)
+    this.modifiers = UserInput.extractModifierKeys(e)
   }
 
   private updateResult(operation: UserOperation): void {
