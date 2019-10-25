@@ -36,7 +36,7 @@ export enum UserOperation {
 export class UserInput extends State {
   // Configuration
   draggingThreshold: number
-  element?: HTMLElement
+  element?: HTMLElement | null
   // Common
   active: boolean
   touched: boolean
@@ -99,7 +99,7 @@ export class UserInput extends State {
   setElement(element: HTMLElement | undefined, listen: boolean): void {
     const existing = this.element
     if (element !== existing) {
-      if (existing !== undefined) {
+      if (existing) {
         existing.removeEventListener('blur', this.onBlur, false)
         existing.removeEventListener('pointerenter', this.onPointerEnter, false)
         existing.removeEventListener('pointerleave', this.onPointerLeave, false)
