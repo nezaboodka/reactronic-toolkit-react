@@ -726,10 +726,10 @@ react@^16.11.0:
     object-assign "^4.1.1"
     prop-types "^15.6.2"
 
-reactronic@^0.19.415:
-  version "0.19.415"
-  resolved "https://registry.yarnpkg.com/reactronic/-/reactronic-0.19.415.tgz#de70bfd6517ea792ba40cbd2f00790bf91b3d3cf"
-  integrity sha512-Fx8iIuatcV8g3Wteu0K+6mfqcgtP4W4l0wiGKSasiwicYR9Fj4YlJecDrbqhb/byxbu0S5fjucmRThJZmNsj1g==
+reactronic@^0.19.416:
+  version "0.19.416"
+  resolved "https://registry.yarnpkg.com/reactronic/-/reactronic-0.19.416.tgz#ec6207b315e59fd8f2e0f5e422bdf7120ce1c1f7"
+  integrity sha512-ifnfdtN4uPuYrhm4v66OIZH3t93lwuB7I3r41YRZvr7PWCIculpiY5RmKPJjJFpXSJglpGwKVuqpstmDrkFAMA==
 
 regexpp@^2.0.1:
   version "2.0.1"
