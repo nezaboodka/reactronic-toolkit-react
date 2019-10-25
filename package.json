@@ -1,6 +1,6 @@
 {
   "name": "reactronic-toolkit-react",
-  "version": "0.19.48",
+  "version": "0.19.49",
   "description": "Reactronic Toolkit for React",
   "main": "build/dist/source/index.js",
   "types": "build/dist/source/index.d.ts",
