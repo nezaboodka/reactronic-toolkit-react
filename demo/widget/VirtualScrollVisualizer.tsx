@@ -6,7 +6,7 @@
 import * as React from 'react'
 import { reactive } from '../../source/reactive'
 import { place } from '../common'
-import { Area } from '../../source/Area'
+import { Area, XY } from '../../source/Area'
 import { VirtualScroll, num } from '../../source/VirtualScroll'
 import { style } from './VirtualScrollVisualizer.css'
 import { cx } from 'emotion'
@@ -51,39 +51,36 @@ function AreaRect(p: {
           <div>{p.hint}</div>
           {p.area && (
             <div>
-              {num(p.area.size.x)} <i>x</i> {num(p.area.size.y)} <i>cells</i>
+              <i> (cells) </i>{num(p.area.size.x)} <i>x</i> {num(p.area.size.y)}
             </div>
           )}
         </div>
         <div className={css.areaTop} style={place(2, 2, 6, 2)}>
-          {p.area && (
-            <div className={css.coords}>
-              {num(p.area.from.x)} <i>x</i><br/>
-              {num(p.area.from.y)} <i>y</i><br/>
-            </div>
-          )}
-          {p.px && (
-            <div className={cx(css.coords, css.px)}>
-              {num(p.px.from.x)} <i>px</i><br/>
-              {num(p.px.from.y)} <i>px</i><br/>
-            </div>
-          )}
+          {p.area && <Coords coords={p.area.from} px={false}/>}
+          {p.area && <i> (grid) </i>}
+          {p.area && <br/>}
+          {p.px && <Coords coords={p.px.from} px={true}/>}
+          {p.px && <i> (px) </i>}
         </div>
         <div className={css.areaBottom} style={place(2, 9, 9, 9)}>
-          {p.px && (
-            <div className={cx(css.coords, css.px)}>
-              {num(p.px.till.x)} <i>px</i><br/>
-              {num(p.px.till.y)} <i>px</i><br/>
-            </div>
-          )}
-          {p.area && (
-            <div className={css.coords}>
-              {num(p.area.till.x)} <i>x</i><br/>
-              {num(p.area.till.y)} <i>y</i><br/>
-            </div>
-          )}
+          {p.px && <i> (px) </i>}
+          {p.px && <Coords coords={p.px.till} px={true}/>}
+          {p.area && <br/>}
+          {p.area && <i> (grid) </i>}
+          {p.area && <Coords coords={p.area.till} px={false}/>}
         </div>
         <div className={css.areaCenter} style={place(5, 5, 6, 6)}>{p.children}</div>
+      </div>
+    )
+  })
+}
+
+function Coords(p: {coords: XY, px: boolean}): JSX.Element {
+  return reactive(() => {
+    const css = style.classes
+    return (
+      <div className={p.px ? cx(css.coords, css.px) : css.coords}>
+        {num(p.coords.x)}<i> ' </i>{num(p.coords.y)}
       </div>
     )
   })

@@ -74,12 +74,10 @@ export const style = restyle(() => {
       text-align: right;
     `,
     px: css`
-      opacity: 0.5;
-      margin: 0 1em;
+      font-size: smaller;
     `,
     axis: css`
       opacity: 0.25;
-      margin: 0 1em;
     `,
   }
 })

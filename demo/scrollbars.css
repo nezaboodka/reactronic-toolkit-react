@@ -101,6 +101,6 @@
 }
 
 * {
-  scrollbar-color: rgba(127, 127, 127, 0.4) transparent;
-  scrollbar-width: thin;
+  scrollbar-color: rgba(127, 127, 127, 0.4) rgba(127, 127, 127, 0.05);
+  /* scrollbar-width: thin; */
 }
