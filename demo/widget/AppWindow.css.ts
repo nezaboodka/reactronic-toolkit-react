@@ -34,7 +34,6 @@ export const style = restyle(() => {
       min-width: 25em;
       font-size: smaller;
       justify-self: center;
-      margin: 2em;
     `,
     from: css` label: from;
     `,
