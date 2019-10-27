@@ -12,6 +12,12 @@ export const style = restyle(() => {
       display: grid;
       grid-template-columns: repeat(4, auto) 1fr 1fr repeat(4, auto);
       grid-template-rows: repeat(4, auto) 1fr 1fr repeat(4, auto);
+
+      i {
+        font-style: normal;
+        opacity: 0.5;
+        font-size: smaller;
+      }
     `,
     grid: css` label: grid;
       border: 1px solid white;

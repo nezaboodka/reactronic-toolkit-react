@@ -21,11 +21,6 @@ export const style = restyle(() => {
       display: grid;
       grid-template-columns: repeat(4, auto) 1fr 1fr repeat(4, auto);
       grid-template-rows: repeat(4, auto) 1fr 1fr repeat(4, auto);
-
-      b {
-        color: yellow;
-        font-weight: inherit;
-      }
     `,
     scroll: css` label: scroll;
       overflow: scroll;
@@ -34,12 +29,12 @@ export const style = restyle(() => {
     `,
     content: css` label: content;
     `,
-    info: css` label: info;
-      width: 30em;
-      max-width: 30em;
+    visualizer: css` label: info;
+      width: 25em;
+      min-width: 25em;
       font-size: smaller;
       justify-self: center;
-      margin: 1em;
+      margin: 2em;
     `,
     from: css` label: from;
     `,

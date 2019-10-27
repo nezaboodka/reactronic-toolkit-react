@@ -16,13 +16,13 @@ export function VirtualScrollVisualizer(p: {scroll: VirtualScroll}): JSX.Element
     const vs = p.scroll
     return (
       <div className={css.main}>
-        <AreaRect hint={'all grid'} area={vs.grid} px={vs.pxGrid} key={`grid-${counter}`}
+        <AreaRect hint={'All Grid'} area={vs.grid} px={vs.pxGrid} key={`grid-${counter}`}
           className={css.grid} style={place(1, 1, 10, 10)}>
-          <AreaRect hint={'dataport'} area={vs.dataport} px={vs.pxDataport} key={`dataport-${counter}`}
+          <AreaRect hint={'Dataport'} area={vs.dataport} px={vs.pxDataport} key={`dataport-${counter}`}
             className={css.dataport} style={place(2, 2, 9, 9)}>
-            <AreaRect hint={'viewport'} area={vs.viewport} px={vs.pxViewport} key={`viewport-${counter}`}
+            <AreaRect hint={'Viewport'} area={vs.viewport} px={vs.pxViewport} key={`viewport-${counter}`}
               className={css.viewport} style={place(3, 3, 8, 8)}>
-              <div style={{height: '10em'}}></div>
+              <div style={{height: '5em'}}></div>
             </AreaRect>
           </AreaRect>
         </AreaRect>
@@ -42,7 +42,12 @@ function AreaRect(p: {
     const css = style.classes
     return (
       <div className={css.area + (p.className ? ` ${p.className}` : '')} style={p.style}>
-        <div className={css.areaHint} style={place(6, 2, 9, 2)}>{p.hint}</div>
+        <div className={css.areaHint} style={place(6, 2, 9, 2)}>
+          <div>{p.hint}</div>
+          <div>
+            {num(p.area.size.x)} <i>x</i> {num(p.area.size.y)} <i>cells</i>
+          </div>
+        </div>
         <div className={css.areaTop} style={place(2, 2, 5, 2)}>
           <div style={{display: 'inline-block', textAlign: 'right'}}>
             {num(p.area.from.x)}<br/>
@@ -50,24 +55,24 @@ function AreaRect(p: {
           </div>
           &nbsp;&nbsp;&nbsp;
           <div style={{display: 'inline-block', textAlign: 'right', opacity: 0.5}}>
-            {num(p.px.from.x)} px<br/>
-            {num(p.px.from.y)} px<br/>
+            {num(p.px.from.x)} <i>px</i><br/>
+            {num(p.px.from.y)} <i>px</i><br/>
           </div>
           &nbsp;&nbsp;&nbsp;
           <div style={{display: 'inline-block', textAlign: 'right', opacity: 0.25}}>
-            x<br/>
-            y<br/>
+            <i>x</i><br/>
+            <i>y</i><br/>
           </div>
         </div>
-        <div className={css.areaBottom} style={place(6, 9, 9, 9)}>
+        <div className={css.areaBottom} style={place(2, 9, 9, 9)}>
           <div style={{display: 'inline-block', textAlign: 'right', opacity: 0.25}}>
-            x<br/>
-            y<br/>
+            <i>x</i><br/>
+            <i>y</i><br/>
           </div>
           &nbsp;&nbsp;&nbsp;
           <div style={{display: 'inline-block', textAlign: 'right', opacity: 0.5}}>
-            {num(p.px.till.x)} px<br/>
-            {num(p.px.till.y)} px<br/>
+            {num(p.px.till.x)} <i>px</i><br/>
+            {num(p.px.till.y)} <i>px</i><br/>
           </div>
           &nbsp;&nbsp;&nbsp;
           <div style={{display: 'inline-block', textAlign: 'right'}}>
