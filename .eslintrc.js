@@ -19,6 +19,7 @@ module.exports = {
     '@typescript-eslint/member-delimiter-style': 'off',
     // '@typescript-eslint/interface-name-prefix': 'off',
     '@typescript-eslint/explicit-function-return-type': ['error', { allowExpressions: true }],
+    "@typescript-eslint/no-var-requires": "off",
   },
   'overrides': [
     {
