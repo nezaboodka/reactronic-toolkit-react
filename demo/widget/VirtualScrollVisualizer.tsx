@@ -51,22 +51,22 @@ function AreaRect(p: {
           <div>{p.hint}</div>
           {p.area && (
             <div>
-              <i> (cells) </i>{num(p.area.size.x)} <i>x</i> {num(p.area.size.y)}
+              <i> cells </i>{num(p.area.size.x)} <i>x</i> {num(p.area.size.y)}
             </div>
           )}
         </div>
         <div className={css.areaTop} style={place(2, 2, 6, 2)}>
           {p.area && <Coords coords={p.area.from} px={false}/>}
-          {p.area && <i> (grid) </i>}
+          {p.area && <i> cell </i>}
           {p.area && <br/>}
           {p.px && <Coords coords={p.px.from} px={true}/>}
-          {p.px && <i> (px) </i>}
+          {p.px && <i> px </i>}
         </div>
         <div className={css.areaBottom} style={place(2, 9, 9, 9)}>
-          {p.px && <i> (px) </i>}
+          {p.px && <i> px </i>}
           {p.px && <Coords coords={p.px.till} px={true}/>}
           {p.area && <br/>}
-          {p.area && <i> (grid) </i>}
+          {p.area && <i> cell </i>}
           {p.area && <Coords coords={p.area.till} px={false}/>}
         </div>
         <div className={css.areaCenter} style={place(5, 5, 6, 6)}>{p.children}</div>
