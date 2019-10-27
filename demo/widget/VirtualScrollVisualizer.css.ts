@@ -14,8 +14,8 @@ export const style = restyle(() => {
       grid-template-rows: repeat(4, auto) 1fr 1fr repeat(4, auto);
     `,
     grid: css` label: grid;
-      border: 0.5px solid gray;
-      color: gray;
+      border: 1px solid white;
+      color: white;
     `,
     gridTop: css` label: gridTop;
       text-align: center;
@@ -31,12 +31,12 @@ export const style = restyle(() => {
       text-align: center;
     `,
     dataport: css` label: dataport;
-      border: 0.5px solid #FFFFA0;
+      border: 1px solid #FFFFA0;
       color: #FFFFA0;
       margin: 1em;
     `,
     viewport: css` label: viewport;
-      border: 0.5px solid #8DFFA6;
+      border: 1px solid #8DFFA6;
       color: #8DFFA6;
       margin: 1em;
     `,
@@ -46,17 +46,17 @@ export const style = restyle(() => {
       grid-template-columns: repeat(4, auto) 1fr 1fr repeat(4, auto);
       grid-template-rows: repeat(4, auto) 1fr 1fr repeat(4, auto);
     `,
+    areaHint: css` label: gridTop;
+      text-align: right;
+      margin-right: 0.25em;
+    `,
     areaTop: css` label: gridTop;
       text-align: left;
+      margin-left: 0.25em;
     `,
     areaBottom: css` label: gridBottom;
       text-align: right;
-    `,
-    areaLeft: css` label: gridLeft;
-      text-align: center;
-    `,
-    areaRight: css` label: gridRight;
-      text-align: center;
+      margin-right: 0.25em;
     `,
     areaCenter: css` label: gridRight;
       text-align: center;

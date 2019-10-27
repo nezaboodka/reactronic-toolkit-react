@@ -119,5 +119,5 @@ export function dumpArea(a: Area, fr?: number): string {
 }
 
 export function num(n: number, fr?: number): string {
-  return n.toFixed(fr).replace(/\B(?=(\d{3})+(?!\d))/g, '·')
+  return n.toFixed(fr).replace(/\B(?=(\d{3})+(?!\d))/g, ' ')
 }
