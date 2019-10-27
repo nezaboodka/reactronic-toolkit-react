@@ -22,27 +22,25 @@ export const style = restyle(() => {
     `,
     grid: css`
       label: grid;
-      border: 1px solid white;
-      color: white;
-      background-color: rgba(127, 127, 127, 0.1);
+      border: 1px solid #8DFFA6;
+      color: #8DFFA6;
     `,
     dataport: css`
       label: dataport;
       border: 1px solid #FFFFA0;
       color: #FFFFA0;
-      background-color: rgba(127, 127, 127, 0.1);
     `,
     viewport: css`
       label: viewport;
-      border: 1px solid #8DFFA6;
-      color: #8DFFA6;
-      background-color: rgba(127, 127, 127, 0.1);
+      border: 1px solid white;
+      color: white;
     `,
     area: css`
       label: area;
       display: grid;
       grid-template-columns: repeat(4, auto) 1fr 1fr repeat(4, auto);
       grid-template-rows: repeat(4, auto) 1fr 1fr repeat(4, auto);
+      background-color: rgba(127, 127, 127, 0.1);
       box-shadow: 0.05em 0.05em 0.25em 1px black;
       padding: 0.5em 0;
       margin: 0.5em 0.5em;
