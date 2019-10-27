@@ -4,11 +4,11 @@
 // License: https://raw.githubusercontent.com/nezaboodka/reactronic/master/LICENSE
 
 import { css } from 'emotion'
-import { restyle } from '../source/restyle'
+import { restyle } from '../../source/restyle'
 
 export const style = restyle(() => {
   return {
-    main: css` label: main;
+    window: css` label: main;
       position: absolute;
       top: 0;
       left: 0;
@@ -21,15 +21,29 @@ export const style = restyle(() => {
       display: grid;
       grid-template-columns: repeat(4, auto) 1fr 1fr repeat(4, auto);
       grid-template-rows: repeat(4, auto) 1fr 1fr repeat(4, auto);
+
+      b {
+        color: yellow;
+        font-weight: inherit;
+      }
     `,
     scroll: css` label: scroll;
-      margin: 10vh;
       overflow: scroll;
       border-top: 0.5px solid rgba(127, 127, 127, 0.2);
       border-left: 0.5px solid rgba(127, 127, 127, 0.2);
     `,
     content: css` label: content;
-      height: 100em;
+    `,
+    info: css` label: info;
+      width: 30em;
+      max-width: 30em;
+      font-size: smaller;
+      justify-self: center;
+      margin: 1em;
+    `,
+    from: css` label: from;
+    `,
+    till: css` label: till;
     `,
   }
 })

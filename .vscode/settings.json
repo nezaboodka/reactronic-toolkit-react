@@ -37,6 +37,8 @@
     "boilerplating",
     "checkin",
     "circleci",
+    "coord",
+    "dataport",
     "decoratedclass",
     "decoratedfield",
     "devtool",
