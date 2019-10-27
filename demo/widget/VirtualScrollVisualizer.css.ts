@@ -20,6 +20,11 @@ export const style = restyle(() => {
         font-size: smaller;
       }
     `,
+    device: css`
+      label: device;
+      border: 1px solid white;
+      color: white;
+    `,
     grid: css`
       label: grid;
       border: 1px solid #8DFFA6;

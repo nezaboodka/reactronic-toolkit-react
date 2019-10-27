@@ -53,7 +53,7 @@ export class VirtualScroll extends State {
 
   get dataport(): Area {
     const center = this.viewport.getCenter()
-    return this.viewport.zoomAt(center, this.dataportSize).round()
+    return this.viewport.zoomAt(center, this.dataportSize).round().truncateBy(this.grid)
   }
 
   get pxDataport(): Area {

@@ -44,6 +44,33 @@ export class Area extends XY {
       Math.ceil(this.size.x), Math.ceil(this.size.y))
   }
 
+  truncateBy(bounds: Area): Area {
+    const dx = this.x - bounds.x
+    const dy = this.y - bounds.y
+    const ox = bounds.x + bounds.size.x - (this.x + this.size.x)
+    const oy = bounds.y + bounds.size.y - (this.y + this.size.y)
+
+    let x = this.x
+    let y = this.y
+    let sx = this.size.x
+    let sy = this.size.y
+
+    if (dx < 0) {
+      x = bounds.x
+      sx += dx
+    }
+    if (dy < 0) {
+      y = bounds.y
+      sy += dy
+    }
+    if (ox < 0)
+      sx += ox
+    if (oy < 0)
+      sy += oy
+
+    return area(x, y, sx, sy)
+  }
+
   getCenter(): XY {
     return area(this.x + this.size.x / 2, this.y + this.size.y / 2, 0, 0)
   }
