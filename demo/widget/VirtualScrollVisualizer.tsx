@@ -39,7 +39,7 @@ export function VirtualScrollVisualizer(p: {scroll: VirtualScroll}): JSX.Element
 function AreaRect(p: {
   hint: string,
   area?: Area,
-  px?: Area,
+  px: Area,
   className?: string,
   style?: React.CSSProperties,
   children?: JSX.Element}): JSX.Element {
@@ -51,23 +51,31 @@ function AreaRect(p: {
           <div>{p.hint}</div>
           {p.area && (
             <div>
-              <i> cells </i>{num(p.area.size.x)} <i>x</i> {num(p.area.size.y)}
+              <i> cells </i><Coords coords={p.area.size} delimiter={'x'}/>
             </div>
           )}
         </div>
         <div className={css.areaTop} style={place(2, 2, 6, 2)}>
-          {p.area && <Coords coords={p.area.from} px={false}/>}
-          {p.area && <i> cell </i>}
-          {p.area && <br/>}
-          {p.px && <Coords coords={p.px.from} px={true}/>}
-          {p.px && <i> px </i>}
+          {p.area && (
+            <React.Fragment>
+              <Coords coords={p.area.from}/>
+              <i> cell </i>
+              <br/>
+            </React.Fragment>
+          )}
+          <Coords coords={p.px.from} className={css.px}/>
+          <i> px </i>
         </div>
         <div className={css.areaBottom} style={place(2, 9, 9, 9)}>
-          {p.px && <i> px </i>}
-          {p.px && <Coords coords={p.px.till} px={true}/>}
-          {p.area && <br/>}
-          {p.area && <i> cell </i>}
-          {p.area && <Coords coords={p.area.till} px={false}/>}
+          <i> px </i>
+          <Coords coords={p.px.till} className={css.px}/>
+          {p.area && (
+            <React.Fragment>
+              <br/>
+              <i> cell </i>
+              <Coords coords={p.area.till}/>
+            </React.Fragment>
+          )}
         </div>
         <div className={css.areaCenter} style={place(5, 5, 6, 6)}>{p.children}</div>
       </div>
@@ -75,12 +83,12 @@ function AreaRect(p: {
   })
 }
 
-function Coords(p: {coords: XY, px: boolean}): JSX.Element {
+function Coords(p: {coords: XY, delimiter?: string, className?: string, style?: React.CSSProperties}): JSX.Element {
   return reactive(() => {
     const css = style.classes
     return (
-      <div className={p.px ? cx(css.coords, css.px) : css.coords}>
-        {num(p.coords.x)}<i> ' </i>{num(p.coords.y)}
+      <div className={cx(css.coords, p.className)} style={p.style}>
+        {num(p.coords.x)}<i> {p.delimiter || ','} </i>{num(p.coords.y)}
       </div>
     )
   })

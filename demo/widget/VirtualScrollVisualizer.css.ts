@@ -53,17 +53,17 @@ export const style = restyle(() => {
     areaHint: css`
       label: areaHint;
       text-align: right;
-      margin-right: 0.25em;
+      margin-right: 0.5em;
     `,
     areaTop: css`
       label: areaTop;
       text-align: left;
-      margin-left: 0.25em;
+      margin-left: 0.5em;
     `,
     areaBottom: css`
       label: areaBottom;
       text-align: right;
-      margin-right: 0.25em;
+      margin-right: 0.5em;
     `,
     areaCenter: css`
       label: areaCenter;
