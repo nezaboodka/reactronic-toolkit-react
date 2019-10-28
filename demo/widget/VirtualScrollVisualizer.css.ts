@@ -55,13 +55,13 @@ export const style = restyle(() => {
       text-align: right;
       margin-right: 0.5em;
     `,
-    areaTop: css`
-      label: areaTop;
+    areaFrom: css`
+      label: areaFrom;
       text-align: left;
       margin-left: 0.5em;
     `,
-    areaBottom: css`
-      label: areaBottom;
+    areaTill: css`
+      label: areaTill;
       text-align: right;
       margin-right: 0.5em;
     `,
@@ -75,9 +75,6 @@ export const style = restyle(() => {
     `,
     px: css`
       font-size: smaller;
-    `,
-    axis: css`
-      opacity: 0.25;
     `,
   }
 })

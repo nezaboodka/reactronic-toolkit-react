@@ -55,7 +55,7 @@ function AreaRect(p: {
             </div>
           )}
         </div>
-        <div className={css.areaTop} style={place(2, 2, 6, 2)}>
+        <div className={css.areaFrom} style={place(2, 2, 6, 2)}>
           {p.area && (
             <React.Fragment>
               <Coords coords={p.area.from}/>
@@ -66,7 +66,7 @@ function AreaRect(p: {
           <Coords coords={p.px.from} className={css.px}/>
           <i> px </i>
         </div>
-        <div className={css.areaBottom} style={place(2, 9, 9, 9)}>
+        <div className={css.areaTill} style={place(2, 9, 9, 9)}>
           <i> px </i>
           <Coords coords={p.px.till} className={css.px}/>
           {p.area && (
