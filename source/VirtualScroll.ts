@@ -3,7 +3,7 @@
 // Copyright (C) 2019 Yury Chetyrko <ychetyrko@gmail.com>
 // License: https://raw.githubusercontent.com/nezaboodka/reactronic/master/LICENSE
 
-import { State, action } from 'reactronic'
+import { State, action, cached } from 'reactronic'
 import { XY, xy, Area, area, ZERO } from './Area'
 
 export type GridLine = { index: number, coord: number }
@@ -57,13 +57,14 @@ export class VirtualScroll extends State {
     return this.pxViewport.zoomAt(ZERO, this.pxToGrid).round()
   }
 
-  get dataport(): Area {
+  @cached
+  dataport(): Area {
     const center = this.viewport.getCenter()
     return this.viewport.zoomAt(center, this.dataportSize).round().truncateBy(this.grid)
   }
 
   get pxDataport(): Area {
-    return this.dataport.zoomAt(ZERO, this.gridToPx)
+    return this.dataport().zoomAt(ZERO, this.gridToPx)
   }
 
   get pxGrid(): Area {
@@ -118,7 +119,7 @@ export class VirtualScroll extends State {
 device: ${this.pxDevice.size.x}px * ${this.pxDevice.size.y}px
 grid: ${this.grid.size.x}c * ${this.grid.size.y}r (${this.pxGrid.size.x}px * ${this.pxGrid.size.y}px)
 viewport: ${dumpArea(this.viewport)} (px: ${dumpArea(this.pxViewport)})
-dataport: ${dumpArea(this.dataport)} (px: ${dumpArea(this.pxDataport)})
+dataport: ${dumpArea(this.dataport())} (px: ${dumpArea(this.pxDataport)})
 `
   }
 }

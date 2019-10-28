@@ -66,7 +66,7 @@ function getComponentName(): string {
   const stack = error.stack || ''
   Error.stackTraceLimit = restore
   const lines = stack.split('\n')
-  const i = lines.findIndex(x => x.indexOf('.reactiveRender') >= 0) || 6
+  const i = lines.findIndex(x => x.indexOf(reactive.name) >= 0) || 6
   let result: string = lines[i + 1] || ''
   result = (result.match(/^\s*at\s*(\S+)/) || [])[1]
   return result !== undefined ? `<${result}>` : '<Rx>'

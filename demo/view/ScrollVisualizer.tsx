@@ -4,10 +4,8 @@
 // License: https://raw.githubusercontent.com/nezaboodka/reactronic/master/LICENSE
 
 import * as React from 'react'
-import { reactive } from '../../source/reactive'
+import { reactive, Area, VirtualScroll, num } from '../../source/index'
 import { place } from '../common'
-import { Area } from '../../source/Area'
-import { VirtualScroll, num } from '../../source/VirtualScroll'
 import { style } from './ScrollVisualizer.css'
 
 export function ScrollVisualizer(p: {scroll: VirtualScroll}): JSX.Element {
@@ -29,7 +27,7 @@ export function ScrollVisualizer(p: {scroll: VirtualScroll}): JSX.Element {
         </AreaRect>
         <AreaRect hint={'All Grid'} area={vs.grid} px={vs.pxGrid} key={`grid-${counter}`}
           className={css.grid} style={place(1, 1, 10, 9)}>
-          <AreaRect hint={'Dataport'} area={vs.dataport} px={vs.pxDataport} key={`dataport-${counter}`}
+          <AreaRect hint={'Dataport'} area={vs.dataport()} px={vs.pxDataport} key={`dataport-${counter}`}
             className={css.dataport} style={place(2, 2, 9, 9)}>
             <AreaRect hint={'Viewport'} area={vs.viewport} px={vs.pxViewport} key={`viewport-${counter}`}
               className={css.viewport} style={place(3, 3, 8, 8)}>

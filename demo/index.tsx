@@ -5,10 +5,15 @@
 
 import * as React from 'react'
 import * as ReactDOM from 'react-dom'
-import { Action } from 'reactronic'
+import { Action, Tools as RT, TraceLevel } from 'reactronic'
+import { Database } from './model/Database'
+import { VirtualScroll } from '../source/index'
 import { AppWindow } from './view/AppWindow'
-import { VirtualScroll } from '../source/VirtualScroll'
 
-const scroll = Action.run('app', () => new VirtualScroll(100, 1000000000))
+RT.setTrace(TraceLevel.Basic)
+RT.performanceWarningThreshold = 0 // disable
+
+const scroll = Action.run('scroll', () => new VirtualScroll(100, 1000000000))
+const db = Action.run('data', () => new Database())
 const root = document.getElementById('root')
-ReactDOM.render(<AppWindow key="app" scroll={scroll}/>, root)
+ReactDOM.render(<AppWindow key="app" scroll={scroll} db={db}/>, root)

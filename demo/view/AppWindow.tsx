@@ -4,27 +4,23 @@
 // License: https://raw.githubusercontent.com/nezaboodka/reactronic/master/LICENSE
 
 import * as React from 'react'
-import { reactive } from '../../source/reactive'
+import { resolved } from 'reactronic'
+import { reactive, VirtualScroll, xy } from '../../source/index'
 import { place } from '../common'
-import { style } from './AppWindow.css'
-import { xy } from '../../source/Area'
-import { VirtualScroll } from '../../source/VirtualScroll'
+import { Database } from '../model/Database'
 import { ScrollVisualizer } from './ScrollVisualizer'
+import { style } from './AppWindow.css'
 
-export function AppWindow(p: {scroll: VirtualScroll}): JSX.Element {
+export function AppWindow(p: {scroll: VirtualScroll, db: Database}): JSX.Element {
   const ref = React.useCallback(element => p.scroll.setDevice(element), [])
   return reactive(() => {
     const css = style.classes
-    // const items: string[] = []
-    // for (let i = 0; i < p.app.grid.size.y; i++)
-    //   items.push(`[${i}]`)
-    const deviceHeight = p.scroll.grid.size.y < 100000 ? p.scroll.grid.size.y : 100000
     return (
       <div className={css.window}>
         <div ref={ref} onScroll={e => p.scroll.scrollTo(xy(e.currentTarget.scrollLeft, e.currentTarget.scrollTop))}
           className={css.scroll} style={place(2, 2, 9, 9)}>
-          <div className={css.content} style={{height: `${deviceHeight}em`}}>
-            {/* {items.map((s, i) => <div>{s}</div>)} */}
+          <div className={css.content}>
+            <Data db={p.db} scroll={p.scroll}/>
           </div>
         </div>
         <div className={css.toolbar} style={place(10, 2, 10, 2)}>
@@ -35,6 +31,23 @@ export function AppWindow(p: {scroll: VirtualScroll}): JSX.Element {
           <ScrollVisualizer scroll={p.scroll}/>
         </div>
       </div>
+    )
+  })
+}
+
+function Data(p: {scroll: VirtualScroll, db: Database}): JSX.Element {
+  return reactive(() => {
+    const d = resolved(p.db.data, [p.scroll.dataport()]) || []
+    return (
+      <React.Fragment>
+        {d.map(row => (
+          <div key={row[0]}>
+            {row.map(text => (
+              <span key={text} style={{marginLeft: '1em'}}>{text}</span>
+            ))}
+          </div>
+        ))}
+      </React.Fragment>
     )
   })
 }

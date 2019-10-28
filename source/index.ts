@@ -4,5 +4,8 @@
 // License: https://raw.githubusercontent.com/nezaboodka/reactronic/master/LICENSE
 
 export * from './reactive'
+export * from './restyle'
 export * from './OutsideEvents'
 export * from './UserInput'
+export * from './Area'
+export * from './VirtualScroll'
