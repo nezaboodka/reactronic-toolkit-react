@@ -17,8 +17,8 @@ export class Sizing {
 export type IDevice = {
   readonly clientWidth: number
   readonly clientHeight: number
-  readonly scrollLeft: number
-  readonly scrollTop: number
+  scrollLeft: number
+  scrollTop: number
   readonly scrollWidth: number
   readonly scrollHeight: number
 }
@@ -29,7 +29,8 @@ export class VirtualScroll extends State {
   pxPerCell: number = 1
   pxViewport: Area = ZERO
   dataportSize: XY = xy(1.0, 2.0) // relative to viewport
-  device: Area = ZERO
+  device?: IDevice | null = undefined
+  pxDevice: Area = ZERO
 
   constructor(sizeX: number, sizeY: number) {
     super()
@@ -48,8 +49,8 @@ export class VirtualScroll extends State {
 
   get deviceToPx(): XY {
     return xy(
-      this.pxGrid.size.x / this.device.size.x,
-      this.pxGrid.size.y / this.device.size.y)
+      this.pxGrid.size.x / this.pxDevice.size.x,
+      this.pxGrid.size.y / this.pxDevice.size.y)
   }
 
   get viewport(): Area {
@@ -72,12 +73,15 @@ export class VirtualScroll extends State {
   @action
   setDevice(device: IDevice | null): void {
     if (device) {
-      this.device = new Area(0, 0, device.scrollWidth, device.scrollHeight)
+      this.device = device
+      this.pxDevice = new Area(0, 0, device.scrollWidth, device.scrollHeight)
       this.pxPerCell = 32
       this.pxViewport = new Area(device.scrollLeft, device.scrollTop, device.clientWidth, device.clientHeight)
     }
-    else
-      this.device = ZERO
+    else {
+      this.pxDevice = ZERO
+      this.device = undefined
+    }
   }
 
   @action
@@ -89,11 +93,11 @@ export class VirtualScroll extends State {
   @action
   scrollTo(pos: XY): XY {
     const vp = this.pxViewport
-    const device = this.device
+    const device = this.pxDevice
     let result = area(device.x + pos.x, device.y + pos.y, vp.size.x, vp.size.y)
     if (!vp.isIntersectedWith(result)) {
       result = area(pos.x, pos.y, 0, 0).zoomAt(ZERO, this.deviceToPx).resize(vp.size)
-      this.device = area(
+      this.pxDevice = area(
         result.x - Math.round(device.size.x / 2),
         Math.round(result.y - device.size.y / 2),
         device.size.x,
@@ -111,7 +115,7 @@ export class VirtualScroll extends State {
 
   toString(): string {
     return `
-device: ${this.device.size.x}px * ${this.device.size.y}px
+device: ${this.pxDevice.size.x}px * ${this.pxDevice.size.y}px
 grid: ${this.grid.size.x}c * ${this.grid.size.y}r (${this.pxGrid.size.x}px * ${this.pxGrid.size.y}px)
 viewport: ${dumpArea(this.viewport)} (px: ${dumpArea(this.pxViewport)})
 dataport: ${dumpArea(this.dataport)} (px: ${dumpArea(this.pxDataport)})

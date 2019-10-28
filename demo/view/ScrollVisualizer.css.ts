@@ -52,7 +52,7 @@ export const style = restyle(() => {
     `,
     areaHint: css`
       label: areaHint;
-      text-align: right;
+      text-align: center;
       margin-right: 0.25em;
     `,
     areaFrom: css`
@@ -60,10 +60,15 @@ export const style = restyle(() => {
       text-align: left;
       margin-left: 0.25em;
     `,
-    areaTill: css`
-      label: areaBottom;
+    areaRight: css`
+      label: areaRight;
       text-align: right;
       margin-right: 0.25em;
+    `,
+    areaBottom: css`
+      label: areaBottom;
+      text-align: left;
+      margin-left: 0.25em;
     `,
     areaCenter: css`
       label: areaCenter;
@@ -71,7 +76,7 @@ export const style = restyle(() => {
     `,
     coords: css`
       display: inline-block;
-      text-align: right;
+      text-align: left;
     `,
     px: css`
       font-size: smaller;

@@ -27,7 +27,11 @@ export function AppWindow(p: {scroll: VirtualScroll}): JSX.Element {
             {/* {items.map((s, i) => <div>{s}</div>)} */}
           </div>
         </div>
-        <div className={css.visualizer} style={place(10, 2, 10, 5)}>
+        <div className={css.toolbar} style={place(10, 2, 10, 2)}>
+          <button onClick={e => p.scroll.device ? p.scroll.device.scrollTop += 1 : {}}>▼ 1px</button>
+          <button onClick={e => p.scroll.device ? p.scroll.device.scrollTop -= 1 : {}}>▲ 1px</button>
+        </div>
+        <div className={css.visualizer} style={place(10, 3, 10, 5)}>
           <ScrollVisualizer scroll={p.scroll}/>
         </div>
       </div>
