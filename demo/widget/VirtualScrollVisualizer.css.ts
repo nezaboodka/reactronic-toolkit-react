@@ -16,7 +16,7 @@ export const style = restyle(() => {
 
       i {
         font-style: normal;
-        opacity: 0.5;
+        opacity: 0.25;
         font-size: smaller;
       }
     `,
@@ -47,23 +47,23 @@ export const style = restyle(() => {
       grid-template-rows: repeat(4, auto) 1fr 1fr repeat(4, auto);
       background-color: rgba(127, 127, 127, 0.1);
       box-shadow: 0.05em 0.05em 0.25em 1px black;
-      padding: 0.5em 0;
-      margin: 0.5em 0.5em;
+      padding: 0.25em 0;
+      margin: 1em 1em;
     `,
     areaHint: css`
       label: areaHint;
       text-align: right;
-      margin-right: 0.5em;
+      margin-right: 0.25em;
     `,
     areaFrom: css`
       label: areaFrom;
       text-align: left;
-      margin-left: 0.5em;
+      margin-left: 0.25em;
     `,
     areaTill: css`
-      label: areaTill;
+      label: areaBottom;
       text-align: right;
-      margin-right: 0.5em;
+      margin-right: 0.25em;
     `,
     areaCenter: css`
       label: areaCenter;
