@@ -57,14 +57,14 @@ function AreaRect(p: {
           {p.hint}
         </div>
         <div className={css.areaFrom} style={place(2, 2, 6, 2)}>
-          <div>{num(p.area.from.x)} <i> = {num(p.px.from.x)} px</i></div>
-          <div>{num(p.area.from.y)} <i> = {num(p.px.from.y)} px</i></div>
+          <div><i>x:</i> {num(p.area.from.x)} <i> / {num(p.px.from.x)} px</i></div>
+          <div><i>y:</i> {num(p.area.from.y)} <i> / {num(p.px.from.y)} px</i></div>
         </div>
         <div className={css.areaRight} style={place(2, 2, 9, 2)}>
-          <div><i>{num(p.px.till.x)} px = </i> {num(p.area.till.x)}</div>
+          <div><i>{num(p.px.till.x)} px / x: </i> {num(p.area.till.x)}</div>
         </div>
         <div className={css.areaBottom} style={place(2, 9, 9, 9)}>
-          <div>{num(p.area.till.y)} <i> = {num(p.px.till.y)} px</i></div>
+          <div><i>y:</i> {num(p.area.till.y)} <i> / {num(p.px.till.y)} px</i></div>
         </div>
         <div className={css.areaCenter} style={place(5, 5, 6, 6)}>{p.children}</div>
       </div>
