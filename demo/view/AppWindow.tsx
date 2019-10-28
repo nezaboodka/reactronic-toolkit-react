@@ -11,24 +11,25 @@ import { Database } from '../model/Database'
 import { ScrollVisualizer } from './ScrollVisualizer'
 import { style } from './AppWindow.css'
 
-export function AppWindow(p: {scroll: VirtualScroll, db: Database}): JSX.Element {
-  const ref = React.useCallback(element => p.scroll.setDevice(element), [])
+export function AppWindow(p: {db: Database, vs: VirtualScroll}): JSX.Element {
+  const deviceRef = React.useCallback(element => p.vs.setComponent(element), [])
   return reactive(() => {
     const css = style.classes
+    const d = p.vs.component
     return (
       <div className={css.window}>
-        <div ref={ref} onScroll={e => p.scroll.scrollTo(xy(e.currentTarget.scrollLeft, e.currentTarget.scrollTop))}
-          className={css.scroll} style={place(2, 2, 9, 9)}>
-          <div className={css.content}>
-            <Data db={p.db} scroll={p.scroll}/>
-          </div>
+        <div onScroll={e => p.vs.scrollTo(xy(e.currentTarget.scrollLeft, e.currentTarget.scrollTop))}
+          ref={deviceRef} className={css.scroll} style={place(2, 2, 9, 9)}>
+          <Data db={p.db} scroll={p.vs}/>
         </div>
         <div className={css.toolbar} style={place(10, 2, 10, 2)}>
-          <button onClick={e => p.scroll.device ? p.scroll.device.scrollTop += 1 : {}}>▼ 1px</button>
-          <button onClick={e => p.scroll.device ? p.scroll.device.scrollTop -= 1 : {}}>▲ 1px</button>
+          <button onClick={e => d ? d.scrollTop += 1 : {}}
+            disabled={!d}>▼ 1px</button>
+          <button onClick={e => d ? d.scrollTop -= 1 : {}}
+            disabled={!d}>▲ 1px</button>
         </div>
         <div className={css.visualizer} style={place(10, 3, 10, 5)}>
-          <ScrollVisualizer scroll={p.scroll}/>
+          <ScrollVisualizer scroll={p.vs}/>
         </div>
       </div>
     )
@@ -37,9 +38,10 @@ export function AppWindow(p: {scroll: VirtualScroll, db: Database}): JSX.Element
 
 function Data(p: {scroll: VirtualScroll, db: Database}): JSX.Element {
   return reactive(() => {
-    const d = resolved(p.db.data, [p.scroll.dataport()]) || []
+    const css = style.classes
+    const d = resolved(p.db.data, [p.scroll.dataArea()]) || []
     return (
-      <React.Fragment>
+      <div className={css.content}>
         {d.map(row => (
           <div key={row[0]}>
             {row.map(text => (
@@ -47,7 +49,7 @@ function Data(p: {scroll: VirtualScroll, db: Database}): JSX.Element {
             ))}
           </div>
         ))}
-      </React.Fragment>
+      </div>
     )
   })
 }

@@ -27,18 +27,23 @@ export const style = restyle(() => {
     `,
     grid: css`
       label: grid;
-      border: 1px solid #8DFFA6;
-      color: #8DFFA6;
+      border: 1px solid silver;
+      color: silver;
     `,
-    dataport: css`
+    render: css`
+      label: render;
+      border: 1px solid white;
+      color: white;
+    `,
+    data: css`
       label: dataport;
       border: 1px solid #FFFFA0;
       color: #FFFFA0;
     `,
-    viewport: css`
+    view: css`
       label: viewport;
-      border: 1px solid white;
-      color: white;
+      border: 1px solid #8DFFA6;
+      color: #8DFFA6;
     `,
     area: css`
       label: area;
@@ -52,23 +57,18 @@ export const style = restyle(() => {
     `,
     areaHint: css`
       label: areaHint;
-      text-align: center;
-      margin-right: 0.25em;
+      text-align: left;
+      margin-left: 0.25em;
     `,
     areaFrom: css`
       label: areaFrom;
-      text-align: left;
-      margin-left: 0.25em;
-    `,
-    areaRight: css`
-      label: areaRight;
       text-align: right;
       margin-right: 0.25em;
     `,
-    areaBottom: css`
+    areaTill: css`
       label: areaBottom;
-      text-align: left;
-      margin-left: 0.25em;
+      text-align: right;
+      margin-right: 0.25em;
     `,
     areaCenter: css`
       label: areaCenter;
