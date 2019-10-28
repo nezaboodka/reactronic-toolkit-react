@@ -9,7 +9,6 @@ import { place } from '../common'
 import { Area } from '../../source/Area'
 import { VirtualScroll, num } from '../../source/VirtualScroll'
 import { style } from './ScrollVisualizer.css'
-import { cx } from 'emotion'
 
 export function ScrollVisualizer(p: {scroll: VirtualScroll}): JSX.Element {
   return reactive(counter => {
@@ -68,17 +67,6 @@ function AreaRect(p: {
           <div>{num(p.area.till.y)} <i> = {num(p.px.till.y)} px</i></div>
         </div>
         <div className={css.areaCenter} style={place(5, 5, 6, 6)}>{p.children}</div>
-      </div>
-    )
-  })
-}
-
-function Coords(p: {cell: number, px: number, className?: string, style?: React.CSSProperties}): JSX.Element {
-  return reactive(() => {
-    const css = style.classes
-    return (
-      <div className={cx(css.coords, p.className)} style={p.style}>
-        {num(p.cell)} <i> = {num(p.px)} px</i>
       </div>
     )
   })
