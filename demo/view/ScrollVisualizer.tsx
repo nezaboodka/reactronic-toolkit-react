@@ -11,7 +11,7 @@ import { VirtualScroll, num } from '../../source/VirtualScroll'
 import { style } from './VirtualScrollVisualizer.css'
 import { cx } from 'emotion'
 
-export function VirtualScrollVisualizer(p: {scroll: VirtualScroll}): JSX.Element {
+export function ScrollVisualizer(p: {scroll: VirtualScroll}): JSX.Element {
   return reactive(counter => {
     const css = style.classes
     const vs = p.scroll

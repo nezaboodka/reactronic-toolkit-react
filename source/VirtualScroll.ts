@@ -24,12 +24,17 @@ export type IDevice = {
 }
 
 export class VirtualScroll extends State {
-  grid: Area = ZERO
+  grid: Area
   sizing = new Sizing()
   pxPerCell: number = 1
   pxViewport: Area = ZERO
   dataportSize: XY = xy(1.0, 2.0) // relative to viewport
   device: Area = ZERO
+
+  constructor(sizeX: number, sizeY: number) {
+    super()
+    this.grid = area(0, 0, sizeX, sizeY)
+  }
 
   get gridToPx(): XY {
     const ppc = this.pxPerCell

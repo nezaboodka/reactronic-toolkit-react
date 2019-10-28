@@ -30,8 +30,9 @@ export const style = restyle(() => {
     content: css` label: content;
     `,
     visualizer: css` label: info;
-      width: 25em;
-      min-width: 25em;
+      width: 38vw;
+      min-width: 38vw;
+      max-width: 38vw;
       font-size: smaller;
       justify-self: center;
     `,

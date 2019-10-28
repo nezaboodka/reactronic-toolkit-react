@@ -6,10 +6,9 @@
 import * as React from 'react'
 import * as ReactDOM from 'react-dom'
 import { Action } from 'reactronic'
-import { AppWindow } from './widget/AppWindow'
-import { area } from '../source/Area'
+import { AppWindow } from './view/AppWindow'
 import { VirtualScroll } from '../source/VirtualScroll'
 
-const app = Action.run('app', () => { const t = new VirtualScroll(); t.grid = area(0, 0, 100, 1000000000); return t })
+const scroll = Action.run('app', () => new VirtualScroll(100, 1000000000))
 const root = document.getElementById('root')
-ReactDOM.render(<AppWindow key="app" app={app}/>, root)
+ReactDOM.render(<AppWindow key="app" scroll={scroll}/>, root)
