@@ -30,11 +30,6 @@ export const style = restyle(() => {
       border: 1px solid silver;
       color: silver;
     `,
-    render: css`
-      label: render;
-      border: 1px solid white;
-      color: white;
-    `,
     data: css`
       label: dataport;
       border: 1px solid #FFFFA0;
@@ -51,9 +46,10 @@ export const style = restyle(() => {
       grid-template-columns: repeat(4, auto) 1fr 1fr repeat(4, auto);
       grid-template-rows: repeat(4, auto) 1fr 1fr repeat(4, auto);
       background-color: rgba(127, 127, 127, 0.1);
-      box-shadow: 0.05em 0.05em 0.25em 1px black;
+      box-shadow: 0.05em 0.05em 0.2em 0.5px black;
+      text-shadow: 0 0 2px black;
       padding: 0.25em 0;
-      margin: 1em 1em;
+      margin: 0.5em 1em;
     `,
     areaHint: css`
       label: areaHint;

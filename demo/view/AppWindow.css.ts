@@ -47,6 +47,7 @@ export const style = restyle(() => {
     `,
     content: css`
       label: content;
+      overflow: hidden;
     `,
     visualizer: css`
       label: visualizer;

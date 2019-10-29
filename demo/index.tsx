@@ -10,7 +10,7 @@ import { Database } from './model/Database'
 import { VirtualScroll } from '../source/index'
 import { AppWindow } from './view/AppWindow'
 
-RT.setTrace(TraceLevel.Basic)
+RT.setTrace(TraceLevel.Off)
 RT.performanceWarningThreshold = 0 // disable
 
 const vs = Action.run('vs', () => new VirtualScroll(10000, 1000000000))

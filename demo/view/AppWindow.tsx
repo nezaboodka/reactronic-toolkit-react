@@ -20,7 +20,7 @@ export function AppWindow(p: {db: Database, vs: VirtualScroll}): JSX.Element {
       <div className={css.window}>
         <div onScroll={e => p.vs.scrollTo(xy(e.currentTarget.scrollLeft, e.currentTarget.scrollTop))}
           ref={deviceRef} className={css.scroll} style={place(2, 2, 9, 9)}>
-          <Data db={p.db} scroll={p.vs}/>
+          <Data db={p.db} vs={p.vs}/>
         </div>
         <div className={css.toolbar} style={place(10, 2, 10, 2)}>
           <button onClick={e => d ? d.scrollTop += 1 : {}}
@@ -36,12 +36,13 @@ export function AppWindow(p: {db: Database, vs: VirtualScroll}): JSX.Element {
   })
 }
 
-function Data(p: {scroll: VirtualScroll, db: Database}): JSX.Element {
+function Data(p: {db: Database, vs: VirtualScroll}): JSX.Element {
   return reactive(() => {
     const css = style.classes
-    const d = resolved(p.db.data, [p.scroll.dataArea()]) || []
+    const size = p.vs.pxDeviceArea.size
+    const d = resolved(p.db.data, [p.vs.dataArea()]) || []
     return (
-      <div className={css.content}>
+      <div key={'data'} className={css.content} style={{width: `${size.x}px`, height: `${size.y}px`, minHeight: `${size.y}px`, maxHeight: `${size.y}px`, marginTop: p.vs.pxDataArea.y}}>
         {d.map(row => (
           <div key={row[0]}>
             {row.map(text => (
