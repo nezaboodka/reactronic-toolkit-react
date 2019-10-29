@@ -25,7 +25,7 @@ export const style = restyle(() => {
 
       button {
         cursor: pointer;
-        margin: 0 0.5em;
+        margin: 0 0.25em;
         padding: 0.25em;
         background-color: rgba(127, 127, 127, 0.1);
 
@@ -36,7 +36,7 @@ export const style = restyle(() => {
     `,
     toolbar: css`
       label: toolbar;
-      margin: 1em;
+      margin: 0.5em;
       margin-bottom: 0;
     `,
     scroll: css`

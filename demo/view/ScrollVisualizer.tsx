@@ -17,7 +17,7 @@ export function ScrollVisualizer(p: {scroll: VirtualScroll}): JSX.Element {
       <div className={css.main}>
         <AreaRect hint={'Database'} area={vs.grid} px={vs.pxGrid} key={`grid-${counter}`}
           className={css.grid} style={place(1, 1, 10, 9)}>
-          <AreaRect hint={'Device'} area={vs.deviceArea} px={vs.pxDeviceArea} key={`render-${counter}`}
+          <AreaRect hint={'Visual Component'} area={vs.deviceArea} px={vs.pxDeviceArea} key={`render-${counter}`}
             className={css.device} style={place(2, 2, 9, 9)}>
             <AreaRect hint={'Fetched Data'} area={vs.dataArea} px={vs.pxDataArea} key={`dataport-${counter}`}
               className={css.data} style={place(2, 2, 9, 9)}>
