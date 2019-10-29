@@ -12,21 +12,21 @@ import { ScrollVisualizer } from './ScrollVisualizer'
 import { style } from './AppWindow.css'
 
 export function AppWindow(p: {db: Database, vs: VirtualScroll}): JSX.Element {
-  const deviceRef = React.useCallback(element => {
+  const ref = React.useCallback(component => {
     let pxPerRow = 16
-    if (element) {
-      const fs = window.getComputedStyle(element).fontSize
+    if (component) {
+      const fs = window.getComputedStyle(component).fontSize
       pxPerRow = parseFloat(fs.substr(0, fs.length - 2))
     }
-    p.vs.setDevice(element, pxPerRow)
+    p.vs.setComponent(component, pxPerRow)
   }, [])
   return reactive(() => {
     const css = style.classes
-    const d = p.vs.device
+    const d = p.vs.component
     return (
       <div className={css.window}>
         <div onScroll={e => p.vs.onScroll(e.currentTarget.scrollLeft, e.currentTarget.scrollTop)}
-          ref={deviceRef} className={css.scroll} style={place(2, 2, 9, 9)}>
+          ref={ref} className={css.scroll} style={place(2, 2, 9, 9)}>
           <Data db={p.db} vs={p.vs}/>
         </div>
         <div className={css.toolbar} style={place(10, 2, 10, 2)}>
@@ -46,7 +46,7 @@ export function AppWindow(p: {db: Database, vs: VirtualScroll}): JSX.Element {
 function Data(p: {db: Database, vs: VirtualScroll}): JSX.Element {
   return reactive(() => {
     const css = style.classes
-    const size = p.vs.pxDeviceArea.size
+    const size = p.vs.pxComponentArea.size
     const padding = p.vs.pxDataMargin
     const d = resolved(p.db.data, [p.vs.cachedDataArea()]) || []
     return (

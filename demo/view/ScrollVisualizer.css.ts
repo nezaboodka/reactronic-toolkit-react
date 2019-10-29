@@ -21,22 +21,22 @@ export const style = restyle(() => {
         font-size: smaller;
       }
     `,
-    device: css`
-      label: device;
+    component: css`
+      label: component;
       border: 1px solid white;
       color: white;
     `,
-    grid: css`
-      label: grid;
+    database: css`
+      label: database;
       border: 1px solid silver;
       color: silver;
     `,
-    data: css`
-      label: dataport;
+    dataArea: css`
+      label: dataArea;
       border: 1px solid #FFFFA0;
       color: #FFFFA0;
     `,
-    view: css`
+    viewport: css`
       label: viewport;
       border: 1px solid #8DFFA6;
       color: #8DFFA6;
@@ -63,7 +63,7 @@ export const style = restyle(() => {
       margin-right: 0.25em;
     `,
     areaTill: css`
-      label: areaBottom;
+      label: areaTill;
       text-align: right;
       margin-right: 0.25em;
     `,

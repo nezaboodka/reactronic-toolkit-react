@@ -16,29 +16,34 @@ export function ScrollVisualizer(p: {scroll: VirtualScroll}): JSX.Element {
     return (
       <div className={css.main}>
         <AreaRect hint={'Database'} area={vs.grid} px={vs.pxGrid} key={`grid-${counter}`}
-          className={css.grid} style={place(1, 1, 10, 9)}>
-          <AreaRect hint={'Visual Component'} area={vs.deviceArea} px={vs.pxDeviceArea} key={`render-${counter}`}
-            className={css.device} style={place(2, 2, 9, 9)}>
+          className={css.database} style={place(1, 1, 10, 9)}>
+          <AreaRect hint={'Visual Component'} area={vs.componentArea} px={vs.pxComponentArea} key={`render-${counter}`}
+            className={css.component} style={place(2, 2, 9, 9)}>
             <AreaRect hint={'Fetched Data'} area={vs.dataArea} px={vs.pxDataArea} key={`dataport-${counter}`}
-              className={css.data} style={place(2, 2, 9, 9)}>
+              className={css.dataArea} style={place(2, 2, 9, 9)}>
               <AreaRect hint={'Viewport'} area={vs.viewport} px={vs.pxViewport} key={`viewport-${counter}`}
-                className={css.view} style={place(3, 3, 8, 8)}>
+                className={css.viewport} style={place(3, 3, 8, 8)}>
                 <div style={{height: '1em'}}></div>
               </AreaRect>
             </AreaRect>
           </AreaRect>
         </AreaRect>
-        <AreaRect hint={'Device'} area={vs.deviceArea} px={vs.pxDeviceArea} key={`device-${counter}`}
-          className={css.device} style={place(1, 10, 10, 10)}>
-          {vs.device ? (
+        <AreaRect hint={'Device'} area={vs.componentArea} px={vs.pxComponentArea} key={`device-${counter}`}
+          className={css.component} style={place(1, 10, 10, 10)}>
+          {vs.component ? (
             <div>
               <br/>
-              <div>Scroll: x = {num(vs.device.scrollLeft)}, y = {num(vs.device.scrollTop)}</div>
+              <div>Scroll:
+                x = {num(vs.component.scrollLeft)},
+                y = {num(vs.component.scrollTop)},
+                px = {num(vs.component.scrollLeft / vs.componentPxPerScrollPx.x, 3)},
+                py = {num(vs.component.scrollTop / vs.componentPxPerScrollPx.y, 3)}
+              </div>
               <div>Font Size: {vs.pxPerRow}</div>
-              <div>{num(vs.devicePxPerScrollPx.y)} <i>device pixels in a single scrollbar pixel out of</i> {num(vs.pxViewport.size.y)}</div>
-              <div>{num(vs.pxGrid.size.y / vs.pxDeviceArea.size.y)} <i>grid pixels in a single device pixel out of</i> {num(vs.pxDeviceArea.size.y)}</div>
-              <div>{num(vs.pxGrid.size.y / vs.device.clientHeight)} <i>grid pixels in a single scrollbar pixel out of</i> {num(vs.pxViewport.size.y)}</div>
-              <div>{num(vs.pxGrid.size.y / vs.device.clientHeight / vs.pxPerRow)} <i>grid cells in a single scrollbar pixel out of</i> {num(vs.pxViewport.size.y)}</div>
+              <div>{num(vs.componentPxPerScrollPx.y)} <i>device pixels in a single scrollbar pixel out of</i> {num(vs.pxViewport.size.y)}</div>
+              <div>{num(vs.pxGrid.size.y / vs.pxComponentArea.size.y)} <i>grid pixels in a single device pixel out of</i> {num(vs.pxComponentArea.size.y)}</div>
+              <div>{num(vs.pxGrid.size.y / vs.component.clientHeight)} <i>grid pixels in a single scrollbar pixel out of</i> {num(vs.pxViewport.size.y)}</div>
+              <div>{num(vs.pxGrid.size.y / vs.component.clientHeight / vs.pxPerRow)} <i>grid cells in a single scrollbar pixel out of</i> {num(vs.pxViewport.size.y)}</div>
               <br/>
             </div>
           ) : <div/>}
