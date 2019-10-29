@@ -12,7 +12,14 @@ import { ScrollVisualizer } from './ScrollVisualizer'
 import { style } from './AppWindow.css'
 
 export function AppWindow(p: {db: Database, vs: VirtualScroll}): JSX.Element {
-  const deviceRef = React.useCallback(element => p.vs.setDevice(element, 16), [])
+  const deviceRef = React.useCallback(element => {
+    let pxPerRow = 16
+    if (element) {
+      const fs = window.getComputedStyle(element).fontSize
+      pxPerRow = parseFloat(fs.substr(0, fs.length - 2))
+    }
+    p.vs.setDevice(element, pxPerRow)
+  }, [])
   return reactive(() => {
     const css = style.classes
     const d = p.vs.device
