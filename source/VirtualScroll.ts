@@ -71,12 +71,6 @@ export class VirtualScroll extends State {
     return this.pxGrid.truncateBy(PX_RENDERING_LIMIT).moveTo(this.pxDataArea, this.pxGrid)
   }
 
-  get pxScrollPositionForDevice(): XY {
-    return xy(
-      this.pxViewArea.x - this.pxDeviceArea.x,
-      this.pxViewArea.y - this.pxDeviceArea.y)
-  }
-
   get dataArea(): Area {
     const center = this.viewArea.getCenter()
     return this.viewArea.zoomAt(center, this.dataPreloadRatio).round().truncateBy(this.grid)
@@ -94,6 +88,18 @@ export class VirtualScroll extends State {
 
   get pxGrid(): Area {
     return this.grid.zoomAt(ZERO, this.gridToPx)
+  }
+
+  get devicePxPerScrollPx(): XY {
+    return xy(
+      this.pxDeviceArea.size.x / this.pxViewArea.size.x,
+      this.pxDeviceArea.size.y / this.pxViewArea.size.y)
+  }
+
+  get deviceScrollPosition(): XY {
+    return xy(
+      this.pxViewArea.x - this.pxDeviceArea.x,
+      this.pxViewArea.y - this.pxDeviceArea.y)
   }
 
   @cached cachedDataArea(): Area {

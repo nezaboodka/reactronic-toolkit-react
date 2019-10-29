@@ -34,10 +34,10 @@ export function ScrollVisualizer(p: {scroll: VirtualScroll}): JSX.Element {
             <div>
               <br/>
               <div>Scroll: x = {num(vs.device.scrollLeft)}, y = {num(vs.device.scrollTop)}</div>
-              <div>{num(vs.pxDeviceArea.size.y / vs.device.clientHeight)} <i>device pixels in a single scrollbar pixel out of</i> {num(vs.device.clientHeight)}</div>
+              <div>{num(vs.devicePxPerScrollPx.y)} <i>device pixels in a single scrollbar pixel out of</i> {num(vs.pxViewArea.size.y)}</div>
               <div>{num(vs.pxGrid.size.y / vs.pxDeviceArea.size.y)} <i>grid pixels in a single device pixel out of</i> {num(vs.pxDeviceArea.size.y)}</div>
-              <div>{num(vs.pxGrid.size.y / vs.device.clientHeight)} <i>grid pixels in a single scrollbar pixel out of</i> {num(vs.device.clientHeight)}</div>
-              <div>{num(vs.pxGrid.size.y / vs.device.clientHeight / vs.pxPerRow)} <i>grid cells in a single scrollbar pixel out of</i> {num(vs.device.clientHeight)}</div>
+              <div>{num(vs.pxGrid.size.y / vs.device.clientHeight)} <i>grid pixels in a single scrollbar pixel out of</i> {num(vs.pxViewArea.size.y)}</div>
+              <div>{num(vs.pxGrid.size.y / vs.device.clientHeight / vs.pxPerRow)} <i>grid cells in a single scrollbar pixel out of</i> {num(vs.pxViewArea.size.y)}</div>
               <br/>
             </div>
           ) : <div/>}
