@@ -56,7 +56,8 @@ function AreaRect(p: {
     return (
       <div className={cx(css.area, p.className)} style={p.style}>
         <div className={css.areaHint} style={place(2, 2, 9, 2)}>
-          {p.hint} <i>{num(p.area.size.y, 0)} rows / {num(p.px.size.y, 0)} px</i>
+          {p.hint}: {num(p.area.size.y, -3)} rows<br/>
+          <i>↕ {num(p.px.size.y, 0)} px</i>
         </div>
         <div className={css.areaFrom} style={place(5, 2, 9, 2)}>
           {num(p.area.from.y, 3)}<br/>
