@@ -35,8 +35,8 @@ type ReactState<V> = { rx: Rx<V>, counter: number }
 
 class Rx<V> extends State {
   @cached
-  view(run: (counter: number) => V, action?: Action): V {
-    return action ? action.inspect(() => run(this.counter)) : run(this.counter)
+  view(generate: (counter: number) => V, action?: Action): V {
+    return action ? action.inspect(() => generate(this.counter)) : generate(this.counter)
   }
 
   @trigger
