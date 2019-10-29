@@ -6,7 +6,7 @@
 import { State, action, cached } from 'reactronic'
 import { XY, xy, Area, area, ZERO } from './Area'
 
-export const PX_RENDERING_LIMIT: Area = area(0, 0, 10000008, 10000008)
+export const PX_RENDERING_LIMIT: Area = area(0, 0, 100008, 100008)
 export type GridLine = { index: number, coord: number }
 
 export class Sizing {
@@ -27,7 +27,7 @@ export class VirtualScroll extends State {
   sizing = new Sizing()
   device: IDevice | null | undefined = undefined
   pxPerRow: number = 16
-  pxViewArea: Area = ZERO
+  pxViewport: Area = ZERO
   dataPreloadRatio: XY = xy(1.0, 2.0) // relative to view area
 
   constructor(sizeX: number, sizeY: number) {
@@ -39,12 +39,12 @@ export class VirtualScroll extends State {
   setDevice(device: IDevice | null, pxPerRow: number): void {
     if (device) {
       this.device = device
-      this.pxViewArea = new Area(0, 0, device.clientWidth, device.clientHeight)
+      this.pxViewport = new Area(0, 0, device.clientWidth, device.clientHeight)
       this.pxPerRow = pxPerRow
     }
     else {
       this.device = undefined
-      this.pxViewArea = ZERO
+      this.pxViewport = ZERO
       this.pxPerRow = 16
     }
   }
@@ -59,8 +59,8 @@ export class VirtualScroll extends State {
     return xy(1 / g2p.x, 1 / g2p.y)
   }
 
-  get viewArea(): Area {
-    return this.pxViewArea.zoomAt(ZERO, this.pxToGrid)
+  get viewport(): Area {
+    return this.pxViewport.zoomAt(ZERO, this.pxToGrid)
   }
 
   get deviceArea(): Area {
@@ -72,8 +72,8 @@ export class VirtualScroll extends State {
   }
 
   get dataArea(): Area {
-    const center = this.viewArea.getCenter()
-    return this.viewArea.zoomAt(center, this.dataPreloadRatio).round().truncateBy(this.grid)
+    const center = this.viewport.getCenter()
+    return this.viewport.zoomAt(center, this.dataPreloadRatio).round().truncateBy(this.grid)
   }
 
   get pxDataArea(): Area {
@@ -92,14 +92,14 @@ export class VirtualScroll extends State {
 
   get devicePxPerScrollPx(): XY {
     return xy(
-      this.pxDeviceArea.size.x / this.pxViewArea.size.x,
-      this.pxDeviceArea.size.y / this.pxViewArea.size.y)
+      this.pxDeviceArea.size.x / this.pxViewport.size.x,
+      this.pxDeviceArea.size.y / this.pxViewport.size.y)
   }
 
   get deviceScrollPosition(): XY {
     return xy(
-      this.pxViewArea.x - this.pxDeviceArea.x,
-      this.pxViewArea.y - this.pxDeviceArea.y)
+      this.pxViewport.x - this.pxDeviceArea.x,
+      this.pxViewport.y - this.pxDeviceArea.y)
   }
 
   @cached cachedDataArea(): Area {
@@ -109,24 +109,18 @@ export class VirtualScroll extends State {
   @action
   scrollBy(delta: XY): void {
     // delta = new Area(delta.x, delta.y, 0, 0).scaleBy(this.deviceToPx)
-    this.pxViewArea = this.pxViewArea.moveBy(delta)
+    this.pxViewport = this.pxViewport.moveBy(delta)
   }
 
   @action
   onScroll(x: number, y: number): void {
-    const vp = this.pxViewArea
-    const device = this.pxDeviceArea
-    const result = area(device.x + x, device.y + y, vp.size.x, vp.size.y)
-    if (!result.equalTo(this.pxViewArea)) {
-      this.pxViewArea = result
-      // if (this.component) {
-      //   const pos = this.pxDeviceScrollPosition
-      //   if (this.component.scrollLeft !== pos.x) {
-      //     this.component.scrollLeft = pos.x
-      //   }
-      //   if (this.component.scrollTop !== pos.y) {
-      //     this.component.scrollTop = pos.y
-      //   }
+    const vp = this.pxViewport
+    const da = this.pxDeviceArea
+    const result = area(da.x + x, da.y + y, vp.size.x, vp.size.y)
+    if (!result.equalTo(this.pxViewport)) {
+      this.pxViewport = result
+      // const d = this.device
+      // if (d && (d.scrollLeft > this.devicePxPerScrollPx.x / 2 || d.scrollTop > this.devicePxPerScrollPx.y)) {
       // }
     }
   }
@@ -134,14 +128,14 @@ export class VirtualScroll extends State {
   @action
   zoomAt(origin: XY, factor: number): void {
     origin = this.pxDeviceArea.moveBy(origin)
-    this.pxViewArea = this.pxViewArea.zoomAt(origin, xy(factor, factor))
+    this.pxViewport = this.pxViewport.zoomAt(origin, xy(factor, factor))
   }
 
   toString(): string {
     return `
 device: ${this.pxDeviceArea.size.x}px * ${this.pxDeviceArea.size.y}px
 grid: ${this.grid.size.x}c * ${this.grid.size.y}r (${this.pxGrid.size.x}px * ${this.pxGrid.size.y}px)
-viewport: ${dumpArea(this.viewArea)} (px: ${dumpArea(this.pxViewArea)})
+viewport: ${dumpArea(this.viewport)} (px: ${dumpArea(this.pxViewport)})
 dataport: ${dumpArea(this.dataArea)} (px: ${dumpArea(this.pxDataArea)})
 `
   }
