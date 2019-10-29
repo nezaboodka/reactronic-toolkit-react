@@ -12,10 +12,10 @@ import { ScrollVisualizer } from './ScrollVisualizer'
 import { style } from './AppWindow.css'
 
 export function AppWindow(p: {db: Database, vs: VirtualScroll}): JSX.Element {
-  const deviceRef = React.useCallback(element => p.vs.setComponent(element), [])
+  const deviceRef = React.useCallback(element => p.vs.setDevice(element, 16), [])
   return reactive(() => {
     const css = style.classes
-    const d = p.vs.component
+    const d = p.vs.device
     return (
       <div className={css.window}>
         <div onScroll={e => p.vs.onScroll(e.currentTarget.scrollLeft, e.currentTarget.scrollTop)}

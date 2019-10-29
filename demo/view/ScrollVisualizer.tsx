@@ -15,20 +15,6 @@ export function ScrollVisualizer(p: {scroll: VirtualScroll}): JSX.Element {
     const vs = p.scroll
     return (
       <div className={css.main}>
-        <AreaRect hint={'Device'} area={vs.deviceArea} px={vs.pxDeviceArea} key={`device-${counter}`}
-          className={css.device} style={place(1, 10, 10, 10)}>
-          {vs.component ? (
-            <div>
-              <br/>
-              <div>{num(vs.component.scrollLeft)}, {num(vs.component.scrollTop)}</div>
-              <div>{num(vs.pxDeviceArea.size.y / vs.component.clientHeight)} <i>render pixels in a single scrollbar pixel out of</i> {num(vs.component.clientHeight)}</div>
-              <div>{num(vs.pxGrid.size.y / vs.pxDeviceArea.size.y)} <i>grid pixels in a single render pixel out of</i> {num(vs.pxDeviceArea.size.y)}</div>
-              <div>{num(vs.pxGrid.size.y / vs.component.clientHeight)} <i>grid pixels in a single scrollbar pixel out of</i> {num(vs.component.clientHeight)}</div>
-              <div>{num(vs.pxGrid.size.y / vs.component.clientHeight / vs.pxPerCell)} <i>grid cells in a single scrollbar pixel out of</i> {num(vs.component.clientHeight)}</div>
-              <br/>
-            </div>
-          ) : <div/>}
-        </AreaRect>
         <AreaRect hint={'Grid Area'} area={vs.grid} px={vs.pxGrid} key={`grid-${counter}`}
           className={css.grid} style={place(1, 1, 10, 9)}>
           <AreaRect hint={'Device Area'} area={vs.deviceArea} px={vs.pxDeviceArea} key={`render-${counter}`}
@@ -41,6 +27,20 @@ export function ScrollVisualizer(p: {scroll: VirtualScroll}): JSX.Element {
               </AreaRect>
             </AreaRect>
           </AreaRect>
+        </AreaRect>
+        <AreaRect hint={'Device'} area={vs.deviceArea} px={vs.pxDeviceArea} key={`device-${counter}`}
+          className={css.device} style={place(1, 10, 10, 10)}>
+          {vs.device ? (
+            <div>
+              <br/>
+              <div>Scroll: x = {num(vs.device.scrollLeft)}, y = {num(vs.device.scrollTop)}</div>
+              <div>{num(vs.pxDeviceArea.size.y / vs.device.clientHeight)} <i>render pixels in a single scrollbar pixel out of</i> {num(vs.device.clientHeight)}</div>
+              <div>{num(vs.pxGrid.size.y / vs.pxDeviceArea.size.y)} <i>grid pixels in a single render pixel out of</i> {num(vs.pxDeviceArea.size.y)}</div>
+              <div>{num(vs.pxGrid.size.y / vs.device.clientHeight)} <i>grid pixels in a single scrollbar pixel out of</i> {num(vs.device.clientHeight)}</div>
+              <div>{num(vs.pxGrid.size.y / vs.device.clientHeight / vs.pxPerRow)} <i>grid cells in a single scrollbar pixel out of</i> {num(vs.device.clientHeight)}</div>
+              <br/>
+            </div>
+          ) : <div/>}
         </AreaRect>
       </div>
     )

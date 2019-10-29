@@ -7,16 +7,15 @@ import { State, action, cached } from 'reactronic'
 import { XY, xy, Area, area, ZERO } from './Area'
 
 export const PX_RENDERING_LIMIT: Area = area(0, 0, 1000008, 1000008)
-
 export type GridLine = { index: number, coord: number }
 
 export class Sizing {
-  defaultCellSizeX: number = 4 // measured in cell height ('em')
-  customCellSizeX: GridLine[] = []
-  customCellSizeY: GridLine[] = []
+  defaultColumnWidth: number = 4 // measured in cell height ('em')
+  customColumnWidths: GridLine[] = [] // in pixels?
+  customRowHeights: GridLine[] = [] // in pixels?
 }
 
-export type IComponent = {
+export type IDevice = {
   readonly clientWidth: number
   readonly clientHeight: number
   scrollLeft: number
@@ -26,30 +25,38 @@ export type IComponent = {
 export class VirtualScroll extends State {
   grid: Area
   sizing = new Sizing()
-  component: IComponent | null | undefined = undefined
-  pxPerCell: number = 16
+  device: IDevice | null | undefined = undefined
+  pxPerRow: number = 16
   pxViewArea: Area = ZERO
-  dataAreaRatio: XY = xy(1.0, 2.0) // relative to viewport
+  dataPreloadRatio: XY = xy(1.0, 2.0) // relative to view area
 
   constructor(sizeX: number, sizeY: number) {
     super()
     this.grid = area(0, 0, sizeX, sizeY)
   }
 
+  @action
+  setDevice(device: IDevice | null, pxPerRow: number): void {
+    if (device) {
+      this.device = device
+      this.pxViewArea = new Area(0, 0, device.clientWidth, device.clientHeight)
+      this.pxPerRow = pxPerRow
+    }
+    else {
+      this.device = undefined
+      this.pxViewArea = ZERO
+      this.pxPerRow = 16
+    }
+  }
+
   get gridToPx(): XY {
-    const ppc = this.pxPerCell
-    return xy(ppc * this.sizing.defaultCellSizeX, ppc)
+    const ppr = this.pxPerRow
+    return xy(ppr * this.sizing.defaultColumnWidth, ppr)
   }
 
   get pxToGrid(): XY {
     const g2p = this.gridToPx
     return xy(1 / g2p.x, 1 / g2p.y)
-  }
-
-  get renderToPx(): XY {
-    return xy(
-      this.pxGrid.size.x / this.pxDeviceArea.size.x,
-      this.pxGrid.size.y / this.pxDeviceArea.size.y)
   }
 
   get viewArea(): Area {
@@ -60,23 +67,19 @@ export class VirtualScroll extends State {
     return this.pxDeviceArea.zoomAt(ZERO, this.pxToGrid)
   }
 
-  get pxDeviceScrollPosition(): XY {
+  get pxDeviceArea(): Area {
+    return this.pxGrid.truncateBy(PX_RENDERING_LIMIT).moveTo(this.pxDataArea, this.pxGrid)
+  }
+
+  get pxScrollPositionForDevice(): XY {
     return xy(
       this.pxViewArea.x - this.pxDeviceArea.x,
       this.pxViewArea.y - this.pxDeviceArea.y)
   }
 
-  get pxDeviceArea(): Area {
-    return this.pxGrid.truncateBy(PX_RENDERING_LIMIT).moveTo(this.pxDataArea, this.pxGrid)
-  }
-
   get dataArea(): Area {
     const center = this.viewArea.getCenter()
-    return this.viewArea.zoomAt(center, this.dataAreaRatio).round().truncateBy(this.grid)
-  }
-
-  @cached cachedDataArea(): Area {
-    return this.dataArea
+    return this.viewArea.zoomAt(center, this.dataPreloadRatio).round().truncateBy(this.grid)
   }
 
   get pxDataArea(): Area {
@@ -93,15 +96,8 @@ export class VirtualScroll extends State {
     return this.grid.zoomAt(ZERO, this.gridToPx)
   }
 
-  @action
-  setComponent(component: IComponent | null): void {
-    if (component) {
-      this.component = component
-      this.pxViewArea = new Area(0, 0, component.clientWidth, component.clientHeight)
-    }
-    else {
-      this.component = undefined
-    }
+  @cached cachedDataArea(): Area {
+    return this.dataArea
   }
 
   @action
@@ -131,7 +127,7 @@ export class VirtualScroll extends State {
 
   @action
   zoomAt(origin: XY, factor: number): void {
-    origin = area(origin.x, origin.y, 1, 1).zoomAt(ZERO, this.renderToPx)
+    origin = this.pxDeviceArea.moveBy(origin)
     this.pxViewArea = this.pxViewArea.zoomAt(origin, xy(factor, factor))
   }
 
