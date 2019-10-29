@@ -6,7 +6,7 @@
 import { State, action, cached } from 'reactronic'
 import { XY, xy, Area, area, ZERO } from './Area'
 
-export const PX_RENDERING_LIMIT: Area = area(0, 0, 1000008, 1000008)
+export const PX_RENDERING_LIMIT: Area = area(0, 0, 10000008, 10000008)
 export type GridLine = { index: number, coord: number }
 
 export class Sizing {
