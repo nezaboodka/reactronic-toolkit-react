@@ -13,6 +13,7 @@ export const style = restyle(() => {
       display: grid;
       grid-template-columns: repeat(4, auto) 1fr 1fr repeat(4, auto);
       grid-template-rows: repeat(4, auto) 1fr 1fr repeat(4, auto);
+      font-size: smaller;
 
       i {
         font-style: normal;

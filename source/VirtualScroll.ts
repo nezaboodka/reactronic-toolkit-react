@@ -60,8 +60,14 @@ export class VirtualScroll extends State {
     return this.pxDeviceArea.zoomAt(ZERO, this.pxToGrid)
   }
 
+  get deviceScroll(): XY {
+    return xy(
+      this.pxViewArea.x - this.pxDeviceArea.x,
+      this.pxViewArea.y - this.pxDeviceArea.y)
+  }
+
   get pxDeviceArea(): Area {
-    return this.pxGrid.truncateBy(PX_RENDERING_LIMIT)
+    return this.pxGrid.truncateBy(PX_RENDERING_LIMIT).moveTo(this.pxDataArea, this.pxGrid)
   }
 
   @cached
@@ -72,6 +78,12 @@ export class VirtualScroll extends State {
 
   get pxDataArea(): Area {
     return this.dataArea().zoomAt(ZERO, this.gridToPx)
+  }
+
+  get pxDataMargin(): XY {
+    return xy(
+      this.pxDataArea.x - this.pxDeviceArea.x,
+      this.pxDataArea.y - this.pxDeviceArea.y)
   }
 
   get pxGrid(): Area {
@@ -96,10 +108,10 @@ export class VirtualScroll extends State {
   }
 
   @action
-  scrollTo(pos: XY): XY {
+  scrollTo(x: number, y: number): XY {
     const vp = this.pxViewArea
     const device = this.pxDeviceArea
-    const result = area(device.x + pos.x, device.y + pos.y, vp.size.x, vp.size.y)
+    const result = area(device.x + x, device.y + y, vp.size.x, vp.size.y)
     if (!vp.isIntersectedWith(result)) {
       // result = area(pos.x, pos.y, 0, 0).zoomAt(ZERO, this.renderToPx).resize(vp.size)
       // this.pxRenderArea = area(

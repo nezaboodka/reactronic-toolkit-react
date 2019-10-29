@@ -34,7 +34,7 @@ export function ScrollVisualizer(p: {scroll: VirtualScroll}): JSX.Element {
               className={css.data} style={place(2, 2, 9, 9)}>
               <AreaRect hint={'View Area'} area={vs.viewArea} px={vs.pxViewArea} key={`viewport-${counter}`}
                 className={css.view} style={place(3, 3, 8, 8)}>
-                <div style={{height: '5em'}}></div>
+                <div style={{height: '1em'}}></div>
               </AreaRect>
             </AreaRect>
           </AreaRect>

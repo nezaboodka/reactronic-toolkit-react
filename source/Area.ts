@@ -26,6 +26,23 @@ export class Area extends XY {
     return area(this.x + delta.x, this.y + delta.y, this.size.x, this.size.y)
   }
 
+  moveTo(pos: XY, bounds: Area): Area {
+    let x = pos.x
+    let y = pos.y
+
+    const sx = this.size.x
+    const sy = this.size.y
+    const ox = bounds.x + bounds.size.x - (this.x + sx)
+    const oy = bounds.y + bounds.size.y - (this.y + sy)
+
+    if (ox < 0)
+      x += ox
+    if (oy < 0)
+      y += oy
+
+    return area(x, y, sx, sy)
+  }
+
   resize(size: XY): Area {
     return area(this.x, this.y, size.x, size.y)
   }

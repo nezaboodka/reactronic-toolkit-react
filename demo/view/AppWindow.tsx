@@ -5,7 +5,7 @@
 
 import * as React from 'react'
 import { resolved } from 'reactronic'
-import { reactive, VirtualScroll, xy } from '../../source/index'
+import { reactive, VirtualScroll } from '../../source/index'
 import { place } from '../common'
 import { Database } from '../model/Database'
 import { ScrollVisualizer } from './ScrollVisualizer'
@@ -18,7 +18,7 @@ export function AppWindow(p: {db: Database, vs: VirtualScroll}): JSX.Element {
     const d = p.vs.component
     return (
       <div className={css.window}>
-        <div onScroll={e => p.vs.scrollTo(xy(e.currentTarget.scrollLeft, e.currentTarget.scrollTop))}
+        <div onScroll={e => p.vs.scrollTo(e.currentTarget.scrollLeft, e.currentTarget.scrollTop)}
           ref={deviceRef} className={css.scroll} style={place(2, 2, 9, 9)}>
           <Data db={p.db} vs={p.vs}/>
         </div>
@@ -42,7 +42,10 @@ function Data(p: {db: Database, vs: VirtualScroll}): JSX.Element {
     const size = p.vs.pxDeviceArea.size
     const d = resolved(p.db.data, [p.vs.dataArea()]) || []
     return (
-      <div key={'data'} className={css.content} style={{width: `${size.x}px`, height: `${size.y}px`, minHeight: `${size.y}px`, maxHeight: `${size.y}px`, marginTop: p.vs.pxDataArea.y}}>
+      <div className={css.content} key={'data'}
+        style={{width: `${size.x}px`,
+          height: `${size.y}px`, minHeight: `${size.y}px`, maxHeight: `${size.y}px`,
+          marginTop: p.vs.pxDataMargin.y}}>
         {d.map(row => (
           <div key={row[0]}>
             {row.map(text => (
