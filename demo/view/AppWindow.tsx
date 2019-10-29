@@ -18,7 +18,7 @@ export function AppWindow(p: {db: Database, vs: VirtualScroll}): JSX.Element {
     const d = p.vs.component
     return (
       <div className={css.window}>
-        <div onScroll={e => p.vs.scrollTo(e.currentTarget.scrollLeft, e.currentTarget.scrollTop)}
+        <div onScroll={e => p.vs.onScroll(e.currentTarget.scrollLeft, e.currentTarget.scrollTop)}
           ref={deviceRef} className={css.scroll} style={place(2, 2, 9, 9)}>
           <Data db={p.db} vs={p.vs}/>
         </div>
@@ -40,12 +40,14 @@ function Data(p: {db: Database, vs: VirtualScroll}): JSX.Element {
   return reactive(() => {
     const css = style.classes
     const size = p.vs.pxDeviceArea.size
-    const d = resolved(p.db.data, [p.vs.dataArea()]) || []
+    const padding = p.vs.pxDataMargin
+    const d = resolved(p.db.data, [p.vs.cachedDataArea()]) || []
     return (
       <div className={css.content} key={'data'}
-        style={{width: `${size.x}px`,
+        style={{
+          width: `${size.x}px`, minWidth: `${size.x}px`, maxWidth: `${size.x}px`,
           height: `${size.y}px`, minHeight: `${size.y}px`, maxHeight: `${size.y}px`,
-          marginTop: p.vs.pxDataMargin.y}}>
+          paddingLeft: `${padding.x}px`, paddingTop: `${padding.y}px`}}>
         {d.map(row => (
           <div key={row[0]}>
             {row.map(text => (

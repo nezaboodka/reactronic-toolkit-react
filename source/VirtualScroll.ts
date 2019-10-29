@@ -60,7 +60,7 @@ export class VirtualScroll extends State {
     return this.pxDeviceArea.zoomAt(ZERO, this.pxToGrid)
   }
 
-  get deviceScroll(): XY {
+  get pxDeviceScrollPosition(): XY {
     return xy(
       this.pxViewArea.x - this.pxDeviceArea.x,
       this.pxViewArea.y - this.pxDeviceArea.y)
@@ -70,14 +70,17 @@ export class VirtualScroll extends State {
     return this.pxGrid.truncateBy(PX_RENDERING_LIMIT).moveTo(this.pxDataArea, this.pxGrid)
   }
 
-  @cached
-  dataArea(): Area {
+  get dataArea(): Area {
     const center = this.viewArea.getCenter()
     return this.viewArea.zoomAt(center, this.dataAreaRatio).round().truncateBy(this.grid)
   }
 
+  @cached cachedDataArea(): Area {
+    return this.dataArea
+  }
+
   get pxDataArea(): Area {
-    return this.dataArea().zoomAt(ZERO, this.gridToPx)
+    return this.dataArea.zoomAt(ZERO, this.gridToPx)
   }
 
   get pxDataMargin(): XY {
@@ -108,20 +111,22 @@ export class VirtualScroll extends State {
   }
 
   @action
-  scrollTo(x: number, y: number): XY {
+  onScroll(x: number, y: number): void {
     const vp = this.pxViewArea
     const device = this.pxDeviceArea
     const result = area(device.x + x, device.y + y, vp.size.x, vp.size.y)
-    if (!vp.isIntersectedWith(result)) {
-      // result = area(pos.x, pos.y, 0, 0).zoomAt(ZERO, this.renderToPx).resize(vp.size)
-      // this.pxRenderArea = area(
-      //   result.x - Math.round(device.size.x / 2),
-      //   Math.round(result.y - device.size.y / 2),
-      //   device.size.x,
-      //   device.size.y)
+    if (!result.equalTo(this.pxViewArea)) {
+      this.pxViewArea = result
+      // if (this.component) {
+      //   const pos = this.pxDeviceScrollPosition
+      //   if (this.component.scrollLeft !== pos.x) {
+      //     this.component.scrollLeft = pos.x
+      //   }
+      //   if (this.component.scrollTop !== pos.y) {
+      //     this.component.scrollTop = pos.y
+      //   }
+      // }
     }
-    this.pxViewArea = result
-    return result
   }
 
   @action
@@ -135,7 +140,7 @@ export class VirtualScroll extends State {
 device: ${this.pxDeviceArea.size.x}px * ${this.pxDeviceArea.size.y}px
 grid: ${this.grid.size.x}c * ${this.grid.size.y}r (${this.pxGrid.size.x}px * ${this.pxGrid.size.y}px)
 viewport: ${dumpArea(this.viewArea)} (px: ${dumpArea(this.pxViewArea)})
-dataport: ${dumpArea(this.dataArea())} (px: ${dumpArea(this.pxDataArea)})
+dataport: ${dumpArea(this.dataArea)} (px: ${dumpArea(this.pxDataArea)})
 `
   }
 }

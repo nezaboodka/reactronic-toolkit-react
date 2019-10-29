@@ -17,20 +17,23 @@ export function ScrollVisualizer(p: {scroll: VirtualScroll}): JSX.Element {
       <div className={css.main}>
         <AreaRect hint={'Device'} area={vs.deviceArea} px={vs.pxDeviceArea} key={`device-${counter}`}
           className={css.device} style={place(1, 10, 10, 10)}>
-          <div>
-            <br/>
-            {vs.component && <div>{num(vs.pxDeviceArea.size.y / vs.component.clientHeight)} <i>render pixels in a single scrollbar pixel out of</i> {num(vs.component.clientHeight)}</div>}
-            <div>{num(vs.pxGrid.size.y / vs.pxDeviceArea.size.y)} <i>grid pixels in a single render pixel out of</i> {num(vs.pxDeviceArea.size.y)}</div>
-            {vs.component && <div>{num(vs.pxGrid.size.y / vs.component.clientHeight)} <i>grid pixels in a single scrollbar pixel out of</i> {num(vs.component.clientHeight)}</div>}
-            {vs.component && <div>{num(vs.pxGrid.size.y / vs.component.clientHeight / vs.pxPerCell)} <i>grid cells in a single scrollbar pixel out of</i> {num(vs.component.clientHeight)}</div>}
-            <br/>
-          </div>
+          {vs.component ? (
+            <div>
+              <br/>
+              <div>{num(vs.component.scrollLeft)}, {num(vs.component.scrollTop)}</div>
+              <div>{num(vs.pxDeviceArea.size.y / vs.component.clientHeight)} <i>render pixels in a single scrollbar pixel out of</i> {num(vs.component.clientHeight)}</div>
+              <div>{num(vs.pxGrid.size.y / vs.pxDeviceArea.size.y)} <i>grid pixels in a single render pixel out of</i> {num(vs.pxDeviceArea.size.y)}</div>
+              <div>{num(vs.pxGrid.size.y / vs.component.clientHeight)} <i>grid pixels in a single scrollbar pixel out of</i> {num(vs.component.clientHeight)}</div>
+              <div>{num(vs.pxGrid.size.y / vs.component.clientHeight / vs.pxPerCell)} <i>grid cells in a single scrollbar pixel out of</i> {num(vs.component.clientHeight)}</div>
+              <br/>
+            </div>
+          ) : <div/>}
         </AreaRect>
         <AreaRect hint={'Grid Area'} area={vs.grid} px={vs.pxGrid} key={`grid-${counter}`}
           className={css.grid} style={place(1, 1, 10, 9)}>
           <AreaRect hint={'Device Area'} area={vs.deviceArea} px={vs.pxDeviceArea} key={`render-${counter}`}
             className={css.device} style={place(2, 2, 9, 9)}>
-            <AreaRect hint={'Data Area'} area={vs.dataArea()} px={vs.pxDataArea} key={`dataport-${counter}`}
+            <AreaRect hint={'Data Area'} area={vs.dataArea} px={vs.pxDataArea} key={`dataport-${counter}`}
               className={css.data} style={place(2, 2, 9, 9)}>
               <AreaRect hint={'View Area'} area={vs.viewArea} px={vs.pxViewArea} key={`viewport-${counter}`}
                 className={css.view} style={place(3, 3, 8, 8)}>
