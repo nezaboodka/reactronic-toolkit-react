@@ -36,8 +36,8 @@ export function ScrollVisualizer(p: {scroll: VirtualScroll}): JSX.Element {
               <div>Scroll:
                 x = {num(vs.component.scrollLeft)},
                 y = {num(vs.component.scrollTop)},
-                px = {num(vs.component.scrollLeft / vs.componentPxPerScrollPx.x, 3)},
-                py = {num(vs.component.scrollTop / vs.componentPxPerScrollPx.y, 3)}
+                px = {num(Math.ceil(vs.component.scrollLeft / vs.componentPxPerScrollPx.x))},
+                py = {num(Math.ceil(vs.component.scrollTop / vs.componentPxPerScrollPx.y))}
               </div>
               <div>Font Size: {vs.pxPerRow}</div>
               <div>{num(vs.componentPxPerScrollPx.y)} <i>device pixels in a single scrollbar pixel out of</i> {num(vs.pxViewport.size.y)}</div>

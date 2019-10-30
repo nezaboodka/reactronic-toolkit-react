@@ -3,7 +3,7 @@
 // Copyright (C) 2019 Yury Chetyrko <ychetyrko@gmail.com>
 // License: https://raw.githubusercontent.com/nezaboodka/reactronic/master/LICENSE
 
-import { State, action, cached } from 'reactronic'
+import { State, action, cached, trigger } from 'reactronic'
 import { XY, xy, Area, area, ZERO } from './Area'
 
 export const BROWSER_PIXEL_LIMIT: Area = area(0, 0, 10000008, 10000008)
@@ -26,7 +26,8 @@ export class VirtualScroll extends State {
   grid: Area
   sizing = new Sizing()
   component: IComponent | null | undefined = undefined
-  pxPerRow: number = 16
+  pxComponentArea: Area = ZERO
+  pxPerRow: number = 1
   pxViewport: Area = ZERO
   dataPreloadRatio: XY = xy(1.0, 2.0) // relative to view area
 
@@ -39,14 +40,22 @@ export class VirtualScroll extends State {
   setComponent(component: IComponent | null, pxPerRow: number): void {
     if (component) {
       this.component = component
-      this.pxViewport = new Area(0, 0, component.clientWidth, component.clientHeight)
       this.pxPerRow = pxPerRow
+      this.pxViewport = new Area(0, 0, component.clientWidth, component.clientHeight)
     }
     else {
-      this.component = undefined
       this.pxViewport = ZERO
-      this.pxPerRow = 16
+      this.pxPerRow = 1
+      this.component = undefined
     }
+  }
+
+  @trigger
+  autoSetComponentSize(): void {
+    if (this.component)
+      this.pxComponentArea = this.pxGrid.truncateBy(BROWSER_PIXEL_LIMIT)
+    else
+      this.pxComponentArea = ZERO
   }
 
   get gridToPx(): XY {
@@ -65,11 +74,6 @@ export class VirtualScroll extends State {
 
   get componentArea(): Area {
     return this.pxComponentArea.zoomAt(ZERO, this.pxToGrid)
-  }
-
-  get pxComponentArea(): Area {
-    // return this.pxGrid.truncateBy(BROWSER_PIXEL_LIMIT).moveTo(this.pxDataArea, this.pxGrid)
-    return this.pxGrid.truncateBy(BROWSER_PIXEL_LIMIT)
   }
 
   get dataArea(): Area {
@@ -120,9 +124,9 @@ export class VirtualScroll extends State {
     const result = area(da.x + x, da.y + y, vp.size.x, vp.size.y)
     if (!result.equalTo(this.pxViewport)) {
       this.pxViewport = result
-      // const d = this.device
-      // if (d && (d.scrollLeft > this.devicePxPerScrollPx.x / 2 || d.scrollTop > this.devicePxPerScrollPx.y)) {
-      // }
+      const c = this.component
+      if (c && (c.scrollLeft > this.componentPxPerScrollPx.x / 2 || c.scrollTop > this.componentPxPerScrollPx.y)) {
+      }
     }
   }
 
