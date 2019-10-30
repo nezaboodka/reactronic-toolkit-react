@@ -13,34 +13,49 @@ export class XY {
 }
 
 export class Area extends XY {
+  static readonly ZERO = Object.freeze(area(0, 0, 0, 0))
+  static readonly MAX = Object.freeze(area(Number.MIN_VALUE, Number.MIN_VALUE, Number.MAX_VALUE, Number.MAX_VALUE))
+
   readonly size: XY
   get from(): XY { return this }
   get till(): XY { return xy(this.x + this.size.x - 1, this.y + this.size.y - 1) }
+  get center(): XY { return xy(this.x + this.size.x / 2, this.y + this.size.y / 2) }
 
   constructor(x: number, y: number, w: number, h: number) {
     super(x, y)
     this.size = xy(w, h)
   }
 
-  moveBy(delta: XY): Area {
-    return area(this.x + delta.x, this.y + delta.y, this.size.x, this.size.y)
+  moveTo(pos: XY, bounds: Area): Area {
+    return this.moveBy(xy(pos.x - this.x, pos.y - this.y), bounds)
   }
 
-  moveTo(pos: XY, bounds: Area): Area {
-    let x = pos.x
-    let y = pos.y
+  moveCenterTo(pos: XY, bounds: Area): Area {
+    const c = this.center
+    return this.moveBy(xy(pos.x - c.x, pos.y - c.y), bounds)
+  }
 
-    const sx = this.size.x
-    const sy = this.size.y
-    const ox = bounds.x + bounds.size.x - (this.x + sx)
-    const oy = bounds.y + bounds.size.y - (this.y + sy)
+  moveBy(delta: XY, bounds: Area): Area {
+    // return this.moveTo(xy(this.x + delta.x, this.y + delta.y), bounds)
 
+    const dx = this.x + delta.x - bounds.x
+    const dy = this.y + delta.y - bounds.y
+    const ox = bounds.x + bounds.size.x - (this.x + delta.x + this.size.x)
+    const oy = bounds.y + bounds.size.y - (this.y + delta.y + this.size.y)
+
+    let x = this.x + delta.x
+    let y = this.y + delta.y
+
+    if (dx < 0)
+      x = bounds.x
+    if (dy < 0)
+      y = bounds.y
     if (ox < 0)
       x += ox
     if (oy < 0)
       y += oy
 
-    return area(x, y, sx, sy)
+    return area(x, y, this.size.x, this.size.y)
   }
 
   resize(size: XY): Area {
@@ -88,10 +103,6 @@ export class Area extends XY {
     return area(x, y, sx, sy)
   }
 
-  getCenter(): XY {
-    return area(this.x + this.size.x / 2, this.y + this.size.y / 2, 0, 0)
-  }
-
   equalTo(a: Area): boolean {
     return this.x === a.x && this.y === a.y &&
       this.size.x === a.size.x && this.size.y === a.size.y
@@ -106,8 +117,6 @@ export class Area extends XY {
     return this.contains(a) || this.contains(a.till)
   }
 }
-
-export const ZERO = Object.freeze(new Area(0, 0, 0, 0))
 
 export function xy(x: number, y: number): XY {
   return new XY(x, y)

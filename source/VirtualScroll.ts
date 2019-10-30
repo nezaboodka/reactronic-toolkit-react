@@ -4,9 +4,9 @@
 // License: https://raw.githubusercontent.com/nezaboodka/reactronic/master/LICENSE
 
 import { State, action, cached, trigger } from 'reactronic'
-import { XY, xy, Area, area, ZERO } from './Area'
+import { XY, xy, Area, area } from './Area'
 
-export const BROWSER_PIXEL_LIMIT: Area = area(0, 0, 10000008, 10000008)
+export const BROWSER_PIXEL_LIMIT: Area = area(0, 0, 1000008, 1000008)
 export type GridLine = { index: number, coord: number }
 
 export class Sizing {
@@ -18,6 +18,8 @@ export class Sizing {
 export type IComponent = {
   readonly clientWidth: number
   readonly clientHeight: number
+  readonly scrollWidth: number
+  readonly scrollHeight: number
   scrollLeft: number
   scrollTop: number
 }
@@ -26,10 +28,10 @@ export class VirtualScroll extends State {
   grid: Area
   sizing = new Sizing()
   component: IComponent | null | undefined = undefined
-  pxComponentArea: Area = ZERO
+  pxComponentArea: Area = Area.ZERO
   pxPerRow: number = 1
-  pxViewport: Area = ZERO
-  dataPreloadRatio: XY = xy(1.0, 2.0) // relative to view area
+  pxViewport: Area = Area.ZERO
+  preloadRatio: XY = xy(1.0, 2.0) // relative to view area
 
   constructor(sizeX: number, sizeY: number) {
     super()
@@ -44,18 +46,28 @@ export class VirtualScroll extends State {
       this.pxViewport = new Area(0, 0, component.clientWidth, component.clientHeight)
     }
     else {
-      this.pxViewport = ZERO
+      this.pxViewport = Area.ZERO
       this.pxPerRow = 1
       this.component = undefined
     }
   }
 
   @trigger
-  autoSetComponentSize(): void {
-    if (this.component)
-      this.pxComponentArea = this.pxGrid.truncateBy(BROWSER_PIXEL_LIMIT)
+  adjustComponentArea(): void {
+    if (this.component) {
+      let ca = this.pxComponentArea
+      if (ca === Area.ZERO)
+        ca = this.pxComponentArea = this.pxGrid.truncateBy(BROWSER_PIXEL_LIMIT)
+      // const vp = this.pxViewport
+      // const cps = this.componentPxPerScrollPx
+      // const caSb = xy(ca.x / cps.x, ca.y / cps.y)
+      // const vpSb = xy(vp.x / cps.x, vp.y / cps.y)
+      // if (Math.abs(vpSb.y - caSb.y) > 0.5 || Math.abs(vpSb.x - caSb.x) > 0.5)
+      //   ca = ca.moveCenterTo(vp.center, this.pxGrid)
+      this.pxComponentArea = ca
+    }
     else
-      this.pxComponentArea = ZERO
+      this.pxComponentArea = Area.ZERO
   }
 
   get gridToPx(): XY {
@@ -69,30 +81,30 @@ export class VirtualScroll extends State {
   }
 
   get viewport(): Area {
-    return this.pxViewport.zoomAt(ZERO, this.pxToGrid)
+    return this.pxViewport.zoomAt(Area.ZERO, this.pxToGrid)
   }
 
   get componentArea(): Area {
-    return this.pxComponentArea.zoomAt(ZERO, this.pxToGrid)
+    return this.pxComponentArea.zoomAt(Area.ZERO, this.pxToGrid)
   }
 
-  get dataArea(): Area {
-    const center = this.viewport.getCenter()
-    return this.viewport.zoomAt(center, this.dataPreloadRatio).round().truncateBy(this.grid)
+  get preloadArea(): Area {
+    const vp = this.viewport
+    return vp.zoomAt(vp.center, this.preloadRatio).round().truncateBy(this.grid)
   }
 
-  get pxDataArea(): Area {
-    return this.dataArea.zoomAt(ZERO, this.gridToPx)
+  get pxPreloadArea(): Area {
+    return this.preloadArea.zoomAt(Area.ZERO, this.gridToPx)
   }
 
-  get pxDataMargin(): XY {
+  get pxPreloadMargin(): XY {
     return xy(
-      this.pxDataArea.x - this.pxComponentArea.x,
-      this.pxDataArea.y - this.pxComponentArea.y)
+      this.pxPreloadArea.x - this.pxComponentArea.x,
+      this.pxPreloadArea.y - this.pxComponentArea.y)
   }
 
   get pxGrid(): Area {
-    return this.grid.zoomAt(ZERO, this.gridToPx)
+    return this.grid.zoomAt(Area.ZERO, this.gridToPx)
   }
 
   get componentPxPerScrollPx(): XY {
@@ -107,32 +119,39 @@ export class VirtualScroll extends State {
       this.pxViewport.y - this.pxComponentArea.y)
   }
 
-  @cached cachedDataArea(): Area {
-    return this.dataArea
+  @cached cachedPreloadArea(): Area {
+    return this.preloadArea
   }
 
   @action
   scrollBy(delta: XY): void {
     // delta = new Area(delta.x, delta.y, 0, 0).scaleBy(this.deviceToPx)
-    this.pxViewport = this.pxViewport.moveBy(delta)
+    this.pxViewport = this.pxViewport.moveBy(delta, this.pxGrid)
   }
 
   @action
   onScroll(x: number, y: number): void {
     const vp = this.pxViewport
-    const da = this.pxComponentArea
-    const result = area(da.x + x, da.y + y, vp.size.x, vp.size.y)
-    if (!result.equalTo(this.pxViewport)) {
-      this.pxViewport = result
-      const c = this.component
-      if (c && (c.scrollLeft > this.componentPxPerScrollPx.x / 2 || c.scrollTop > this.componentPxPerScrollPx.y)) {
-      }
+    const ca = this.pxComponentArea
+    const prev = xy(vp.x - ca.x, vp.y - ca.y)
+    const pos = xy(
+      Math.abs(x - prev.x) > 2 * vp.size.x ? Math.ceil((ca.x + x) * (this.pxGrid.size.x / ca.size.x)) : ca.x + x,
+      Math.abs(y - prev.y) > 2 * vp.size.y ? Math.ceil((ca.y + y) * (this.pxGrid.size.y / ca.size.y)) : ca.y + y)
+    const vp2 = vp.moveTo(pos, this.pxGrid)
+    if (!vp2.equalTo(vp)) {
+      // const caSnap = ca.zoomAt(ca.center, xy(0.75, 0.75)).truncateBy(this.pxGrid)
+      // if (!caSnap.contains(vp2.from) || !caSnap.contains(vp2.till)) {
+      //   const ca2 = ca.moveCenterTo(vp2.center, this.pxGrid)
+      //   if (!ca2.equalTo(ca))
+      //     this.pxComponentArea = ca2
+      // }
+      this.pxViewport = vp2
     }
   }
 
   @action
   zoomAt(origin: XY, factor: number): void {
-    origin = this.pxComponentArea.moveBy(origin)
+    origin = this.pxComponentArea.moveBy(origin, this.pxGrid)
     this.pxViewport = this.pxViewport.zoomAt(origin, xy(factor, factor))
   }
 }

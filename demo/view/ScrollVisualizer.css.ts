@@ -52,6 +52,10 @@ export const style = restyle(() => {
       padding: 0.25em 0;
       margin: 0.5em 1em;
     `,
+    areaOuter: css`
+      label: areaParent;
+      text-align: center;
+    `,
     areaHint: css`
       label: areaHint;
       text-align: left;

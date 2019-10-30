@@ -5,7 +5,7 @@
 
 import * as React from 'react'
 import { resolved } from 'reactronic'
-import { reactive, VirtualScroll } from '../../source/index'
+import { reactive, VirtualScroll, num } from '../../source/index'
 import { place } from '../common'
 import { Database } from '../model/Database'
 import { ScrollVisualizer } from './ScrollVisualizer'
@@ -47,14 +47,15 @@ function Data(p: {db: Database, vs: VirtualScroll}): JSX.Element {
   return reactive(() => {
     const css = style.classes
     const size = p.vs.pxComponentArea.size
-    const padding = p.vs.pxDataMargin
-    const d = resolved(p.db.data, [p.vs.cachedDataArea()]) || []
+    const padding = p.vs.pxPreloadMargin
+    const d = resolved(p.db.data, [p.vs.cachedPreloadArea()]) || []
     return (
       <div className={css.content} key={'data'}
-        style={{
+        title={`${num(size.x)}, ${num(size.y)}`}
+        style={{boxSizing: 'border-box',
           width: `${size.x}px`, minWidth: `${size.x}px`, maxWidth: `${size.x}px`,
           height: `${size.y}px`, minHeight: `${size.y}px`, maxHeight: `${size.y}px`,
-          paddingLeft: `${padding.x}px`, paddingTop: `${padding.y}px`}}>
+          paddingLeft: `${padding.x - padding.x}px`, paddingTop: `${padding.y - padding.y}px`}}>
         {d.map(row => (
           <div key={row[0]}>
             {row.map(text => (

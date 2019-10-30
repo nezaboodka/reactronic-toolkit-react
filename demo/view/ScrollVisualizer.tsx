@@ -19,7 +19,7 @@ export function ScrollVisualizer(p: {scroll: VirtualScroll}): JSX.Element {
           className={css.database} style={place(1, 1, 10, 9)}>
           <AreaRect hint={'Visual Component'} area={vs.componentArea} px={vs.pxComponentArea} key={`render-${counter}`}
             className={css.component} style={place(2, 2, 9, 9)}>
-            <AreaRect hint={'Fetched Data'} area={vs.dataArea} px={vs.pxDataArea} key={`dataport-${counter}`}
+            <AreaRect hint={'Fetched Data'} area={vs.preloadArea} px={vs.pxPreloadArea} outer={vs.pxComponentArea} key={`dataport-${counter}`}
               className={css.dataArea} style={place(2, 2, 9, 9)}>
               <AreaRect hint={'Viewport'} area={vs.viewport} px={vs.pxViewport} key={`viewport-${counter}`}
                 className={css.viewport} style={place(3, 3, 8, 8)}>
@@ -34,8 +34,8 @@ export function ScrollVisualizer(p: {scroll: VirtualScroll}): JSX.Element {
             <div>
               <br/>
               <div>Scroll:
-                x = {num(vs.component.scrollLeft)},
-                y = {num(vs.component.scrollTop)},
+                x = {num(vs.component.scrollLeft)}/{num(vs.component.scrollWidth)},
+                y = {num(vs.component.scrollTop)}/{num(vs.component.scrollHeight)},
                 px = {num(Math.ceil(vs.component.scrollLeft / vs.componentPxPerScrollPx.x))},
                 py = {num(Math.ceil(vs.component.scrollTop / vs.componentPxPerScrollPx.y))}
               </div>
@@ -57,6 +57,7 @@ function AreaRect(p: {
   hint: string,
   area: Area,
   px: Area,
+  outer?: Area,
   className?: string,
   style?: React.CSSProperties,
   children?: JSX.Element}): JSX.Element {
@@ -64,11 +65,16 @@ function AreaRect(p: {
     const css = style.classes
     return (
       <div className={cx(css.area, p.className)} style={p.style}>
-        <div className={css.areaHint} style={place(2, 2, 9, 2)}>
+        {p.outer && (
+          <div className={css.areaOuter} style={place(2, 2, 9, 2)}>
+            {num(p.px.y - p.outer.y)} px
+          </div>
+        )}
+        <div className={css.areaHint} style={place(2, 3, 9, 3)}>
           {p.hint}: {num(p.area.size.y, -3)} rows<br/>
           <i>↕ {num(p.px.size.y, 0)} px</i>
         </div>
-        <div className={css.areaFrom} style={place(5, 2, 9, 2)}>
+        <div className={css.areaFrom} style={place(5, 3, 9, 3)}>
           {num(p.area.from.y, 3)}<br/>
           <i>{num(p.px.from.y, 0)} px</i>
         </div>

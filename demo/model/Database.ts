@@ -17,7 +17,7 @@ export class Database extends State {
         row.push(`Cell r${y}c${x}`)
       result.push(row)
     }
-    await sleep(0)
+    await sleep(50)
     return result
   }
 }
