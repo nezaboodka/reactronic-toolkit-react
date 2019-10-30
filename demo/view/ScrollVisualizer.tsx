@@ -15,35 +15,35 @@ export function ScrollVisualizer(p: {scroll: VirtualScroll}): JSX.Element {
     const vs = p.scroll
     return (
       <div className={css.main}>
-        <AreaRect hint={'Database'} area={vs.grid} px={vs.gridPixels} key={`grid-${counter}`}
+        <AreaRect hint={'Database'} area={vs.gridCells} px={vs.grid} key={`grid-${counter}`}
           className={css.database} style={place(1, 1, 10, 9)}>
-          <AreaRect hint={'Visual Component'} area={vs.componentArea} px={vs.componentAreaPixels} key={`render-${counter}`}
+          <AreaRect hint={'Visual Component'} area={vs.componentCells} px={vs.component} key={`render-${counter}`}
             className={css.component} style={place(2, 2, 9, 9)}>
-            <AreaRect hint={'Fetched Data'} area={vs.preloadArea} px={vs.preloadAreaPixels} outer={vs.componentAreaPixels} key={`dataport-${counter}`}
+            <AreaRect hint={'Rendered Data'} area={vs.fetchCells} px={vs.fetch} outer={vs.component} key={`dataport-${counter}`}
               className={css.dataArea} style={place(2, 2, 9, 9)}>
-              <AreaRect hint={'Viewport'} area={vs.viewport} px={vs.viewportPixels} key={`viewport-${counter}`}
+              <AreaRect hint={'Viewport'} area={vs.viewportCells} px={vs.viewport} key={`viewport-${counter}`}
                 className={css.viewport} style={place(3, 3, 8, 8)}>
                 <div style={{height: '1em'}}></div>
               </AreaRect>
             </AreaRect>
           </AreaRect>
         </AreaRect>
-        <AreaRect hint={'Device'} area={vs.componentArea} px={vs.componentAreaPixels} key={`device-${counter}`}
+        <AreaRect hint={'Device'} area={vs.componentCells} px={vs.component} key={`device-${counter}`}
           className={css.component} style={place(1, 10, 10, 10)}>
-          {vs.component ? (
+          {vs.componentDevice ? (
             <div>
               <br/>
               <div>Scroll:
-                x = {num(vs.component.scrollLeft)}/{num(vs.component.scrollWidth)},
-                y = {num(vs.component.scrollTop)}/{num(vs.component.scrollHeight)},
-                px = {num(Math.ceil(vs.component.scrollLeft / vs.componentPixelPerScrollPixel.x))},
-                py = {num(Math.ceil(vs.component.scrollTop / vs.componentPixelPerScrollPixel.y))}
+                x = {num(vs.componentDevice.scrollLeft)}/{num(vs.componentDevice.scrollWidth)},
+                y = {num(vs.componentDevice.scrollTop)}/{num(vs.componentDevice.scrollHeight)},
+                px = {num(Math.ceil(vs.componentDevice.scrollLeft / vs.componentPixelPerScrollPixel.x))},
+                py = {num(Math.ceil(vs.componentDevice.scrollTop / vs.componentPixelPerScrollPixel.y))}
               </div>
               <div>Font Size: {vs.pixelsPerRow}</div>
-              <div>{num(vs.componentPixelPerScrollPixel.y)} <i>device pixels in a single scrollbar pixel out of</i> {num(vs.viewportPixels.size.y)}</div>
-              <div>{num(vs.gridPixels.size.y / vs.componentAreaPixels.size.y)} <i>grid pixels in a single device pixel out of</i> {num(vs.componentAreaPixels.size.y)}</div>
-              <div>{num(vs.gridPixels.size.y / vs.component.clientHeight)} <i>grid pixels in a single scrollbar pixel out of</i> {num(vs.viewportPixels.size.y)}</div>
-              <div>{num(vs.gridPixels.size.y / vs.component.clientHeight / vs.pixelsPerRow)} <i>grid cells in a single scrollbar pixel out of</i> {num(vs.viewportPixels.size.y)}</div>
+              <div>{num(vs.componentPixelPerScrollPixel.y)} <i>device pixels in a single scrollbar pixel out of</i> {num(vs.viewport.size.y)}</div>
+              <div>{num(vs.grid.size.y / vs.component.size.y)} <i>grid pixels in a single device pixel out of</i> {num(vs.component.size.y)}</div>
+              <div>{num(vs.grid.size.y / vs.componentDevice.clientHeight)} <i>grid pixels in a single scrollbar pixel out of</i> {num(vs.viewport.size.y)}</div>
+              <div>{num(vs.grid.size.y / vs.componentDevice.clientHeight / vs.pixelsPerRow)} <i>grid cells in a single scrollbar pixel out of</i> {num(vs.viewport.size.y)}</div>
               <br/>
             </div>
           ) : <div/>}

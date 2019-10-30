@@ -22,7 +22,7 @@ export function AppWindow(p: {db: Database, vs: VirtualScroll}): JSX.Element {
   }, [])
   return reactive(() => {
     const css = style.classes
-    const d = p.vs.component
+    const d = p.vs.componentDevice
     return (
       <div className={css.window}>
         <div onScroll={e => p.vs.onScroll(e.currentTarget.scrollLeft, e.currentTarget.scrollTop)}
@@ -46,8 +46,8 @@ export function AppWindow(p: {db: Database, vs: VirtualScroll}): JSX.Element {
 function Data(p: {db: Database, vs: VirtualScroll}): JSX.Element {
   return reactive(() => {
     const css = style.classes
-    const size = p.vs.componentAreaPixels.size
-    const padding = p.vs.componentGapPixels
+    const size = p.vs.component.size
+    const padding = p.vs.gap
     const d = resolved(p.db.data, [p.vs.cachedPreloadArea()]) || []
     return (
       <div className={css.content} key={'data'}
