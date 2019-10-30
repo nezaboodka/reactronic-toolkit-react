@@ -72,11 +72,11 @@ const server = new WebpackDevServer(compiler, {
   },
 })
 
-server.listen(3333, 'localhost', function(err) {
+server.listen(3334, 'localhost', function(err) {
   if (err) {
     console.log(err)
     return
   }
-  console.log('Webpack is listening at http://localhost:3333.')
+  console.log('Webpack is listening at http://localhost:3334.')
   console.log('Please wait. Building...')
 })

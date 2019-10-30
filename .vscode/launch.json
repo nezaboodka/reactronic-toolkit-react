@@ -28,7 +28,7 @@
       "name": "chrome",
       "type": "chrome",
       "request": "launch",
-      "url": "http://localhost:3333",
+      "url": "http://localhost:3334",
       "sourceMaps": true,
       "webRoot": "${workspaceRoot}"
     }
