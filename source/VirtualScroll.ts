@@ -84,10 +84,6 @@ export class VirtualScroll extends State {
     return this.pxViewport.zoomAt(Area.ZERO, this.pxToGrid)
   }
 
-  get componentArea(): Area {
-    return this.pxComponentArea.zoomAt(Area.ZERO, this.pxToGrid)
-  }
-
   get preloadArea(): Area {
     const vp = this.viewport
     return vp.zoomAt(vp.center, this.preloadRatio).round().truncateBy(this.grid)
@@ -103,8 +99,8 @@ export class VirtualScroll extends State {
       this.pxPreloadArea.y - this.pxComponentArea.y)
   }
 
-  get pxGrid(): Area {
-    return this.grid.zoomAt(Area.ZERO, this.gridToPx)
+  get componentArea(): Area {
+    return this.pxComponentArea.zoomAt(Area.ZERO, this.pxToGrid)
   }
 
   get componentPxPerScrollPx(): XY {
@@ -117,6 +113,10 @@ export class VirtualScroll extends State {
     return xy(
       this.pxViewport.x - this.pxComponentArea.x,
       this.pxViewport.y - this.pxComponentArea.y)
+  }
+
+  get pxGrid(): Area {
+    return this.grid.zoomAt(Area.ZERO, this.gridToPx)
   }
 
   @cached cachedPreloadArea(): Area {
