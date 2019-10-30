@@ -28,9 +28,9 @@ export class VirtualScroll extends State {
   grid: Area
   sizing = new Sizing()
   component: IComponent | null | undefined = undefined
-  pxComponentArea: Area = Area.ZERO
-  pxPerRow: number = 1
-  pxViewport: Area = Area.ZERO
+  componentAreaPixels: Area = Area.ZERO
+  pixelsPerRow: number = 1
+  viewportPixels: Area = Area.ZERO
   preloadRatio: XY = xy(1.0, 2.0) // relative to view area
 
   constructor(sizeX: number, sizeY: number) {
@@ -42,46 +42,35 @@ export class VirtualScroll extends State {
   setComponent(component: IComponent | null, pxPerRow: number): void {
     if (component) {
       this.component = component
-      this.pxPerRow = pxPerRow
-      this.pxViewport = new Area(0, 0, component.clientWidth, component.clientHeight)
+      this.pixelsPerRow = pxPerRow
+      this.viewportPixels = new Area(0, 0, component.clientWidth, component.clientHeight)
     }
     else {
-      this.pxViewport = Area.ZERO
-      this.pxPerRow = 1
+      this.viewportPixels = Area.ZERO
+      this.pixelsPerRow = 1
       this.component = undefined
     }
   }
 
   @trigger
   adjustComponentArea(): void {
-    if (this.component) {
-      let ca = this.pxComponentArea
-      if (ca === Area.ZERO)
-        ca = this.pxComponentArea = this.pxGrid.truncateBy(BROWSER_PIXEL_LIMIT)
-      // const vp = this.pxViewport
-      // const cps = this.componentPxPerScrollPx
-      // const caSb = xy(ca.x / cps.x, ca.y / cps.y)
-      // const vpSb = xy(vp.x / cps.x, vp.y / cps.y)
-      // if (Math.abs(vpSb.y - caSb.y) > 0.5 || Math.abs(vpSb.x - caSb.x) > 0.5)
-      //   ca = ca.moveCenterTo(vp.center, this.pxGrid)
-      this.pxComponentArea = ca
-    }
-    else
-      this.pxComponentArea = Area.ZERO
+    this.componentAreaPixels = this.component ?
+      this.gridPixels.truncateBy(BROWSER_PIXEL_LIMIT) :
+      Area.ZERO
   }
 
-  get gridToPx(): XY {
-    const ppr = this.pxPerRow
+  get gridToPixelRatio(): XY {
+    const ppr = this.pixelsPerRow
     return xy(ppr * this.sizing.defaultColumnWidth, ppr)
   }
 
-  get pxToGrid(): XY {
-    const g2p = this.gridToPx
+  get pixelToGridRatio(): XY {
+    const g2p = this.gridToPixelRatio
     return xy(1 / g2p.x, 1 / g2p.y)
   }
 
   get viewport(): Area {
-    return this.pxViewport.zoomAt(Area.ZERO, this.pxToGrid)
+    return this.viewportPixels.zoomAt(Area.ZERO, this.pixelToGridRatio)
   }
 
   get preloadArea(): Area {
@@ -89,34 +78,34 @@ export class VirtualScroll extends State {
     return vp.zoomAt(vp.center, this.preloadRatio).round().truncateBy(this.grid)
   }
 
-  get pxPreloadArea(): Area {
-    return this.preloadArea.zoomAt(Area.ZERO, this.gridToPx)
-  }
-
-  get pxPreloadMargin(): XY {
-    return xy(
-      this.pxPreloadArea.x - this.pxComponentArea.x,
-      this.pxPreloadArea.y - this.pxComponentArea.y)
+  get preloadAreaPixels(): Area {
+    return this.preloadArea.zoomAt(Area.ZERO, this.gridToPixelRatio)
   }
 
   get componentArea(): Area {
-    return this.pxComponentArea.zoomAt(Area.ZERO, this.pxToGrid)
+    return this.componentAreaPixels.zoomAt(Area.ZERO, this.pixelToGridRatio)
   }
 
-  get componentPxPerScrollPx(): XY {
+  get componentGapPixels(): XY {
     return xy(
-      this.pxComponentArea.size.x / this.pxViewport.size.x,
-      this.pxComponentArea.size.y / this.pxViewport.size.y)
+      this.preloadAreaPixels.x - this.componentAreaPixels.x,
+      this.preloadAreaPixels.y - this.componentAreaPixels.y)
   }
 
-  get componentScrollPosition(): XY {
+  get componentPixelPerScrollPixel(): XY {
     return xy(
-      this.pxViewport.x - this.pxComponentArea.x,
-      this.pxViewport.y - this.pxComponentArea.y)
+      this.componentAreaPixels.size.x / this.viewportPixels.size.x,
+      this.componentAreaPixels.size.y / this.viewportPixels.size.y)
   }
 
-  get pxGrid(): Area {
-    return this.grid.zoomAt(Area.ZERO, this.gridToPx)
+  get componentScrollPixel(): XY {
+    return xy(
+      this.viewportPixels.x - this.componentAreaPixels.x,
+      this.viewportPixels.y - this.componentAreaPixels.y)
+  }
+
+  get gridPixels(): Area {
+    return this.grid.zoomAt(Area.ZERO, this.gridToPixelRatio)
   }
 
   @cached cachedPreloadArea(): Area {
@@ -126,33 +115,34 @@ export class VirtualScroll extends State {
   @action
   scrollBy(delta: XY): void {
     // delta = new Area(delta.x, delta.y, 0, 0).scaleBy(this.deviceToPx)
-    this.pxViewport = this.pxViewport.moveBy(delta, this.pxGrid)
+    this.viewportPixels = this.viewportPixels.moveBy(delta, this.gridPixels)
   }
 
   @action
   onScroll(x: number, y: number): void {
-    const vp = this.pxViewport
-    const ca = this.pxComponentArea
+    const vp = this.viewportPixels
+    const ca = this.componentAreaPixels
     const prev = xy(vp.x - ca.x, vp.y - ca.y)
     const pos = xy(
-      Math.abs(x - prev.x) > 2 * vp.size.x ? Math.ceil((ca.x + x) * (this.pxGrid.size.x / ca.size.x)) : ca.x + x,
-      Math.abs(y - prev.y) > 2 * vp.size.y ? Math.ceil((ca.y + y) * (this.pxGrid.size.y / ca.size.y)) : ca.y + y)
-    const vp2 = vp.moveTo(pos, this.pxGrid)
+      Math.abs(x - prev.x) > 2 * vp.size.x ? Math.ceil((ca.x + x) * (this.gridPixels.size.x / ca.size.x)) : ca.x + x,
+      Math.abs(y - prev.y) > 2 * vp.size.y ? Math.ceil((ca.y + y) * (this.gridPixels.size.y / ca.size.y)) : ca.y + y)
+    const vp2 = vp.moveTo(pos, this.gridPixels)
     if (!vp2.equalTo(vp)) {
-      // const caSnap = ca.zoomAt(ca.center, xy(0.75, 0.75)).truncateBy(this.pxGrid)
-      // if (!caSnap.contains(vp2.from) || !caSnap.contains(vp2.till)) {
-      //   const ca2 = ca.moveCenterTo(vp2.center, this.pxGrid)
-      //   if (!ca2.equalTo(ca))
-      //     this.pxComponentArea = ca2
-      // }
-      this.pxViewport = vp2
+      const caSnap = ca.zoomAt(ca.center, xy(0.75, 0.75)).truncateBy(this.gridPixels)
+      if (!caSnap.contains(vp2.from) || !caSnap.contains(vp2.till)) {
+
+        // const ca2 = ca.moveCenterTo(vp2.center, this.pxGrid)
+        // if (!ca2.equalTo(ca))
+        //   this.pxComponentArea = ca2
+      }
+      this.viewportPixels = vp2
     }
   }
 
   @action
   zoomAt(origin: XY, factor: number): void {
-    origin = this.pxComponentArea.moveBy(origin, this.pxGrid)
-    this.pxViewport = this.pxViewport.zoomAt(origin, xy(factor, factor))
+    origin = this.componentAreaPixels.moveBy(origin, this.gridPixels)
+    this.viewportPixels = this.viewportPixels.zoomAt(origin, xy(factor, factor))
   }
 }
 

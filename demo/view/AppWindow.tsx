@@ -46,8 +46,8 @@ export function AppWindow(p: {db: Database, vs: VirtualScroll}): JSX.Element {
 function Data(p: {db: Database, vs: VirtualScroll}): JSX.Element {
   return reactive(() => {
     const css = style.classes
-    const size = p.vs.pxComponentArea.size
-    const padding = p.vs.pxPreloadMargin
+    const size = p.vs.componentAreaPixels.size
+    const padding = p.vs.componentGapPixels
     const d = resolved(p.db.data, [p.vs.cachedPreloadArea()]) || []
     return (
       <div className={css.content} key={'data'}
