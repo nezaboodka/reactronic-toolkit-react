@@ -64,6 +64,12 @@ export class VirtualScroll extends State {
     return xy(1 / g2p.x, 1 / g2p.y)
   }
 
+  get componentToGridRatio(): XY {
+    return xy(
+      this.grid.size.x / this.component.size.x,
+      this.grid.size.y / this.component.size.y)
+  }
+
   get grid(): Area {
     return this.gridCells.zoomAt(Area.ZERO, this.gridToPixelRatio)
   }
@@ -72,19 +78,19 @@ export class VirtualScroll extends State {
     return this.viewport.zoomAt(Area.ZERO, this.pixelToGridRatio)
   }
 
-  get fetchCells(): Area {
+  get bufferCells(): Area {
     const vp = this.viewportCells
     return vp.zoomAt(vp.center, this.preloadRatio).round().truncateBy(this.gridCells)
   }
 
-  get fetch(): Area {
-    return this.fetchCells.zoomAt(Area.ZERO, this.gridToPixelRatio)
+  get buffer(): Area {
+    return this.bufferCells.zoomAt(Area.ZERO, this.gridToPixelRatio)
   }
 
   get gap(): XY {
     return xy(
-      this.fetch.x - this.component.x,
-      this.fetch.y - this.component.y)
+      this.buffer.x - this.component.x,
+      this.buffer.y - this.component.y)
   }
 
   get componentCells(): Area {
@@ -104,7 +110,7 @@ export class VirtualScroll extends State {
   }
 
   @cached cachedPreloadArea(): Area {
-    return this.fetchCells
+    return this.bufferCells
   }
 
   @action
@@ -119,24 +125,26 @@ export class VirtualScroll extends State {
     const dx = cpx.x + x - vpx.x
     const dy = cpx.y + y - vpx.y
     if (dy !== 0 || dx !== 0) { // prevent recursion
-      const p2g = this.pixelToGridRatio
-      const delta = xy(
-        Math.abs(dx) < 2 * vpx.size.x ? dx : Math.ceil(dx * p2g.x),
-        Math.abs(dy) < 2 * vpx.size.y ? dy : Math.ceil(dy * p2g.y))
-      const vpx2 = vpx.moveBy(delta, this.grid)
+      const c2g = this.componentToGridRatio
+      const pos = xy(
+        Math.abs(dx) < 2 * vpx.size.x ? vpx.x + dx : Math.ceil(x * c2g.x),
+        Math.abs(dy) < 2 * vpx.size.y ? vpx.y + dy : Math.ceil(y * c2g.y))
+      const vpx2 = vpx.moveTo(pos, this.grid)
       if (!vpx2.equalTo(vpx)) {
-        if (!cpx.contains(vpx2.from) || !cpx.contains(vpx2.till)) {
-          const cpx2 = cpx.moveCenterTo(vpx2.center, this.grid)
-          if (!cpx2.equalTo(cpx)) {
-            console.log(`cpx: ${cpx2.x}, ${cpx2.y}`)
-            this.component = cpx2
-            if (this.componentDevice) {
-              this.componentDevice.scrollLeft = vpx2.x - cpx2.x
-              this.componentDevice.scrollTop = vpx2.y - cpx2.y
-            }
-          }
-        }
         this.viewport = vpx2
+        // const cps = this.componentPixelPerScrollPixel
+        // const gap = this.gap
+        // if (gap.y < 0 || gap.y > cps.y / 2 || gap.x < 0 || gap.x > cps.x / 2) {
+        //   const cpx2 = cpx.moveBy(this.gap, this.grid)
+        //   if (!cpx2.equalTo(cpx)) {
+        //     console.log(`cpx: ${cpx2.x}, ${cpx2.y}`)
+        //     this.component = cpx2
+        //     // if (this.componentDevice) {
+        //     //   this.componentDevice.scrollLeft = vpx2.x - cpx2.x
+        //     //   this.componentDevice.scrollTop = vpx2.y - cpx2.y
+        //     // }
+        //   }
+        // }
       }
     }
   }

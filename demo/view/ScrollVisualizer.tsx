@@ -19,7 +19,7 @@ export function ScrollVisualizer(p: {scroll: VirtualScroll}): JSX.Element {
           className={css.database} style={place(1, 1, 10, 9)}>
           <AreaRect hint={'Visual Component'} area={vs.componentCells} px={vs.component} key={`render-${counter}`}
             className={css.component} style={place(2, 2, 9, 9)}>
-            <AreaRect hint={'Rendered Data'} area={vs.fetchCells} px={vs.fetch} outer={vs.component} key={`dataport-${counter}`}
+            <AreaRect hint={'Buffer'} area={vs.bufferCells} px={vs.buffer} outer={vs.component} key={`dataport-${counter}`}
               className={css.dataArea} style={place(2, 2, 9, 9)}>
               <AreaRect hint={'Viewport'} area={vs.viewportCells} px={vs.viewport} key={`viewport-${counter}`}
                 className={css.viewport} style={place(3, 3, 8, 8)}>
@@ -67,7 +67,7 @@ function AreaRect(p: {
       <div className={cx(css.area, p.className)} style={p.style}>
         {p.outer && (
           <div className={css.areaOuter} style={place(2, 2, 9, 2)}>
-            {num(p.px.y - p.outer.y)} px
+            <i>Gap: {num(p.px.y - p.outer.y)} px</i>
           </div>
         )}
         <div className={css.areaHint} style={place(2, 3, 9, 3)}>
