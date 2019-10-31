@@ -101,12 +101,15 @@ export class VirtualScroll extends State {
   }
 
   get bufferCells(): Area {
-    return this.buffer.zoomAt(Area.ZERO, this.pixelToCellRatio)
+    // return this.buffer.zoomAt(Area.ZERO, this.pixelToCellRatio)
+    const vp = this.viewportCells
+    return vp.zoomAt(vp.center, this.bufferingFactor).round().truncateBy(this.allCells)
   }
 
   get buffer(): Area {
-    const vp = this.viewport
-    return vp.zoomAt(vp.center, this.bufferingFactor).truncateBy(this.all)
+    // const vp = this.viewport
+    // return vp.zoomAt(vp.center, this.bufferingFactor).truncateBy(this.all)
+    return this.bufferCells.zoomAt(Area.ZERO, this.cellToPixelRatio)
   }
 
   get gap(): XY {
@@ -142,8 +145,6 @@ export class VirtualScroll extends State {
         Math.abs(dx) < 2 * vp.size.x ? vp.x + dx : Math.ceil(x * c2a.x),
         Math.abs(dy) < 2 * vp.size.y ? vp.y + dy : Math.ceil(y * c2a.y))
       const vp2 = vp.moveTo(pos, this.all)
-      if (vp2.y % 1 !== 0)
-        console.log('(!)')
       if (!vp2.equalTo(vp)) {
         this.viewport = vp2
         const v2c = this.viewportToComponentRatio
