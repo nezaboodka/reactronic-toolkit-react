@@ -54,6 +54,8 @@ export class VirtualScroll extends State {
     }
   }
 
+  // Ratios
+
   get cellToPixelRatio(): XY {
     const ppr = this.pixelsPerCell
     return xy(ppr * this.sizing.defaultCellWidthFactor, ppr)
@@ -63,6 +65,32 @@ export class VirtualScroll extends State {
     const g2p = this.cellToPixelRatio
     return xy(1 / g2p.x, 1 / g2p.y)
   }
+
+  get viewportToComponentRatio(): XY {
+    const comp = this.component.size
+    const vp = this.viewport.size
+    return xy(comp.x / (vp.x - 1), comp.y / (vp.y - 1))
+  }
+
+  get componentToViewportRatio(): XY {
+    const v2c = this.viewportToComponentRatio
+    return xy(1 / v2c.x, 1 / v2c.y)
+  }
+
+  get componentToAllRatio(): XY {
+    const all = this.all.size
+    const vp = this.viewport.size
+    const comp = this.component.size
+    return xy(all.x / (comp.x - vp.x), all.y / (comp.y - vp.y))
+  }
+
+  get viewportToAllRatio(): XY {
+    const all = this.all.size
+    const vp = this.viewport.size
+    return xy(all.x / (vp.x - 1), all.x / (vp.y - 1))
+  }
+
+  // Areas
 
   get all(): Area {
     return this.allCells.zoomAt(Area.ZERO, this.cellToPixelRatio)
@@ -91,33 +119,11 @@ export class VirtualScroll extends State {
     return this.component.zoomAt(Area.ZERO, this.pixelToCellRatio)
   }
 
-  get viewportToComponentRatio(): XY {
-    const comp = this.component.size
-    const vp = this.viewport.size
-    return xy(comp.x / (vp.x - 1), comp.y / (vp.y - 1))
-  }
-
-  get componentToViewportRatio(): XY {
-    const v2c = this.viewportToComponentRatio
-    return xy(1 / v2c.x, 1 / v2c.y)
-  }
-
-  get componentToAllRatio(): XY {
-    const all = this.all.size
-    const vp = this.viewport.size
-    const comp = this.component.size
-    return xy(all.x / (comp.x - vp.x), all.y / (comp.y - vp.y))
-  }
-
-  get viewportToAllRatio(): XY {
-    const all = this.all.size
-    const vp = this.viewport.size
-    return xy(all.x / (vp.x - 1), all.x / (vp.y - 1))
-  }
-
   @cached bufferCellsWorkaround(): Area {
     return this.bufferCells
   }
+
+  // Actions
 
   @action
   scrollBy(delta: XY): void {
@@ -138,10 +144,10 @@ export class VirtualScroll extends State {
       const vpx2 = vpx.moveTo(pos, this.all)
       if (!vpx2.equalTo(vpx)) {
         this.viewport = vpx2
-        // const cps = this.componentPixelPerScrollPixel
+        // const v2c = this.viewportToComponentRatio
         // const gap = this.gap
-        // if (gap.y < 0 || gap.y > cps.y / 2 || gap.x < 0 || gap.x > cps.x / 2) {
-        //   const cpx2 = cpx.moveBy(this.gap, this.grid)
+        // if (gap.y < 0 || gap.y > v2c.y / 2 || gap.x < 0 || gap.x > v2c.x / 2) {
+        //   const cpx2 = cpx.moveBy(this.gap, this.all)
         //   if (!cpx2.equalTo(cpx)) {
         //     console.log(`cpx: ${cpx2.x}, ${cpx2.y}`)
         //     this.component = cpx2
