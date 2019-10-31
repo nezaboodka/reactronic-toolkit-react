@@ -18,11 +18,11 @@ export function AppWindow(p: {db: Database, vs: VirtualScroll}): JSX.Element {
       const fs = window.getComputedStyle(component).fontSize
       pxPerRow = parseFloat(fs.substr(0, fs.length - 2))
     }
-    p.vs.setComponent(component, pxPerRow)
+    p.vs.setComponentDevice(component, pxPerRow)
   }, [])
   return reactive(() => {
     const css = style.classes
-    const d = p.vs.componentDevice
+    const d = p.vs.device
     return (
       <div className={css.window}>
         <div onScroll={e => p.vs.onScroll(e.currentTarget.scrollLeft, e.currentTarget.scrollTop)}
@@ -48,7 +48,7 @@ function Data(p: {db: Database, vs: VirtualScroll}): JSX.Element {
     const css = style.classes
     const size = p.vs.component.size
     const padding = p.vs.gap
-    const d = resolved(p.db.data, [p.vs.cachedPreloadArea()]) || []
+    const d = resolved(p.db.data, [p.vs.bufferCellsWorkaround()]) || []
     return (
       <div className={css.content} key={'data'}
         title={`${num(size.x)}, ${num(size.y)}`}

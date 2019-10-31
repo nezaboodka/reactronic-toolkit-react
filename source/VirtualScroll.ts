@@ -10,12 +10,12 @@ export const BROWSER_PIXEL_LIMIT: Area = area(0, 0, 1000008, 1000008)
 export type GridLine = { index: number, coord: number }
 
 export class Sizing {
-  defaultColumnWidth: number = 4 // measured in cell height ('em')
-  customColumnWidths: GridLine[] = [] // in pixels?
-  customRowHeights: GridLine[] = [] // in pixels?
+  defaultCellWidthFactor: number = 4 // measured in cell height ('em')
+  customCellWidth: GridLine[] = [] // in pixels?
+  customCellHeight: GridLine[] = [] // in pixels?
 }
 
-export type IComponentDevice = {
+export type IDevice = {
   readonly clientWidth: number
   readonly clientHeight: number
   readonly scrollWidth: number
@@ -27,11 +27,11 @@ export type IComponentDevice = {
 export class VirtualScroll extends State {
   allCells: Area
   sizing = new Sizing()
-  componentDevice: IComponentDevice | null | undefined = undefined
+  device: IDevice | null | undefined = undefined
   component: Area = Area.ZERO
-  pixelsPerRow: number = 1
+  pixelsPerCell: number = 1
   viewport: Area = Area.ZERO
-  bufferingFactor: XY = xy(1.0, 2.0) // relative to view area
+  bufferingFactor: XY = xy(1.0, 2.0) // from viewport
 
   constructor(sizeX: number, sizeY: number) {
     super()
@@ -39,28 +39,28 @@ export class VirtualScroll extends State {
   }
 
   @action
-  setComponent(component: IComponentDevice | null, pxPerRow: number): void {
-    if (component) {
-      this.componentDevice = component
-      this.pixelsPerRow = pxPerRow
+  setComponentDevice(device: IDevice | null, pxPerCell: number): void {
+    if (device) {
+      this.device = device
+      this.pixelsPerCell = pxPerCell
       this.component = this.all.truncateBy(BROWSER_PIXEL_LIMIT)
-      this.viewport = new Area(0, 0, component.clientWidth, component.clientHeight)
+      this.viewport = new Area(0, 0, device.clientWidth, device.clientHeight)
     }
     else {
       this.viewport = Area.ZERO
       this.component = Area.ZERO
-      this.pixelsPerRow = 1
-      this.componentDevice = undefined
+      this.pixelsPerCell = 1
+      this.device = undefined
     }
   }
 
-  get rowToPixelRatio(): XY {
-    const ppr = this.pixelsPerRow
-    return xy(ppr * this.sizing.defaultColumnWidth, ppr)
+  get cellToPixelRatio(): XY {
+    const ppr = this.pixelsPerCell
+    return xy(ppr * this.sizing.defaultCellWidthFactor, ppr)
   }
 
-  get pixelToRowRatio(): XY {
-    const g2p = this.rowToPixelRatio
+  get pixelToCellRatio(): XY {
+    const g2p = this.cellToPixelRatio
     return xy(1 / g2p.x, 1 / g2p.y)
   }
 
@@ -71,11 +71,11 @@ export class VirtualScroll extends State {
   }
 
   get all(): Area {
-    return this.allCells.zoomAt(Area.ZERO, this.rowToPixelRatio)
+    return this.allCells.zoomAt(Area.ZERO, this.cellToPixelRatio)
   }
 
   get viewportCells(): Area {
-    return this.viewport.zoomAt(Area.ZERO, this.pixelToRowRatio)
+    return this.viewport.zoomAt(Area.ZERO, this.pixelToCellRatio)
   }
 
   get bufferCells(): Area {
@@ -84,7 +84,7 @@ export class VirtualScroll extends State {
   }
 
   get buffer(): Area {
-    return this.bufferCells.zoomAt(Area.ZERO, this.rowToPixelRatio)
+    return this.bufferCells.zoomAt(Area.ZERO, this.cellToPixelRatio)
   }
 
   get gap(): XY {
@@ -94,22 +94,22 @@ export class VirtualScroll extends State {
   }
 
   get componentCells(): Area {
-    return this.component.zoomAt(Area.ZERO, this.pixelToRowRatio)
+    return this.component.zoomAt(Area.ZERO, this.pixelToCellRatio)
   }
 
   get componentPixelPerScrollPixel(): XY {
-    const component = this.component.size
-    const scrollbar = this.viewport.size
-    return xy(component.x / scrollbar.x, component.y / scrollbar.y)
+    const c = this.component.size
+    const sb = this.viewport.size
+    return xy(c.x / sb.x, c.y / sb.y)
   }
 
   get allPixelPerScrollPixel(): XY {
-    const size = this.all.size
-    const scrollbar = this.viewport.size
-    return xy(size.x / scrollbar.x, size.x / scrollbar.y)
+    const a = this.all.size
+    const sb = this.viewport.size
+    return xy(a.x / sb.x, a.x / sb.y)
   }
 
-  @cached cachedPreloadArea(): Area {
+  @cached bufferCellsWorkaround(): Area {
     return this.bufferCells
   }
 

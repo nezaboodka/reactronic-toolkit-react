@@ -17,7 +17,7 @@ export function ScrollVisualizer(p: {scroll: VirtualScroll}): JSX.Element {
       <div className={css.main}>
         <AreaRect hint={'All Data'} area={vs.allCells} px={vs.all} key={`grid-${counter}`}
           className={css.database} style={place(1, 1, 10, 9)}>
-          <AreaRect hint={'Visual Component'} area={vs.componentCells} px={vs.component} key={`render-${counter}`}
+          <AreaRect hint={'Scroll Box'} area={vs.componentCells} px={vs.component} key={`render-${counter}`}
             className={css.component} style={place(2, 2, 9, 9)}>
             <AreaRect hint={'Data Buffer'} area={vs.bufferCells} px={vs.buffer} outer={vs.component} key={`dataport-${counter}`}
               className={css.dataArea} style={place(2, 2, 9, 9)}>
@@ -30,20 +30,20 @@ export function ScrollVisualizer(p: {scroll: VirtualScroll}): JSX.Element {
         </AreaRect>
         <AreaRect hint={'Device'} area={vs.componentCells} px={vs.component} key={`device-${counter}`}
           className={css.component} style={place(1, 10, 10, 10)}>
-          {vs.componentDevice ? (
+          {vs.device ? (
             <div>
               <br/>
               <div>Scroll:
-                x = {num(vs.componentDevice.scrollLeft)}/{num(vs.componentDevice.scrollWidth)},
-                y = {num(vs.componentDevice.scrollTop)}/{num(vs.componentDevice.scrollHeight)},
-                px = {num(Math.ceil(vs.componentDevice.scrollLeft / vs.componentPixelPerScrollPixel.x))},
-                py = {num(Math.ceil(vs.componentDevice.scrollTop / vs.componentPixelPerScrollPixel.y))}
+                x = {num(vs.device.scrollLeft)}/{num(vs.device.scrollWidth)},
+                y = {num(vs.device.scrollTop)}/{num(vs.device.scrollHeight)},
+                px = {num(Math.ceil(vs.device.scrollLeft / vs.componentPixelPerScrollPixel.x))},
+                py = {num(Math.ceil(vs.device.scrollTop / vs.componentPixelPerScrollPixel.y))}
               </div>
-              <div>Font Size: {vs.pixelsPerRow}</div>
+              <div>Font Size: {vs.pixelsPerCell}</div>
               <div>{num(vs.componentPixelPerScrollPixel.y)} <i>device pixels in a single scrollbar pixel out of</i> {num(vs.viewport.size.y)}</div>
               <div>{num(vs.all.size.y / vs.component.size.y)} <i>grid pixels in a single device pixel out of</i> {num(vs.component.size.y)}</div>
-              <div>{num(vs.all.size.y / vs.componentDevice.clientHeight)} <i>grid pixels in a single scrollbar pixel out of</i> {num(vs.viewport.size.y)}</div>
-              <div>{num(vs.all.size.y / vs.componentDevice.clientHeight / vs.pixelsPerRow)} <i>grid cells in a single scrollbar pixel out of</i> {num(vs.viewport.size.y)}</div>
+              <div>{num(vs.all.size.y / vs.device.clientHeight)} <i>grid pixels in a single scrollbar pixel out of</i> {num(vs.viewport.size.y)}</div>
+              <div>{num(vs.all.size.y / vs.device.clientHeight / vs.pixelsPerCell)} <i>grid cells in a single scrollbar pixel out of</i> {num(vs.viewport.size.y)}</div>
               <br/>
             </div>
           ) : <div/>}
