@@ -17,9 +17,9 @@ export function ScrollVisualizer(p: {scroll: VirtualScroll}): JSX.Element {
       <div className={css.main}>
         <AreaRect hint={'All Data'} area={vs.allCells} px={vs.all} key={`grid-${counter}`}
           className={css.database} style={place(1, 1, 10, 9)}>
-          <AreaRect hint={'Scroll Box'} area={vs.componentCells} px={vs.component} key={`render-${counter}`}
+          <AreaRect hint={'Scroll Box'} area={vs.componentCells} px={vs.component} inner={vs.buffer} key={`render-${counter}`}
             className={css.component} style={place(2, 2, 9, 9)}>
-            <AreaRect hint={'Data Buffer'} area={vs.bufferCells} px={vs.buffer} outer={vs.component} key={`dataport-${counter}`}
+            <AreaRect hint={'Data Buffer'} area={vs.bufferCells} px={vs.buffer} key={`dataport-${counter}`}
               className={css.dataArea} style={place(2, 2, 9, 9)}>
               <AreaRect hint={'Viewport'} area={vs.viewportCells} px={vs.viewport} key={`viewport-${counter}`}
                 className={css.viewport} style={place(3, 3, 8, 8)}>
@@ -57,7 +57,7 @@ function AreaRect(p: {
   hint: string,
   area: Area,
   px: Area,
-  outer?: Area,
+  inner?: Area,
   className?: string,
   style?: React.CSSProperties,
   children?: JSX.Element}): JSX.Element {
@@ -65,16 +65,11 @@ function AreaRect(p: {
     const css = style.classes
     return (
       <div className={cx(css.area, p.className)} style={p.style}>
-        {p.outer && (
-          <div className={css.areaOuter} style={place(2, 2, 9, 2)}>
-            <i>Gap: {num(p.px.y - p.outer.y)} px</i>
-          </div>
-        )}
-        <div className={css.areaHint} style={place(2, 3, 9, 3)}>
+        <div className={css.areaHint} style={place(2, 2, 9, 2)}>
           {p.hint}: {num(p.area.size.y, -3)} rows<br/>
           <i>↕ {num(p.px.size.y, 0)} px</i>
         </div>
-        <div className={css.areaFrom} style={place(5, 3, 9, 3)}>
+        <div className={css.areaFrom} style={place(5, 2, 9, 2)}>
           {num(p.area.from.y, 3)}<br/>
           <i>{num(p.px.from.y, 0)} px</i>
         </div>
@@ -82,6 +77,11 @@ function AreaRect(p: {
           <i>{num(p.px.till.y, 0)} px</i><br/>
           {num(p.area.till.y, 3)}
         </div>
+        {p.inner && (
+          <div className={css.areaOuter} style={place(2, 3, 9, 3)}>
+            <i>Gap: {num(p.inner.y - p.px.y)} px</i>
+          </div>
+        )}
         <div className={css.areaCenter} style={place(5, 5, 6, 6)}>{p.children}</div>
       </div>
     )
