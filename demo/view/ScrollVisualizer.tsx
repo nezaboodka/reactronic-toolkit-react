@@ -33,14 +33,14 @@ export function ScrollVisualizer(p: {scroll: VirtualScroll}): JSX.Element {
           {vs.device ? (
             <div>
               <br/>
-              <div>Scroll:
-                x = {num(vs.device.scrollLeft)}/{num(vs.device.scrollWidth)},
-                y = {num(vs.device.scrollTop)}/{num(vs.device.scrollHeight)},
-                px = {num(Math.ceil(vs.device.scrollLeft / vs.componentPixelPerScrollPixel.x))},
-                py = {num(Math.ceil(vs.device.scrollTop / vs.componentPixelPerScrollPixel.y))}
+              <div>
+                ScrollTop: {num(vs.device.scrollTop)}/{num(vs.device.scrollHeight)},
+              </div>
+              <div>
+                ScrollBarPixel = {num(Math.ceil(vs.device.scrollTop * vs.componentToViewportRatio.y))}
               </div>
               <div>Font Size: {vs.pixelsPerCell}</div>
-              <div>{num(vs.componentPixelPerScrollPixel.y)} <i>device pixels in a single scrollbar pixel out of</i> {num(vs.viewport.size.y)}</div>
+              <div>{num(vs.viewportToComponentRatio.y)} <i>device pixels in a single scrollbar pixel out of</i> {num(vs.viewport.size.y)}</div>
               <div>{num(vs.all.size.y / vs.component.size.y)} <i>grid pixels in a single device pixel out of</i> {num(vs.component.size.y)}</div>
               <div>{num(vs.all.size.y / vs.device.clientHeight)} <i>grid pixels in a single scrollbar pixel out of</i> {num(vs.viewport.size.y)}</div>
               <div>{num(vs.all.size.y / vs.device.clientHeight / vs.pixelsPerCell)} <i>grid cells in a single scrollbar pixel out of</i> {num(vs.viewport.size.y)}</div>

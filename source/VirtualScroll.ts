@@ -64,12 +64,6 @@ export class VirtualScroll extends State {
     return xy(1 / g2p.x, 1 / g2p.y)
   }
 
-  get componentToAllRatio(): XY {
-    return xy(
-      this.all.size.x / this.component.size.x,
-      this.all.size.y / this.component.size.y)
-  }
-
   get all(): Area {
     return this.allCells.zoomAt(Area.ZERO, this.cellToPixelRatio)
   }
@@ -97,16 +91,28 @@ export class VirtualScroll extends State {
     return this.component.zoomAt(Area.ZERO, this.pixelToCellRatio)
   }
 
-  get componentPixelPerScrollPixel(): XY {
-    const c = this.component.size
-    const sb = this.viewport.size
-    return xy(c.x / sb.x, c.y / sb.y)
+  get viewportToComponentRatio(): XY {
+    const comp = this.component.size
+    const vp = this.viewport.size
+    return xy(comp.x / (vp.x - 1), comp.y / (vp.y - 1))
   }
 
-  get allPixelPerScrollPixel(): XY {
-    const a = this.all.size
-    const sb = this.viewport.size
-    return xy(a.x / sb.x, a.x / sb.y)
+  get componentToViewportRatio(): XY {
+    const v2c = this.viewportToComponentRatio
+    return xy(1 / v2c.x, 1 / v2c.y)
+  }
+
+  get componentToAllRatio(): XY {
+    const all = this.all.size
+    const vp = this.viewport.size
+    const comp = this.component.size
+    return xy(all.x / (comp.x - vp.x), all.y / (comp.y - vp.y))
+  }
+
+  get viewportToAllRatio(): XY {
+    const all = this.all.size
+    const vp = this.viewport.size
+    return xy(all.x / (vp.x - 1), all.x / (vp.y - 1))
   }
 
   @cached bufferCellsWorkaround(): Area {
