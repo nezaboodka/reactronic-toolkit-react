@@ -34,16 +34,16 @@ export function ScrollVisualizer(p: {scroll: VirtualScroll}): JSX.Element {
             <div>
               <br/>
               <div>
-                ScrollTop: {num(vs.device.scrollTop)}/{num(vs.device.scrollHeight)},
+                ScrollTop: {num(vs.device.scrollTop, -1)}/{num(vs.device.scrollHeight, -1)},
               </div>
               <div>
-                ScrollBarPixel = {num(Math.ceil(vs.device.scrollTop * vs.componentToViewportRatio.y))}
+                ScrollBarPixel = {num(Math.ceil(vs.device.scrollTop * vs.componentToViewportRatio.y), -1)}
               </div>
               <div>Font Size: {vs.pixelsPerCell}</div>
-              <div>{num(vs.viewportToComponentRatio.y)} <i>device pixels in a single scrollbar pixel out of</i> {num(vs.viewport.size.y)}</div>
-              <div>{num(vs.all.size.y / vs.component.size.y)} <i>grid pixels in a single device pixel out of</i> {num(vs.component.size.y)}</div>
-              <div>{num(vs.all.size.y / vs.device.clientHeight)} <i>grid pixels in a single scrollbar pixel out of</i> {num(vs.viewport.size.y)}</div>
-              <div>{num(vs.all.size.y / vs.device.clientHeight / vs.pixelsPerCell)} <i>grid cells in a single scrollbar pixel out of</i> {num(vs.viewport.size.y)}</div>
+              <div>{num(vs.viewportToComponentRatio.y, -1)} <i>device pixels in a single scrollbar pixel out of</i> {num(vs.viewport.size.y)}</div>
+              <div>{num(vs.all.size.y / vs.component.size.y, -1)} <i>grid pixels in a single device pixel out of</i> {num(vs.component.size.y)}</div>
+              <div>{num(vs.all.size.y / vs.device.clientHeight, -1)} <i>grid pixels in a single scrollbar pixel out of</i> {num(vs.viewport.size.y)}</div>
+              <div>{num(vs.all.size.y / vs.device.clientHeight / vs.pixelsPerCell, -3)} <i>grid cells in a single scrollbar pixel out of</i> {num(vs.viewport.size.y)}</div>
               <br/>
             </div>
           ) : <div/>}
@@ -67,19 +67,19 @@ function AreaRect(p: {
       <div className={cx(css.area, p.className)} style={p.style}>
         <div className={css.areaHint} style={place(2, 2, 9, 2)}>
           {p.hint}: {num(p.area.size.y, -3)} rows<br/>
-          <i>↕ {num(p.px.size.y, 0)} px</i>
+          <i>↕ {num(p.px.size.y, -1)} px</i>
         </div>
         <div className={css.areaFrom} style={place(5, 2, 9, 2)}>
           {num(p.area.from.y, 3)}<br/>
-          <i>{num(p.px.from.y, 0)} px</i>
+          <i>{num(p.px.from.y, -1)} px</i>
         </div>
         <div className={css.areaTill} style={place(5, 9, 9, 9)}>
-          <i>{num(p.px.till.y, 0)} px</i><br/>
+          <i>{num(p.px.till.y, -1)} px</i><br/>
           {num(p.area.till.y, 3)}
         </div>
         {p.inner && (
           <div className={css.areaOuter} style={place(2, 3, 9, 3)}>
-            <i>Gap: {num(p.inner.y - p.px.y)} px</i>
+            <i>Gap: {num(p.inner.y - p.px.y, -1)} px</i>
           </div>
         )}
         <div className={css.areaCenter} style={place(5, 5, 6, 6)}>{p.children}</div>
