@@ -106,7 +106,7 @@ export class VirtualScroll extends State {
 
   get buffer(): Area {
     const vp = this.viewport
-    return vp.zoomAt(vp, this.bufferingFactor).truncateBy(this.all)
+    return vp.zoomAt(vp.center, this.bufferingFactor).truncateBy(this.all)
   }
 
   get gap(): XY {
