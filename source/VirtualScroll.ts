@@ -31,7 +31,7 @@ export class VirtualScroll extends State {
   component: Area = Area.ZERO
   pixelsPerRow: number = 1
   viewport: Area = Area.ZERO
-  preloadRatio: XY = xy(1.0, 2.0) // relative to view area
+  bufferingFactor: XY = xy(1.0, 2.0) // relative to view area
 
   constructor(sizeX: number, sizeY: number) {
     super()
@@ -80,7 +80,7 @@ export class VirtualScroll extends State {
 
   get bufferCells(): Area {
     const vp = this.viewportCells
-    return vp.zoomAt(vp.center, this.preloadRatio).round().truncateBy(this.allCells)
+    return vp.zoomAt(vp.center, this.bufferingFactor).round().truncateBy(this.allCells)
   }
 
   get buffer(): Area {
