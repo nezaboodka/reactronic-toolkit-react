@@ -25,7 +25,7 @@ export type IComponentDevice = {
 }
 
 export class VirtualScroll extends State {
-  gridCells: Area
+  allCells: Area
   sizing = new Sizing()
   componentDevice: IComponentDevice | null | undefined = undefined
   component: Area = Area.ZERO
@@ -35,7 +35,7 @@ export class VirtualScroll extends State {
 
   constructor(sizeX: number, sizeY: number) {
     super()
-    this.gridCells = area(0, 0, sizeX, sizeY)
+    this.allCells = area(0, 0, sizeX, sizeY)
   }
 
   @action
@@ -43,7 +43,7 @@ export class VirtualScroll extends State {
     if (component) {
       this.componentDevice = component
       this.pixelsPerRow = pxPerRow
-      this.component = this.grid.truncateBy(BROWSER_PIXEL_LIMIT)
+      this.component = this.all.truncateBy(BROWSER_PIXEL_LIMIT)
       this.viewport = new Area(0, 0, component.clientWidth, component.clientHeight)
     }
     else {
@@ -54,37 +54,37 @@ export class VirtualScroll extends State {
     }
   }
 
-  get gridToPixelRatio(): XY {
+  get rowToPixelRatio(): XY {
     const ppr = this.pixelsPerRow
     return xy(ppr * this.sizing.defaultColumnWidth, ppr)
   }
 
-  get pixelToGridRatio(): XY {
-    const g2p = this.gridToPixelRatio
+  get pixelToRowRatio(): XY {
+    const g2p = this.rowToPixelRatio
     return xy(1 / g2p.x, 1 / g2p.y)
   }
 
-  get componentToGridRatio(): XY {
+  get componentToAllRatio(): XY {
     return xy(
-      this.grid.size.x / this.component.size.x,
-      this.grid.size.y / this.component.size.y)
+      this.all.size.x / this.component.size.x,
+      this.all.size.y / this.component.size.y)
   }
 
-  get grid(): Area {
-    return this.gridCells.zoomAt(Area.ZERO, this.gridToPixelRatio)
+  get all(): Area {
+    return this.allCells.zoomAt(Area.ZERO, this.rowToPixelRatio)
   }
 
   get viewportCells(): Area {
-    return this.viewport.zoomAt(Area.ZERO, this.pixelToGridRatio)
+    return this.viewport.zoomAt(Area.ZERO, this.pixelToRowRatio)
   }
 
   get bufferCells(): Area {
     const vp = this.viewportCells
-    return vp.zoomAt(vp.center, this.preloadRatio).round().truncateBy(this.gridCells)
+    return vp.zoomAt(vp.center, this.preloadRatio).round().truncateBy(this.allCells)
   }
 
   get buffer(): Area {
-    return this.bufferCells.zoomAt(Area.ZERO, this.gridToPixelRatio)
+    return this.bufferCells.zoomAt(Area.ZERO, this.rowToPixelRatio)
   }
 
   get gap(): XY {
@@ -94,7 +94,7 @@ export class VirtualScroll extends State {
   }
 
   get componentCells(): Area {
-    return this.component.zoomAt(Area.ZERO, this.pixelToGridRatio)
+    return this.component.zoomAt(Area.ZERO, this.pixelToRowRatio)
   }
 
   get componentPixelPerScrollPixel(): XY {
@@ -103,10 +103,10 @@ export class VirtualScroll extends State {
     return xy(component.x / scrollbar.x, component.y / scrollbar.y)
   }
 
-  get gridPixelPerScrollPixel(): XY {
-    const grid = this.grid.size
+  get allPixelPerScrollPixel(): XY {
+    const size = this.all.size
     const scrollbar = this.viewport.size
-    return xy(grid.x / scrollbar.x, grid.x / scrollbar.y)
+    return xy(size.x / scrollbar.x, size.x / scrollbar.y)
   }
 
   @cached cachedPreloadArea(): Area {
@@ -115,7 +115,7 @@ export class VirtualScroll extends State {
 
   @action
   scrollBy(delta: XY): void {
-    this.viewport = this.viewport.moveBy(delta, this.grid)
+    this.viewport = this.viewport.moveBy(delta, this.all)
   }
 
   @action
@@ -125,11 +125,11 @@ export class VirtualScroll extends State {
     const dx = cpx.x + x - vpx.x
     const dy = cpx.y + y - vpx.y
     if (dy !== 0 || dx !== 0) { // prevent recursion
-      const c2g = this.componentToGridRatio
+      const c2g = this.componentToAllRatio
       const pos = xy(
         Math.abs(dx) < 2 * vpx.size.x ? vpx.x + dx : Math.ceil(x * c2g.x),
         Math.abs(dy) < 2 * vpx.size.y ? vpx.y + dy : Math.ceil(y * c2g.y))
-      const vpx2 = vpx.moveTo(pos, this.grid)
+      const vpx2 = vpx.moveTo(pos, this.all)
       if (!vpx2.equalTo(vpx)) {
         this.viewport = vpx2
         // const cps = this.componentPixelPerScrollPixel
@@ -151,7 +151,7 @@ export class VirtualScroll extends State {
 
   @action
   zoomAt(origin: XY, factor: number): void {
-    origin = this.component.moveBy(origin, this.grid)
+    origin = this.component.moveBy(origin, this.all)
     this.viewport = this.viewport.zoomAt(origin, xy(factor, factor))
   }
 }
