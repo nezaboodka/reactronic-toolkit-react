@@ -87,7 +87,7 @@ export class VirtualScroll extends State {
   get viewportToAllRatio(): XY {
     const all = this.all.size
     const vp = this.viewport.size
-    return xy(all.x / (vp.x - 1), all.x / (vp.y - 1))
+    return xy(all.x / (vp.x - 1), all.y / (vp.y - 1))
   }
 
   // Areas
