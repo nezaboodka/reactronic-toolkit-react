@@ -149,7 +149,7 @@ export class VirtualScroll extends State {
         this.viewport = vp2
         const v2c = this.viewportToComponentRatio
         const gap = this.gap
-        if (gap.y < 0 || gap.y >= v2c.y || gap.x < 0 || gap.x >= v2c.x) {
+        if (gap.y < 0 || gap.y >= v2c.y / 4 * 3 || gap.x < 0 || gap.x >= v2c.x / 4 * 3) {
           const comp2 = comp.moveBy(this.gap, this.all)
           if (!comp2.equalTo(comp)) {
             console.log(`comp: ${comp2.x}, ${comp2.y}`)

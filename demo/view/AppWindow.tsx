@@ -34,6 +34,8 @@ export function AppWindow(p: {db: Database, vs: VirtualScroll}): JSX.Element {
             disabled={!d}>▼ 1px</button>
           <button onClick={e => d ? d.scrollTop -= 1 : {}}
             disabled={!d}>▲ 1px</button>
+          <button onClick={e => d ? d.scrollTop = 1100 : {}}
+            disabled={!d}>Jump</button>
         </div>
         <div className={css.visualizer} style={place(10, 3, 10, 5)}>
           <ScrollVisualizer scroll={p.vs}/>
