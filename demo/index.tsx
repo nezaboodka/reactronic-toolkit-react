@@ -13,7 +13,7 @@ import { AppWindow } from './view/AppWindow'
 RT.setTrace(TraceLevel.Off)
 RT.performanceWarningThreshold = 0 // disable
 
-const vs = Action.run('vs', () => new VirtualScroll(10000, 1000000000))
+const vs = Action.run('vs', () => new VirtualScroll(10000, 1000000000000))
 const db = Action.run('db', () => new Database())
 const root = document.getElementById('root')
 ReactDOM.render(<AppWindow key="app" db={db} vs={vs}/>, root)

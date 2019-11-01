@@ -40,10 +40,10 @@ export function ScrollVisualizer(p: {scroll: VirtualScroll}): JSX.Element {
                 ScrollBarPixel = {num(Math.ceil(vs.device.scrollTop * vs.componentToViewportRatio.y), -1)}
               </div>
               <div>Font Size: {vs.pixelsPerCell}</div>
-              <div>{num(vs.viewportToComponentRatio.y, -1)} <i>device pixels in a single scrollbar pixel out of</i> {num(vs.viewport.size.y)}</div>
-              <div>{num(vs.all.size.y / vs.component.size.y, -1)} <i>grid pixels in a single device pixel out of</i> {num(vs.component.size.y)}</div>
-              <div>{num(vs.all.size.y / vs.device.clientHeight, -1)} <i>grid pixels in a single scrollbar pixel out of</i> {num(vs.viewport.size.y)}</div>
-              <div>{num(vs.all.size.y / vs.device.clientHeight / vs.pixelsPerCell, -3)} <i>grid cells in a single scrollbar pixel out of</i> {num(vs.viewport.size.y)}</div>
+              <div>{num(vs.all.size.y / vs.component.size.y, -1)} <i>all data pixels in a single device pixel out of</i> {num(vs.component.size.y)}</div>
+              <div>{num(vs.viewportToComponentRatio.y, -1)} <i>device pixels in a single viewport pixel out of</i> {num(vs.viewport.size.y)}</div>
+              <div>{num(vs.viewportToAllRatio.y, -1)} <i>all data pixels in a single viewport pixel out of</i> {num(vs.viewport.size.y)}</div>
+              <div>{num(vs.viewportToAllRatio.y / vs.pixelsPerCell, -3)} <i>grid cells in a single viewport pixel out of</i> {num(vs.viewport.size.y)}</div>
               <br/>
             </div>
           ) : <div/>}
