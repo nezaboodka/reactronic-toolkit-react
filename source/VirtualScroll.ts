@@ -56,13 +56,13 @@ export class VirtualScroll extends State {
 
   // Ratios
 
-  get cellToPixelRatio(): XY {
+  get cellToAllRatio(): XY {
     const ppr = this.pixelsPerCell
     return xy(ppr * this.sizing.defaultCellWidthFactor, ppr)
   }
 
-  get pixelToCellRatio(): XY {
-    const g2p = this.cellToPixelRatio
+  get allToCellRatio(): XY {
+    const g2p = this.cellToAllRatio
     return xy(1 / g2p.x, 1 / g2p.y)
   }
 
@@ -84,20 +84,30 @@ export class VirtualScroll extends State {
     return xy(all.x / (comp.x - vp.x), all.y / (comp.y - vp.y))
   }
 
+  get allToComponentRatio(): XY {
+    const c2a = this.componentToAllRatio
+    return xy(1 / c2a.x, 1 / c2a.y)
+  }
+
   get viewportToAllRatio(): XY {
     const all = this.all.size
     const vp = this.viewport.size
     return xy(all.x / (vp.x - 1), all.y / (vp.y - 1))
   }
 
+  get allToViewportRatio(): XY {
+    const v2a = this.viewportToAllRatio
+    return xy(1 / v2a.x, 1 / v2a.y)
+  }
+
   // Areas
 
   get all(): Area {
-    return this.allCells.zoomAt(Area.ZERO, this.cellToPixelRatio)
+    return this.allCells.zoomAt(Area.ZERO, this.cellToAllRatio)
   }
 
   get viewportCells(): Area {
-    return this.viewport.zoomAt(Area.ZERO, this.pixelToCellRatio)
+    return this.viewport.zoomAt(Area.ZERO, this.allToCellRatio)
   }
 
   get bufferCells(): Area {
@@ -109,7 +119,7 @@ export class VirtualScroll extends State {
   get buffer(): Area {
     // const vp = this.viewport
     // return vp.zoomAt(vp.center, this.bufferingFactor).truncateBy(this.all)
-    return this.bufferCells.zoomAt(Area.ZERO, this.cellToPixelRatio)
+    return this.bufferCells.zoomAt(Area.ZERO, this.cellToAllRatio)
   }
 
   get gap(): XY {
@@ -119,7 +129,7 @@ export class VirtualScroll extends State {
   }
 
   get componentCells(): Area {
-    return this.component.zoomAt(Area.ZERO, this.pixelToCellRatio)
+    return this.component.zoomAt(Area.ZERO, this.allToCellRatio)
   }
 
   @cached bufferCellsWorkaround(): Area {
@@ -142,22 +152,23 @@ export class VirtualScroll extends State {
     if (dy !== 0 || dx !== 0) { // prevent recursion
       const c2a = this.componentToAllRatio
       const pos = xy(
-        Math.abs(dx) < 2 * vp.size.x ? vp.x + dx : Math.ceil(x * c2a.x),
-        Math.abs(dy) < 2 * vp.size.y ? vp.y + dy : Math.ceil(y * c2a.y))
+        Math.abs(dx) < vp.size.x ? vp.x + dx : Math.ceil(x * c2a.x),
+        Math.abs(dy) < vp.size.y ? vp.y + dy : Math.ceil(y * c2a.y))
       const vp2 = vp.moveTo(pos, this.all)
       if (!vp2.equalTo(vp)) {
         this.viewport = vp2
         const v2c = this.viewportToComponentRatio
-        const gap = this.gap
-        if (gap.y < 0 || gap.y >= v2c.y / 4 * 3 || gap.x < 0 || gap.x >= v2c.x / 4 * 3) {
-          const comp2 = comp.moveBy(this.gap, this.all)
+        const a2c = this.allToComponentRatio
+        const delta = xy(x - vp2.x * a2c.x, y - vp2.y * a2c.y)
+        if (delta.y < 0 || delta.y >= v2c.y || delta.x < 0 || delta.x >= v2c.x) {
+          const comp2 = comp.moveBy(delta, this.all)
           if (!comp2.equalTo(comp)) {
             console.log(`comp: ${comp2.x}, ${comp2.y}`)
-            this.component = comp2
-            if (this.device) {
-              this.device.scrollLeft = vp2.x - comp2.x
-              this.device.scrollTop = vp2.y - comp2.y
-            }
+            // this.component = comp2
+            // if (this.device) {
+            //   this.device.scrollLeft -= delta.x
+            //   this.device.scrollTop -= delta.y
+            // }
           }
         }
       }
