@@ -70,6 +70,10 @@ export class Area extends XY {
       this.size.y * factor.y)
   }
 
+  scaleBy(factor: XY): Area {
+    return this.zoomAt(Area.ZERO, factor)
+  }
+
   round(): Area {
     return area(
       Math.floor(this.x), Math.floor(this.y),

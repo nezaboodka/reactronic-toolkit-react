@@ -18,7 +18,7 @@ export function AppWindow(p: {db: Database, vs: VirtualScroll}): JSX.Element {
       const fs = window.getComputedStyle(component).fontSize
       pxPerRow = parseFloat(fs.substr(0, fs.length - 2))
     }
-    p.vs.setComponentDevice(component, pxPerRow)
+    p.vs.setDevice(component, pxPerRow)
   }, [])
   return reactive(() => {
     const css = style.classes
@@ -50,7 +50,7 @@ export function AppWindow(p: {db: Database, vs: VirtualScroll}): JSX.Element {
 function Data(p: {db: Database, vs: VirtualScroll}): JSX.Element {
   return reactive(() => {
     const css = style.classes
-    const size = p.vs.component.size
+    const size = p.vs.canvas.size
     const padding = p.vs.gap
     const d = resolved(p.db.data, [p.vs.bufferCellsWorkaround()]) || []
     return (

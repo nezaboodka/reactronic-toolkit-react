@@ -17,7 +17,7 @@ export function ScrollVisualizer(p: {scroll: VirtualScroll}): JSX.Element {
       <div className={css.main}>
         <AreaRect hint={'All Data'} area={vs.allCells} px={vs.all} key={`grid-${counter}`}
           className={css.database} style={place(1, 1, 10, 9)}>
-          <AreaRect hint={'Scroll Box'} area={vs.componentCells} px={vs.component} inner={vs.buffer} key={`render-${counter}`}
+          <AreaRect hint={'Scroll Box'} area={vs.canvasCells} px={vs.canvas} inner={vs.buffer} key={`render-${counter}`}
             className={css.component} style={place(2, 2, 9, 9)}>
             <AreaRect hint={'Data Buffer'} area={vs.bufferCells} px={vs.buffer} key={`dataport-${counter}`}
               className={css.dataArea} style={place(2, 2, 9, 9)}>
@@ -28,21 +28,21 @@ export function ScrollVisualizer(p: {scroll: VirtualScroll}): JSX.Element {
             </AreaRect>
           </AreaRect>
         </AreaRect>
-        <AreaRect hint={'Device'} area={vs.componentCells} px={vs.component} key={`device-${counter}`}
+        <AreaRect hint={'Device'} area={vs.canvasCells} px={vs.canvas} key={`device-${counter}`}
           className={css.component} style={place(1, 10, 10, 10)}>
           {vs.device ? (
             <div>
               <br/>
               <div>
-                ScrollTop: {num(vs.device.scrollTop, -1)}/{num(vs.device.scrollHeight, -1)},
+                ScrollTop: {num(vs.thumb.y, 1)}/{num(vs.canvas.size.y, 1)},
               </div>
               <div>
-                ScrollBarPixel = {num(vs.device.scrollTop * vs.componentToViewportFactor.y, -3)}
+                ScrollBarPixel = {num(vs.thumb.y * vs.canvasToViewportFactor.y, 3)}
               </div>
               <div>Font Size: {vs.pixelsPerCell}</div>
-              <div>{num(vs.all.size.y / vs.component.size.y, -1)} <i>all data pixels in a single device pixel out of</i> {num(vs.component.size.y)}</div>
-              <div>{num(vs.viewportToComponentFactor.y, -1)} <i>device pixels in a single viewport pixel out of</i> {num(vs.viewport.size.y)}</div>
-              <div>{num(vs.viewportToAllFactor.y, -1)} <i>all data pixels in a single viewport pixel out of</i> {num(vs.viewport.size.y)}</div>
+              <div>{num(vs.all.size.y / vs.canvas.size.y, 1)} <i>all data pixels in a single device pixel out of</i> {num(vs.canvas.size.y)}</div>
+              <div>{num(vs.viewportToCanvasFactor.y, 1)} <i>device pixels in a single viewport pixel out of</i> {num(vs.viewport.size.y)}</div>
+              <div>{num(vs.viewportToAllFactor.y, 1)} <i>all data pixels in a single viewport pixel out of</i> {num(vs.viewport.size.y)}</div>
               <div>{num(vs.viewportToAllFactor.y / vs.pixelsPerCell, -3)} <i>cells in a single viewport pixel out of</i> {num(vs.viewport.size.y)}</div>
               <br/>
             </div>
@@ -67,19 +67,19 @@ function AreaRect(p: {
       <div className={cx(css.area, p.className)} style={p.style}>
         <div className={css.areaHint} style={place(2, 2, 9, 2)}>
           {p.hint}: {num(p.area.size.y, -3)} rows<br/>
-          <i>↕ {num(p.px.size.y, -1)} px</i>
+          <i>↕ {num(p.px.size.y, 1)} px</i>
         </div>
         <div className={css.areaFrom} style={place(5, 2, 9, 2)}>
           {num(p.area.from.y, 3)}<br/>
-          <i>{num(p.px.from.y, -1)} px</i>
+          <i>{num(p.px.from.y, 1)} px</i>
         </div>
         <div className={css.areaTill} style={place(5, 9, 9, 9)}>
-          <i>{num(p.px.till.y, -1)} px</i><br/>
+          <i>{num(p.px.till.y, 1)} px</i><br/>
           {num(p.area.till.y, 3)}
         </div>
         {p.inner && (
           <div className={css.areaOuter} style={place(2, 3, 9, 3)}>
-            <i>Gap: {num(p.inner.y - p.px.y, -1)} px</i>
+            <i>Gap: {num(p.inner.y - p.px.y, 1)} px</i>
           </div>
         )}
         <div className={css.areaCenter} style={place(5, 5, 6, 6)}>{p.children}</div>
