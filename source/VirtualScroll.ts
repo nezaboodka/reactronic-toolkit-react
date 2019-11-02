@@ -29,10 +29,10 @@ export class VirtualScroll extends State {
   sizing = new Sizing()
   device: IDevice | null | undefined = undefined
   pixelsPerCell: number = 1
-  thumb: XY = xy(0, 0)
   canvas: Area = Area.ZERO
+  thumb: XY = xy(0, 0) // relative to canvas
   viewport: Area = Area.ZERO
-  bufferingFactor: XY = xy(1.0, 2.0) // from viewport
+  bufferingFactor: XY = xy(1.0, 2.0) // viewport-based
 
   constructor(sizeX: number, sizeY: number) {
     super()
@@ -68,9 +68,9 @@ export class VirtualScroll extends State {
   }
 
   get viewportToCanvasFactor(): XY {
-    const comp = this.canvas.size
+    const c = this.canvas.size
     const vp = this.viewport.size
-    return xy(comp.x / (vp.x - 1), comp.y / (vp.y - 1))
+    return xy(c.x / (vp.x - 1), c.y / (vp.y - 1))
   }
 
   get canvasToViewportFactor(): XY {
@@ -80,9 +80,9 @@ export class VirtualScroll extends State {
 
   get canvasToAllFactor(): XY {
     const all = this.all.size
-    const vp = this.viewport.size
-    const comp = this.canvas.size
-    return xy(all.x / (comp.x - vp.x), all.y / (comp.y - vp.y))
+    const v = this.viewport.size
+    const c = this.canvas.size
+    return xy(all.x / (c.x - v.x), all.y / (c.y - v.y))
   }
 
   get allToCanvasFactor(): XY {
@@ -92,8 +92,8 @@ export class VirtualScroll extends State {
 
   get viewportToAllFactor(): XY {
     const all = this.all.size
-    const vp = this.viewport.size
-    return xy(all.x / (vp.x - 1), all.y / (vp.y - 1))
+    const v = this.viewport.size
+    return xy(all.x / (v.x - 1), all.y / (v.y - 1))
   }
 
   get allToViewportFactor(): XY {
@@ -113,8 +113,8 @@ export class VirtualScroll extends State {
 
   get bufferCells(): Area {
     // return this.buffer.zoomAt(Area.ZERO, this.pixelToCellRatio)
-    const vp = this.viewportCells
-    return vp.zoomAt(vp.center, this.bufferingFactor).round().truncateBy(this.allCells)
+    const v = this.viewportCells
+    return v.zoomAt(v.center, this.bufferingFactor).round().truncateBy(this.allCells)
   }
 
   get buffer(): Area {
@@ -125,8 +125,8 @@ export class VirtualScroll extends State {
 
   get gap(): XY {
     const buf = this.buffer
-    const comp = this.canvas
-    return xy(buf.x - comp.x, buf.y - comp.y)
+    const c = this.canvas
+    return xy(buf.x - c.x, buf.y - c.y)
   }
 
   get canvasCells(): Area {
@@ -146,33 +146,45 @@ export class VirtualScroll extends State {
 
   @action
   onScroll(x: number, y: number): void {
-    const pos = this.thumb
-    if (pos.y !== y || pos.x !== x) {
+    const t = this.thumb
+    if (t.y !== y || t.x !== x) {
       this.thumb = xy(x, y)
-      const vp = this.viewport
-      const comp = this.canvas
+      const c = this.canvas
       const c2a = this.canvasToAllFactor
-      const vp2 = vp.moveTo(xy(
-        Math.abs(comp.x + x - vp.x) < vp.size.x ? comp.x + x : Math.ceil((comp.x + x) * c2a.x),
-        Math.abs(comp.y + y - vp.y) < vp.size.y ? comp.y + y : Math.ceil((comp.y + y) * c2a.y)), this.all)
-      if (!vp2.equalTo(vp)) // prevent recursion
-        this.viewport = vp2
+      const v = this.viewport
+      const v2 = v.moveTo(xy(
+        Math.abs(c.x + x - v.x) < v.size.x ? c.x + x : Math.ceil((c.x + x) * c2a.x),
+        Math.abs(c.y + y - v.y) < v.size.y ? c.y + y : Math.ceil((c.y + y) * c2a.y)), this.all)
+      if (!v2.equalTo(v)) // prevent recursion
+        this.viewport = v2
     }
   }
 
   @trigger
-  keepInSync(): void {
+  syncThumb(): void {
     const d = this.device
+    const t = this.thumb
     if (d) {
-      const comp = this.canvas
-      const vp = this.viewport
-      const pos = xy(vp.x - comp.x, vp.y - comp.y)
-      if (pos.y !== d.scrollTop || pos.x !== d.scrollLeft) {
-        // const bounds = this.viewportToCanvasFactor
-        console.log(`pos: ${num(pos.y, 15)}`)
-        console.log(`d.scrollTop: ${num(d.scrollTop, 15)}`)
-      }
+      if (t.x !== d.scrollLeft)
+        d.scrollLeft = t.x
+      if (t.y !== d.scrollTop)
+        d.scrollTop = t.y
     }
+  }
+
+  @trigger
+  rebaseCanvas(): void {
+    // const c = this.canvas
+    // const v = this.viewport
+
+    // const t2 = xy(v.x - c.x, v.y - c.y)
+    // if (t2.y !== t.y || t2.x !== t.x) {
+    //   // const bounds = this.viewportToCanvasFactor
+    //   console.log(`thumb: ${num(t.y, 15)}`)
+    //   console.log(`pos: ${num(t2.y, 15)}`)
+    //   d.scrollTop = t2.y
+    //   d.scrollLeft = t2.x
+    // }
     // // const v2c = this.viewportToCanvasFactor
     // // const actual = vp2.zoomAt(Area.ZERO, v2c)
     // const c2v = this.canvasToViewportFactor

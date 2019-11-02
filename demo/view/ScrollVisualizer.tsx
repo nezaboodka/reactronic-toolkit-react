@@ -17,9 +17,9 @@ export function ScrollVisualizer(p: {scroll: VirtualScroll}): JSX.Element {
       <div className={css.main}>
         <AreaRect hint={'All Data'} area={vs.allCells} px={vs.all} key={`grid-${counter}`}
           className={css.database} style={place(1, 1, 10, 9)}>
-          <AreaRect hint={'Scroll Box'} area={vs.canvasCells} px={vs.canvas} inner={vs.buffer} key={`render-${counter}`}
+          <AreaRect hint={'Canvas'} area={vs.canvasCells} px={vs.canvas} inner={vs.buffer} key={`render-${counter}`}
             className={css.component} style={place(2, 2, 9, 9)}>
-            <AreaRect hint={'Data Buffer'} area={vs.bufferCells} px={vs.buffer} key={`dataport-${counter}`}
+            <AreaRect hint={'Buffer'} area={vs.bufferCells} px={vs.buffer} key={`dataport-${counter}`}
               className={css.dataArea} style={place(2, 2, 9, 9)}>
               <AreaRect hint={'Viewport'} area={vs.viewportCells} px={vs.viewport} key={`viewport-${counter}`}
                 className={css.viewport} style={place(3, 3, 8, 8)}>
@@ -28,25 +28,23 @@ export function ScrollVisualizer(p: {scroll: VirtualScroll}): JSX.Element {
             </AreaRect>
           </AreaRect>
         </AreaRect>
-        <AreaRect hint={'Device'} area={vs.canvasCells} px={vs.canvas} key={`device-${counter}`}
+        <AreaRect hint={'Canvas'} area={vs.canvasCells} px={vs.canvas} key={`canvas-${counter}`}
           className={css.component} style={place(1, 10, 10, 10)}>
-          {vs.device ? (
+          <div>
+            <br/>
             <div>
-              <br/>
-              <div>
-                ScrollTop: {num(vs.thumb.y, 1)}/{num(vs.canvas.size.y, 1)},
-              </div>
-              <div>
-                ScrollBarPixel = {num(vs.thumb.y * vs.canvasToViewportFactor.y, 3)}
-              </div>
-              <div>Font Size: {vs.pixelsPerCell}</div>
-              <div>{num(vs.all.size.y / vs.canvas.size.y, 1)} <i>all data pixels in a single device pixel out of</i> {num(vs.canvas.size.y)}</div>
-              <div>{num(vs.viewportToCanvasFactor.y, 1)} <i>device pixels in a single viewport pixel out of</i> {num(vs.viewport.size.y)}</div>
-              <div>{num(vs.viewportToAllFactor.y, 1)} <i>all data pixels in a single viewport pixel out of</i> {num(vs.viewport.size.y)}</div>
-              <div>{num(vs.viewportToAllFactor.y / vs.pixelsPerCell, -3)} <i>cells in a single viewport pixel out of</i> {num(vs.viewport.size.y)}</div>
-              <br/>
+              Thumb/Canvas: {num(vs.thumb.y, 1)}/{num(vs.canvas.size.y, 1)},
             </div>
-          ) : <div/>}
+            <div>
+              Thumb Pixel = {num(vs.thumb.y * vs.canvasToViewportFactor.y, 3)}
+            </div>
+            <div>Font Size: {vs.pixelsPerCell}</div>
+            <div>{num(vs.all.size.y / vs.canvas.size.y, 1)} <i>all data pixels in a single canvas pixel out of</i> {num(vs.canvas.size.y)}</div>
+            <div>{num(vs.viewportToCanvasFactor.y, 1)} <i>canvas pixels in a single viewport pixel out of</i> {num(vs.viewport.size.y)}</div>
+            <div>{num(vs.viewportToAllFactor.y, 1)} <i>all data pixels in a single viewport pixel out of</i> {num(vs.viewport.size.y)}</div>
+            <div>{num(vs.viewportToAllFactor.y / vs.pixelsPerCell, -3)} <i>cells in a single viewport pixel out of</i> {num(vs.viewport.size.y)}</div>
+            <br/>
+          </div>
         </AreaRect>
       </div>
     )
