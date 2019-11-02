@@ -56,58 +56,58 @@ export class VirtualScroll extends State {
 
   // Ratios
 
-  get cellToAllRatio(): XY {
+  get cellToAllFactor(): XY {
     const ppr = this.pixelsPerCell
     return xy(ppr * this.sizing.defaultCellWidthFactor, ppr)
   }
 
-  get allToCellRatio(): XY {
-    const g2p = this.cellToAllRatio
+  get allToCellFactor(): XY {
+    const g2p = this.cellToAllFactor
     return xy(1 / g2p.x, 1 / g2p.y)
   }
 
-  get viewportToComponentRatio(): XY {
+  get viewportToComponentFactor(): XY {
     const comp = this.component.size
     const vp = this.viewport.size
     return xy(comp.x / (vp.x - 1), comp.y / (vp.y - 1))
   }
 
-  get componentToViewportRatio(): XY {
-    const v2c = this.viewportToComponentRatio
+  get componentToViewportFactor(): XY {
+    const v2c = this.viewportToComponentFactor
     return xy(1 / v2c.x, 1 / v2c.y)
   }
 
-  get componentToAllRatio(): XY {
+  get componentToAllFactor(): XY {
     const all = this.all.size
     const vp = this.viewport.size
     const comp = this.component.size
     return xy(all.x / (comp.x - vp.x), all.y / (comp.y - vp.y))
   }
 
-  get allToComponentRatio(): XY {
-    const c2a = this.componentToAllRatio
+  get allToComponentFactor(): XY {
+    const c2a = this.componentToAllFactor
     return xy(1 / c2a.x, 1 / c2a.y)
   }
 
-  get viewportToAllRatio(): XY {
+  get viewportToAllFactor(): XY {
     const all = this.all.size
     const vp = this.viewport.size
     return xy(all.x / (vp.x - 1), all.y / (vp.y - 1))
   }
 
-  get allToViewportRatio(): XY {
-    const v2a = this.viewportToAllRatio
+  get allToViewportFactor(): XY {
+    const v2a = this.viewportToAllFactor
     return xy(1 / v2a.x, 1 / v2a.y)
   }
 
   // Areas
 
   get all(): Area {
-    return this.allCells.zoomAt(Area.ZERO, this.cellToAllRatio)
+    return this.allCells.zoomAt(Area.ZERO, this.cellToAllFactor)
   }
 
   get viewportCells(): Area {
-    return this.viewport.zoomAt(Area.ZERO, this.allToCellRatio)
+    return this.viewport.zoomAt(Area.ZERO, this.allToCellFactor)
   }
 
   get bufferCells(): Area {
@@ -119,7 +119,7 @@ export class VirtualScroll extends State {
   get buffer(): Area {
     // const vp = this.viewport
     // return vp.zoomAt(vp.center, this.bufferingFactor).truncateBy(this.all)
-    return this.bufferCells.zoomAt(Area.ZERO, this.cellToAllRatio)
+    return this.bufferCells.zoomAt(Area.ZERO, this.cellToAllFactor)
   }
 
   get gap(): XY {
@@ -129,7 +129,7 @@ export class VirtualScroll extends State {
   }
 
   get componentCells(): Area {
-    return this.component.zoomAt(Area.ZERO, this.allToCellRatio)
+    return this.component.zoomAt(Area.ZERO, this.allToCellFactor)
   }
 
   @cached bufferCellsWorkaround(): Area {
@@ -150,25 +150,36 @@ export class VirtualScroll extends State {
     const dx = comp.x + x - vp.x
     const dy = comp.y + y - vp.y
     if (dy !== 0 || dx !== 0) { // prevent recursion
-      const c2a = this.componentToAllRatio
+      const c2a = this.componentToAllFactor
       const pos = xy(
         Math.abs(dx) < vp.size.x ? vp.x + dx : Math.ceil(x * c2a.x),
         Math.abs(dy) < vp.size.y ? vp.y + dy : Math.ceil(y * c2a.y))
       const vp2 = vp.moveTo(pos, this.all)
       if (!vp2.equalTo(vp)) {
         this.viewport = vp2
-        const v2c = this.viewportToComponentRatio
-        const a2c = this.allToComponentRatio
-        const delta = xy(x - vp2.x * a2c.x, y - vp2.y * a2c.y)
-        if (delta.y < 0 || delta.y >= v2c.y || delta.x < 0 || delta.x >= v2c.x) {
-          const comp2 = comp.moveBy(delta, this.all)
+        // const v2c = this.viewportToComponentFactor
+        // const actual = vp2.zoomAt(Area.ZERO, v2c)
+        const c2v = this.componentToViewportFactor
+        const a2v = this.allToViewportFactor
+        const sb1 = area(x, y, 0, 0).zoomAt(Area.ZERO, c2v)
+        const sb2 = area(x, y, 0, 0).zoomAt(Area.ZERO, a2v)
+        const cx = sb1.x - sb2.x
+        const cy = sb1.y - sb2.y
+        if (cy > 0.9 || cy < 0 || cx > 0.9 || cy < 0) {
+          const actual = vp2.zoomAt(Area.ZERO, a2v)
+          const shift = xy(x - actual.x, y - actual.y)
+          const comp2 = comp.moveBy(shift, this.all)
           if (!comp2.equalTo(comp)) {
-            console.log(`comp: ${comp2.x}, ${comp2.y}`)
-            // this.component = comp2
-            // if (this.device) {
-            //   this.device.scrollLeft -= delta.x
-            //   this.device.scrollTop -= delta.y
-            // }
+            console.log(`p: (${num(x)}, ${num(y)}) -> (${num(actual.x, 15)}, ${num(actual.y, 15)})`)
+            console.log(`c: (${num(sb1.x, 15)}, ${num(sb1.y, 15)})`)
+            console.log(`a: (${num(sb2.x, 15)}, ${num(sb2.y, 15)})`)
+            this.component = comp2
+            if (this.device) {
+              if (this.device.scrollLeft !== actual.x)
+                this.device.scrollLeft = actual.x
+              if (this.device.scrollTop !== actual.y)
+                this.device.scrollTop = actual.y
+            }
           }
         }
       }
@@ -183,7 +194,7 @@ export class VirtualScroll extends State {
 }
 
 export function dumpArea(a: Area, fr?: number): string {
-  return `${num(a.x, fr)}, ${num(a.y, fr)}, ${num(a.x + a.size.x - 1, fr)}, ${num(a.y + a.size.y - 1, fr)}`
+  return `x: ${num(a.x, fr)}, y: ${num(a.y, fr)}, w: ${num(a.x + a.size.x, fr)}, h: ${num(a.y + a.size.y, fr)}`
 }
 
 export function num(n: number, fr?: number): string {

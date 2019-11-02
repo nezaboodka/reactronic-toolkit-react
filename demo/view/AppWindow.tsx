@@ -31,11 +31,13 @@ export function AppWindow(p: {db: Database, vs: VirtualScroll}): JSX.Element {
         </div>
         <div className={css.toolbar} style={place(10, 2, 10, 2)}>
           <button onClick={e => d ? d.scrollTop += 1 : {}}
-            disabled={!d}>▼ 1px</button>
+            disabled={!d}>▼ 1 px</button>
           <button onClick={e => d ? d.scrollTop -= 1 : {}}
-            disabled={!d}>▲ 1px</button>
-          <button onClick={e => d ? d.scrollTop = 1100 : {}}
-            disabled={!d}>Jump</button>
+            disabled={!d}>▲ 1 px</button>
+          <button onClick={e => d ? d.scrollTop += 10000 : {}}
+            disabled={!d}>▼ 10K px</button>
+          <button onClick={e => d ? d.scrollTop -= 10000 : {}}
+            disabled={!d}>▲ 10K px</button>
         </div>
         <div className={css.visualizer} style={place(10, 3, 10, 5)}>
           <ScrollVisualizer scroll={p.vs}/>
