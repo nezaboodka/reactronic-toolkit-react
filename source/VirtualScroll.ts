@@ -31,6 +31,7 @@ export class VirtualScroll extends State {
   pixelsPerCell: number = 1
   canvas: Area = Area.ZERO
   canvasThumb: Area = Area.ZERO
+  // canvasThumbTimestamp: number = 0
   viewport: Area = Area.ZERO
   bufferingFactor: XY = xy(1.0, 2.0) // viewport-based
 
@@ -141,16 +142,17 @@ export class VirtualScroll extends State {
 
   @action
   handleDeviceScroll(x: number, y: number): void {
+    console.log(`scroll: ${y}`)
     const t = this.canvasThumb
     if (t.y !== y || t.x !== x) {
-      this.canvasThumb = t.moveTo(xy(x, y), this.canvas)
+      this.canvasThumb = t.moveTo(xy(x, y), this.canvas.moveTo(Area.ZERO, this.global))
       const canvas = this.canvas
       const p = xy(canvas.x + x, canvas.y + y)
       const v = this.viewport
       const c2a = this.canvasToGlobalFactor
       const v2 = v.moveTo(xy(
-        Math.abs(p.x - v.x) < v.size.x ? p.x : Math.ceil(p.x * c2a.x),
-        Math.abs(p.y - v.y) < v.size.y ? p.y : Math.ceil(p.y * c2a.y)), this.global)
+        Math.abs(p.x - v.x) < 2 * v.size.x ? p.x : Math.ceil(p.x * c2a.x),
+        Math.abs(p.y - v.y) < 2 * v.size.y ? p.y : Math.ceil(p.y * c2a.y)), this.global)
       if (!v2.equalTo(v)) // prevent recursion
         this.viewport = v2
     }
@@ -163,8 +165,10 @@ export class VirtualScroll extends State {
     if (d) {
       if (t.x !== d.scrollLeft)
         d.scrollLeft = t.x
-      if (t.y !== d.scrollTop)
+      if (t.y !== d.scrollTop) {
         d.scrollTop = t.y
+        console.log(`d.scrollTop = ${t.y}`)
+      }
     }
   }
 
@@ -174,7 +178,7 @@ export class VirtualScroll extends State {
     const ct = this.canvasThumb.scaleBy(this.canvasToViewportFactor)
     const gt = v.scaleBy(this.globalToViewportFactor)
     const delta = xy(ct.x - gt.x, ct.y - gt.y)
-    if (Math.abs(delta.y) >= 0.5 || Math.abs(delta.x) >= 0.5) {
+    if (delta.y >= 1.0 || delta.y < 0 || delta.x >= 1.0 || delta.x < 0) {
       const t1 = this.canvasThumb
       const t2 = v.scaleBy(this.globalToCanvasFactor).ceil()
       console.log(`canvas thumb pixel: ${num(ct.y, 15)} (${num(ct.size.y, 15)})`)
