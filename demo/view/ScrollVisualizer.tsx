@@ -15,7 +15,7 @@ export function ScrollVisualizer(p: {scroll: VirtualScroll}): JSX.Element {
     const vs = p.scroll
     return (
       <div className={css.main}>
-        <AreaRect hint={'All Data'} area={vs.allCells} px={vs.all} key={`grid-${counter}`}
+        <AreaRect hint={'All Data'} area={vs.globalCells} px={vs.global} key={`grid-${counter}`}
           className={css.database} style={place(1, 1, 10, 9)}>
           <AreaRect hint={'Canvas'} area={vs.canvasCells} px={vs.canvas} inner={vs.buffer} key={`render-${counter}`}
             className={css.component} style={place(2, 2, 9, 9)}>
@@ -39,10 +39,10 @@ export function ScrollVisualizer(p: {scroll: VirtualScroll}): JSX.Element {
               Thumb Pixel = {num(vs.thumb.y * vs.canvasToViewportFactor.y, 3)}
             </div>
             <div>Font Size: {vs.pixelsPerCell}</div>
-            <div>{num(vs.all.size.y / vs.canvas.size.y, 1)} <i>all data pixels in a single canvas pixel out of</i> {num(vs.canvas.size.y)}</div>
+            <div>{num(vs.global.size.y / vs.canvas.size.y, 1)} <i>all data pixels in a single canvas pixel out of</i> {num(vs.canvas.size.y)}</div>
             <div>{num(vs.viewportToCanvasFactor.y, 1)} <i>canvas pixels in a single viewport pixel out of</i> {num(vs.viewport.size.y)}</div>
-            <div>{num(vs.viewportToAllFactor.y, 1)} <i>all data pixels in a single viewport pixel out of</i> {num(vs.viewport.size.y)}</div>
-            <div>{num(vs.viewportToAllFactor.y / vs.pixelsPerCell, -3)} <i>cells in a single viewport pixel out of</i> {num(vs.viewport.size.y)}</div>
+            <div>{num(vs.viewportToGlobalFactor.y, 1)} <i>all data pixels in a single viewport pixel out of</i> {num(vs.viewport.size.y)}</div>
+            <div>{num(vs.viewportToGlobalFactor.y / vs.pixelsPerCell, -3)} <i>cells in a single viewport pixel out of</i> {num(vs.viewport.size.y)}</div>
             <br/>
           </div>
         </AreaRect>
