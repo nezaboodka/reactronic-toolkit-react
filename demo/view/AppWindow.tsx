@@ -4,7 +4,7 @@
 // License: https://raw.githubusercontent.com/nezaboodka/reactronic/master/LICENSE
 
 import * as React from 'react'
-import { resolved } from 'reactronic'
+import { getCachedResultAndRevalidate } from 'reactronic'
 import { reactive, VirtualScroll, num } from '../../source/index'
 import { place } from '../common'
 import { Database } from '../model/Database'
@@ -52,7 +52,7 @@ function Data(p: {db: Database, vs: VirtualScroll}): JSX.Element {
     const css = style.classes
     const size = p.vs.canvas.size
     const padding = p.vs.gap
-    const d = resolved(p.db.data, [p.vs.bufferCellsWorkaround()]) || []
+    const d = getCachedResultAndRevalidate(p.db.data, [p.vs.bufferCellsWorkaround()]) || []
     return (
       <div className={css.content} key={'data'}
         title={`${num(size.x)}, ${num(size.y)}`}
