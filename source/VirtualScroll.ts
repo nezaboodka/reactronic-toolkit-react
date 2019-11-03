@@ -30,7 +30,7 @@ export class VirtualScroll extends State {
   device: IDevice | null | undefined = undefined
   pixelsPerCell: number = 1
   canvas: Area = Area.ZERO
-  thumb: Area = Area.ZERO // relative to canvas
+  canvasThumb: Area = Area.ZERO
   viewport: Area = Area.ZERO
   bufferingFactor: XY = xy(1.0, 2.0) // viewport-based
 
@@ -45,19 +45,19 @@ export class VirtualScroll extends State {
       this.device = device
       this.pixelsPerCell = pxPerCell
       this.canvas = this.global.truncateBy(CANVAS_PIXEL_LIMIT)
-      this.thumb = new Area(0, 0, device.clientWidth, device.clientHeight)
+      this.canvasThumb = new Area(0, 0, device.clientWidth, device.clientHeight)
       this.viewport = new Area(0, 0, device.clientWidth, device.clientHeight)
     }
     else {
       this.viewport = Area.ZERO
-      this.thumb = Area.ZERO
+      this.canvasThumb = Area.ZERO
       this.canvas = Area.ZERO
       this.pixelsPerCell = 1
       this.device = undefined
     }
   }
 
-  // Ratios
+  // Factors
 
   get cellToGlobalFactor(): XY {
     const ppr = this.pixelsPerCell
@@ -103,20 +103,10 @@ export class VirtualScroll extends State {
     return xy(1 / v2a.x, 1 / v2a.y)
   }
 
-  // Areas
+  // Areas (pixels)
 
   get global(): Area {
     return this.grid.scaleBy(this.cellToGlobalFactor)
-  }
-
-  get viewportCells(): Area {
-    return this.viewport.scaleBy(this.globalToCellFactor)
-  }
-
-  get bufferCells(): Area {
-    // return this.buffer.zoomAt(Area.ZERO, this.pixelToCellRatio)
-    const v = this.viewportCells
-    return v.zoomAt(v.center, this.bufferingFactor).round().truncateBy(this.grid)
   }
 
   get buffer(): Area {
@@ -125,18 +115,26 @@ export class VirtualScroll extends State {
     return this.bufferCells.scaleBy(this.cellToGlobalFactor)
   }
 
-  get gap(): XY {
+  get gap(): XY { // between canvas and buffer
     const buf = this.buffer
     const c = this.canvas
     return xy(buf.x - c.x, buf.y - c.y)
   }
 
+  // Areas (cells)
+
   get canvasCells(): Area {
     return this.canvas.scaleBy(this.globalToCellFactor)
   }
 
-  @cached bufferCellsWorkaround(): Area {
-    return this.bufferCells
+  get bufferCells(): Area {
+    // return this.buffer.zoomAt(Area.ZERO, this.pixelToCellRatio)
+    const v = this.viewportCells
+    return v.zoomAt(v.center, this.bufferingFactor).round().truncateBy(this.grid)
+  }
+
+  get viewportCells(): Area {
+    return this.viewport.scaleBy(this.globalToCellFactor)
   }
 
   // Actions
@@ -148,9 +146,9 @@ export class VirtualScroll extends State {
 
   @action
   moveThumb(x: number, y: number): void {
-    const t = this.thumb
+    const t = this.canvasThumb
     if (t.y !== y || t.x !== x) {
-      this.thumb = t.moveTo(xy(x, y), this.canvas)
+      this.canvasThumb = t.moveTo(xy(x, y), this.canvas)
       const c = this.canvas
       const c2a = this.canvasToGlobalFactor
       const v = this.viewport
@@ -165,7 +163,7 @@ export class VirtualScroll extends State {
   @trigger
   syncThumbWithDeviceScrollPosition(): void {
     const d = this.device
-    const t = this.thumb
+    const t = this.canvasThumb
     if (d) {
       if (t.x !== d.scrollLeft)
         d.scrollLeft = t.x
@@ -176,7 +174,7 @@ export class VirtualScroll extends State {
 
   @trigger
   rebaseCanvas(): void {
-    const t = this.thumb
+    const t = this.canvasThumb
     const v = this.viewport
     const canvasThumb = t.scaleBy(this.canvasToViewportFactor)
     const globalThumb = v.scaleBy(this.globalToViewportFactor)
@@ -225,6 +223,12 @@ export class VirtualScroll extends State {
   zoomAt(origin: XY, factor: number): void {
     origin = this.canvas.moveBy(origin, this.global)
     this.viewport = this.viewport.zoomAt(origin, xy(factor, factor))
+  }
+
+  // Temporary
+
+  @cached bufferCellsWorkaround(): Area {
+    return this.bufferCells
   }
 }
 
