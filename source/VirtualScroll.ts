@@ -130,7 +130,7 @@ export class VirtualScroll extends State {
   get bufferCells(): Area {
     // return this.buffer.zoomAt(Area.ZERO, this.pixelToCellRatio)
     const v = this.viewportCells
-    return v.zoomAt(v.center, this.bufferingFactor).round().truncateBy(this.grid)
+    return v.zoomAt(v.center, this.bufferingFactor).floor().truncateBy(this.grid)
   }
 
   get viewportCells(): Area {
@@ -140,21 +140,17 @@ export class VirtualScroll extends State {
   // Actions
 
   @action
-  scrollBy(delta: XY): void {
-    this.viewport = this.viewport.moveBy(delta, this.global)
-  }
-
-  @action
-  moveThumb(x: number, y: number): void {
+  handleDeviceScroll(x: number, y: number): void {
     const t = this.canvasThumb
     if (t.y !== y || t.x !== x) {
       this.canvasThumb = t.moveTo(xy(x, y), this.canvas)
-      const c = this.canvas
-      const c2a = this.canvasToGlobalFactor
+      const canvas = this.canvas
+      const p = xy(canvas.x + x, canvas.y + y)
       const v = this.viewport
+      const c2a = this.canvasToGlobalFactor
       const v2 = v.moveTo(xy(
-        Math.abs(c.x + x - v.x) < v.size.x ? c.x + x : Math.ceil((c.x + x) * c2a.x),
-        Math.abs(c.y + y - v.y) < v.size.y ? c.y + y : Math.ceil((c.y + y) * c2a.y)), this.global)
+        Math.abs(p.x - v.x) < v.size.x ? p.x : Math.ceil(p.x * c2a.x),
+        Math.abs(p.y - v.y) < v.size.y ? p.y : Math.ceil(p.y * c2a.y)), this.global)
       if (!v2.equalTo(v)) // prevent recursion
         this.viewport = v2
     }
@@ -174,14 +170,21 @@ export class VirtualScroll extends State {
 
   @trigger
   rebaseCanvas(): void {
-    const t = this.canvasThumb
     const v = this.viewport
-    const canvasThumb = t.scaleBy(this.canvasToViewportFactor)
-    const globalThumb = v.scaleBy(this.globalToViewportFactor)
-    const delta = xy(canvasThumb.x - globalThumb.x, canvasThumb.y - globalThumb.y)
-    if (delta.y > 1.0 || delta.y < 0 || delta.x > 1.0 || delta.x < 0) {
-      console.log(`canvas thumb: ${num(canvasThumb.y, 15)}`)
-      console.log(`global thumb: ${num(globalThumb.y, 15)}\n`)
+    const ct = this.canvasThumb.scaleBy(this.canvasToViewportFactor)
+    const gt = v.scaleBy(this.globalToViewportFactor)
+    const delta = xy(ct.x - gt.x, ct.y - gt.y)
+    if (Math.abs(delta.y) >= 0.5 || Math.abs(delta.x) >= 0.5) {
+      const t1 = this.canvasThumb
+      const t2 = v.scaleBy(this.globalToCanvasFactor).ceil()
+      console.log(`canvas thumb pixel: ${num(ct.y, 15)} (${num(ct.size.y, 15)})`)
+      console.log(`global thumb pixel: ${num(gt.y, 15)} (${num(gt.size.y, 15)})`)
+      console.log(`          viewport: ${num(v.y, 15)} (${num(v.size.y, 15)})`)
+      console.log(`                t1: ${num(t1.y, 15)} (${num(t1.size.y, 15)})`)
+      console.log(`                t2: ${num(t2.y, 15)} (${num(t2.size.y, 15)})\n`)
+      const shift = xy(t1.x - t2.x, t1.y - t2.y)
+      this.canvasThumb = this.canvasThumb.moveTo(t2, this.global)
+      this.canvas = this.canvas.moveBy(shift, this.global)
     }
 
     // const t2 = xy(v.x - c.x, v.y - c.y)

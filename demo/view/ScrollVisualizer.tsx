@@ -33,10 +33,10 @@ export function ScrollVisualizer(p: {scroll: VirtualScroll}): JSX.Element {
           <div>
             <br/>
             <div>
-              Thumb/Canvas: {num(vs.canvasThumb.y, 1)}/{num(vs.canvas.size.y, 1)},
+              Thumb: {num(vs.canvasThumb.y, 1)} of {num(vs.canvas.size.y, 1)} canvas pixels,
             </div>
             <div>
-              Thumb Pixel = {num(vs.canvasThumb.y * vs.canvasToViewportFactor.y, 3)}
+              Thumb Pixel = {num(vs.canvasThumb.scaleBy(vs.canvasToViewportFactor).y, 3)}
             </div>
             <div>Font Size: {vs.pixelsPerCell}</div>
             <div>{num(vs.global.size.y / vs.canvas.size.y, 1)} <i>all data pixels in a single canvas pixel out of</i> {num(vs.canvas.size.y)}</div>

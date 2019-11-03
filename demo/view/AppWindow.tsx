@@ -25,7 +25,7 @@ export function AppWindow(p: {db: Database, vs: VirtualScroll}): JSX.Element {
     const d = p.vs.device
     return (
       <div className={css.window}>
-        <div onScroll={e => p.vs.moveThumb(e.currentTarget.scrollLeft, e.currentTarget.scrollTop)}
+        <div onScroll={e => p.vs.handleDeviceScroll(e.currentTarget.scrollLeft, e.currentTarget.scrollTop)}
           ref={ref} className={css.scroll} style={place(2, 2, 9, 9)}>
           <Data db={p.db} vs={p.vs}/>
         </div>

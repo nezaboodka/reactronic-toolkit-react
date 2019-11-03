@@ -74,10 +74,16 @@ export class Area extends XY {
     return this.zoomAt(Area.ZERO, factor)
   }
 
-  round(): Area {
+  floor(): Area {
     return area(
       Math.floor(this.x), Math.floor(this.y),
       Math.ceil(this.size.x), Math.ceil(this.size.y))
+  }
+
+  ceil(): Area {
+    return area(
+      Math.ceil(this.x), Math.ceil(this.y),
+      Math.floor(this.size.x), Math.floor(this.size.y))
   }
 
   truncateBy(bounds: Area): Area {
@@ -112,14 +118,24 @@ export class Area extends XY {
       this.size.x === a.size.x && this.size.y === a.size.y
   }
 
-  contains(p: XY): boolean {
-    return p.x >= this.x && p.x < this.x + this.size.x &&
-      p.y >= this.y && p.y < this.y + this.size.y
+  overlaps(a: Area): boolean {
+    return (
+      a.y >= this.y && a.y < this.y + this.size.y &&
+      a.x >= this.x && a.x < this.x + this.size.x) ||
+      (
+        a.y + a.size.y > this.y && a.y + a.size.y < this.y + this.size.y &&
+        a.x + a.size.x > this.x && a.x + a.size.x < this.x + this.size.x)
   }
 
-  isIntersectedWith(a: Area): boolean {
-    return this.contains(a) || this.contains(a.till)
+  envelops(a: Area): boolean {
+    return (
+      a.y >= this.y && a.y < this.y + this.size.y &&
+      a.x >= this.x && a.x < this.x + this.size.x) &&
+      (
+        a.y + a.size.y > this.y && a.y + a.size.y <= this.y + this.size.y &&
+        a.x + a.size.x > this.x && a.x + a.size.x <= this.x + this.size.x)
   }
+
 }
 
 export function xy(x: number, y: number): XY {
