@@ -161,7 +161,7 @@ export class VirtualScroll extends State {
   }
 
   @trigger
-  syncCanvasThumbWithViewport(): void {
+  syncCanvasThumbWithDevice(): void {
     const d = this.device
     const t = this.canvasThumb
     if (d) {
