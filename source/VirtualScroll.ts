@@ -6,7 +6,7 @@
 import { State, action, cached, trigger } from 'reactronic'
 import { XY, xy, Area, area } from './Area'
 
-export const BROWSER_PIXEL_LIMIT: Area = area(0, 0, 1000008, 1000008)
+export const CANVAS_PIXEL_LIMIT: Area = area(0, 0, 1000008, 1000008)
 export type GridLine = { index: number, coord: number }
 
 export class Sizing {
@@ -25,7 +25,7 @@ export type IDevice = {
 }
 
 export class VirtualScroll extends State {
-  globalCells: Area
+  grid: Area
   sizing = new Sizing()
   device: IDevice | null | undefined = undefined
   pixelsPerCell: number = 1
@@ -36,7 +36,7 @@ export class VirtualScroll extends State {
 
   constructor(sizeX: number, sizeY: number) {
     super()
-    this.globalCells = area(0, 0, sizeX, sizeY)
+    this.grid = area(0, 0, sizeX, sizeY)
   }
 
   @action
@@ -44,7 +44,7 @@ export class VirtualScroll extends State {
     if (device) {
       this.device = device
       this.pixelsPerCell = pxPerCell
-      this.canvas = this.global.truncateBy(BROWSER_PIXEL_LIMIT)
+      this.canvas = this.global.truncateBy(CANVAS_PIXEL_LIMIT)
       this.thumb = new Area(0, 0, device.clientWidth, device.clientHeight)
       this.viewport = new Area(0, 0, device.clientWidth, device.clientHeight)
     }
@@ -106,7 +106,7 @@ export class VirtualScroll extends State {
   // Areas
 
   get global(): Area {
-    return this.globalCells.scaleBy(this.cellToGlobalFactor)
+    return this.grid.scaleBy(this.cellToGlobalFactor)
   }
 
   get viewportCells(): Area {
@@ -116,7 +116,7 @@ export class VirtualScroll extends State {
   get bufferCells(): Area {
     // return this.buffer.zoomAt(Area.ZERO, this.pixelToCellRatio)
     const v = this.viewportCells
-    return v.zoomAt(v.center, this.bufferingFactor).round().truncateBy(this.globalCells)
+    return v.zoomAt(v.center, this.bufferingFactor).round().truncateBy(this.grid)
   }
 
   get buffer(): Area {

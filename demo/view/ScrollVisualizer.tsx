@@ -15,7 +15,7 @@ export function ScrollVisualizer(p: {scroll: VirtualScroll}): JSX.Element {
     const vs = p.scroll
     return (
       <div className={css.main}>
-        <AreaRect hint={'All Data'} area={vs.globalCells} px={vs.global} key={`grid-${counter}`}
+        <AreaRect hint={'All Data'} area={vs.grid} px={vs.global} key={`grid-${counter}`}
           className={css.database} style={place(1, 1, 10, 9)}>
           <AreaRect hint={'Canvas'} area={vs.canvasCells} px={vs.canvas} inner={vs.buffer} key={`render-${counter}`}
             className={css.component} style={place(2, 2, 9, 9)}>
