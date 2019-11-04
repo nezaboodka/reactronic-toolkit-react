@@ -31,7 +31,7 @@ export class VirtualScroll extends State {
   pixelsPerCell: number = 1
   canvas: Area = Area.ZERO
   canvasThumb: Area = Area.ZERO
-  scrollingMonitor: Monitor = Monitor.create('scrolling', 5)
+  scrollingMonitor: Monitor = Monitor.create('scrolling', 18)
   // canvasThumbTimestamp: number = 0
   viewport: Area = Area.ZERO
   bufferingFactor: XY = xy(1.0, 2.0) // viewport-based
@@ -157,6 +157,8 @@ export class VirtualScroll extends State {
     const p = xy(canvas.x + x, canvas.y + y)
     const v = this.viewport
     const c2a = this.canvasToGlobalFactor
+    if (Math.abs(p.x - v.x) >= 2 * v.size.x || Math.abs(p.y - v.y) >= 2 * v.size.y)
+      console.log('(!)')
     const v2 = v.moveTo(xy(
       Math.abs(p.x - v.x) < 2 * v.size.x ? p.x : Math.ceil(p.x * c2a.x),
       Math.abs(p.y - v.y) < 2 * v.size.y ? p.y : Math.ceil(p.y * c2a.y)), this.global)
@@ -168,66 +170,28 @@ export class VirtualScroll extends State {
   adjustDeviceThumb(): void {
     const d = this.device
     if (d && !this.scrollingMonitor.busy) {
+      const v = this.viewport
+      const ct = this.canvasThumb.scaleBy(this.canvasToViewportFactor)
+      const gt = v.scaleBy(this.globalToViewportFactor)
+      const delta = xy(ct.x - gt.x, ct.y - gt.y)
+      if (delta.y >= 1.0 || delta.y < 0 || delta.x >= 1.0 || delta.x < 0) {
+        const t1 = this.canvasThumb
+        const t2 = v.scaleBy(this.globalToCanvasFactor).ceil()
+        console.log(`canvas thumb pixel: ${num(ct.y, 15)} (${num(ct.size.y, 15)})`)
+        console.log(`global thumb pixel: ${num(gt.y, 15)} (${num(gt.size.y, 15)})`)
+        console.log(`          viewport: ${num(v.y, 15)} (${num(v.size.y, 15)})`)
+        console.log(`                t1: ${num(t1.y, 15)} (${num(t1.size.y, 15)})`)
+        console.log(`                t2: ${num(t2.y, 15)} (${num(t2.size.y, 15)})\n`)
+        const shift = xy(t1.x - t2.x, t1.y - t2.y)
+        this.canvasThumb = this.canvasThumb.moveTo(t2, this.global)
+        this.canvas = this.canvas.moveBy(shift, this.global)
+      }
       const t = this.canvasThumb
       if (t.x !== d.scrollLeft)
         d.scrollLeft = t.x
       if (t.y !== d.scrollTop)
         d.scrollTop = t.y
     }
-  }
-
-  @trigger
-  rebaseCanvasAndThumb(): void {
-    const v = this.viewport
-    const ct = this.canvasThumb.scaleBy(this.canvasToViewportFactor)
-    const gt = v.scaleBy(this.globalToViewportFactor)
-    const delta = xy(ct.x - gt.x, ct.y - gt.y)
-    if (delta.y >= 1.0 || delta.y < 0 || delta.x >= 1.0 || delta.x < 0) {
-      const t1 = this.canvasThumb
-      const t2 = v.scaleBy(this.globalToCanvasFactor).ceil()
-      console.log(`canvas thumb pixel: ${num(ct.y, 15)} (${num(ct.size.y, 15)})`)
-      console.log(`global thumb pixel: ${num(gt.y, 15)} (${num(gt.size.y, 15)})`)
-      console.log(`          viewport: ${num(v.y, 15)} (${num(v.size.y, 15)})`)
-      console.log(`                t1: ${num(t1.y, 15)} (${num(t1.size.y, 15)})`)
-      console.log(`                t2: ${num(t2.y, 15)} (${num(t2.size.y, 15)})\n`)
-      const shift = xy(t1.x - t2.x, t1.y - t2.y)
-      this.canvasThumb = this.canvasThumb.moveTo(t2, this.global)
-      this.canvas = this.canvas.moveBy(shift, this.global)
-    }
-
-    // const t2 = xy(v.x - c.x, v.y - c.y)
-    // if (t2.y !== t.y || t2.x !== t.x) {
-    //   // const bounds = this.viewportToCanvasFactor
-    //   console.log(`thumb: ${num(t.y, 15)}`)
-    //   console.log(`pos: ${num(t2.y, 15)}`)
-    //   d.scrollTop = t2.y
-    //   d.scrollLeft = t2.x
-    // }
-    // // const v2c = this.viewportToCanvasFactor
-    // // const actual = vp2.zoomAt(Area.ZERO, v2c)
-    // const c2v = this.canvasToViewportFactor
-    // const a2v = this.globalToViewportFactor
-    // const sb1 = area(x, y, 0, 0).zoomAt(Area.ZERO, c2v)
-    // const sb2 = area(x, y, 0, 0).zoomAt(Area.ZERO, a2v)
-    // const cx = sb1.x - sb2.x
-    // const cy = sb1.y - sb2.y
-    // if (cy > 0.9 || cy < 0 || cx > 0.9 || cy < 0) {
-    //   const actual = vp2.zoomAt(Area.ZERO, a2v)
-    //   const shift = xy(x - actual.x, y - actual.y)
-    //   const comp2 = comp.moveBy(shift, this.global)
-    //   if (!comp2.equalTo(comp)) {
-    //     console.log(`p: (${num(x)}, ${num(y)}) -> (${num(actual.x, 15)}, ${num(actual.y, 15)})`)
-    //     console.log(`c: (${num(sb1.x, 15)}, ${num(sb1.y, 15)})`)
-    //     console.log(`a: (${num(sb2.x, 15)}, ${num(sb2.y, 15)})`)
-    //     this.canvas = comp2
-    //     if (this.device) {
-    //       if (this.device.scrollLeft !== actual.x)
-    //         this.device.scrollLeft = actual.x
-    //       if (this.device.scrollTop !== actual.y)
-    //         this.device.scrollTop = actual.y
-    //     }
-    //   }
-    // }
   }
 
   @action
