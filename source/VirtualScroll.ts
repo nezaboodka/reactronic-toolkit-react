@@ -31,7 +31,7 @@ export class VirtualScroll extends State {
   pixelsPerCell: number = 1
   canvas: Area = Area.ZERO
   canvasThumb: Area = Area.ZERO
-  scrollingMonitor: Monitor = Monitor.create('scrolling', 18)
+  scrollingMonitor: Monitor = Monitor.create('scrolling', 20)
   // canvasThumbTimestamp: number = 0
   viewport: Area = Area.ZERO
   bufferingFactor: XY = xy(1.0, 2.0) // viewport-based
