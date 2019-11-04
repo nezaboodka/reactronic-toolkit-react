@@ -3,7 +3,7 @@
 // Copyright (C) 2019 Yury Chetyrko <ychetyrko@gmail.com>
 // License: https://raw.githubusercontent.com/nezaboodka/reactronic/master/LICENSE
 
-import { State, action, cached, trigger } from 'reactronic'
+import { State, action, cached, trigger, Monitor, Cache } from 'reactronic'
 import { XY, xy, Area, area } from './Area'
 
 export const CANVAS_PIXEL_LIMIT: Area = area(0, 0, 1000008, 1000008)
@@ -31,6 +31,7 @@ export class VirtualScroll extends State {
   pixelsPerCell: number = 1
   canvas: Area = Area.ZERO
   canvasThumb: Area = Area.ZERO
+  scrollingMonitor: Monitor = Monitor.create('scrolling', 5)
   // canvasThumbTimestamp: number = 0
   viewport: Area = Area.ZERO
   bufferingFactor: XY = xy(1.0, 2.0) // viewport-based
@@ -47,10 +48,12 @@ export class VirtualScroll extends State {
       this.pixelsPerCell = pxPerCell
       this.canvas = this.global.truncateBy(CANVAS_PIXEL_LIMIT)
       this.canvasThumb = new Area(0, 0, device.clientWidth, device.clientHeight)
+      Cache.of(this.moveViewportAndThumb).setup({monitor: this.scrollingMonitor})
       this.viewport = new Area(0, 0, device.clientWidth, device.clientHeight)
     }
     else {
       this.viewport = Area.ZERO
+      Cache.of(this.moveViewportAndThumb).setup({monitor: null})
       this.canvasThumb = Area.ZERO
       this.canvas = Area.ZERO
       this.pixelsPerCell = 1
@@ -140,40 +143,41 @@ export class VirtualScroll extends State {
 
   // Actions
 
-  @action
   handleDeviceScroll(x: number, y: number): void {
-    console.log(`scroll: ${y}`)
     const t = this.canvasThumb
-    if (t.y !== y || t.x !== x) {
-      this.canvasThumb = t.moveTo(xy(x, y), this.canvas.moveTo(Area.ZERO, this.global))
-      const canvas = this.canvas
-      const p = xy(canvas.x + x, canvas.y + y)
-      const v = this.viewport
-      const c2a = this.canvasToGlobalFactor
-      const v2 = v.moveTo(xy(
-        Math.abs(p.x - v.x) < 2 * v.size.x ? p.x : Math.ceil(p.x * c2a.x),
-        Math.abs(p.y - v.y) < 2 * v.size.y ? p.y : Math.ceil(p.y * c2a.y)), this.global)
-      if (!v2.equalTo(v)) // prevent recursion
-        this.viewport = v2
-    }
+    if (t.y !== y || t.x !== x)
+      this.moveViewportAndThumb(x, y, t)
+  }
+
+  @action
+  moveViewportAndThumb(x: number, y: number, thumb: Area): void {
+    console.log(`scroll: ${y}`)
+    this.canvasThumb = thumb.moveTo(xy(x, y), this.canvas.moveTo(Area.ZERO, this.global))
+    const canvas = this.canvas
+    const p = xy(canvas.x + x, canvas.y + y)
+    const v = this.viewport
+    const c2a = this.canvasToGlobalFactor
+    const v2 = v.moveTo(xy(
+      Math.abs(p.x - v.x) < 2 * v.size.x ? p.x : Math.ceil(p.x * c2a.x),
+      Math.abs(p.y - v.y) < 2 * v.size.y ? p.y : Math.ceil(p.y * c2a.y)), this.global)
+    if (!v2.equalTo(v)) // prevent recursion
+      this.viewport = v2
   }
 
   @trigger
-  syncThumbWithDevice(): void {
+  adjustDeviceThumb(): void {
     const d = this.device
-    const t = this.canvasThumb
-    if (d) {
+    if (d && !this.scrollingMonitor.busy) {
+      const t = this.canvasThumb
       if (t.x !== d.scrollLeft)
         d.scrollLeft = t.x
-      if (t.y !== d.scrollTop) {
+      if (t.y !== d.scrollTop)
         d.scrollTop = t.y
-        console.log(`d.scrollTop = ${t.y}`)
-      }
     }
   }
 
   @trigger
-  rebaseCanvas(): void {
+  rebaseCanvasAndThumb(): void {
     const v = this.viewport
     const ct = this.canvasThumb.scaleBy(this.canvasToViewportFactor)
     const gt = v.scaleBy(this.globalToViewportFactor)
