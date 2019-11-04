@@ -174,16 +174,16 @@ export class VirtualScroll extends State {
       const ct = this.canvasThumb.scaleBy(this.canvasToViewportFactor)
       const gt = v.scaleBy(this.globalToViewportFactor)
       const delta = xy(ct.x - gt.x, ct.y - gt.y)
-      if (delta.y >= 1.0 || delta.y < 0 || delta.x >= 1.0 || delta.x < 0) {
+      if (delta.y >= 0.75 || delta.y < 0 || delta.x >= 0.75 || delta.x < 0  ) {
         const t1 = this.canvasThumb
         const t2 = v.scaleBy(this.globalToCanvasFactor).ceil()
-        console.log(`canvas thumb pixel: ${num(ct.y, 15)} (${num(ct.size.y, 15)})`)
-        console.log(`global thumb pixel: ${num(gt.y, 15)} (${num(gt.size.y, 15)})`)
-        console.log(`          viewport: ${num(v.y, 15)} (${num(v.size.y, 15)})`)
-        console.log(`                t1: ${num(t1.y, 15)} (${num(t1.size.y, 15)})`)
-        console.log(`                t2: ${num(t2.y, 15)} (${num(t2.size.y, 15)})\n`)
-        const shift = xy(t1.x - t2.x, t1.y - t2.y)
-        this.canvasThumb = this.canvasThumb.moveTo(t2, this.global)
+        // console.log(`canvas thumb pixel: ${num(ct.y, 15)} (${num(ct.size.y, 15)})`)
+        // console.log(`global thumb pixel: ${num(gt.y, 15)} (${num(gt.size.y, 15)})`)
+        // console.log(`          viewport: ${num(v.y, 15)} (${num(v.size.y, 15)})`)
+        // console.log(`                t1: ${num(t1.y, 15)} (${num(t1.size.y, 15)})`)
+        // console.log(`                t2: ${num(t2.y, 15)} (${num(t2.size.y, 15)})\n`)
+        const shift = xy((t1.x - t2.x) / 2, (t1.y - t2.y) / 2)
+        this.canvasThumb = this.canvasThumb.moveBy(xy(-shift.x, -shift.y), this.global)
         this.canvas = this.canvas.moveBy(shift, this.global)
       }
       const t = this.canvasThumb

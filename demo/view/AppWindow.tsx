@@ -51,7 +51,7 @@ function Data(p: {db: Database, vs: VirtualScroll}): JSX.Element {
   return reactive(() => {
     const css = style.classes
     const size = p.vs.canvas.size
-    const padding = p.vs.gap
+    const gap = p.vs.gap
     const d = getCachedResultAndRevalidate(p.db.data, [p.vs.bufferCellsWorkaround()]) || []
     return (
       <div className={css.content} key={'data'}
@@ -59,9 +59,9 @@ function Data(p: {db: Database, vs: VirtualScroll}): JSX.Element {
         style={{boxSizing: 'border-box',
           width: `${size.x}px`, minWidth: `${size.x}px`, maxWidth: `${size.x}px`,
           height: `${size.y}px`, minHeight: `${size.y}px`, maxHeight: `${size.y}px`,
-          paddingLeft: `${padding.x - padding.x}px`, paddingTop: `${padding.y - padding.y}px`}}>
+          paddingLeft: `${gap.x}px`, paddingTop: `${gap.y}px`}}>
         {d.map(row => (
-          <div key={row[0]}>
+          <div title={row[0]} key={row[0]}>
             {row.map(text => (
               <span key={text} style={{marginLeft: '1em'}}>{text}</span>
             ))}
