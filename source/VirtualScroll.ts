@@ -171,20 +171,20 @@ export class VirtualScroll extends State {
       let c1 = this.canvas
       let t1 = this.canvasThumb
       const v = this.viewport
-      const exact = v.scaleBy(this.globalToCanvasFactor)
-      const f = this.viewportToCanvasFactor
-      const median = xy(exact.x + f.x/2, exact.y + f.y/2)
+      const v2c = this.viewportToCanvasFactor
+      const precise = v.scaleBy(this.globalToCanvasFactor)
+      const median = xy(precise.x + v2c.x/2, precise.y + v2c.y/2)
       const diff = xy(t1.x - median.x, t1.y - median.y)
-      if (Math.abs(diff.x) > f.x/3) {
-        const t2 = t1.moveTo(xy(exact.x + f.x/2, t1.y), c1.moveTo(Area.ZERO, this.global))
+      if (Math.abs(diff.x) > v2c.x/3) {
+        const t2 = t1.moveTo(xy(precise.x + v2c.x/2, t1.y), c1.moveTo(Area.ZERO, this.global))
         const c2 = c1.moveTo(xy(v.x - t2.x, c1.y), this.global)
         if (!c2.equalTo(c1)) {
           this.canvas = c1 = c2
           this.canvasThumb = t1 = t2
         }
       }
-      if (Math.abs(diff.y) > f.y/3) {
-        const t2 = t1.moveTo(xy(t1.x, exact.y + f.y/2), c1.moveTo(Area.ZERO, this.global))
+      if (Math.abs(diff.y) > v2c.y/3) {
+        const t2 = t1.moveTo(xy(t1.x, precise.y + v2c.y/2), c1.moveTo(Area.ZERO, this.global))
         const c2 = c1.moveTo(xy(c1.x, v.y - t2.y), this.global)
         if (!c2.equalTo(c1)) {
           this.canvas = c1 = c2
