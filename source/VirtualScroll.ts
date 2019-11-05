@@ -119,7 +119,7 @@ export class VirtualScroll extends State {
     return this.bufferCells.scaleBy(this.cellToGlobalFactor)
   }
 
-  get gap(): XY { // between canvas and buffer
+  get bufferGap(): XY {
     const buf = this.buffer
     const c = this.canvas
     return xy(buf.x - c.x, buf.y - c.y)
@@ -168,31 +168,32 @@ export class VirtualScroll extends State {
   adjustDeviceThumb(): void {
     const d = this.device
     if (d && !this.scrollingMonitor.busy) {
-      const f = this.viewportToCanvasFactor
-      const v = this.viewport
-      const ideal = v.scaleBy(this.globalToCanvasFactor)
-      const c1 = this.canvas
+      let c1 = this.canvas
       let t1 = this.canvasThumb
-      const diff = xy(t1.x - (ideal.x + f.x/2), t1.y - (ideal.y + f.y/2))
+      const v = this.viewport
+      const exact = v.scaleBy(this.globalToCanvasFactor)
+      const f = this.viewportToCanvasFactor
+      const median = xy(exact.x + f.x/2, exact.y + f.y/2)
+      const diff = xy(t1.x - median.x, t1.y - median.y)
       if (Math.abs(diff.x) > f.x/3) {
-        const t2 = t1.moveTo(xy(ideal.x + f.x/3, t1.y), this.global)
-        const c2 = c1.moveTo(xy(v.x - t2.x /*- f.x/3*/, c1.y), this.global)
+        const t2 = t1.moveTo(xy(exact.x + f.x/2, t1.y), c1.moveTo(Area.ZERO, this.global))
+        const c2 = c1.moveTo(xy(v.x - t2.x, c1.y), this.global)
         if (!c2.equalTo(c1)) {
-          this.canvas = c2
+          this.canvas = c1 = c2
           this.canvasThumb = t1 = t2
         }
       }
       if (Math.abs(diff.y) > f.y/3) {
-        const t2 = t1.moveTo(xy(t1.x, ideal.y + f.y/3), this.global)
-        const c2 = c1.moveTo(xy(c1.x, v.y - t2.y /*- f.y/3*/), this.global)
+        const t2 = t1.moveTo(xy(t1.x, exact.y + f.y/2), c1.moveTo(Area.ZERO, this.global))
+        const c2 = c1.moveTo(xy(c1.x, v.y - t2.y), this.global)
         if (!c2.equalTo(c1)) {
-          this.canvas = c2
+          this.canvas = c1 = c2
           this.canvasThumb = t1 = t2
         }
       }
-      if (t1.x !== d.scrollLeft)
+      if (Math.round(t1.x) !== Math.round(d.scrollLeft))
         d.scrollLeft = t1.x
-      if (t1.y !== d.scrollTop)
+      if (Math.round(t1.y) !== Math.round(d.scrollTop))
         d.scrollTop = t1.y
     }
   }
