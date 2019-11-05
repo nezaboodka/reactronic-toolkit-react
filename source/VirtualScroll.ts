@@ -168,30 +168,32 @@ export class VirtualScroll extends State {
   adjustDeviceThumb(): void {
     const d = this.device
     if (d && !this.scrollingMonitor.busy) {
-      // const ct = this.canvasThumb.scaleBy(this.canvasToViewportFactor)
-      // const gt = v.scaleBy(this.globalToViewportFactor)
-      // const delta = xy(ct.x - gt.x, ct.y - gt.y)
-
       const f = this.viewportToCanvasFactor
-      const thumb = this.canvasThumb
-      const vp = this.viewport.scaleBy(this.globalToCanvasFactor)
-      const diff = xy(thumb.x - vp.x, thumb.y - vp.y)
-      if (Math.abs(diff.y - f.y/2) > f.y/2 || Math.abs(diff.x - f.x/2) > f.x/2) {
-        const c = this.canvas
-        const v = this.viewport
-        const c2 = c.moveBy(xy(diff.x - f.x*3/4, diff.y - f.y*3/4), this.global)
-        if (!c2.equalTo(c)) {
+      const v = this.viewport
+      const ideal = v.scaleBy(this.globalToCanvasFactor)
+      const c1 = this.canvas
+      let t1 = this.canvasThumb
+      const diff = xy(t1.x - (ideal.x + f.x/2), t1.y - (ideal.y + f.y/2))
+      if (Math.abs(diff.x) > f.x/3) {
+        const t2 = t1.moveTo(xy(ideal.x + f.x/3, t1.y), this.global)
+        const c2 = c1.moveTo(xy(v.x - t2.x /*- f.x/3*/, c1.y), this.global)
+        if (!c2.equalTo(c1)) {
           this.canvas = c2
-          this.canvasThumb = thumb.moveTo(xy(v.x - c2.x, v.y - c2.y), this.global)
+          this.canvasThumb = t1 = t2
         }
       }
-      const t = this.canvasThumb
-      if (t.x !== d.scrollLeft) {
-        d.scrollLeft = t.x
+      if (Math.abs(diff.y) > f.y/3) {
+        const t2 = t1.moveTo(xy(t1.x, ideal.y + f.y/3), this.global)
+        const c2 = c1.moveTo(xy(c1.x, v.y - t2.y /*- f.y/3*/), this.global)
+        if (!c2.equalTo(c1)) {
+          this.canvas = c2
+          this.canvasThumb = t1 = t2
+        }
       }
-      if (t.y !== d.scrollTop) {
-        d.scrollTop = t.y
-      }
+      if (t1.x !== d.scrollLeft)
+        d.scrollLeft = t1.x
+      if (t1.y !== d.scrollTop)
+        d.scrollTop = t1.y
     }
   }
 

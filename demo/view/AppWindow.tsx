@@ -34,9 +34,9 @@ export function AppWindow(p: {db: Database, vs: VirtualScroll}): JSX.Element {
             disabled={!d}>▼ 1 px</button>
           <button onClick={e => d ? d.scrollTop -= 1 : {}}
             disabled={!d}>▲ 1 px</button>
-          <button onClick={e => d ? d.scrollTop += 1280 : {}}
+          <button onClick={e => d ? d.scrollTop += 1072 : {}}
             disabled={!d}>▼ 1K px</button>
-          <button onClick={e => d ? d.scrollTop -= 1280 : {}}
+          <button onClick={e => d ? d.scrollTop -= 1072 : {}}
             disabled={!d}>▲ 1K px</button>
         </div>
         <div className={css.visualizer} style={place(10, 3, 10, 5)}>
@@ -59,7 +59,7 @@ function Data(p: {db: Database, vs: VirtualScroll}): JSX.Element {
         style={{boxSizing: 'border-box',
           width: `${size.x}px`, minWidth: `${size.x}px`, maxWidth: `${size.x}px`,
           height: `${size.y}px`, minHeight: `${size.y}px`, maxHeight: `${size.y}px`,
-          paddingLeft: `${Math.min(gap.x, size.x)}px`, paddingTop: `${Math.min(gap.y, size.y)}px`}}>
+          marginLeft: `${Math.min(gap.x, size.x)}px`, marginTop: `${Math.min(gap.y, size.y)}px`}}>
         {d.map(row => (
           <div title={row[0]} key={row[0]}>
             {row.map(text => (
