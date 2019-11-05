@@ -4,9 +4,9 @@
 // License: https://raw.githubusercontent.com/nezaboodka/reactronic/master/LICENSE
 
 import { State, action, cached, trigger, Monitor, Cache } from 'reactronic'
-import { XY, xy, Area, area } from './Area'
+import { XY, xy, Area, area, num } from './Area'
 
-export const CANVAS_PIXEL_LIMIT: Area = area(0, 0, 1000008, 1000008)
+export const CANVAS_PIXEL_LIMIT: Area = area(0, 0, 1000123, 1000123)
 export type GridLine = { index: number, coord: number }
 
 export class Sizing {
@@ -86,8 +86,8 @@ export class VirtualScroll extends State {
 
   get canvasToGlobalFactor(): XY {
     const g = this.global.size
-    const v = this.viewport.size
     const c = this.canvas.size
+    const v = this.viewport.size
     return xy(g.x / (c.x - v.x), g.y / (c.y - v.y))
   }
 
@@ -153,12 +153,10 @@ export class VirtualScroll extends State {
   moveViewportAndThumb(x: number, y: number, thumb: Area): void {
     console.log(`scroll: ${y}`)
     this.canvasThumb = thumb.moveTo(xy(x, y), this.canvas.moveTo(Area.ZERO, this.global))
-    const canvas = this.canvas
-    const p = xy(canvas.x + x, canvas.y + y)
+    const c = this.canvas
+    const p = xy(c.x + x, c.y + y)
     const v = this.viewport
     const c2a = this.canvasToGlobalFactor
-    if (Math.abs(p.x - v.x) >= 2 * v.size.x || Math.abs(p.y - v.y) >= 2 * v.size.y)
-      console.log('(!)')
     const v2 = v.moveTo(xy(
       Math.abs(p.x - v.x) < 2 * v.size.x ? p.x : Math.ceil(p.x * c2a.x),
       Math.abs(p.y - v.y) < 2 * v.size.y ? p.y : Math.ceil(p.y * c2a.y)), this.global)
@@ -170,27 +168,30 @@ export class VirtualScroll extends State {
   adjustDeviceThumb(): void {
     const d = this.device
     if (d && !this.scrollingMonitor.busy) {
-      const v = this.viewport
-      const ct = this.canvasThumb.scaleBy(this.canvasToViewportFactor)
-      const gt = v.scaleBy(this.globalToViewportFactor)
-      const delta = xy(ct.x - gt.x, ct.y - gt.y)
-      if (delta.y >= 0.75 || delta.y < 0 || delta.x >= 0.75 || delta.x < 0  ) {
-        const t1 = this.canvasThumb
-        const t2 = v.scaleBy(this.globalToCanvasFactor).ceil()
-        // console.log(`canvas thumb pixel: ${num(ct.y, 15)} (${num(ct.size.y, 15)})`)
-        // console.log(`global thumb pixel: ${num(gt.y, 15)} (${num(gt.size.y, 15)})`)
-        // console.log(`          viewport: ${num(v.y, 15)} (${num(v.size.y, 15)})`)
-        // console.log(`                t1: ${num(t1.y, 15)} (${num(t1.size.y, 15)})`)
-        // console.log(`                t2: ${num(t2.y, 15)} (${num(t2.size.y, 15)})\n`)
-        const shift = xy((t1.x - t2.x) / 2, (t1.y - t2.y) / 2)
-        this.canvasThumb = this.canvasThumb.moveBy(xy(-shift.x, -shift.y), this.global)
-        this.canvas = this.canvas.moveBy(shift, this.global)
+      // const ct = this.canvasThumb.scaleBy(this.canvasToViewportFactor)
+      // const gt = v.scaleBy(this.globalToViewportFactor)
+      // const delta = xy(ct.x - gt.x, ct.y - gt.y)
+
+      const f = this.viewportToCanvasFactor
+      const thumb = this.canvasThumb
+      const vp = this.viewport.scaleBy(this.globalToCanvasFactor)
+      const diff = xy(thumb.x - vp.x, thumb.y - vp.y)
+      if (Math.abs(diff.y - f.y/2) > f.y/2 || Math.abs(diff.x - f.x/2) > f.x/2) {
+        const c = this.canvas
+        const v = this.viewport
+        const c2 = c.moveBy(xy(diff.x - f.x*3/4, diff.y - f.y*3/4), this.global)
+        if (!c2.equalTo(c)) {
+          this.canvas = c2
+          this.canvasThumb = thumb.moveTo(xy(v.x - c2.x, v.y - c2.y), this.global)
+        }
       }
       const t = this.canvasThumb
-      if (t.x !== d.scrollLeft)
+      if (t.x !== d.scrollLeft) {
         d.scrollLeft = t.x
-      if (t.y !== d.scrollTop)
+      }
+      if (t.y !== d.scrollTop) {
         d.scrollTop = t.y
+      }
     }
   }
 
@@ -209,9 +210,4 @@ export class VirtualScroll extends State {
 
 export function dumpArea(a: Area, fr?: number): string {
   return `x: ${num(a.x, fr)}, y: ${num(a.y, fr)}, w: ${num(a.x + a.size.x, fr)}, h: ${num(a.y + a.size.y, fr)}`
-}
-
-export function num(n: number, fr?: number): string {
-  const s = fr !== undefined && fr < 0 ? n.toFixed(n % 1 !== 0 ? -fr : 0) : n.toFixed(fr)
-  return s.replace(/\B(?=(\d{3})+(?!\d))/g, ' ')
 }

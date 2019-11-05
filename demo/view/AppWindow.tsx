@@ -59,7 +59,7 @@ function Data(p: {db: Database, vs: VirtualScroll}): JSX.Element {
         style={{boxSizing: 'border-box',
           width: `${size.x}px`, minWidth: `${size.x}px`, maxWidth: `${size.x}px`,
           height: `${size.y}px`, minHeight: `${size.y}px`, maxHeight: `${size.y}px`,
-          paddingLeft: `${gap.x}px`, paddingTop: `${gap.y}px`}}>
+          paddingLeft: `${Math.min(gap.x, size.x)}px`, paddingTop: `${Math.min(gap.y, size.y)}px`}}>
         {d.map(row => (
           <div title={row[0]} key={row[0]}>
             {row.map(text => (

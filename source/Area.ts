@@ -15,6 +15,7 @@ export class XY {
 export class Area extends XY {
   static readonly ZERO = Object.freeze(area(0, 0, 0, 0))
   static readonly MAX = Object.freeze(area(Number.MIN_VALUE, Number.MIN_VALUE, Number.MAX_VALUE, Number.MAX_VALUE))
+  static readonly INFINITY = Object.freeze(area(Number.NEGATIVE_INFINITY, Number.NEGATIVE_INFINITY, Number.POSITIVE_INFINITY, Number.POSITIVE_INFINITY))
 
   readonly size: XY
   get from(): XY { return this }
@@ -72,6 +73,12 @@ export class Area extends XY {
 
   scaleBy(factor: XY): Area {
     return this.zoomAt(Area.ZERO, factor)
+  }
+
+  round(): Area {
+    return area(
+      Math.round(this.x), Math.round(this.y),
+      Math.round(this.size.x), Math.round(this.size.y))
   }
 
   floor(): Area {
@@ -136,6 +143,9 @@ export class Area extends XY {
         a.x + a.size.x > this.x && a.x + a.size.x <= this.x + this.size.x)
   }
 
+  toString(): string {
+    return `${num(this.x, -15)}, ${num(this.y, -15)} (w: ${num(this.size.x, -15)}, h: ${num(this.size.y, -15)})`
+  }
 }
 
 export function xy(x: number, y: number): XY {
@@ -144,4 +154,9 @@ export function xy(x: number, y: number): XY {
 
 export function area(x: number, y: number, w: number, h: number): Area {
   return new Area(x, y, w, h)
+}
+
+export function num(n: number, fr?: number): string {
+  const s = fr !== undefined && fr < 0 ? n.toFixed(n % 1 !== 0 ? -fr : 0) : n.toFixed(fr)
+  return s.replace(/\B(?=(\d{3})+(?!\d))/g, ' ')
 }
