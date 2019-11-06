@@ -48,12 +48,12 @@ export class VirtualScroll extends State {
       this.pixelsPerCell = pxPerCell
       this.canvas = this.global.truncateBy(CANVAS_PIXEL_LIMIT)
       this.canvasThumb = new Area(0, 0, device.clientWidth, device.clientHeight)
-      Cache.of(this.moveViewportAndThumb).setup({monitor: this.scrollingMonitor})
+      Cache.of(this.moveThumbAndViewport).setup({monitor: this.scrollingMonitor})
       this.viewport = new Area(0, 0, device.clientWidth, device.clientHeight)
     }
     else {
       this.viewport = Area.ZERO
-      Cache.of(this.moveViewportAndThumb).setup({monitor: null})
+      Cache.of(this.moveThumbAndViewport).setup({monitor: null})
       this.canvasThumb = Area.ZERO
       this.canvas = Area.ZERO
       this.pixelsPerCell = 1
@@ -146,28 +146,64 @@ export class VirtualScroll extends State {
   handleDeviceScroll(x: number, y: number): void {
     const t = this.canvasThumb
     if (t.y !== y || t.x !== x)
-      this.moveViewportAndThumb(x, y, t)
+      this.moveThumbAndViewport(x, y)
   }
 
   @action
-  moveViewportAndThumb(x: number, y: number, thumb: Area): void {
+  moveThumbAndViewport(x: number, y: number): void {
     console.log(`scroll: ${y}`)
-    this.canvasThumb = thumb.moveTo(xy(x, y), this.canvas.moveTo(Area.ZERO, this.global))
-    const c = this.canvas
-    const p = xy(c.x + x, c.y + y)
-    const v = this.viewport
+    const c0 = this.canvas.moveTo(Area.ZERO, this.global)
+    this.canvasThumb = this.canvasThumb.moveTo(xy(x, y), c0)
+    const t = this.canvasThumb
+    let c = this.canvas
+    let v = this.viewport
+    x = c.x + t.x
+    y = c.y + t.y
     const c2a = this.canvasToGlobalFactor
-    const v2 = v.moveTo(xy(
-      Math.abs(p.x - v.x) < 2 * v.size.x ? p.x : Math.ceil(p.x * c2a.x),
-      Math.abs(p.y - v.y) < 2 * v.size.y ? p.y : Math.ceil(p.y * c2a.y)), this.global)
-    if (!v2.equalTo(v)) // prevent recursion
-      this.viewport = v2
+    if (Math.abs(x - v.x) > v.size.x) {
+      const v2 = v.moveTo(xy(Math.ceil(x * c2a.x), v.y), this.global)
+      if (!v2.equalTo(v)) {
+        v = this.viewport = v2
+        c = this.canvas = c.moveTo(xy(v2.x - t.x, c.y), this.global)
+      }
+    }
+    else {
+      const v2 = v.moveTo(xy(x, v.y), this.global)
+      if (!v2.equalTo(v))
+        this.viewport = v2
+    }
+    if (Math.abs(y - v.y) > v.size.y) {
+      const v2 = v.moveTo(xy(v.x, Math.ceil(y * c2a.y)), this.global)
+      if (!v2.equalTo(v)) {
+        v = this.viewport = v2
+        c = this.canvas = c.moveTo(xy(c.x, v2.y - t.y), this.global)
+      }
+    }
+    else {
+      const v2 = v.moveTo(xy(v.x, y), this.global)
+      if (!v2.equalTo(v))
+        this.viewport = v2
+    }
   }
 
   @trigger
-  adjustDeviceThumb(): void {
-    const d = this.device
-    if (d && !this.scrollingMonitor.busy) {
+  syncCanvasThumbWithDevice(): void {
+    const device = this.device
+    if (device) {
+      const t = this.canvasThumb
+      if (Math.abs(t.x - device.scrollLeft) > 0.1) {
+        device.scrollLeft = t.x
+      }
+      if (Math.abs(t.y - device.scrollTop) > 0.1) {
+        device.scrollTop = t.y
+      }
+    }
+  }
+
+  @trigger
+  rebaseCanvas(): void {
+    const device = this.device
+    if (device && !this.scrollingMonitor.busy) {
       let c = this.canvas
       let t = this.canvasThumb
       const v = this.viewport
@@ -190,12 +226,6 @@ export class VirtualScroll extends State {
           this.canvas = c = c2
           this.canvasThumb = t = t2
         }
-      }
-      if (Math.abs(t.x - d.scrollLeft) > 0.1) {
-        d.scrollLeft = t.x
-      }
-      if (Math.abs(t.y - d.scrollTop) > 0.1) {
-        d.scrollTop = t.y
       }
     }
   }
