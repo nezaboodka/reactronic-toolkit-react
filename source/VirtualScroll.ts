@@ -191,10 +191,12 @@ export class VirtualScroll extends State {
           this.canvasThumb = t1 = t2
         }
       }
-      if (Math.round(t1.x) !== Math.round(d.scrollLeft))
+      if (Math.abs(t1.x - d.scrollLeft) > 0.1) {
         d.scrollLeft = t1.x
-      if (Math.round(t1.y) !== Math.round(d.scrollTop))
+      }
+      if (Math.abs(t1.y - d.scrollTop) > 0.1) {
         d.scrollTop = t1.y
+      }
     }
   }
 
