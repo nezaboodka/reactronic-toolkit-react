@@ -187,20 +187,6 @@ export class VirtualScroll extends State {
   }
 
   @trigger
-  syncCanvasThumbWithDevice(): void {
-    const device = this.device
-    if (device) {
-      const t = this.canvasThumb
-      if (Math.abs(t.x - device.scrollLeft) > 0.1) {
-        device.scrollLeft = t.x
-      }
-      if (Math.abs(t.y - device.scrollTop) > 0.1) {
-        device.scrollTop = t.y
-      }
-    }
-  }
-
-  @trigger
   rebaseCanvas(): void {
     const device = this.device
     if (device && !this.scrollingMonitor.busy) {
@@ -226,6 +212,20 @@ export class VirtualScroll extends State {
           this.canvas = c = c2
           this.canvasThumb = t = t2
         }
+      }
+    }
+  }
+
+  @trigger
+  syncCanvasThumbWithDevice(): void {
+    const device = this.device
+    if (device) {
+      const t = this.canvasThumb
+      if (Math.abs(t.x - device.scrollLeft) > 0.1) {
+        device.scrollLeft = t.x
+      }
+      if (Math.abs(t.y - device.scrollTop) > 0.1) {
+        device.scrollTop = t.y
       }
     }
   }
