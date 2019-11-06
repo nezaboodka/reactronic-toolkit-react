@@ -168,34 +168,34 @@ export class VirtualScroll extends State {
   adjustDeviceThumb(): void {
     const d = this.device
     if (d && !this.scrollingMonitor.busy) {
-      let c1 = this.canvas
-      let t1 = this.canvasThumb
+      let c = this.canvas
+      let t = this.canvasThumb
       const v = this.viewport
       const v2c = this.viewportToCanvasFactor
       const precise = v.scaleBy(this.globalToCanvasFactor)
       const median = xy(precise.x + v2c.x/2, precise.y + v2c.y/2)
-      const diff = xy(t1.x - median.x, t1.y - median.y)
+      const diff = xy(t.x - median.x, t.y - median.y)
       if (Math.abs(diff.x) > v2c.x/3) {
-        const t2 = t1.moveTo(xy(precise.x + v2c.x/2, t1.y), c1.moveTo(Area.ZERO, this.global))
-        const c2 = c1.moveTo(xy(v.x - t2.x, c1.y), this.global)
-        if (!c2.equalTo(c1)) {
-          this.canvas = c1 = c2
-          this.canvasThumb = t1 = t2
+        const t2 = t.moveTo(xy(precise.x + v2c.x/2, t.y), c.moveTo(Area.ZERO, this.global))
+        const c2 = c.moveTo(xy(v.x - t2.x, c.y), this.global)
+        if (!c2.equalTo(c)) {
+          this.canvas = c = c2
+          this.canvasThumb = t = t2
         }
       }
       if (Math.abs(diff.y) > v2c.y/3) {
-        const t2 = t1.moveTo(xy(t1.x, precise.y + v2c.y/2), c1.moveTo(Area.ZERO, this.global))
-        const c2 = c1.moveTo(xy(c1.x, v.y - t2.y), this.global)
-        if (!c2.equalTo(c1)) {
-          this.canvas = c1 = c2
-          this.canvasThumb = t1 = t2
+        const t2 = t.moveTo(xy(t.x, precise.y + v2c.y/2), c.moveTo(Area.ZERO, this.global))
+        const c2 = c.moveTo(xy(c.x, v.y - t2.y), this.global)
+        if (!c2.equalTo(c)) {
+          this.canvas = c = c2
+          this.canvasThumb = t = t2
         }
       }
-      if (Math.abs(t1.x - d.scrollLeft) > 0.1) {
-        d.scrollLeft = t1.x
+      if (Math.abs(t.x - d.scrollLeft) > 0.1) {
+        d.scrollLeft = t.x
       }
-      if (Math.abs(t1.y - d.scrollTop) > 0.1) {
-        d.scrollTop = t1.y
+      if (Math.abs(t.y - d.scrollTop) > 0.1) {
+        d.scrollTop = t.y
       }
     }
   }

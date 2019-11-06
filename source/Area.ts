@@ -41,8 +41,8 @@ export class Area extends XY {
 
     const dx = this.x + delta.x - bounds.x
     const dy = this.y + delta.y - bounds.y
-    const ox = bounds.x + bounds.size.x + 0.5 - (this.x + delta.x + this.size.x)
-    const oy = bounds.y + bounds.size.y + 0.5 - (this.y + delta.y + this.size.y)
+    const ox = bounds.x + bounds.size.x + (this.x + delta.x + this.size.x)
+    const oy = bounds.y + bounds.size.y + (this.y + delta.y + this.size.y)
 
     let x = this.x + delta.x
     let y = this.y + delta.y
