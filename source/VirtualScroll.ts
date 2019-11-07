@@ -145,23 +145,21 @@ export class VirtualScroll extends State {
 
   handleDeviceScroll(x: number, y: number): void {
     const t = this.canvasThumb
-    if (t.y !== y || t.x !== x)
+    if (Math.abs(t.y - y) > 0.1 || Math.abs(t.x - x) > 0.1)
       this.moveThumbAndViewport(x, y)
   }
 
   @action
-  moveThumbAndViewport(x: number, y: number): void {
-    console.log(`scroll: ${y}`)
-    const c0 = this.canvas.moveTo(Area.ZERO, this.global)
-    this.canvasThumb = this.canvasThumb.moveTo(xy(x, y), c0)
+  moveThumbAndViewport(x2: number, y2: number): void {    const c0 = this.canvas.moveTo(Area.ZERO, this.global)
+    this.canvasThumb = this.canvasThumb.moveTo(xy(x2, y2), c0)
     const t = this.canvasThumb
     let c = this.canvas
     let v = this.viewport
-    x = c.x + t.x
-    y = c.y + t.y
+    const x = c.x + t.x
+    const y = c.y + t.y
     const c2a = this.canvasToGlobalFactor
-    if (Math.abs(x - v.x) > v.size.x) {
-      const v2 = v.moveTo(xy(Math.ceil(x * c2a.x), v.y), this.global)
+    if (Math.abs(x - v.x) > 2 * v.size.x) {
+      const v2 = v.moveTo(xy(Math.ceil(x2 * c2a.x), v.y), this.global)
       if (!v2.equalTo(v)) {
         v = this.viewport = v2
         c = this.canvas = c.moveTo(xy(v2.x - t.x, c.y), this.global)
@@ -172,8 +170,8 @@ export class VirtualScroll extends State {
       if (!v2.equalTo(v))
         this.viewport = v2
     }
-    if (Math.abs(y - v.y) > v.size.y) {
-      const v2 = v.moveTo(xy(v.x, Math.ceil(y * c2a.y)), this.global)
+    if (Math.abs(y - v.y) > 2 * v.size.y) {
+      const v2 = v.moveTo(xy(v.x, Math.ceil(y2 * c2a.y)), this.global)
       if (!v2.equalTo(v)) {
         v = this.viewport = v2
         c = this.canvas = c.moveTo(xy(c.x, v2.y - t.y), this.global)
@@ -221,12 +219,10 @@ export class VirtualScroll extends State {
     const device = this.device
     if (device) {
       const t = this.canvasThumb
-      if (Math.abs(t.x - device.scrollLeft) > 0.1) {
+      if (Math.abs(t.x - device.scrollLeft) > 0.1)
         device.scrollLeft = t.x
-      }
-      if (Math.abs(t.y - device.scrollTop) > 0.1) {
+      if (Math.abs(t.y - device.scrollTop) > 0.1)
         device.scrollTop = t.y
-      }
     }
   }
 
