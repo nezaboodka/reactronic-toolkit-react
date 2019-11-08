@@ -9,7 +9,7 @@ import { reactive, VirtualScroll, num } from '../../source/index'
 import { place } from '../common'
 import { Database } from '../model/Database'
 import { ScrollVisualizer } from './ScrollVisualizer'
-import { ScrollBox } from './ScrollBox'
+import { ScrollBox } from '../../source/view/ScrollBox'
 import { style } from './AppWindow.css'
 
 export function AppWindow(p: {db: Database, vs: VirtualScroll}): JSX.Element {

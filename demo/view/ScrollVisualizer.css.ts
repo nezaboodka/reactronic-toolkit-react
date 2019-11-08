@@ -4,7 +4,7 @@
 // License: https://raw.githubusercontent.com/nezaboodka/reactronic/master/LICENSE
 
 import { css } from 'emotion'
-import { restyle } from '../../source/restyle'
+import { restyle } from '../../source/tools/restyle'
 
 export const style = restyle(() => {
   return {

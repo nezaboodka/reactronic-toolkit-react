@@ -3,9 +3,9 @@
 // Copyright (C) 2019 Yury Chetyrko <ychetyrko@gmail.com>
 // License: https://raw.githubusercontent.com/nezaboodka/reactronic/master/LICENSE
 
-export * from './reactive'
-export * from './restyle'
-export * from './OutsideEvents'
-export * from './UserInput'
-export * from './Area'
-export * from './VirtualScroll'
+export * from './tools/reactive'
+export * from './tools/restyle'
+export * from './model/OutsideEvents'
+export * from './model/UserInput'
+export * from './model/Area'
+export * from './model/VirtualScroll'
