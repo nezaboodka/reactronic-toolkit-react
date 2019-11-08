@@ -150,35 +150,35 @@ export class VirtualScroll extends State {
   }
 
   @action
-  moveThumbAndViewport(x2: number, y2: number): void {    const c0 = this.canvas.moveTo(Area.ZERO, this.global)
-    this.canvasThumb = this.canvasThumb.moveTo(xy(x2, y2), c0)
+  moveThumbAndViewport(x: number, y: number): void {    const c0 = this.canvas.moveTo(Area.ZERO, this.global)
+    this.canvasThumb = this.canvasThumb.moveTo(xy(x, y), c0)
     const t = this.canvasThumb
     let c = this.canvas
     let v = this.viewport
-    const x = c.x + t.x
-    const y = c.y + t.y
+    const vx = c.x + t.x
+    const vy = c.y + t.y
     const c2a = this.canvasToGlobalFactor
-    if (Math.abs(x - v.x) > 2 * v.size.x) {
-      const v2 = v.moveTo(xy(Math.ceil(x2 * c2a.x), v.y), this.global)
+    if (Math.abs(vx - v.x) > 2 * v.size.x || x === 0 || x >= c.size.x - v.size.x) {
+      const v2 = v.moveTo(xy(Math.ceil(x * c2a.x), v.y), this.global)
       if (!v2.equalTo(v)) {
         v = this.viewport = v2
         c = this.canvas = c.moveTo(xy(v2.x - t.x, c.y), this.global)
       }
     }
     else {
-      const v2 = v.moveTo(xy(x, v.y), this.global)
+      const v2 = v.moveTo(xy(vx, v.y), this.global)
       if (!v2.equalTo(v))
         this.viewport = v2
     }
-    if (Math.abs(y - v.y) > 2 * v.size.y) {
-      const v2 = v.moveTo(xy(v.x, Math.ceil(y2 * c2a.y)), this.global)
+    if (Math.abs(vy - v.y) > 2 * v.size.y || y === 0 || y >= c.size.y - v.size.y) {
+      const v2 = v.moveTo(xy(v.x, Math.ceil(y * c2a.y)), this.global)
       if (!v2.equalTo(v)) {
         v = this.viewport = v2
         c = this.canvas = c.moveTo(xy(c.x, v2.y - t.y), this.global)
       }
     }
     else {
-      const v2 = v.moveTo(xy(v.x, y), this.global)
+      const v2 = v.moveTo(xy(v.x, vy), this.global)
       if (!v2.equalTo(v))
         this.viewport = v2
     }
