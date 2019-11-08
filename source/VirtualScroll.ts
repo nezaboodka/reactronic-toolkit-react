@@ -143,10 +143,13 @@ export class VirtualScroll extends State {
 
   // Actions
 
-  handleDeviceScroll(x: number, y: number): void {
-    const t = this.canvasThumb
-    if (Math.abs(t.y - y) > 0.1 || Math.abs(t.x - x) > 0.1)
-      this.moveThumbAndViewport(x, y)
+  handleDeviceScroll(): void {
+    const d = this.device
+    if (d) {
+      const t = this.canvasThumb
+      if (Math.abs(t.y - d.scrollTop) > 0.1 || Math.abs(t.x - d.scrollLeft) > 0.1)
+        this.moveThumbAndViewport(d.scrollLeft, d.scrollTop)
+    }
   }
 
   @action
