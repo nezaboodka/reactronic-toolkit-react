@@ -12,23 +12,12 @@ import { ScrollVisualizer } from './ScrollVisualizer'
 import { style } from './AppWindow.css'
 
 export function AppWindow(p: {db: Database, vs: VirtualScroll}): JSX.Element {
-  const ref = React.useCallback(component => {
-    let pxPerRow = 16
-    if (component) {
-      const fs = window.getComputedStyle(component).fontSize
-      pxPerRow = parseFloat(fs.substr(0, fs.length - 2))
-    }
-    p.vs.setDevice(component, pxPerRow)
-  }, [])
   return reactive(() => {
     const css = style.classes
     const d = p.vs.device
     return (
       <div className={css.window}>
-        <div onScroll={e => p.vs.handleDeviceScroll(e.currentTarget.scrollLeft, e.currentTarget.scrollTop)}
-          ref={ref} className={css.scroll} style={place(2, 2, 9, 9)}>
-          <Data db={p.db} vs={p.vs}/>
-        </div>
+        <ScrollBox db={p.db} vs={p.vs} style={place(2, 2, 9, 9)}/>
         <div className={css.toolbar} style={place(10, 2, 10, 2)}>
           <button onClick={e => d ? d.scrollTop += 1 : {}}
             disabled={!d}>▼ 1 px</button>
@@ -46,6 +35,26 @@ export function AppWindow(p: {db: Database, vs: VirtualScroll}): JSX.Element {
         <div className={css.visualizer} style={place(10, 3, 10, 5)}>
           <ScrollVisualizer scroll={p.vs}/>
         </div>
+      </div>
+    )
+  })
+}
+
+function ScrollBox(p: {db: Database, vs: VirtualScroll, style?: React.CSSProperties}): JSX.Element {
+  const ref = React.useCallback(component => {
+    let pxPerRow = 16
+    if (component) {
+      const fs = window.getComputedStyle(component).fontSize
+      pxPerRow = parseFloat(fs.substr(0, fs.length - 2))
+    }
+    p.vs.setDevice(component, pxPerRow)
+  }, [])
+  return reactive(() => {
+    const css = style.classes
+    return (
+      <div onScroll={e => p.vs.handleDeviceScroll(e.currentTarget.scrollLeft, e.currentTarget.scrollTop)}
+        ref={ref} className={css.scroll} style={p.style}>
+        <Data db={p.db} vs={p.vs}/>
       </div>
     )
   })
