@@ -17,7 +17,9 @@ export function AppWindow(p: {db: Database, vs: VirtualScroll}): JSX.Element {
     const d = p.vs.device
     return (
       <div className={css.window}>
-        <ScrollBox db={p.db} vs={p.vs} style={place(2, 2, 9, 9)}/>
+        <ScrollBox vs={p.vs} style={place(2, 2, 9, 9)}>
+          <Data db={p.db} vs={p.vs}/>
+        </ScrollBox>
         <div className={css.toolbar} style={place(10, 2, 10, 2)}>
           <button onClick={e => d ? d.scrollTop += 1 : {}}
             disabled={!d}>▼ 1 px</button>
@@ -40,7 +42,10 @@ export function AppWindow(p: {db: Database, vs: VirtualScroll}): JSX.Element {
   })
 }
 
-function ScrollBox(p: {db: Database, vs: VirtualScroll, style?: React.CSSProperties}): JSX.Element {
+function ScrollBox(p: {
+  vs: VirtualScroll,
+  children: JSX.Element,
+  style?: React.CSSProperties}): JSX.Element {
   const ref = React.useCallback(component => {
     let pxPerRow = 16
     if (component) {
@@ -54,7 +59,7 @@ function ScrollBox(p: {db: Database, vs: VirtualScroll, style?: React.CSSPropert
     return (
       <div onScroll={e => p.vs.handleDeviceScroll(e.currentTarget.scrollLeft, e.currentTarget.scrollTop)}
         ref={ref} className={css.scroll} style={p.style}>
-        <Data db={p.db} vs={p.vs}/>
+        {p.children}
       </div>
     )
   })
