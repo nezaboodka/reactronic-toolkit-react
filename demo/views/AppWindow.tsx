@@ -6,7 +6,7 @@
 import * as React from 'react'
 import { getCachedResultAndRevalidate } from 'reactronic'
 import { reactive, VirtualScroll, num } from '../../source/index'
-import { place } from '../common'
+import { place } from '../tools/common'
 import { Database } from '../models/Database'
 import { ScrollVisualizer } from './ScrollVisualizer'
 import { ScrollBox } from '../../source/views/ScrollBox'

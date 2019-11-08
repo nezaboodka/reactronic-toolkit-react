@@ -6,7 +6,7 @@
 import * as React from 'react'
 import { cx } from 'emotion'
 import { reactive, Area, VirtualScroll, num } from '../../source/index'
-import { place } from '../common'
+import { place } from '../tools/common'
 import { style } from './ScrollVisualizer.css'
 
 export function ScrollVisualizer(p: {scroll: VirtualScroll}): JSX.Element {
