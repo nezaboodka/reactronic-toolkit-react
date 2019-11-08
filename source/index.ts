@@ -5,7 +5,7 @@
 
 export * from './tools/reactive'
 export * from './tools/restyle'
-export * from './model/OutsideEvents'
-export * from './model/UserInput'
-export * from './model/Area'
-export * from './model/VirtualScroll'
+export * from './models/OutsideEvents'
+export * from './models/UserInput'
+export * from './models/Area'
+export * from './models/VirtualScroll'

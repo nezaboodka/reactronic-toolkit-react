@@ -6,9 +6,9 @@
 import * as React from 'react'
 import * as ReactDOM from 'react-dom'
 import { Action, Tools as RT, TraceLevel } from 'reactronic'
-import { Database } from './model/Database'
+import { Database } from './models/Database'
 import { VirtualScroll } from '../source/index'
-import { AppWindow } from './view/AppWindow'
+import { AppWindow } from './views/AppWindow'
 
 RT.setTrace(TraceLevel.Off)
 RT.performanceWarningThreshold = 0 // disable

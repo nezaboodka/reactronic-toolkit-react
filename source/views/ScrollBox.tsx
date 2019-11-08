@@ -4,7 +4,7 @@
 // License: https://raw.githubusercontent.com/nezaboodka/reactronic/master/LICENSE
 
 import * as React from 'react'
-import { reactive, VirtualScroll } from '../../source/index'
+import { reactive, VirtualScroll } from '../index'
 
 export function ScrollBox(p: {
   vs: VirtualScroll,
