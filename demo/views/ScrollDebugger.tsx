@@ -7,9 +7,9 @@ import * as React from 'react'
 import { cx } from 'emotion'
 import { reactive, Area, VirtualScroll, num } from '../../source/index'
 import { place } from '../tools/common'
-import { style } from './ScrollVisualizer.css'
+import { style } from './ScrollDebugger.css'
 
-export function ScrollVisualizer(p: {scroll: VirtualScroll}): JSX.Element {
+export function ScrollDebugger(p: {scroll: VirtualScroll}): JSX.Element {
   return reactive(counter => {
     const css = style.classes
     const vs = p.scroll

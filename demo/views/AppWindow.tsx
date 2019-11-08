@@ -8,7 +8,7 @@ import { getCachedResultAndRevalidate } from 'reactronic'
 import { reactive, VirtualScroll, num } from '../../source/index'
 import { place } from '../tools/common'
 import { Database } from '../models/Database'
-import { ScrollVisualizer } from './ScrollVisualizer'
+import { ScrollDebugger } from './ScrollDebugger'
 import { ScrollBox } from '../../source/views/ScrollBox'
 import { style } from './AppWindow.css'
 
@@ -36,7 +36,7 @@ export function AppWindow(p: {db: Database, vs: VirtualScroll}): JSX.Element {
             disabled={!d}>▲ Begin</button>
         </div>
         <div className={css.visualizer} style={place(10, 3, 10, 5)}>
-          <ScrollVisualizer scroll={p.vs}/>
+          <ScrollDebugger scroll={p.vs}/>
         </div>
       </div>
     )
