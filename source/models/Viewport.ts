@@ -61,13 +61,13 @@ export class Viewport extends State {
 
   // Factors
 
-  get cellToGlobalFactor(): XY {
+  get cellToPixelFactor(): XY {
     const ppr = this.pixelsPerCell
     return xy(ppr * this.gridSizing.defaultCellWidthFactor, ppr)
   }
 
-  get globalToCellFactor(): XY {
-    const c2g = this.cellToGlobalFactor
+  get pixelToCellFactor(): XY {
+    const c2g = this.cellToPixelFactor
     return xy(1 / c2g.x, 1 / c2g.y)
   }
 
@@ -108,11 +108,11 @@ export class Viewport extends State {
   // Areas (pixels)
 
   get global(): Area {
-    return this.grid.scaleBy(this.cellToGlobalFactor)
+    return this.grid.scaleBy(this.cellToPixelFactor)
   }
 
   get buffer(): Area {
-    return this.bufferCells.scaleBy(this.cellToGlobalFactor)
+    return this.bufferCells.scaleBy(this.cellToPixelFactor)
   }
 
   get bufferGap(): XY {
@@ -124,7 +124,7 @@ export class Viewport extends State {
   // Areas (cells)
 
   get canvasCells(): Area {
-    return this.canvas.scaleBy(this.globalToCellFactor)
+    return this.canvas.scaleBy(this.pixelToCellFactor)
   }
 
   get bufferCells(): Area {
@@ -134,7 +134,7 @@ export class Viewport extends State {
   }
 
   get viewCells(): Area {
-    return this.view.scaleBy(this.globalToCellFactor)
+    return this.view.scaleBy(this.pixelToCellFactor)
   }
 
   // Actions
