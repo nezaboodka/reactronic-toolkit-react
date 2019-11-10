@@ -21,7 +21,7 @@ export function ScrollDebugger(p: {scroll: VirtualScroll}): JSX.Element {
             className={css.component} style={place(2, 2, 9, 9)}>
             <AreaRect hint={'Buffer'} area={vs.bufferCells} px={vs.buffer} key={`dataport-${counter}`}
               className={css.dataArea} style={place(2, 2, 9, 9)}>
-              <AreaRect hint={'Viewport'} area={vs.viewportCells} px={vs.viewport} key={`viewport-${counter}`}
+              <AreaRect hint={'View'} area={vs.viewCells} px={vs.view} key={`viewport-${counter}`}
                 className={css.viewport} style={place(3, 3, 8, 8)}>
                 <div style={{height: '1em'}}></div>
               </AreaRect>
@@ -36,16 +36,16 @@ export function ScrollDebugger(p: {scroll: VirtualScroll}): JSX.Element {
               Thumb: {num(vs.canvasThumb.y, 1)} of {num(vs.canvas.size.y, 1)} canvas pixels,
             </div>
             <div>
-              Thumb Pixel = {num(vs.canvasThumb.scaleBy(vs.canvasToViewportFactor).y, 3)}
+              Thumb Pixel = {num(vs.canvasThumb.scaleBy(vs.canvasToViewFactor).y, 3)}
             </div>
             <div>
-              Viewport-to-Canvas = {num(vs.viewport.scaleBy(vs.globalToCanvasFactor).y, 15)}
+              Viewport-to-Canvas = {num(vs.view.scaleBy(vs.globalToCanvasFactor).y, 15)}
             </div>
             <div>Font Size: {vs.pixelsPerCell}</div>
             <div>{num(vs.global.size.y / vs.canvas.size.y, 1)} <i>all data pixels in a single canvas pixel out of</i> {num(vs.canvas.size.y)}</div>
-            <div>{num(vs.viewportToCanvasFactor.y, 1)} <i>canvas pixels in a single viewport pixel out of</i> {num(vs.viewport.size.y)}</div>
-            <div>{num(vs.viewportToGlobalFactor.y, 1)} <i>all data pixels in a single viewport pixel out of</i> {num(vs.viewport.size.y)}</div>
-            <div>{num(vs.viewportToGlobalFactor.y / vs.pixelsPerCell, -3)} <i>cells in a single viewport pixel out of</i> {num(vs.viewport.size.y)}</div>
+            <div>{num(vs.viewToCanvasFactor.y, 1)} <i>canvas pixels in a single viewport pixel out of</i> {num(vs.view.size.y)}</div>
+            <div>{num(vs.viewToGlobalFactor.y, 1)} <i>all data pixels in a single viewport pixel out of</i> {num(vs.view.size.y)}</div>
+            <div>{num(vs.viewToGlobalFactor.y / vs.pixelsPerCell, -3)} <i>cells in a single viewport pixel out of</i> {num(vs.view.size.y)}</div>
             <br/>
           </div>
         </AreaRect>

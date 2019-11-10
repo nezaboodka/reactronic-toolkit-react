@@ -61,7 +61,7 @@ function Data(p: {db: Database, vs: VirtualScroll}): JSX.Element {
       paddingTop: gap.y > 0 ? gap.y : 0,
       marginTop: gap.y < 0 ? gap.y : 0,
     }
-    const d = getCachedResultAndRevalidate(p.db.data, [p.vs.bufferCellsWorkaround()]) || []
+    const d = getCachedResultAndRevalidate(p.db.data, [p.vs.bufferedCellsWorkaround()]) || []
     return (
       <div className={css.content} key={'data'}
         title={`${num(size.x)}, ${num(size.y)}`}

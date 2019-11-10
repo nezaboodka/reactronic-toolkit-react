@@ -32,9 +32,8 @@ export class VirtualScroll extends State {
   canvas: Area = Area.ZERO
   canvasThumb: Area = Area.ZERO
   scrollingMonitor: Monitor = Monitor.create('scrolling', 20)
-  // canvasThumbTimestamp: number = 0
-  viewport: Area = Area.ZERO
-  bufferingFactor: XY = xy(1.0, 2.0) // viewport-based
+  view: Area = Area.ZERO
+  bufferingFactor: XY = xy(1.0, 2.0)
 
   constructor(sizeX: number, sizeY: number) {
     super()
@@ -49,10 +48,10 @@ export class VirtualScroll extends State {
       this.canvas = this.global.truncateBy(CANVAS_PIXEL_LIMIT)
       this.canvasThumb = new Area(0, 0, device.clientWidth, device.clientHeight)
       Cache.of(this.moveThumbAndViewport).setup({monitor: this.scrollingMonitor})
-      this.viewport = new Area(0, 0, device.clientWidth, device.clientHeight)
+      this.view = new Area(0, 0, device.clientWidth, device.clientHeight)
     }
     else {
-      this.viewport = Area.ZERO
+      this.view = Area.ZERO
       Cache.of(this.moveThumbAndViewport).setup({monitor: null})
       this.canvasThumb = Area.ZERO
       this.canvas = Area.ZERO
@@ -69,42 +68,42 @@ export class VirtualScroll extends State {
   }
 
   get globalToCellFactor(): XY {
-    const g2p = this.cellToGlobalFactor
-    return xy(1 / g2p.x, 1 / g2p.y)
+    const c2g = this.cellToGlobalFactor
+    return xy(1 / c2g.x, 1 / c2g.y)
   }
 
-  get viewportToCanvasFactor(): XY {
+  get viewToCanvasFactor(): XY {
     const c = this.canvas.size
-    const vp = this.viewport.size
-    return xy(c.x / (vp.x - 1), c.y / (vp.y - 1))
+    const v = this.view.size
+    return xy(c.x / (v.x - 1), c.y / (v.y - 1))
   }
 
-  get canvasToViewportFactor(): XY {
-    const v2c = this.viewportToCanvasFactor
+  get canvasToViewFactor(): XY {
+    const v2c = this.viewToCanvasFactor
     return xy(1 / v2c.x, 1 / v2c.y)
   }
 
   get canvasToGlobalFactor(): XY {
     const g = this.global.size
     const c = this.canvas.size
-    const v = this.viewport.size
+    const v = this.view.size
     return xy(g.x / (c.x - v.x), g.y / (c.y - v.y))
   }
 
   get globalToCanvasFactor(): XY {
-    const c2a = this.canvasToGlobalFactor
-    return xy(1 / c2a.x, 1 / c2a.y)
+    const c2g = this.canvasToGlobalFactor
+    return xy(1 / c2g.x, 1 / c2g.y)
   }
 
-  get viewportToGlobalFactor(): XY {
+  get viewToGlobalFactor(): XY {
     const g = this.global.size
-    const v = this.viewport.size
+    const v = this.view.size
     return xy(g.x / (v.x - 1), g.y / (v.y - 1))
   }
 
-  get globalToViewportFactor(): XY {
-    const v2a = this.viewportToGlobalFactor
-    return xy(1 / v2a.x, 1 / v2a.y)
+  get globalToViewFactor(): XY {
+    const v2g = this.viewToGlobalFactor
+    return xy(1 / v2g.x, 1 / v2g.y)
   }
 
   // Areas (pixels)
@@ -114,8 +113,6 @@ export class VirtualScroll extends State {
   }
 
   get buffer(): Area {
-    // const vp = this.viewport
-    // return vp.zoomAt(vp.center, this.bufferingFactor).truncateBy(this.global)
     return this.bufferCells.scaleBy(this.cellToGlobalFactor)
   }
 
@@ -133,57 +130,57 @@ export class VirtualScroll extends State {
 
   get bufferCells(): Area {
     // return this.buffer.zoomAt(Area.ZERO, this.pixelToCellRatio)
-    const v = this.viewportCells
+    const v = this.viewCells
     return v.zoomAt(v.center, this.bufferingFactor).floor().truncateBy(this.grid)
   }
 
-  get viewportCells(): Area {
-    return this.viewport.scaleBy(this.globalToCellFactor)
+  get viewCells(): Area {
+    return this.view.scaleBy(this.globalToCellFactor)
   }
 
   // Actions
 
   handleDeviceScroll(): void {
-    const d = this.device
-    if (d) {
+    const device = this.device
+    if (device) {
       const t = this.canvasThumb
-      if (Math.abs(t.y - d.scrollTop) > 0.1 || Math.abs(t.x - d.scrollLeft) > 0.1)
-        this.moveThumbAndViewport(d.scrollLeft, d.scrollTop)
+      if (Math.abs(t.y - device.scrollTop) > 0.1 || Math.abs(t.x - device.scrollLeft) > 0.1)
+        this.moveThumbAndViewport(device.scrollLeft, device.scrollTop)
     }
   }
 
   @action
-  moveThumbAndViewport(x: number, y: number): void {    const c0 = this.canvas.moveTo(Area.ZERO, this.global)
-    this.canvasThumb = this.canvasThumb.moveTo(xy(x, y), c0)
+  moveThumbAndViewport(cx: number, cy: number): void {    const c0 = this.canvas.moveTo(Area.ZERO, this.global)
+    this.canvasThumb = this.canvasThumb.moveTo(xy(cx, cy), c0)
     const t = this.canvasThumb
     let c = this.canvas
-    let v = this.viewport
-    const vx = c.x + t.x
-    const vy = c.y + t.y
+    let v = this.view
+    const x = c.x + t.x
+    const y = c.y + t.y
     const c2a = this.canvasToGlobalFactor
-    if (Math.abs(vx - v.x) > 2 * v.size.x || x === 0 || x >= c.size.x - v.size.x) {
-      const v2 = v.moveTo(xy(Math.ceil(x * c2a.x), v.y), this.global)
+    if (Math.abs(x - v.x) > 2 * v.size.x || cx === 0 || cx >= c.size.x - v.size.x) {
+      const v2 = v.moveTo(xy(Math.ceil(cx * c2a.x), v.y), this.global)
       if (!v2.equalTo(v)) {
-        v = this.viewport = v2
+        v = this.view = v2
         c = this.canvas = c.moveTo(xy(v2.x - t.x, c.y), this.global)
       }
     }
     else {
-      const v2 = v.moveTo(xy(vx, v.y), this.global)
+      const v2 = v.moveTo(xy(x, v.y), this.global)
       if (!v2.equalTo(v))
-        this.viewport = v2
+        this.view = v2
     }
-    if (Math.abs(vy - v.y) > 2 * v.size.y || y === 0 || y >= c.size.y - v.size.y) {
-      const v2 = v.moveTo(xy(v.x, Math.ceil(y * c2a.y)), this.global)
+    if (Math.abs(y - v.y) > 2 * v.size.y || cy === 0 || cy >= c.size.y - v.size.y) {
+      const v2 = v.moveTo(xy(v.x, Math.ceil(cy * c2a.y)), this.global)
       if (!v2.equalTo(v)) {
-        v = this.viewport = v2
+        v = this.view = v2
         c = this.canvas = c.moveTo(xy(c.x, v2.y - t.y), this.global)
       }
     }
     else {
-      const v2 = v.moveTo(xy(v.x, vy), this.global)
+      const v2 = v.moveTo(xy(v.x, y), this.global)
       if (!v2.equalTo(v))
-        this.viewport = v2
+        this.view = v2
     }
   }
 
@@ -193,8 +190,8 @@ export class VirtualScroll extends State {
     if (device && !this.scrollingMonitor.busy) {
       let c = this.canvas
       let t = this.canvasThumb
-      const v = this.viewport
-      const v2c = this.viewportToCanvasFactor
+      const v = this.view
+      const v2c = this.viewToCanvasFactor
       const precise = v.scaleBy(this.globalToCanvasFactor)
       const median = xy(precise.x + v2c.x/2, precise.y + v2c.y/2)
       const diff = xy(t.x - median.x, t.y - median.y)
@@ -232,12 +229,12 @@ export class VirtualScroll extends State {
   @action
   zoomAt(origin: XY, factor: number): void {
     origin = this.canvas.moveBy(origin, this.global)
-    this.viewport = this.viewport.zoomAt(origin, xy(factor, factor))
+    this.view = this.view.zoomAt(origin, xy(factor, factor))
   }
 
   // Temporary
 
-  @cached bufferCellsWorkaround(): Area {
+  @cached bufferedCellsWorkaround(): Area {
     return this.bufferCells
   }
 }
