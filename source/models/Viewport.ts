@@ -44,7 +44,7 @@ export class Viewport extends State {
     if (element) {
       this.element = element
       this.pixelsPerCell = pxPerCell
-      this.canvas = this.global.truncateBy(CANVAS_PIXEL_LIMIT)
+      this.canvas = this.all.truncateBy(CANVAS_PIXEL_LIMIT)
       this.canvasThumb = new Area(0, 0, element.clientWidth, element.clientHeight)
       Cache.of(this.moveThumbAndViewport).setup({monitor: this.scrollingMonitor})
       this.view = new Area(0, 0, element.clientWidth, element.clientHeight)
@@ -82,32 +82,32 @@ export class Viewport extends State {
     return xy(1 / v2c.x, 1 / v2c.y)
   }
 
-  get canvasToGlobalFactor(): XY {
-    const g = this.global.size
+  get canvasToAllFactor(): XY {
+    const a = this.all.size
     const c = this.canvas.size
     const v = this.view.size
-    return xy(g.x / (c.x - v.x), g.y / (c.y - v.y))
+    return xy(a.x / (c.x - v.x), a.y / (c.y - v.y))
   }
 
-  get globalToCanvasFactor(): XY {
-    const c2g = this.canvasToGlobalFactor
-    return xy(1 / c2g.x, 1 / c2g.y)
+  get allToCanvasFactor(): XY {
+    const c2a = this.canvasToAllFactor
+    return xy(1 / c2a.x, 1 / c2a.y)
   }
 
-  get viewToGlobalFactor(): XY {
-    const g = this.global.size
+  get viewToAllFactor(): XY {
+    const a = this.all.size
     const v = this.view.size
-    return xy(g.x / (v.x - 1), g.y / (v.y - 1))
+    return xy(a.x / (v.x - 1), a.y / (v.y - 1))
   }
 
-  get globalToViewFactor(): XY {
-    const v2g = this.viewToGlobalFactor
-    return xy(1 / v2g.x, 1 / v2g.y)
+  get allToViewFactor(): XY {
+    const v2a = this.viewToAllFactor
+    return xy(1 / v2a.x, 1 / v2a.y)
   }
 
   // Areas (pixels)
 
-  get global(): Area {
+  get all(): Area {
     return this.grid.scaleBy(this.cellToPixelFactor)
   }
 
@@ -116,9 +116,9 @@ export class Viewport extends State {
   }
 
   get bufferGap(): XY {
-    const buf = this.buffer
+    const b = this.buffer
     const c = this.canvas
-    return xy(buf.x - c.x, buf.y - c.y)
+    return xy(b.x - c.x, b.y - c.y)
   }
 
   // Areas (cells)
@@ -149,35 +149,35 @@ export class Viewport extends State {
   }
 
   @action
-  moveThumbAndViewport(cx: number, cy: number): void {    const c0 = this.canvas.moveTo(Area.ZERO, this.global)
+  moveThumbAndViewport(cx: number, cy: number): void {    const c0 = this.canvas.moveTo(Area.ZERO, this.all)
     this.canvasThumb = this.canvasThumb.moveTo(xy(cx, cy), c0)
     const t = this.canvasThumb
     let c = this.canvas
     let v = this.view
     const x = c.x + t.x
     const y = c.y + t.y
-    const c2a = this.canvasToGlobalFactor
+    const c2a = this.canvasToAllFactor
     if (Math.abs(x - v.x) > 2 * v.size.x || cx === 0 || cx >= c.size.x - v.size.x) {
-      const v2 = v.moveTo(xy(Math.ceil(cx * c2a.x), v.y), this.global)
+      const v2 = v.moveTo(xy(Math.ceil(cx * c2a.x), v.y), this.all)
       if (!v2.equalTo(v)) {
         v = this.view = v2
-        c = this.canvas = c.moveTo(xy(v2.x - t.x, c.y), this.global)
+        c = this.canvas = c.moveTo(xy(v2.x - t.x, c.y), this.all)
       }
     }
     else {
-      const v2 = v.moveTo(xy(x, v.y), this.global)
+      const v2 = v.moveTo(xy(x, v.y), this.all)
       if (!v2.equalTo(v))
         this.view = v2
     }
     if (Math.abs(y - v.y) > 2 * v.size.y || cy === 0 || cy >= c.size.y - v.size.y) {
-      const v2 = v.moveTo(xy(v.x, Math.ceil(cy * c2a.y)), this.global)
+      const v2 = v.moveTo(xy(v.x, Math.ceil(cy * c2a.y)), this.all)
       if (!v2.equalTo(v)) {
         v = this.view = v2
-        c = this.canvas = c.moveTo(xy(c.x, v2.y - t.y), this.global)
+        c = this.canvas = c.moveTo(xy(c.x, v2.y - t.y), this.all)
       }
     }
     else {
-      const v2 = v.moveTo(xy(v.x, y), this.global)
+      const v2 = v.moveTo(xy(v.x, y), this.all)
       if (!v2.equalTo(v))
         this.view = v2
     }
@@ -191,20 +191,20 @@ export class Viewport extends State {
       let t = this.canvasThumb
       const v = this.view
       const v2c = this.viewToCanvasFactor
-      const precise = v.scaleBy(this.globalToCanvasFactor)
+      const precise = v.scaleBy(this.allToCanvasFactor)
       const median = xy(precise.x + v2c.x/2, precise.y + v2c.y/2)
       const diff = xy(t.x - median.x, t.y - median.y)
       if (Math.abs(diff.x) > v2c.x/3) {
-        const t2 = t.moveTo(xy(precise.x + v2c.x/2, t.y), c.moveTo(Area.ZERO, this.global))
-        const c2 = c.moveTo(xy(v.x - t2.x, c.y), this.global)
+        const t2 = t.moveTo(xy(precise.x + v2c.x/2, t.y), c.moveTo(Area.ZERO, this.all))
+        const c2 = c.moveTo(xy(v.x - t2.x, c.y), this.all)
         if (!c2.equalTo(c)) {
           this.canvas = c = c2
           this.canvasThumb = t = t2
         }
       }
       if (Math.abs(diff.y) > v2c.y/3) {
-        const t2 = t.moveTo(xy(t.x, precise.y + v2c.y/2), c.moveTo(Area.ZERO, this.global))
-        const c2 = c.moveTo(xy(c.x, v.y - t2.y), this.global)
+        const t2 = t.moveTo(xy(t.x, precise.y + v2c.y/2), c.moveTo(Area.ZERO, this.all))
+        const c2 = c.moveTo(xy(c.x, v.y - t2.y), this.all)
         if (!c2.equalTo(c)) {
           this.canvas = c = c2
           this.canvasThumb = t = t2
@@ -227,7 +227,7 @@ export class Viewport extends State {
 
   @action
   zoomAt(origin: XY, factor: number): void {
-    origin = this.canvas.moveBy(origin, this.global)
+    origin = this.canvas.moveBy(origin, this.all)
     this.view = this.view.zoomAt(origin, xy(factor, factor))
   }
 
