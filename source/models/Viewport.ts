@@ -14,7 +14,7 @@ export class GridSizing {
   customCellHeight: GridLine[] = [] // in pixels?
 }
 
-export type IDevice = {
+export type IElement = {
   readonly clientWidth: number
   readonly clientHeight: number
   readonly scrollWidth: number
@@ -26,7 +26,7 @@ export type IDevice = {
 export class Viewport extends State {
   grid: Area
   gridSizing = new GridSizing()
-  device: IDevice | null | undefined = undefined
+  element: IElement | null | undefined = undefined
   pixelsPerCell: number = 1
   canvas: Area = Area.ZERO
   canvasThumb: Area = Area.ZERO
@@ -40,14 +40,14 @@ export class Viewport extends State {
   }
 
   @action
-  setDevice(device: IDevice | null, pxPerCell: number): void {
-    if (device) {
-      this.device = device
+  setElement(element: IElement | null, pxPerCell: number): void {
+    if (element) {
+      this.element = element
       this.pixelsPerCell = pxPerCell
       this.canvas = this.global.truncateBy(CANVAS_PIXEL_LIMIT)
-      this.canvasThumb = new Area(0, 0, device.clientWidth, device.clientHeight)
+      this.canvasThumb = new Area(0, 0, element.clientWidth, element.clientHeight)
       Cache.of(this.moveThumbAndViewport).setup({monitor: this.scrollingMonitor})
-      this.view = new Area(0, 0, device.clientWidth, device.clientHeight)
+      this.view = new Area(0, 0, element.clientWidth, element.clientHeight)
     }
     else {
       this.view = Area.ZERO
@@ -55,7 +55,7 @@ export class Viewport extends State {
       this.canvasThumb = Area.ZERO
       this.canvas = Area.ZERO
       this.pixelsPerCell = 1
-      this.device = undefined
+      this.element = undefined
     }
   }
 
@@ -139,12 +139,12 @@ export class Viewport extends State {
 
   // Actions
 
-  handleDeviceScroll(): void {
-    const device = this.device
-    if (device) {
+  handleElementScroll(): void {
+    const element = this.element
+    if (element) {
       const t = this.canvasThumb
-      if (Math.abs(t.y - device.scrollTop) > 0.1 || Math.abs(t.x - device.scrollLeft) > 0.1)
-        this.moveThumbAndViewport(device.scrollLeft, device.scrollTop)
+      if (Math.abs(t.y - element.scrollTop) > 0.1 || Math.abs(t.x - element.scrollLeft) > 0.1)
+        this.moveThumbAndViewport(element.scrollLeft, element.scrollTop)
     }
   }
 
@@ -185,8 +185,8 @@ export class Viewport extends State {
 
   @trigger
   rebaseCanvas(): void {
-    const device = this.device
-    if (device && !this.scrollingMonitor.busy) {
+    const element = this.element
+    if (element && !this.scrollingMonitor.busy) {
       let c = this.canvas
       let t = this.canvasThumb
       const v = this.view
@@ -214,14 +214,14 @@ export class Viewport extends State {
   }
 
   @trigger
-  syncCanvasThumbWithDevice(): void {
-    const device = this.device
-    if (device) {
+  syncCanvasThumbWithElement(): void {
+    const element = this.element
+    if (element) {
       const t = this.canvasThumb
-      if (Math.abs(t.x - device.scrollLeft) > 0.1)
-        device.scrollLeft = t.x
-      if (Math.abs(t.y - device.scrollTop) > 0.1)
-        device.scrollTop = t.y
+      if (Math.abs(t.x - element.scrollLeft) > 0.1)
+        element.scrollLeft = t.x
+      if (Math.abs(t.y - element.scrollTop) > 0.1)
+        element.scrollTop = t.y
     }
   }
 
