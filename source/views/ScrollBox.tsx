@@ -4,24 +4,24 @@
 // License: https://raw.githubusercontent.com/nezaboodka/reactronic/master/LICENSE
 
 import * as React from 'react'
-import { reactive, VirtualScroll } from '../index'
+import { reactive, Viewport } from '../index'
 
 export function ScrollBox(p: {
-  vs: VirtualScroll,
+  viewport: Viewport,
   children: JSX.Element,
   className?: string,
   style?: React.CSSProperties}): JSX.Element {
-  const ref = React.useCallback(component => {
+  const ref = React.useCallback(element => {
     let pxPerRow = 16
-    if (component) {
-      const fs = window.getComputedStyle(component).fontSize
+    if (element) {
+      const fs = window.getComputedStyle(element).fontSize
       pxPerRow = parseFloat(fs.substr(0, fs.length - 2))
     }
-    p.vs.setDevice(component, pxPerRow)
+    p.viewport.setElement(element, pxPerRow)
   }, [])
   return reactive(() => {
     return (
-      <div ref={ref} onScroll={e => p.vs.handleDeviceScroll()}
+      <div ref={ref} onScroll={e => p.viewport.handleElementScroll()}
         className={p.className} style={p.style}>
         {p.children}
       </div>

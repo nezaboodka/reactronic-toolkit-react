@@ -5,49 +5,50 @@
 
 import * as React from 'react'
 import { getCachedResultAndRevalidate } from 'reactronic'
-import { reactive, VirtualScroll, num } from '../../source/index'
+import { reactive, Viewport, num } from '../../source/index'
 import { place } from '../tools/common'
 import { Database } from '../models/Database'
 import { ScrollDebugger } from './ScrollDebugger'
 import { ScrollBox } from '../../source/views/ScrollBox'
 import { style } from './AppWindow.css'
 
-export function AppWindow(p: {db: Database, vs: VirtualScroll}): JSX.Element {
+export function AppWindow(p: {db: Database, viewport: Viewport}): JSX.Element {
   return reactive(() => {
     const css = style.classes
-    const d = p.vs.device
+    const elem = p.viewport.element
     return (
       <div className={css.window}>
-        <ScrollBox vs={p.vs} className={css.scroll} style={place(2, 2, 9, 9)}>
-          <Data db={p.db} vs={p.vs}/>
+        <ScrollBox viewport={p.viewport} className={css.scroll} style={place(2, 2, 9, 9)}>
+          <Data db={p.db} viewport={p.viewport}/>
         </ScrollBox>
         <div className={css.toolbar} style={place(10, 2, 10, 2)}>
-          <button onClick={e => d ? d.scrollTop += 1 : {}}
-            disabled={!d}>▼ 1 px</button>
-          <button onClick={e => d ? d.scrollTop -= 1 : {}}
-            disabled={!d}>▲ 1 px</button>
-          <button onClick={e => d ? d.scrollTop += 1072 : {}}
-            disabled={!d}>▼ 1K px</button>
-          <button onClick={e => d ? d.scrollTop -= 1072 : {}}
-            disabled={!d}>▲ 1K px</button>
-          <button onClick={e => d ? d.scrollTop = d.scrollHeight - d.clientHeight - 1 : {}}
-            disabled={!d}>▼ End</button>
-          <button onClick={e => d ? alert(`${d.scrollTop}, ${d.scrollHeight}, ${p.vs.canvas.size.y}`) : {}}
-            disabled={!d}>▲ Begin</button>
+          <button onClick={e => elem ? elem.scrollTop += 1 : {}}
+            disabled={!elem}>▼ 1 px</button>
+          <button onClick={e => elem ? elem.scrollTop -= 1 : {}}
+            disabled={!elem}>▲ 1 px</button>
+          <button onClick={e => elem ? elem.scrollTop += 1072 : {}}
+            disabled={!elem}>▼ 1K px</button>
+          <button onClick={e => elem ? elem.scrollTop -= 1072 : {}}
+            disabled={!elem}>▲ 1K px</button>
+          <button onClick={e => elem ? elem.scrollTop = elem.scrollHeight - elem.clientHeight - 1 : {}}
+            disabled={!elem}>▼ End</button>
+          <button onClick={e => elem ? alert(`${elem.scrollTop}, ${elem.scrollHeight}, ${p.viewport.canvas.size.y}`) : {}}
+            disabled={!elem}>▲ Begin</button>
         </div>
         <div className={css.visualizer} style={place(10, 3, 10, 5)}>
-          <ScrollDebugger scroll={p.vs}/>
+          <ScrollDebugger viewport={p.viewport}/>
         </div>
       </div>
     )
   })
 }
 
-function Data(p: {db: Database, vs: VirtualScroll}): JSX.Element {
+function Data(p: {db: Database, viewport: Viewport}): JSX.Element {
   return reactive(() => {
     const css = style.classes
-    const size = p.vs.canvas.size
-    const gap = p.vs.bufferGap
+    const vp = p.viewport
+    const size = vp.canvas.size
+    const gap = vp.bufferGap
     const sizing: React.CSSProperties = {
       boxSizing: 'border-box',
       width: `${size.x}px`,
@@ -61,7 +62,7 @@ function Data(p: {db: Database, vs: VirtualScroll}): JSX.Element {
       paddingTop: gap.y > 0 ? gap.y : 0,
       marginTop: gap.y < 0 ? gap.y : 0,
     }
-    const d = getCachedResultAndRevalidate(p.db.data, [p.vs.bufferedCellsWorkaround()]) || []
+    const d = getCachedResultAndRevalidate(p.db.data, [p.viewport.bufferedCellsWorkaround()]) || []
     return (
       <div className={css.content} key={'data'}
         title={`${num(size.x)}, ${num(size.y)}`}

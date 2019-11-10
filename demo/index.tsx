@@ -16,4 +16,4 @@ RT.performanceWarningThreshold = 0 // disable
 const vs = Action.run('vs', () => new Viewport(10000, 1000000000000))
 const db = Action.run('db', () => new Database())
 const root = document.getElementById('root')
-ReactDOM.render(<AppWindow key="app" db={db} vs={vs}/>, root)
+ReactDOM.render(<AppWindow key="app" db={db} viewport={vs}/>, root)
