@@ -8,8 +8,7 @@ import { XY, xy, Area, area, num } from './Area'
 
 export const CANVAS_PIXEL_LIMIT: Area = area(0, 0, 1000123, 1000123)
 export type GridLine = { index: number, coord: number }
-
-export class Sizing {
+export class GridSizing {
   defaultCellWidthFactor: number = 4 // measured in cell height ('em')
   customCellWidth: GridLine[] = [] // in pixels?
   customCellHeight: GridLine[] = [] // in pixels?
@@ -26,14 +25,14 @@ export type IDevice = {
 
 export class Viewport extends State {
   grid: Area
-  sizing = new Sizing()
+  gridSizing = new GridSizing()
   device: IDevice | null | undefined = undefined
   pixelsPerCell: number = 1
   canvas: Area = Area.ZERO
   canvasThumb: Area = Area.ZERO
-  scrollingMonitor: Monitor = Monitor.create('scrolling', 20)
   view: Area = Area.ZERO
   bufferingFactor: XY = xy(1.0, 2.0)
+  scrollingMonitor: Monitor = Monitor.create('scrolling', 20)
 
   constructor(sizeX: number, sizeY: number) {
     super()
@@ -64,7 +63,7 @@ export class Viewport extends State {
 
   get cellToGlobalFactor(): XY {
     const ppr = this.pixelsPerCell
-    return xy(ppr * this.sizing.defaultCellWidthFactor, ppr)
+    return xy(ppr * this.gridSizing.defaultCellWidthFactor, ppr)
   }
 
   get globalToCellFactor(): XY {
