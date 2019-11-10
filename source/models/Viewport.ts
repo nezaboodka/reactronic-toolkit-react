@@ -24,7 +24,7 @@ export type IDevice = {
   scrollTop: number
 }
 
-export class VirtualScroll extends State {
+export class Viewport extends State {
   grid: Area
   sizing = new Sizing()
   device: IDevice | null | undefined = undefined
