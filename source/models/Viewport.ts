@@ -195,7 +195,8 @@ export class Viewport extends State {
       const median = xy(precise.x + v2c.x/2, precise.y + v2c.y/2)
       const diff = xy(t.x - median.x, t.y - median.y)
       if (Math.abs(diff.x) > v2c.x/3) {
-        const t2 = t.moveTo(xy(precise.x + v2c.x/2, t.y), c.moveTo(Area.ZERO, this.all))
+        const tip = v2c.x * ((c.size.x / 2 - precise.x) / c.size.x)
+        const t2 = t.moveTo(xy(precise.x + tip, t.y), c.moveTo(Area.ZERO, this.all))
         const c2 = c.moveTo(xy(v.x - t2.x, c.y), this.all)
         if (!c2.equalTo(c)) {
           this.canvas = c = c2
@@ -203,7 +204,8 @@ export class Viewport extends State {
         }
       }
       if (Math.abs(diff.y) > v2c.y/3) {
-        const t2 = t.moveTo(xy(t.x, precise.y + v2c.y/2), c.moveTo(Area.ZERO, this.all))
+        const tip = v2c.y * ((c.size.y / 2 - precise.y) / c.size.y)
+        const t2 = t.moveTo(xy(t.x, precise.y + tip), c.moveTo(Area.ZERO, this.all))
         const c2 = c.moveTo(xy(c.x, v.y - t2.y), this.all)
         if (!c2.equalTo(c)) {
           this.canvas = c = c2
