@@ -18,7 +18,7 @@ export function AppWindow(p: {viewport: Viewport, buffer: ViewportBuffer}): JSX.
     return (
       <div className={css.window}>
         <ScrollBox key="scroll" viewport={p.viewport} className={css.scroll} style={place(2, 2, 9, 9)}>
-          <Data buffer={p.buffer}/>
+          <DataGrid buffer={p.buffer}/>
         </ScrollBox>
         <div className={css.toolbar} style={place(10, 2, 10, 2)}>
           <button onClick={e => elem ? elem.scrollTop += 1 : {}}
@@ -42,7 +42,7 @@ export function AppWindow(p: {viewport: Viewport, buffer: ViewportBuffer}): JSX.
   })
 }
 
-function Data(p: {buffer: ViewportBuffer}): JSX.Element {
+function DataGrid(p: {buffer: ViewportBuffer}): JSX.Element {
   return reactive(counter => {
     const css = style.classes
     const v = p.buffer.viewport

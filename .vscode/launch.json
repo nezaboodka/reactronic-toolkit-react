@@ -14,6 +14,7 @@
       "args": ["${relativeFile}"],
       "runtimeArgs": ["--nolazy", "-r", "ts-node/register"],
       "skipFiles": [
+        "${workspaceFolder}/node_modules/**/*.js",
         "<node_internals>/**/*.js"
       ]
     },
@@ -22,7 +23,11 @@
       "type": "node",
       "request": "launch",
       "program": "${workspaceRoot}/server.js",
-      "sourceMaps": true
+      "sourceMaps": true,
+      "skipFiles": [
+        "${workspaceFolder}/node_modules/**/*.js",
+        "<node_internals>/**/*.js"
+      ]
     },
     {
       "name": "chrome",
@@ -30,7 +35,11 @@
       "request": "launch",
       "url": "http://localhost:3334",
       "sourceMaps": true,
-      "webRoot": "${workspaceRoot}"
+      "webRoot": "${workspaceRoot}",
+      "skipFiles": [
+        "${workspaceFolder}/node_modules/**/*.js",
+        "<node_internals>/**/*.js"
+      ]
     }
   ]
 }

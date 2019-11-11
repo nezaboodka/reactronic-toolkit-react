@@ -8,7 +8,7 @@ import { Viewport, Area } from '../../source/index'
 
 export class ViewportBuffer extends State {
   readonly viewport: Viewport
-  loaded: string[][]
+  private loaded: string[][]
   area: Area
 
   constructor(viewport: Viewport) {
