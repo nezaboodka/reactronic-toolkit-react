@@ -46,12 +46,12 @@ export class Viewport extends State {
       this.pixelsPerCell = pxPerCell
       this.canvas = this.all.truncateBy(CANVAS_PIXEL_LIMIT)
       this.canvasThumb = new Area(0, 0, element.clientWidth, element.clientHeight)
-      Cache.of(this.moveThumbAndViewport).setup({monitor: this.scrollingMonitor})
+      Cache.of(this.moveViewport).setup({monitor: this.scrollingMonitor})
       this.view = new Area(0, 0, element.clientWidth, element.clientHeight)
     }
     else {
       this.view = Area.ZERO
-      Cache.of(this.moveThumbAndViewport).setup({monitor: null})
+      Cache.of(this.moveViewport).setup({monitor: null})
       this.canvasThumb = Area.ZERO
       this.canvas = Area.ZERO
       this.pixelsPerCell = 1
@@ -144,12 +144,13 @@ export class Viewport extends State {
     if (element) {
       const t = this.canvasThumb
       if (Math.abs(t.y - element.scrollTop) > 0.1 || Math.abs(t.x - element.scrollLeft) > 0.1)
-        this.moveThumbAndViewport(element.scrollLeft, element.scrollTop)
+        this.moveViewport(element.scrollLeft, element.scrollTop)
     }
   }
 
   @action
-  moveThumbAndViewport(cx: number, cy: number): void {    const c0 = this.canvas.moveTo(Area.ZERO, this.all)
+  moveViewport(cx: number, cy: number): void {
+    const c0 = this.canvas.moveTo(Area.ZERO, this.all)
     this.canvasThumb = this.canvasThumb.moveTo(xy(cx, cy), c0)
     const t = this.canvasThumb
     let c = this.canvas
