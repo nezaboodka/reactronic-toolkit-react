@@ -3,7 +3,7 @@
 // Copyright (C) 2019 Yury Chetyrko <ychetyrko@gmail.com>
 // License: https://raw.githubusercontent.com/nezaboodka/reactronic/master/LICENSE
 
-import { State, action, cached, trigger, Monitor, Cache } from 'reactronic'
+import { State, action, trigger, Monitor, Cache } from 'reactronic'
 import { XY, xy, Area, area, num } from './Area'
 
 export const CANVAS_PIXEL_LIMIT: Area = area(0, 0, 1000123, 1000123)
@@ -33,6 +33,7 @@ export class Viewport extends State {
   view: Area = Area.ZERO
   bufferingFactor: XY = xy(1.0, 2.0)
   scrollingMonitor: Monitor = Monitor.create('scrolling', 20)
+  dragging: boolean = false
 
   constructor(sizeX: number, sizeY: number) {
     super()
@@ -139,7 +140,7 @@ export class Viewport extends State {
 
   // Actions
 
-  handleElementScroll(): void {
+  onScroll(): void {
     const element = this.element
     if (element) {
       const t = this.canvasThumb
@@ -149,7 +150,18 @@ export class Viewport extends State {
   }
 
   @action
+  onPointerDown(): void {
+    this.dragging =true
+  }
+
+  @action
+  onPointerUp(): void {
+    this.dragging = false
+  }
+
+  @action
   moveViewport(cx: number, cy: number): void {
+    console.log(`scroll: ${cy}`)
     const c0 = this.canvas.moveTo(Area.ZERO, this.all)
     this.canvasThumb = this.canvasThumb.moveTo(xy(cx, cy), c0)
     const t = this.canvasThumb
@@ -232,12 +244,6 @@ export class Viewport extends State {
   zoomAt(origin: XY, factor: number): void {
     origin = this.canvas.moveBy(origin, this.all)
     this.view = this.view.zoomAt(origin, xy(factor, factor))
-  }
-
-  // Temporary
-
-  @cached bufferedCellsWorkaround(): Area {
-    return this.bufferCells
   }
 }
 
