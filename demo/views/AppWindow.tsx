@@ -46,9 +46,9 @@ export function AppWindow(p: {db: Database, viewport: Viewport}): JSX.Element {
 function Data(p: {db: Database, viewport: Viewport}): JSX.Element {
   return reactive(counter => {
     const css = style.classes
-    const vp = p.viewport
-    const size = vp.canvas.size
-    const gap = vp.bufferGap
+    const v = p.viewport
+    const size = v.canvas.size
+    const gap = v.bufferGap
     const sizing: React.CSSProperties = {
       boxSizing: 'border-box',
       width: `${size.x}px`,
@@ -62,7 +62,7 @@ function Data(p: {db: Database, viewport: Viewport}): JSX.Element {
       paddingTop: gap.y > 0 ? gap.y : 0,
       marginTop: gap.y < 0 ? gap.y : 0,
     }
-    const d = getCachedResultAndRevalidate(p.db.data, [p.viewport]) || []
+    const d = getCachedResultAndRevalidate(p.db.data, [v]) || []
     return (
       <div className={css.content} key={'data'}
         title={`v${counter}: ${num(size.x)}, ${num(size.y)}`}
