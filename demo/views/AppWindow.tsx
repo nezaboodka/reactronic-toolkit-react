@@ -4,22 +4,21 @@
 // License: https://raw.githubusercontent.com/nezaboodka/reactronic/master/LICENSE
 
 import * as React from 'react'
-import { getCachedResultAndRevalidate } from 'reactronic'
 import { reactive, Viewport, num } from '../../source/index'
 import { place } from '../tools/common'
-import { Database } from '../models/Database'
+import { ViewportBuffer } from '../models/ViewportBuffer'
 import { ScrollDebugger } from './ScrollDebugger'
 import { ScrollBox } from '../../source/views/ScrollBox'
 import { style } from './AppWindow.css'
 
-export function AppWindow(p: {db: Database, viewport: Viewport}): JSX.Element {
+export function AppWindow(p: {viewport: Viewport, buffer: ViewportBuffer}): JSX.Element {
   return reactive(() => {
     const css = style.classes
     const elem = p.viewport.element
     return (
       <div className={css.window}>
         <ScrollBox viewport={p.viewport} className={css.scroll} style={place(2, 2, 9, 9)}>
-          <Data db={p.db} viewport={p.viewport}/>
+          <Data buffer={p.buffer}/>
         </ScrollBox>
         <div className={css.toolbar} style={place(10, 2, 10, 2)}>
           <button onClick={e => elem ? elem.scrollTop += 1 : {}}
@@ -36,19 +35,19 @@ export function AppWindow(p: {db: Database, viewport: Viewport}): JSX.Element {
             disabled={!elem}>▲ Begin</button>
         </div>
         <div className={css.visualizer} style={place(10, 3, 10, 5)}>
-          <ScrollDebugger viewport={p.viewport}/>
+          <ScrollDebugger buffer={p.buffer} viewport={p.viewport}/>
         </div>
       </div>
     )
   })
 }
 
-function Data(p: {db: Database, viewport: Viewport}): JSX.Element {
+function Data(p: {buffer: ViewportBuffer}): JSX.Element {
   return reactive(counter => {
     const css = style.classes
-    const v = p.viewport
+    const v = p.buffer.viewport
     const size = v.canvas.size
-    const gap = v.bufferGap
+    const gap = v.getBufferGap(p.buffer.area)
     const sizing: React.CSSProperties = {
       boxSizing: 'border-box',
       width: `${size.x}px`,
@@ -62,7 +61,7 @@ function Data(p: {db: Database, viewport: Viewport}): JSX.Element {
       paddingTop: gap.y > 0 ? gap.y : 0,
       marginTop: gap.y < 0 ? gap.y : 0,
     }
-    const d = getCachedResultAndRevalidate(p.db.data, [v]) || []
+    const d = p.buffer.data
     return (
       <div className={css.content} key={'data'}
         title={`v${counter}: ${num(size.x)}, ${num(size.y)}`}

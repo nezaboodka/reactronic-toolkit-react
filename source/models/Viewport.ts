@@ -116,8 +116,8 @@ export class Viewport extends State {
     return this.bufferCells.scaleBy(this.cellToPixelFactor)
   }
 
-  get bufferGap(): XY {
-    const b = this.buffer
+  getBufferGap(bufferCells: Area): XY {
+    const b = bufferCells.scaleBy(this.cellToPixelFactor)
     const c = this.canvas
     return xy(b.x - c.x, b.y - c.y)
   }

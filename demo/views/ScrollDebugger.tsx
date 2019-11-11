@@ -4,22 +4,24 @@
 // License: https://raw.githubusercontent.com/nezaboodka/reactronic/master/LICENSE
 
 import * as React from 'react'
-import { cx } from 'emotion'
 import { reactive, Area, Viewport, num } from '../../source/index'
 import { place } from '../tools/common'
+import { cx } from 'emotion'
+import { ViewportBuffer } from '../models/ViewportBuffer'
 import { style } from './ScrollDebugger.css'
 
-export function ScrollDebugger(p: {viewport: Viewport}): JSX.Element {
+export function ScrollDebugger(p: {viewport: Viewport, buffer: ViewportBuffer}): JSX.Element {
   return reactive(counter => {
     const css = style.classes
     const vp = p.viewport
+    const buffer = p.buffer.area.scaleBy(vp.cellToPixelFactor)
     return (
       <div className={css.main}>
         <AreaRect hint={'All Data'} area={vp.grid} px={vp.all} key={`grid-${counter}`}
           className={css.database} style={place(1, 1, 10, 9)}>
-          <AreaRect hint={'Canvas'} area={vp.canvasCells} px={vp.canvas} inner={vp.buffer} key={`render-${counter}`}
+          <AreaRect hint={'Canvas'} area={vp.canvasCells} px={vp.canvas} inner={buffer} key={`render-${counter}`}
             className={css.component} style={place(2, 2, 9, 9)}>
-            <AreaRect hint={'Buffer'} area={vp.bufferCells} px={vp.buffer} key={`dataport-${counter}`}
+            <AreaRect hint={'Buffer'} area={p.buffer.area} px={buffer} key={`dataport-${counter}`}
               className={css.dataArea} style={place(2, 2, 9, 9)}>
               <AreaRect hint={'View'} area={vp.viewCells} px={vp.view} key={`viewport-${counter}`}
                 className={css.viewport} style={place(3, 3, 8, 8)}>
