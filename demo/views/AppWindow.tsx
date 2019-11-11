@@ -17,7 +17,7 @@ export function AppWindow(p: {viewport: Viewport, buffer: ViewportBuffer}): JSX.
     const elem = p.viewport.element
     return (
       <div className={css.window}>
-        <ScrollBox viewport={p.viewport} className={css.scroll} style={place(2, 2, 9, 9)}>
+        <ScrollBox key="scroll" viewport={p.viewport} className={css.scroll} style={place(2, 2, 9, 9)}>
           <Data buffer={p.buffer}/>
         </ScrollBox>
         <div className={css.toolbar} style={place(10, 2, 10, 2)}>
@@ -47,7 +47,7 @@ function Data(p: {buffer: ViewportBuffer}): JSX.Element {
     const css = style.classes
     const v = p.buffer.viewport
     const size = v.canvas.size
-    const gap = v.getBufferGap(p.buffer.area)
+    const gap = v.bufferGap
     const sizing: React.CSSProperties = {
       boxSizing: 'border-box',
       width: `${size.x}px`,
@@ -56,17 +56,16 @@ function Data(p: {buffer: ViewportBuffer}): JSX.Element {
       height: `${size.y}px`,
       minHeight: `${size.y}px`,
       maxHeight: `${size.y}px`,
-      paddingLeft: gap.x > 0 ? gap.x : 0,
-      marginLeft: gap.x < 0 ? gap.x : 0,
-      paddingTop: gap.y > 0 ? gap.y : 0,
-      marginTop: gap.y < 0 ? gap.y : 0,
+      paddingLeft: `${gap.x > 0 ? gap.x : 0}px`,
+      marginLeft: `${gap.x < 0 ? gap.x : 0}px`,
+      paddingTop: `${gap.y > 0 ? gap.y : 0}px`,
+      marginTop: `${gap.y < 0 ? gap.y : 0}px`,
     }
-    const d = p.buffer.data
     return (
       <div className={css.content} key={'data'}
         title={`v${counter}: ${num(size.x)}, ${num(size.y)}`}
         style={sizing}>
-        {d.map(row => (
+        {p.buffer.data.map(row => (
           <div title={row[0]} key={row[0]}>
             {row.map(text => (
               <span key={text} style={{marginLeft: '1em'}}>{text}</span>

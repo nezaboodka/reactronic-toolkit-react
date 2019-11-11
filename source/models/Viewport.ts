@@ -116,8 +116,8 @@ export class Viewport extends State {
     return this.bufferCells.scaleBy(this.cellToPixelFactor)
   }
 
-  getBufferGap(bufferCells: Area): XY {
-    const b = bufferCells.scaleBy(this.cellToPixelFactor)
+  get bufferGap(): XY {
+    const b = this.buffer
     const c = this.canvas
     return xy(b.x - c.x, b.y - c.y)
   }
@@ -160,7 +160,6 @@ export class Viewport extends State {
 
   @action
   moveViewport(cx: number, cy: number): void {
-    console.log(`scroll: ${cy}`)
     const c0 = this.canvas.moveTo(Area.ZERO, this.all)
     this.canvasThumb = this.canvasThumb.moveTo(xy(cx, cy), c0)
     const t = this.canvasThumb

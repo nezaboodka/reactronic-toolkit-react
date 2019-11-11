@@ -3,22 +3,26 @@
 // Copyright (C) 2019 Yury Chetyrko <ychetyrko@gmail.com>
 // License: https://raw.githubusercontent.com/nezaboodka/reactronic/master/LICENSE
 
-import { State, sleep, trigger } from 'reactronic'
+import { State, sleep, trigger, reentrance, Reentrance } from 'reactronic'
 import { Viewport, Area } from '../../source/index'
 
 export class ViewportBuffer extends State {
   readonly viewport: Viewport
-  data: string[][]
+  loaded: string[][]
   area: Area
 
   constructor(viewport: Viewport) {
     super()
     this.viewport = viewport
-    this.data = []
+    this.loaded = []
     this.area = Area.ZERO
   }
 
-  @trigger
+  get data(): string[][] {
+    return this.loaded
+  }
+
+  @trigger @reentrance(Reentrance.CancelPrevious)
   async load(): Promise<void> {
     const area = this.viewport.bufferCells
     if (!area.equalTo(this.area)) {
@@ -30,8 +34,8 @@ export class ViewportBuffer extends State {
           row.push(`Cell r${y}c${x}`)
         data.push(row)
       }
-      await sleep(50)
-      this.data = data
+      await sleep(300)
+      this.loaded = data
       this.area = area
     }
   }
