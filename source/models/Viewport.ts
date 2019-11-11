@@ -129,7 +129,6 @@ export class Viewport extends State {
   }
 
   get bufferCells(): Area {
-    // return this.buffer.zoomAt(Area.ZERO, this.pixelToCellRatio)
     const v = this.viewCells
     return v.zoomAt(v.center, this.bufferingFactor).floor().truncateBy(this.grid)
   }

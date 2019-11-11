@@ -3,13 +3,13 @@
 // Copyright (C) 2019 Yury Chetyrko <ychetyrko@gmail.com>
 // License: https://raw.githubusercontent.com/nezaboodka/reactronic/master/LICENSE
 
-import { State, cached, sleep } from 'reactronic'
-import { Viewport } from '../../source/index'
+import { State, sleep, trigger, cachedArgs } from 'reactronic'
+import { Viewport, Area } from '../../source/index'
 
 export class Database extends State {
-  @cached
-  async data(viewport: Viewport): Promise<string[][]> {
-    const cells = viewport.bufferCells
+  @trigger @cachedArgs(true)
+  async data(viewport?: Viewport): Promise<string[][]> {
+    const cells = viewport ? viewport.bufferCells : Area.ZERO
     const result: string[][] = []
     const till = cells.till
     for (let y = cells.y; y < till.y; y++) {
