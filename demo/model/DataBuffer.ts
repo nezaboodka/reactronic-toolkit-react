@@ -4,43 +4,38 @@
 // License: https://raw.githubusercontent.com/nezaboodka/reactronic/master/LICENSE
 
 import { State, sleep, trigger, reentrance, Reentrance } from 'reactronic'
-import { Viewport, Area } from '../../source/index'
+import { Viewport } from '../../source/index'
 
 export class DataBuffer extends State {
   readonly viewport: Viewport
   private loadedData: string[][]
-  private loadedArea: Area
 
   constructor(viewport: Viewport) {
     super()
     this.viewport = viewport
     this.loadedData = []
-    this.loadedArea = Area.ZERO
   }
 
   get data(): string[][] {
     return this.loadedData
   }
 
-  get area(): Area {
-    return this.loadedArea
-  }
-
   @trigger @reentrance(Reentrance.CancelPrevious)
   async load(): Promise<void> {
-    const area = this.viewport.bufferCells
-    if (!area.equalTo(this.loadedArea)) {
+    const vp = this.viewport
+    const cells = vp.bufferingCells
+    if (!cells.equalTo(vp.bufferedCells)) {
       const data: string[][] = []
-      const till = area.till
-      for (let y = area.y; y < till.y; y++) {
+      const till = cells.till
+      for (let y = cells.y; y < till.y; y++) {
         const row: string[] = []
-        for (let x = area.x; x < till.x; x++)
+        for (let x = cells.x; x < till.x; x++)
           row.push(`Cell r${y}c${x}`)
         data.push(row)
       }
       await sleep(50)
       this.loadedData = data
-      this.loadedArea = area
+      this.viewport.bufferedCells = cells
     }
   }
 }

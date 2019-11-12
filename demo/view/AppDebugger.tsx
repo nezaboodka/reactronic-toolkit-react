@@ -19,9 +19,9 @@ export function AppDebugger(p: {viewport: Viewport, buffer: DataBuffer}): JSX.El
       <div className={css.main}>
         <AreaRect hint={'All Data'} area={vp.grid} px={vp.all} key={`grid-${counter}`}
           className={css.database} style={place(1, 1, 10, 9)}>
-          <AreaRect hint={'Canvas'} area={vp.canvasCells} px={vp.canvas} inner={vp.buffer} key={`render-${counter}`}
+          <AreaRect hint={'Canvas'} area={vp.canvasCells} px={vp.canvas} inner={vp.buffering} key={`render-${counter}`}
             className={css.component} style={place(2, 2, 9, 9)}>
-            <AreaRect hint={'Buffer'} area={vp.bufferCells} px={vp.buffer} key={`dataport-${counter}`}
+            <AreaRect hint={'Buffer'} area={vp.bufferingCells} px={vp.buffering} key={`dataport-${counter}`}
               className={css.dataArea} style={place(2, 2, 9, 9)}>
               <AreaRect hint={'View'} area={vp.viewCells} px={vp.view} key={`viewport-${counter}`}
                 className={css.viewport} style={place(3, 3, 8, 8)}>
