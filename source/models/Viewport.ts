@@ -158,7 +158,8 @@ export class Viewport extends State {
     const x = c.x + t.x
     const y = c.y + t.y
     const c2a = this.canvasToAllFactor
-    if (Math.abs(x - v.x) > 2 * v.size.x /*|| cx === 0 || cx >= c.size.x - v.size.x*/) {
+    const dx = Math.abs(x - v.x)
+    if (dx > 2 * v.size.x || (dx > v.size.x / 2 && (cx === 0 || cx >= c.size.x - v.size.x))) {
       const v2 = v.moveTo(xy(Math.ceil(cx * c2a.x), v.y), this.all)
       if (!v2.equalTo(v)) {
         v = this.view = v2
@@ -170,7 +171,8 @@ export class Viewport extends State {
       if (!v2.equalTo(v))
         this.view = v2
     }
-    if (Math.abs(y - v.y) > 2 * v.size.y /*|| cy === 0 || cy >= c.size.y - v.size.y*/) {
+    const dy = Math.abs(y - v.y)
+    if (dy > 2 * v.size.y || (dy > v.size.y / 2 && (cy === 0 || cy >= c.size.y - v.size.y))) {
       const v2 = v.moveTo(xy(v.x, Math.ceil(cy * c2a.y)), this.all)
       if (!v2.equalTo(v)) {
         v = this.view = v2
