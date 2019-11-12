@@ -21,10 +21,7 @@ export function ScrollBox(p: {
   }, [])
   return reactive(() => {
     return (
-      <div ref={ref}
-        onScroll={e => p.viewport.onScroll()}
-        onPointerDown={e => p.viewport.onPointerDown()}
-        onPointerUp={e => p.viewport.onPointerUp()}
+      <div ref={ref} onScroll={e => p.viewport.onScroll()}
         className={p.className} style={p.style}>
         {p.children}
       </div>

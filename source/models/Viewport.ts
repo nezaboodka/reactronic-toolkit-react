@@ -33,7 +33,6 @@ export class Viewport extends State {
   view: Area = Area.ZERO
   bufferingFactor: XY = xy(1.0, 2.0)
   scrollingMonitor: Monitor = Monitor.create('scrolling', 20)
-  dragging: boolean = false
 
   constructor(sizeX: number, sizeY: number) {
     super()
@@ -146,16 +145,6 @@ export class Viewport extends State {
       if (Math.abs(t.y - element.scrollTop) > 0.1 || Math.abs(t.x - element.scrollLeft) > 0.1)
         this.moveViewport(element.scrollLeft, element.scrollTop)
     }
-  }
-
-  @action
-  onPointerDown(): void {
-    this.dragging =true
-  }
-
-  @action
-  onPointerUp(): void {
-    this.dragging = false
   }
 
   @action

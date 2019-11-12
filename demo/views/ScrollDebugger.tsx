@@ -4,6 +4,7 @@
 // License: https://raw.githubusercontent.com/nezaboodka/reactronic/master/LICENSE
 
 import * as React from 'react'
+import { TraceLevel } from 'reactronic'
 import { reactive, Area, Viewport, num } from '../../source/index'
 import { place } from '../tools/common'
 import { cx } from 'emotion'
@@ -88,5 +89,5 @@ function AreaRect(p: {
         <div className={css.areaCenter} style={place(5, 5, 6, 6)}>{p.children}</div>
       </div>
     )
-  })
+  }, TraceLevel.Off)
 }
