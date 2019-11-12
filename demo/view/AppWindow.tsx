@@ -6,10 +6,10 @@
 import * as React from 'react'
 import { reactive, num } from '../../source/index'
 import { place } from '../tools/common'
-import { DataBuffer } from '../models/DataBuffer'
+import { DataBuffer } from '../model/DataBuffer'
 import { AppDebugger } from './AppDebugger'
 import { VirtualScroll } from '../../source/views/VirtualScroll'
-import { Application } from '../models/Application'
+import { Application } from '../model/Application'
 import { style } from './AppWindow.css'
 
 export function AppWindow(p: {app: Application}): JSX.Element {

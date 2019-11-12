@@ -8,7 +8,7 @@ import { TraceLevel } from 'reactronic'
 import { reactive, Area, Viewport, num } from '../../source/index'
 import { place } from '../tools/common'
 import { cx } from 'emotion'
-import { DataBuffer } from '../models/DataBuffer'
+import { DataBuffer } from '../model/DataBuffer'
 import { style } from './AppDebugger.css'
 
 export function AppDebugger(p: {viewport: Viewport, buffer: DataBuffer}): JSX.Element {
