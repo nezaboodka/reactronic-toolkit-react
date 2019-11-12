@@ -8,7 +8,7 @@ import { reactive, num } from '../../source/index'
 import { place } from '../tools/common'
 import { DataBuffer } from '../model/DataBuffer'
 import { AppDebugger } from './AppDebugger'
-import { VirtualScroll } from '../../source/views/VirtualScroll'
+import { VirtualScroll } from '../../source/components/VirtualScroll'
 import { Application } from '../model/Application'
 import { style } from './AppWindow.css'
 
