@@ -4,22 +4,25 @@
 // License: https://raw.githubusercontent.com/nezaboodka/reactronic/master/LICENSE
 
 import * as React from 'react'
-import { reactive, Viewport, num } from '../../source/index'
+import { reactive, num } from '../../source/index'
 import { place } from '../tools/common'
 import { DataBuffer } from '../models/DataBuffer'
 import { AppDebugger } from './AppDebugger'
 import { VirtualScroll } from '../../source/views/VirtualScroll'
+import { Application } from '../models/Application'
 import { style } from './AppWindow.css'
 
-export function AppWindow(p: {viewport: Viewport, buffer: DataBuffer}): JSX.Element {
+export function AppWindow(p: {app: Application}): JSX.Element {
   return reactive(() => {
     const css = style.classes
-    const elem = p.viewport.element
+    const vp = p.app.viewport
+    const buf = p.app.buffer
+    const elem = vp.element
     return (
       <div className={css.window}>
-        <VirtualScroll viewport={p.viewport}
+        <VirtualScroll viewport={vp}
           className={css.scroll} style={place(2, 2, 9, 9)}>
-          <DataGrid buffer={p.buffer}/>
+          <DataGrid buffer={buf}/>
         </VirtualScroll>
         <div className={css.toolbar} style={place(10, 2, 10, 2)}>
           <button onClick={e => elem ? elem.scrollTop += 1 : {}}
@@ -32,11 +35,11 @@ export function AppWindow(p: {viewport: Viewport, buffer: DataBuffer}): JSX.Elem
             disabled={!elem}>▲ 1K px</button>
           <button onClick={e => elem ? elem.scrollTop = elem.scrollHeight - elem.clientHeight - 1 : {}}
             disabled={!elem}>▼ End</button>
-          <button onClick={e => elem ? alert(`${elem.scrollTop}, ${elem.scrollHeight}, ${p.viewport.canvas.size.y}`) : {}}
+          <button onClick={e => elem ? alert(`${elem.scrollTop}, ${elem.scrollHeight}, ${vp.canvas.size.y}`) : {}}
             disabled={!elem}>▲ Begin</button>
         </div>
         <div className={css.visualizer} style={place(10, 3, 10, 5)}>
-          <AppDebugger buffer={p.buffer} viewport={p.viewport}/>
+          <AppDebugger buffer={buf} viewport={vp}/>
         </div>
       </div>
     )

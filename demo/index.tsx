@@ -6,14 +6,12 @@
 import * as React from 'react'
 import * as ReactDOM from 'react-dom'
 import { Action, Tools as RT, TraceLevel } from 'reactronic'
-import { DataBuffer } from './models/DataBuffer'
-import { Viewport } from '../source/index'
+import { Application } from './models/Application'
 import { AppWindow } from './views/AppWindow'
 
 RT.setTrace(TraceLevel.Off)
 RT.performanceWarningThreshold = 0 // disable
 
-const viewport = Action.run('viewport', () => new Viewport(10000, 1000000000000))
-const buffer = Action.run('buffer', () => new DataBuffer(viewport))
+const app = Action.run('app', () => new Application())
 const root = document.getElementById('root')
-ReactDOM.render(<AppWindow key="app" viewport={viewport} buffer={buffer}/>, root)
+ReactDOM.render(<AppWindow app={app}/>, root)
