@@ -6,7 +6,7 @@
 import * as React from 'react'
 import { reactive, Viewport } from '../index'
 
-export function ScrollBox(p: {
+export function VirtualScroll(p: {
   viewport: Viewport,
   children: JSX.Element,
   className?: string,

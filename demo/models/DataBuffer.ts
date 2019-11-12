@@ -6,7 +6,7 @@
 import { State, sleep, trigger, reentrance, Reentrance } from 'reactronic'
 import { Viewport, Area } from '../../source/index'
 
-export class ViewportBuffer extends State {
+export class DataBuffer extends State {
   readonly viewport: Viewport
   private loadedData: string[][]
   private loadedArea: Area

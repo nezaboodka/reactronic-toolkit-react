@@ -6,20 +6,21 @@
 import * as React from 'react'
 import { reactive, Viewport, num } from '../../source/index'
 import { place } from '../tools/common'
-import { ViewportBuffer } from '../models/ViewportBuffer'
+import { DataBuffer } from '../models/DataBuffer'
 import { ScrollDebugger } from './ScrollDebugger'
-import { ScrollBox } from '../../source/views/ScrollBox'
+import { VirtualScroll } from '../../source/views/VirtualScroll'
 import { style } from './AppWindow.css'
 
-export function AppWindow(p: {viewport: Viewport, buffer: ViewportBuffer}): JSX.Element {
+export function AppWindow(p: {viewport: Viewport, buffer: DataBuffer}): JSX.Element {
   return reactive(() => {
     const css = style.classes
     const elem = p.viewport.element
     return (
       <div className={css.window}>
-        <ScrollBox key="scroll" viewport={p.viewport} className={css.scroll} style={place(2, 2, 9, 9)}>
+        <VirtualScroll viewport={p.viewport}
+          className={css.scroll} style={place(2, 2, 9, 9)}>
           <DataGrid buffer={p.buffer}/>
-        </ScrollBox>
+        </VirtualScroll>
         <div className={css.toolbar} style={place(10, 2, 10, 2)}>
           <button onClick={e => elem ? elem.scrollTop += 1 : {}}
             disabled={!elem}>▼ 1 px</button>
@@ -42,7 +43,7 @@ export function AppWindow(p: {viewport: Viewport, buffer: ViewportBuffer}): JSX.
   })
 }
 
-function DataGrid(p: {buffer: ViewportBuffer}): JSX.Element {
+function DataGrid(p: {buffer: DataBuffer}): JSX.Element {
   return reactive(counter => {
     const css = style.classes
     const v = p.buffer.viewport
