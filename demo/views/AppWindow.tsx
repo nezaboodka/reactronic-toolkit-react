@@ -7,7 +7,7 @@ import * as React from 'react'
 import { reactive, Viewport, num } from '../../source/index'
 import { place } from '../tools/common'
 import { DataBuffer } from '../models/DataBuffer'
-import { ScrollDebugger } from './ScrollDebugger'
+import { AppDebugger } from './AppDebugger'
 import { VirtualScroll } from '../../source/views/VirtualScroll'
 import { style } from './AppWindow.css'
 
@@ -36,7 +36,7 @@ export function AppWindow(p: {viewport: Viewport, buffer: DataBuffer}): JSX.Elem
             disabled={!elem}>▲ Begin</button>
         </div>
         <div className={css.visualizer} style={place(10, 3, 10, 5)}>
-          <ScrollDebugger buffer={p.buffer} viewport={p.viewport}/>
+          <AppDebugger buffer={p.buffer} viewport={p.viewport}/>
         </div>
       </div>
     )

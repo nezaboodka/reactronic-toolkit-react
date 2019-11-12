@@ -9,9 +9,9 @@ import { reactive, Area, Viewport, num } from '../../source/index'
 import { place } from '../tools/common'
 import { cx } from 'emotion'
 import { DataBuffer } from '../models/DataBuffer'
-import { style } from './ScrollDebugger.css'
+import { style } from './AppDebugger.css'
 
-export function ScrollDebugger(p: {viewport: Viewport, buffer: DataBuffer}): JSX.Element {
+export function AppDebugger(p: {viewport: Viewport, buffer: DataBuffer}): JSX.Element {
   return reactive(counter => {
     const css = style.classes
     const vp = p.viewport
