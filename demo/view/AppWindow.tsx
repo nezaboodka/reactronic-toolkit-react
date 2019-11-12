@@ -4,7 +4,7 @@
 // License: https://raw.githubusercontent.com/nezaboodka/reactronic/master/LICENSE
 
 import * as React from 'react'
-import { reactive, num } from '../../source/index'
+import { reactive } from '../../source/index'
 import { place } from '../tools/common'
 import { DataBuffer } from '../model/DataBuffer'
 import { AppDebugger } from './AppDebugger'
