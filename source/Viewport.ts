@@ -159,7 +159,7 @@ export class Viewport extends State {
 
   @action
   moveViewport(cx: number, cy: number): void {
-    // console.log(`scroll: ${cy} (∆ ${cy - this.canvasThumb.y})`)
+    // console.log(`scroll: ${cy} (∆ ${cy - this.canvasThumb.y}), h=${this.element ? this.element.scrollHeight : '?'}`)
     const c0 = this.canvas.moveTo(Area.ZERO, this.all)
     this.canvasThumb = this.canvasThumb.moveTo(xy(cx, cy), c0)
     const t = this.canvasThumb
@@ -169,7 +169,7 @@ export class Viewport extends State {
     const y = c.y + t.y
     const c2a = this.canvasToAllFactor
     const dx = Math.abs(x - v.x)
-    if (dx > 2 * v.size.x || (dx > v.size.x / 2 && (cx === 0 || cx >= c.size.x - v.size.x))) {
+    if (dx > 2 * v.size.x || (dx > v.size.x / 2 && (cx < 1 || cx >= c.size.x - v.size.x))) {
       const v2 = v.moveTo(xy(Math.ceil(cx * c2a.x), v.y), this.all)
       if (!v2.equalTo(v)) {
         v = this.view = v2
@@ -182,7 +182,7 @@ export class Viewport extends State {
         this.view = v2
     }
     const dy = Math.abs(y - v.y)
-    if (dy > 2 * v.size.y || (dy > v.size.y / 2 && (cy === 0 || cy >= c.size.y - v.size.y))) {
+    if (dy > 2 * v.size.y || (dy > v.size.y / 2 && (cy < 1 || cy >= c.size.y - v.size.y))) {
       const v2 = v.moveTo(xy(v.x, Math.ceil(cy * c2a.y)), this.all)
       if (!v2.equalTo(v)) {
         v = this.view = v2
@@ -200,6 +200,7 @@ export class Viewport extends State {
   rebaseCanvas(): void {
     const element = this.element
     if (element && !this.scrollingMonitor.busy) {
+      // console.log('rebase')
       let c = this.canvas
       let t = this.canvasThumb
       const v = this.view
@@ -233,12 +234,10 @@ export class Viewport extends State {
     const element = this.element
     if (element) {
       const t = this.canvasThumb
-      if (Math.abs(t.x - element.scrollLeft) > 0.1) {
+      if (Math.abs(t.x - element.scrollLeft) > 0.1)
         element.scrollLeft = t.x
-      }
-      if (Math.abs(t.y - element.scrollTop) > 0.1) {
+      if (Math.abs(t.y - element.scrollTop) > 0.1)
         element.scrollTop = t.y
-      }
     }
   }
 
