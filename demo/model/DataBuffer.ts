@@ -22,6 +22,10 @@ export class DataBuffer extends State {
     return this.loadedData
   }
 
+  get area(): Area {
+    return this.loadedArea
+  }
+
   @trigger @reentrance(Reentrance.CancelPrevious)
   async load(): Promise<void> {
     const area = this.viewport.bufferCells
@@ -34,7 +38,7 @@ export class DataBuffer extends State {
           row.push(`Cell r${y}c${x}`)
         data.push(row)
       }
-      await sleep(300)
+      await sleep(50)
       this.loadedData = data
       this.loadedArea = area
     }

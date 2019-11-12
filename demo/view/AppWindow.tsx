@@ -51,7 +51,7 @@ function DataGrid(p: {buffer: DataBuffer}): JSX.Element {
     const css = style.classes
     const v = p.buffer.viewport
     const size = v.canvas.size
-    const gap = v.bufferGap
+    const gap = v.getGap(p.buffer.area)
     const data = p.buffer.data
     const sizing: React.CSSProperties = {
       boxSizing: 'border-box',

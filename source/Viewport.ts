@@ -31,7 +31,7 @@ export class Viewport extends State {
   canvas: Area = Area.ZERO
   canvasThumb: Area = Area.ZERO
   view: Area = Area.ZERO
-  bufferingFactor: XY = xy(1.0, 2.0)
+  bufferingFactor: XY = xy(1.0, 3.0)
   scrollingMonitor: Monitor = Monitor.create('scrolling', 20)
 
   constructor(sizeX: number, sizeY: number) {
@@ -115,10 +115,20 @@ export class Viewport extends State {
     return this.bufferCells.scaleBy(this.cellToPixelFactor)
   }
 
-  get bufferGap(): XY {
-    const b = this.buffer
+  getGap(cells: Area): XY {
+    const a = cells.scaleBy(this.cellToPixelFactor)
     const c = this.canvas
-    return xy(b.x - c.x, b.y - c.y)
+    let dx = a.x - c.x
+    if (dx < -a.size.x)
+      dx = -a.size.x
+    else if (dx + a.size.x > c.size.x)
+      dx = c.size.x - a.size.x
+    let dy = a.y - c.y
+    if (dy < -a.size.y)
+      dy = -a.size.y
+    else if (dy + a.size.y > c.size.y)
+      dy = c.size.y - a.size.y
+    return xy(dx, dy)
   }
 
   // Areas (cells)
