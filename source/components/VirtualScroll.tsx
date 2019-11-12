@@ -20,10 +20,24 @@ export function VirtualScroll(p: {
     p.viewport.setElement(element, pxPerRow)
   }, [])
   return reactive(() => {
+    const vp = p.viewport
+    const size = vp.canvas.size
+    const gap = vp.getGap()
+    const sizing: React.CSSProperties = {
+      boxSizing: 'border-box', overflow: 'hidden',
+      width: `${size.x}px`, minWidth: `${size.x}px`, maxWidth: `${size.x}px`,
+      height: `${size.y}px`, minHeight: `${size.y}px`, maxHeight: `${size.y}px`,
+      paddingLeft: `${gap.x > 0 ? gap.x : 0}px`,
+      marginLeft: `${gap.x < 0 ? gap.x : 0}px`,
+      paddingTop: `${gap.y > 0 ? gap.y : 0}px`,
+      marginTop: `${gap.y < 0 ? gap.y : 0}px`,
+    }
     return (
       <div ref={ref} onScroll={e => p.viewport.onScroll()}
         className={p.className} style={p.style}>
-        {p.children}
+        <div style={sizing}>
+          {p.children}
+        </div>
       </div>
     )
   })
