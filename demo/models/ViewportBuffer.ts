@@ -26,6 +26,7 @@ export class ViewportBuffer extends State {
   async load(): Promise<void> {
     const area = this.viewport.bufferCells
     if (!area.equalTo(this.area)) {
+      console.log(`loading ${area.y}+${area.size.y}`)
       const data: string[][] = []
       const till = area.till
       for (let y = area.y; y < till.y; y++) {
@@ -37,6 +38,7 @@ export class ViewportBuffer extends State {
       await sleep(300)
       this.loaded = data
       this.area = area
+      console.log(`loaded ${area.y}+${area.size.y}`)
     }
   }
 }
