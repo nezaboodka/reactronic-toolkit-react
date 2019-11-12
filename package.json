@@ -1,6 +1,6 @@
 {
   "name": "reactronic-toolkit-react",
-  "version": "0.19.58",
+  "version": "0.19.59",
   "description": "Reactronic Toolkit for React",
   "main": "build/dist/source/index.js",
   "types": "build/dist/source/index.d.ts",
@@ -30,7 +30,7 @@
   "homepage": "https://github.com/nezaboodka/reactronic-toolkit-react/blob/master/README.md#readme",
   "dependencies": {
     "react": "^16.11.0",
-    "reactronic": "^0.19.425"
+    "reactronic": "^0.19.426"
   },
   "devDependencies": {
     "@types/node": "12.11.7",

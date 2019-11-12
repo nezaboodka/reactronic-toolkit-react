@@ -5168,10 +5168,10 @@ react@^16.11.0:
     object-assign "^4.1.1"
     prop-types "^15.6.2"
 
-reactronic@^0.19.425:
-  version "0.19.425"
-  resolved "https://registry.yarnpkg.com/reactronic/-/reactronic-0.19.425.tgz#96ec2af423586d426f07b9032a3dfa9945857c28"
-  integrity sha512-z2RRJnBvDGCKJb90Kwk4ByHm0Q3LQ//GOFk55XK6G7M/2MfL1FdOm9ZCBCubZWW/tFlyEcOhqanmM5s//MC8Tg==
+reactronic@^0.19.426:
+  version "0.19.426"
+  resolved "https://registry.yarnpkg.com/reactronic/-/reactronic-0.19.426.tgz#19e33359c7edc0eb862bb4a58e5b65598d7c3eca"
+  integrity sha512-mfwM/tceKA0Q7/qj0x/5xVzUaTUVJAPz7DPe3tcYinkgxna/lccyZTnjMb+SGYQF+k9oFeH85D1iRbLhl2mWFA==
 
 "readable-stream@1 || 2", readable-stream@^2.0.0, readable-stream@^2.0.1, readable-stream@^2.0.2, readable-stream@^2.0.6, readable-stream@^2.1.5, readable-stream@^2.2.2, readable-stream@^2.3.3, readable-stream@^2.3.6, readable-stream@~2.3.6:
   version "2.3.6"
