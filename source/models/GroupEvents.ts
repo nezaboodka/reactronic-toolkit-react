@@ -5,15 +5,39 @@
 
 import * as React from 'react'
 
-export class OutsideEvents {
-  constructor(private events: string[]) { }
+export class GroupEvents {
+  private events: string[]
   private keys = new Map<any, EventTarget>()
   private participants = new Set<EventTarget>()
   private participantEvent: Event | null = null
+  private inside?: (e: Event) => void = undefined
   private outside?: (e: Event) => void = undefined
 
-  get onOutsideEvent(): ((e: Event) => void) | undefined { return this.outside }
-  set onOutsideEvent(handler: ((e: Event) => void) | undefined) {
+  constructor(events: string[]) {
+    this.events = events
+  }
+
+  get onInside(): ((e: Event) => void) | undefined { return this.inside }
+  set onInside(handler: ((e: Event) => void) | undefined) {
+    if (this.inside !== handler) {
+      if (this.inside !== undefined) {
+        for (const x of this.events) {
+          document.removeEventListener(x, this.bubble, false)
+          document.removeEventListener(x, this.capture, true)
+        }
+      }
+      this.inside = handler
+      if (handler !== undefined) {
+        for (const x of this.events) {
+          document.addEventListener(x, this.capture, true)
+          document.addEventListener(x, this.bubble, false)
+        }
+      }
+    }
+  }
+
+  get onOutside(): ((e: Event) => void) | undefined { return this.outside }
+  set onOutside(handler: ((e: Event) => void) | undefined) {
     if (this.outside !== handler) {
       if (this.outside !== undefined) {
         for (const x of this.events) {
@@ -64,7 +88,11 @@ export class OutsideEvents {
   }
 
   private bubble = (e: Event): void => {
-    if (this.participantEvent !== e && this.outside)
+    if (this.participantEvent === e) {
+      if (this.inside)
+        this.inside(e)
+    }
+    else if (this.outside)
       this.outside(e)
     this.participantEvent = null
   }

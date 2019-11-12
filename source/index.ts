@@ -5,7 +5,7 @@
 
 export * from './tools/reactive'
 export * from './tools/restyle'
-export * from './models/OutsideEvents'
+export * from './models/GroupEvents'
 export * from './models/UserInput'
 export * from './models/Area'
 export * from './models/Viewport'
