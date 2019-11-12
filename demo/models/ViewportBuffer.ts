@@ -8,25 +8,24 @@ import { Viewport, Area } from '../../source/index'
 
 export class ViewportBuffer extends State {
   readonly viewport: Viewport
-  private loaded: string[][]
-  area: Area
+  private loadedData: string[][]
+  private loadedArea: Area
 
   constructor(viewport: Viewport) {
     super()
     this.viewport = viewport
-    this.loaded = []
-    this.area = Area.ZERO
+    this.loadedData = []
+    this.loadedArea = Area.ZERO
   }
 
   get data(): string[][] {
-    return this.loaded
+    return this.loadedData
   }
 
   @trigger @reentrance(Reentrance.CancelPrevious)
   async load(): Promise<void> {
     const area = this.viewport.bufferCells
-    if (!area.equalTo(this.area)) {
-      console.log(`loading ${area.y}+${area.size.y}`)
+    if (!area.equalTo(this.loadedArea)) {
       const data: string[][] = []
       const till = area.till
       for (let y = area.y; y < till.y; y++) {
@@ -36,9 +35,8 @@ export class ViewportBuffer extends State {
         data.push(row)
       }
       await sleep(300)
-      this.loaded = data
-      this.area = area
-      console.log(`loaded ${area.y}+${area.size.y}`)
+      this.loadedData = data
+      this.loadedArea = area
     }
   }
 }

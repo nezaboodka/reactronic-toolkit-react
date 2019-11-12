@@ -41,7 +41,6 @@ export class Viewport extends State {
 
   @action
   setElement(element: IElement | null, pxPerCell: number): void {
-    console.log('set element')
     if (element) {
       this.element = element
       this.pixelsPerCell = pxPerCell
@@ -150,7 +149,6 @@ export class Viewport extends State {
 
   @action
   moveViewport(cx: number, cy: number): void {
-    console.log(`scroll: ${cy}`)
     const c0 = this.canvas.moveTo(Area.ZERO, this.all)
     this.canvasThumb = this.canvasThumb.moveTo(xy(cx, cy), c0)
     const t = this.canvasThumb
