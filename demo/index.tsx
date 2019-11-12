@@ -10,7 +10,7 @@ import { ViewportBuffer } from './models/ViewportBuffer'
 import { Viewport } from '../source/index'
 import { AppWindow } from './views/AppWindow'
 
-RT.setTrace(TraceLevel.Noisy)
+RT.setTrace(TraceLevel.Off)
 RT.performanceWarningThreshold = 0 // disable
 
 const viewport = Action.run('viewport', () => new Viewport(10000, 1000000000000))

@@ -149,6 +149,7 @@ export class Viewport extends State {
 
   @action
   moveViewport(cx: number, cy: number): void {
+    // console.log(`scroll: ${cy} (∆ ${cy - this.canvasThumb.y})`)
     const c0 = this.canvas.moveTo(Area.ZERO, this.all)
     this.canvasThumb = this.canvasThumb.moveTo(xy(cx, cy), c0)
     const t = this.canvasThumb
@@ -157,7 +158,7 @@ export class Viewport extends State {
     const x = c.x + t.x
     const y = c.y + t.y
     const c2a = this.canvasToAllFactor
-    if (Math.abs(x - v.x) > 2 * v.size.x || cx === 0 || cx >= c.size.x - v.size.x) {
+    if (Math.abs(x - v.x) > 2 * v.size.x /*|| cx === 0 || cx >= c.size.x - v.size.x*/) {
       const v2 = v.moveTo(xy(Math.ceil(cx * c2a.x), v.y), this.all)
       if (!v2.equalTo(v)) {
         v = this.view = v2
@@ -169,7 +170,7 @@ export class Viewport extends State {
       if (!v2.equalTo(v))
         this.view = v2
     }
-    if (Math.abs(y - v.y) > 2 * v.size.y || cy === 0 || cy >= c.size.y - v.size.y) {
+    if (Math.abs(y - v.y) > 2 * v.size.y /*|| cy === 0 || cy >= c.size.y - v.size.y*/) {
       const v2 = v.moveTo(xy(v.x, Math.ceil(cy * c2a.y)), this.all)
       if (!v2.equalTo(v)) {
         v = this.view = v2
