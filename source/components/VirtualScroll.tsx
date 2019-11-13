@@ -4,7 +4,7 @@
 // License: https://raw.githubusercontent.com/nezaboodka/reactronic/master/LICENSE
 
 import * as React from 'react'
-import { reactive, Viewport } from '../index'
+import { reactive, Viewport, xy } from '../index'
 
 export function VirtualScroll(p: {
   viewport: Viewport,
@@ -21,22 +21,26 @@ export function VirtualScroll(p: {
   }, [])
   return reactive(() => {
     const vp = p.viewport
-    const size = vp.canvas.size
-    const gap = vp.getGap()
-    const sizing: React.CSSProperties = {
-      boxSizing: 'border-box', overflow: 'hidden',
-      width: `${size.x}px`, minWidth: `${size.x}px`, maxWidth: `${size.x}px`,
-      height: `${size.y}px`, minHeight: `${size.y}px`, maxHeight: `${size.y}px`,
-      paddingLeft: `${gap.x > 0 ? gap.x : 0}px`,
-      marginLeft: `${gap.x < 0 ? gap.x : 0}px`,
-      paddingTop: `${gap.y > 0 ? gap.y : 0}px`,
-      marginTop: `${gap.y < 0 ? gap.y : 0}px`,
-    }
+    const canvas = vp.canvas
+    const loaded = vp.loaded
+    const cs: React.CSSProperties = {} // canvas style
+    cs.position = 'relative'
+    cs.overflow = 'hidden'
+    cs.boxSizing = 'border-box'
+    cs.whiteSpace = 'nowrap' // temporary
+    cs.width = cs.minWidth = cs.maxWidth = `${canvas.size.x}px`
+    cs.height = cs.minHeight = cs.maxHeight = `${canvas.size.y}px`
+    const ls: React.CSSProperties = {} // loaded style
+    ls.position = 'absolute'
+    ls.left = `${loaded.x - canvas.x}px`
+    ls.top = `${loaded.y - canvas.y}px`
+    ls.width = ls.minWidth = ls.maxWidth = `${loaded.size.x}`
+    ls.height = ls.minHeight = ls.maxHeight = `${loaded.size.y}`
     return (
       <div ref={ref} onScroll={e => p.viewport.onScroll()}
         className={p.className} style={p.style}>
-        <div style={sizing}>
-          {p.children}
+        <div style={cs}>
+          <div style={ls}>{p.children}</div>
         </div>
       </div>
     )

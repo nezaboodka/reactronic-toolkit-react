@@ -23,19 +23,19 @@ export class DataBuffer extends State {
   @trigger @reentrance(Reentrance.CancelPrevious)
   async load(): Promise<void> {
     const vp = this.viewport
-    const cells = vp.bufferingCells
-    if (!cells.equalTo(vp.bufferedCells)) {
+    const t = vp.bufferCells
+    if (!t.equalTo(vp.loadedCells)) {
       const data: string[][] = []
-      const till = cells.till
-      for (let y = cells.y; y < till.y; y++) {
+      const till = t.till
+      for (let y = t.y; y < till.y; y++) {
         const row: string[] = []
-        for (let x = cells.x; x < till.x; x++)
-          row.push(`Cell r${y}c${x}`)
+        for (let x = t.x; x < till.x; x++)
+          row.push(`cell r${y}c${x}`)
         data.push(row)
       }
-      await sleep(50)
+      await sleep(5000)
       this.loadedData = data
-      this.viewport.bufferedCells = cells
+      this.viewport.loadedCells = t
     }
   }
 }
