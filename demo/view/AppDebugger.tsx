@@ -18,35 +18,35 @@ export function AppDebugger(p: {viewport: Viewport, buffer: DataBuffer}): JSX.El
       <div className={css.main}>
         <AreaRect hint={'All Data'} area={vp.grid} px={vp.all} key={`grid-${counter}`}
           className={css.database} style={place(1, 1, 10, 9)}>
-          <AreaRect hint={'Canvas'} area={vp.canvasCells} px={vp.canvas} inner={vp.loaded} key={`render-${counter}`}
+          <AreaRect hint={'Surface'} area={vp.surfaceCells} px={vp.surface} inner={vp.loaded} key={`surface-${counter}`}
             className={css.component} style={place(2, 2, 9, 9)}>
             <AreaRect hint={'Buffer'} area={vp.loadedCells} px={vp.loaded} key={`dataport-${counter}`}
               className={css.dataArea} style={place(2, 2, 9, 9)}>
-              <AreaRect hint={'View'} area={vp.viewCells} px={vp.view} key={`viewport-${counter}`}
+              <AreaRect hint={'Display'} area={vp.displayCells} px={vp.display} key={`viewport-${counter}`}
                 className={css.viewport} style={place(3, 3, 8, 8)}>
                 <div style={{height: '1em'}}></div>
               </AreaRect>
             </AreaRect>
           </AreaRect>
         </AreaRect>
-        <AreaRect hint={'Canvas'} area={vp.canvasCells} px={vp.canvas} key={`canvas-${counter}`}
+        <AreaRect hint={'Surface'} area={vp.surfaceCells} px={vp.surface} key={`canvas-${counter}`}
           className={css.component} style={place(1, 10, 10, 10)}>
           <div>
             <br/>
             <div>
-              Thumb: {num(vp.canvasThumb.y, 1)} of {num(vp.canvas.size.y, 1)} canvas pixels,
+              Thumb: {num(vp.thumb.y, 1)} of {num(vp.surface.size.y, 1)} canvas pixels,
             </div>
             <div>
-              Thumb Pixel = {num(vp.canvasThumb.scaleBy(vp.canvasToViewFactor).y, 3)}
+              Thumb Pixel = {num(vp.thumb.scaleBy(vp.surfaceToDisplayFactor).y, 3)}
             </div>
             <div>
-              Viewport-to-Canvas = {num(vp.view.scaleBy(vp.allToCanvasFactor).y, 15)}
+              Viewport-to-Canvas = {num(vp.display.scaleBy(vp.allToSurfaceFactor).y, 15)}
             </div>
             <div>Font Size: {vp.pixelsPerCell}</div>
-            <div>{num(vp.all.size.y / vp.canvas.size.y, 1)} <i>all data pixels in a single canvas pixel out of</i> {num(vp.canvas.size.y)}</div>
-            <div>{num(vp.viewToCanvasFactor.y, 1)} <i>canvas pixels in a single viewport pixel out of</i> {num(vp.view.size.y)}</div>
-            <div>{num(vp.viewToAllFactor.y, 1)} <i>all data pixels in a single viewport pixel out of</i> {num(vp.view.size.y)}</div>
-            <div>{num(vp.viewToAllFactor.y / vp.pixelsPerCell, -3)} <i>cells in a single viewport pixel out of</i> {num(vp.view.size.y)}</div>
+            <div>{num(vp.all.size.y / vp.surface.size.y, 1)} <i>all data pixels in a single canvas pixel out of</i> {num(vp.surface.size.y)}</div>
+            <div>{num(vp.displayToSurfaceFactor.y, 1)} <i>canvas pixels in a single viewport pixel out of</i> {num(vp.display.size.y)}</div>
+            <div>{num(vp.displayToAllFactor.y, 1)} <i>all data pixels in a single viewport pixel out of</i> {num(vp.display.size.y)}</div>
+            <div>{num(vp.displayToAllFactor.y / vp.pixelsPerCell, -3)} <i>cells in a single viewport pixel out of</i> {num(vp.display.size.y)}</div>
             <br/>
           </div>
         </AreaRect>

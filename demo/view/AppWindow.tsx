@@ -36,7 +36,7 @@ export function AppWindow(p: {app: Application}): JSX.Element {
             disabled={!elem}>▲ 1K px</button>
           <button onClick={e => elem ? elem.scrollTop = elem.scrollHeight - elem.clientHeight - 1 : {}}
             disabled={!elem}>▼ End</button>
-          <button onClick={e => elem ? alert(`${elem.scrollTop}, ${elem.scrollHeight}, ${vp.canvas.size.y}`) : {}}
+          <button onClick={e => elem ? alert(`${elem.scrollTop}, ${elem.scrollHeight}, ${vp.surface.size.y}`) : {}}
             disabled={!elem}>▲ Begin</button>
         </div>
         <div className={css.visualizer} style={place(10, 3, 10, 5)}>

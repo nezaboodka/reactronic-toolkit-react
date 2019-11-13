@@ -25,36 +25,36 @@ export function VirtualScroll(p: {
 
   return reactive(() => {
     const vp = p.viewport
-    const canvas = vp.canvas
-    const canvasStyle: React.CSSProperties = {
+    const s = vp.surface
+    const surfaceStyle: React.CSSProperties = {
       position: 'relative',
       overflow: 'hidden',
       boxSizing: 'border-box',
       whiteSpace: 'nowrap', // temporary
-      width: `${canvas.size.x}px`,
-      minWidth: `${canvas.size.x}px`,
-      maxWidth: `${canvas.size.x}px`,
-      height: `${canvas.size.y}px`,
-      minHeight: `${canvas.size.y}px`,
-      maxHeight: `${canvas.size.y}px`,
+      width: `${s.size.x}px`,
+      minWidth: `${s.size.x}px`,
+      maxWidth: `${s.size.x}px`,
+      height: `${s.size.y}px`,
+      minHeight: `${s.size.y}px`,
+      maxHeight: `${s.size.y}px`,
     }
-    const data = vp.loaded
+    const d = vp.loaded
     const dataStyle: React.CSSProperties = {
       ...p.dataStyle,
       position: 'absolute',
-      left: `${data.x - canvas.x}px`,
-      top: `${data.y - canvas.y}px`,
-      width: `${data.size.x}`,
-      minWidth: `${data.size.x}`,
-      maxWidth: `${data.size.x}`,
-      height: `${data.size.y}`,
-      minHeight: `${data.size.y}`,
-      maxHeight: `${data.size.y}`,
+      left: `${d.x - s.x}px`,
+      top: `${d.y - s.y}px`,
+      width: `${d.size.x}`,
+      minWidth: `${d.size.x}`,
+      maxWidth: `${d.size.x}`,
+      height: `${d.size.y}`,
+      minHeight: `${d.size.y}`,
+      maxHeight: `${d.size.y}`,
     }
     return (
       <div ref={ref} className={p.className} style={p.style}
         onScroll={e => p.viewport.onScroll()}>
-        <div style={canvasStyle}>
+        <div style={surfaceStyle}>
           <div className={p.dataClassName} style={dataStyle}>{p.children}</div>
         </div>
       </div>

@@ -6,7 +6,7 @@
 import { State, action, trigger, Monitor, Cache } from 'reactronic'
 import { XY, xy, Area, area, num } from './Area'
 
-export const CANVAS_PIXEL_LIMIT: Area = area(0, 0, 1000123, 1000123)
+export const SURFACE_PIXEL_LIMIT: Area = area(0, 0, 1000123, 1000123)
 export type GridLine = { index: number, coord: number }
 export class GridSizing {
   defaultCellWidthFactor: number = 10 // measured in cell height ('em')
@@ -28,9 +28,9 @@ export class Viewport extends State {
   sizings = new GridSizing()
   element: IElement | null | undefined = undefined
   pixelsPerCell: number = 1
-  canvas: Area = Area.ZERO
-  canvasThumb: Area = Area.ZERO
-  view: Area = Area.ZERO
+  surface: Area = Area.ZERO
+  thumb: Area = Area.ZERO
+  display: Area = Area.ZERO
   bufferingFactor: XY = xy(1.01, 3.01)
   loadedCells: Area = Area.ZERO
   scrollingMonitor: Monitor = Monitor.create('scrolling', 20)
@@ -45,16 +45,16 @@ export class Viewport extends State {
     if (element) {
       this.element = element
       this.pixelsPerCell = pxPerCell
-      this.canvas = this.all.truncateBy(CANVAS_PIXEL_LIMIT)
-      this.canvasThumb = new Area(0, 0, element.clientWidth, element.clientHeight)
+      this.surface = this.all.truncateBy(SURFACE_PIXEL_LIMIT)
+      this.thumb = new Area(0, 0, element.clientWidth, element.clientHeight)
       Cache.of(this.moveViewport).setup({monitor: this.scrollingMonitor})
-      this.view = new Area(0, 0, element.clientWidth, element.clientHeight)
+      this.display = new Area(0, 0, element.clientWidth, element.clientHeight)
     }
     else {
-      this.view = Area.ZERO
+      this.display = Area.ZERO
       Cache.of(this.moveViewport).setup({monitor: null})
-      this.canvasThumb = Area.ZERO
-      this.canvas = Area.ZERO
+      this.thumb = Area.ZERO
+      this.surface = Area.ZERO
       this.pixelsPerCell = 1
       this.element = undefined
     }
@@ -68,42 +68,42 @@ export class Viewport extends State {
   }
 
   get pixelToCellFactor(): XY {
-    const c2g = this.cellToPixelFactor
-    return xy(1 / c2g.x, 1 / c2g.y)
+    const c2p = this.cellToPixelFactor
+    return xy(1 / c2p.x, 1 / c2p.y)
   }
 
-  get viewToCanvasFactor(): XY {
-    const c = this.canvas.size
-    const v = this.view.size
-    return xy(c.x / (v.x - 1), c.y / (v.y - 1))
+  get displayToSurfaceFactor(): XY {
+    const s = this.surface.size
+    const d = this.display.size
+    return xy(s.x / (d.x - 1), s.y / (d.y - 1))
   }
 
-  get canvasToViewFactor(): XY {
-    const v2c = this.viewToCanvasFactor
-    return xy(1 / v2c.x, 1 / v2c.y)
+  get surfaceToDisplayFactor(): XY {
+    const d2s = this.displayToSurfaceFactor
+    return xy(1 / d2s.x, 1 / d2s.y)
   }
 
-  get canvasToAllFactor(): XY {
+  get surfaceToAllFactor(): XY {
     const a = this.all.size
-    const c = this.canvas.size
-    const v = this.view.size
-    return xy(a.x / (c.x - v.x), a.y / (c.y - v.y))
+    const s = this.surface.size
+    const d = this.display.size
+    return xy(a.x / (s.x - d.x), a.y / (s.y - d.y))
   }
 
-  get allToCanvasFactor(): XY {
-    const c2a = this.canvasToAllFactor
-    return xy(1 / c2a.x, 1 / c2a.y)
+  get allToSurfaceFactor(): XY {
+    const s2a = this.surfaceToAllFactor
+    return xy(1 / s2a.x, 1 / s2a.y)
   }
 
-  get viewToAllFactor(): XY {
+  get displayToAllFactor(): XY {
     const a = this.all.size
-    const v = this.view.size
-    return xy(a.x / (v.x - 1), a.y / (v.y - 1))
+    const d = this.display.size
+    return xy(a.x / (d.x - 1), a.y / (d.y - 1))
   }
 
-  get allToViewFactor(): XY {
-    const v2a = this.viewToAllFactor
-    return xy(1 / v2a.x, 1 / v2a.y)
+  get allToDisplayFactor(): XY {
+    const d2a = this.displayToAllFactor
+    return xy(1 / d2a.x, 1 / d2a.y)
   }
 
   // Areas (pixels)
@@ -120,35 +120,19 @@ export class Viewport extends State {
     return this.loadedCells.scaleBy(this.cellToPixelFactor)
   }
 
-  // getGap(): XY {
-  //   const b = this.buffered
-  //   const c = this.canvas
-  //   let dx = b.x - c.x
-  //   if (dx < -b.size.x)
-  //     dx = -b.size.x
-  //   else if (dx + b.size.x > c.size.x)
-  //     dx = c.size.x - b.size.x
-  //   let dy = b.y - c.y
-  //   if (dy < -b.size.y)
-  //     dy = -b.size.y
-  //   else if (dy + b.size.y > c.size.y)
-  //     dy = c.size.y - b.size.y
-  //   return xy(dx, dy)
-  // }
-
   // Areas (cells)
 
-  get canvasCells(): Area {
-    return this.canvas.scaleBy(this.pixelToCellFactor)
+  get surfaceCells(): Area {
+    return this.surface.scaleBy(this.pixelToCellFactor)
   }
 
   get bufferCells(): Area {
-    const v = this.viewCells
-    return v.zoomAt(v.center, this.bufferingFactor).truncateBy(this.all).roundToOuter()
+    const d = this.displayCells
+    return d.zoomAt(d.center, this.bufferingFactor).truncateBy(this.all).roundToOuter()
   }
 
-  get viewCells(): Area {
-    return this.view.scaleBy(this.pixelToCellFactor)
+  get displayCells(): Area {
+    return this.display.scaleBy(this.pixelToCellFactor)
   }
 
   // Actions
@@ -156,7 +140,7 @@ export class Viewport extends State {
   onScroll(): void {
     const element = this.element
     if (element) {
-      const t = this.canvasThumb
+      const t = this.thumb
       if (Math.abs(t.y - element.scrollTop) > 0.1 || Math.abs(t.x - element.scrollLeft) > 0.1)
         this.moveViewport(element.scrollLeft, element.scrollTop)
     }
@@ -165,39 +149,39 @@ export class Viewport extends State {
   @action
   moveViewport(cx: number, cy: number): void {
     // console.log(`scroll: ${cy} (∆ ${cy - this.canvasThumb.y}), h=${this.element ? this.element.scrollHeight : '?'}`)
-    const c0 = this.canvas.moveTo(Area.ZERO, this.all)
-    this.canvasThumb = this.canvasThumb.moveTo(xy(cx, cy), c0)
-    const t = this.canvasThumb
-    let c = this.canvas
-    let v = this.view
-    const x = c.x + t.x
-    const y = c.y + t.y
-    const c2a = this.canvasToAllFactor
-    const dx = Math.abs(x - v.x)
-    if (dx > 2 * v.size.x || (dx > v.size.x / 2 && (cx < 1 || cx >= c.size.x - v.size.x))) {
-      const v2 = v.moveTo(xy(Math.ceil(cx * c2a.x), v.y), this.all)
-      if (!v2.equalTo(v)) {
-        v = this.view = v2
-        c = this.canvas = c.moveTo(xy(v2.x - t.x, c.y), this.all)
+    const s0 = this.surface.moveTo(Area.ZERO, this.all)
+    this.thumb = this.thumb.moveTo(xy(cx, cy), s0)
+    const t = this.thumb
+    let s = this.surface
+    let d = this.display
+    const x = s.x + t.x
+    const y = s.y + t.y
+    const s2a = this.surfaceToAllFactor
+    const dx = Math.abs(x - d.x)
+    if (dx > 2 * d.size.x || (dx > d.size.x / 2 && (cx < 1 || cx >= s.size.x - d.size.x))) {
+      const d2 = d.moveTo(xy(Math.ceil(cx * s2a.x), d.y), this.all)
+      if (!d2.equalTo(d)) {
+        this.display = d = d2
+        this.surface = s = s.moveTo(xy(d2.x - t.x, s.y), this.all)
       }
     }
     else {
-      const v2 = v.moveTo(xy(x, v.y), this.all)
-      if (!v2.equalTo(v))
-        this.view = v2
+      const d2 = d.moveTo(xy(x, d.y), this.all)
+      if (!d2.equalTo(d))
+        this.display = d = d2
     }
-    const dy = Math.abs(y - v.y)
-    if (dy > 2 * v.size.y || (dy > v.size.y / 2 && (cy < 1 || cy >= c.size.y - v.size.y))) {
-      const v2 = v.moveTo(xy(v.x, Math.ceil(cy * c2a.y)), this.all)
-      if (!v2.equalTo(v)) {
-        v = this.view = v2
-        c = this.canvas = c.moveTo(xy(c.x, v2.y - t.y), this.all)
+    const dy = Math.abs(y - d.y)
+    if (dy > 2 * d.size.y || (dy > d.size.y / 2 && (cy < 1 || cy >= s.size.y - d.size.y))) {
+      const d2 = d.moveTo(xy(d.x, Math.ceil(cy * s2a.y)), this.all)
+      if (!d2.equalTo(d)) {
+        this.display = d = d2
+        this.surface = s = s.moveTo(xy(s.x, d2.y - t.y), this.all)
       }
     }
     else {
-      const v2 = v.moveTo(xy(v.x, y), this.all)
-      if (!v2.equalTo(v))
-        this.view = v2
+      const d2 = d.moveTo(xy(d.x, y), this.all)
+      if (!d2.equalTo(d))
+        this.display = d = d2
     }
   }
 
@@ -206,29 +190,29 @@ export class Viewport extends State {
     const element = this.element
     if (element && !this.scrollingMonitor.busy) {
       // console.log('rebase')
-      let c = this.canvas
-      let t = this.canvasThumb
-      const v = this.view
-      const v2c = this.viewToCanvasFactor
-      const precise = v.scaleBy(this.allToCanvasFactor)
-      const median = xy(precise.x + v2c.x/2, precise.y + v2c.y/2)
+      let s = this.surface
+      let t = this.thumb
+      const d = this.display
+      const d2s = this.displayToSurfaceFactor
+      const precise = d.scaleBy(this.allToSurfaceFactor)
+      const median = xy(precise.x + d2s.x/2, precise.y + d2s.y/2)
       const diff = xy(t.x - median.x, t.y - median.y)
-      if (Math.abs(diff.x) > v2c.x/3) {
-        const tip = v2c.x * ((c.size.x / 2 - precise.x) / c.size.x)
-        const t2 = t.moveTo(xy(precise.x + tip, t.y), c.moveTo(Area.ZERO, this.all))
-        const c2 = c.moveTo(xy(v.x - t2.x, c.y), this.all)
-        if (!c2.equalTo(c)) {
-          this.canvas = c = c2
-          this.canvasThumb = t = t2
+      if (Math.abs(diff.x) > d2s.x/3) {
+        const tip = d2s.x * ((s.size.x / 2 - precise.x) / s.size.x)
+        const t2 = t.moveTo(xy(precise.x + tip, t.y), s.moveTo(Area.ZERO, this.all))
+        const s2 = s.moveTo(xy(d.x - t2.x, s.y), this.all)
+        if (!s2.equalTo(s)) {
+          this.surface = s = s2
+          this.thumb = t = t2
         }
       }
-      if (Math.abs(diff.y) > v2c.y/3) {
-        const tip = v2c.y * ((c.size.y / 2 - precise.y) / c.size.y)
-        const t2 = t.moveTo(xy(t.x, precise.y + tip), c.moveTo(Area.ZERO, this.all))
-        const c2 = c.moveTo(xy(c.x, v.y - t2.y), this.all)
-        if (!c2.equalTo(c)) {
-          this.canvas = c = c2
-          this.canvasThumb = t = t2
+      if (Math.abs(diff.y) > d2s.y/3) {
+        const tip = d2s.y * ((s.size.y / 2 - precise.y) / s.size.y)
+        const t2 = t.moveTo(xy(t.x, precise.y + tip), s.moveTo(Area.ZERO, this.all))
+        const s2 = s.moveTo(xy(s.x, d.y - t2.y), this.all)
+        if (!s2.equalTo(s)) {
+          this.surface = s = s2
+          this.thumb = t = t2
         }
       }
     }
@@ -238,7 +222,7 @@ export class Viewport extends State {
   syncCanvasThumbWithElement(): void {
     const element = this.element
     if (element) {
-      const t = this.canvasThumb
+      const t = this.thumb
       if (Math.abs(t.x - element.scrollLeft) > 0.1)
         element.scrollLeft = t.x
       if (Math.abs(t.y - element.scrollTop) > 0.1)
@@ -248,8 +232,8 @@ export class Viewport extends State {
 
   @action
   zoomAt(origin: XY, factor: number): void {
-    origin = this.canvas.moveBy(origin, this.all)
-    this.view = this.view.zoomAt(origin, xy(factor, factor))
+    origin = this.surface.moveBy(origin, this.all)
+    this.display = this.display.zoomAt(origin, xy(factor, factor))
   }
 }
 
