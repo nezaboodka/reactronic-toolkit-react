@@ -42,11 +42,11 @@ export function AppDebugger(p: {viewport: Viewport, buffer: DataBuffer}): JSX.El
             <div>
               Viewport-to-Canvas = {num(vp.display.scaleBy(vp.allToSurfaceFactor).y, 15)}
             </div>
-            <div>Font Size: {vp.pixelsPerCell}</div>
+            <div>Font Size (resolution): {vp.resolution}</div>
             <div>{num(vp.all.size.y / vp.surface.size.y, 1)} <i>all data pixels in a single canvas pixel out of</i> {num(vp.surface.size.y)}</div>
             <div>{num(vp.displayToSurfaceFactor.y, 1)} <i>canvas pixels in a single viewport pixel out of</i> {num(vp.display.size.y)}</div>
             <div>{num(vp.displayToAllFactor.y, 1)} <i>all data pixels in a single viewport pixel out of</i> {num(vp.display.size.y)}</div>
-            <div>{num(vp.displayToAllFactor.y / vp.pixelsPerCell, -3)} <i>cells in a single viewport pixel out of</i> {num(vp.display.size.y)}</div>
+            <div>{num(vp.displayToAllFactor.y / vp.resolution, -3)} <i>cells in a single viewport pixel out of</i> {num(vp.display.size.y)}</div>
             <br/>
           </div>
         </AreaRect>

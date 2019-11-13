@@ -23,7 +23,7 @@ export function AppWindow(p: {app: Application}): JSX.Element {
         <VirtualScroll viewport={vp}
           className={css.scroll} style={place(2, 2, 9, 9)}
           dataClassName={css.grid}>
-          <GridFrame buffer={buf} cellHeight={vp.pixelsPerCell} cellWidth={vp.pixelsPerCell * vp.sizings.defaultCellWidthFactor}/>
+          <GridFrame buffer={buf} cellHeight={vp.resolution} cellWidth={vp.resolution * vp.sizing.defaultCellWidthFactor}/>
         </VirtualScroll>
         <div className={css.toolbar} style={place(10, 2, 10, 2)}>
           <button onClick={e => elem ? elem.scrollTop += 1 : {}}

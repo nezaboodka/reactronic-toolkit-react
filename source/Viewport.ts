@@ -7,11 +7,11 @@ import { State, action, trigger, Monitor, Cache } from 'reactronic'
 import { XY, xy, Area, area, num } from './Area'
 
 export const SURFACE_PIXEL_LIMIT: Area = area(0, 0, 1000123, 1000123)
-export type GridLine = { index: number, coord: number }
-export class GridSizing {
+export type Guide = { index: number, coord: number }
+export class Sizing {
   defaultCellWidthFactor: number = 10 // measured in cell height ('em')
-  customCellWidth: GridLine[] = [] // in pixels?
-  customCellHeight: GridLine[] = [] // in pixels?
+  customCellWidth: Guide[] = [] // in pixels?
+  customCellHeight: Guide[] = [] // in pixels?
 }
 
 export type IElement = {
@@ -25,9 +25,9 @@ export type IElement = {
 
 export class Viewport extends State {
   allCells: Area
-  sizings = new GridSizing()
+  sizing = new Sizing()
   element: IElement | null | undefined = undefined
-  pixelsPerCell: number = 1
+  resolution: number = 1 // pixels per cell
   surface: Area = Area.ZERO
   thumb: Area = Area.ZERO
   display: Area = Area.ZERO
@@ -41,10 +41,10 @@ export class Viewport extends State {
   }
 
   @action
-  setElement(element: IElement | null, pxPerCell: number): void {
+  setElement(element: IElement | null, resolution: number): void {
     if (element) {
       this.element = element
-      this.pixelsPerCell = pxPerCell
+      this.resolution = resolution
       this.surface = this.all.truncateBy(SURFACE_PIXEL_LIMIT)
       this.thumb = new Area(0, 0, element.clientWidth, element.clientHeight)
       Cache.of(this.moveViewport).setup({monitor: this.scrollingMonitor})
@@ -55,7 +55,7 @@ export class Viewport extends State {
       Cache.of(this.moveViewport).setup({monitor: null})
       this.thumb = Area.ZERO
       this.surface = Area.ZERO
-      this.pixelsPerCell = 1
+      this.resolution = 1
       this.element = undefined
     }
   }
@@ -63,8 +63,8 @@ export class Viewport extends State {
   // Factors
 
   get cellToPixelFactor(): XY {
-    const ppr = this.pixelsPerCell
-    return xy(ppr * this.sizings.defaultCellWidthFactor, ppr)
+    const r = this.resolution
+    return xy(r * this.sizing.defaultCellWidthFactor, r)
   }
 
   get pixelToCellFactor(): XY {
