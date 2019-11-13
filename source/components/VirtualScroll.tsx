@@ -4,7 +4,7 @@
 // License: https://raw.githubusercontent.com/nezaboodka/reactronic/master/LICENSE
 
 import * as React from 'react'
-import { reactive, Viewport, xy } from '../index'
+import { reactive, Viewport } from '../index'
 
 export function VirtualScroll(p: {
   viewport: Viewport,
