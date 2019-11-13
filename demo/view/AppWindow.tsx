@@ -6,10 +6,10 @@
 import * as React from 'react'
 import { reactive } from '../../source/index'
 import { place } from '../tools/common'
-import { DataBuffer } from '../model/DataBuffer'
 import { AppDebugger } from './AppDebugger'
 import { VirtualScroll } from '../../source/components/VirtualScroll'
 import { Application } from '../model/Application'
+import { DataGrid } from './DataGrid'
 import { style } from './AppWindow.css'
 
 export function AppWindow(p: {app: Application}): JSX.Element {
@@ -22,7 +22,7 @@ export function AppWindow(p: {app: Application}): JSX.Element {
       <div className={css.window}>
         <VirtualScroll viewport={vp}
           className={css.scroll} style={place(2, 2, 9, 9)}>
-          <Data buffer={buf}/>
+          <DataGrid buffer={buf}/>
         </VirtualScroll>
         <div className={css.toolbar} style={place(10, 2, 10, 2)}>
           <button onClick={e => elem ? elem.scrollTop += 1 : {}}
@@ -42,23 +42,6 @@ export function AppWindow(p: {app: Application}): JSX.Element {
           <AppDebugger buffer={buf} viewport={vp}/>
         </div>
       </div>
-    )
-  })
-}
-
-function Data(p: {buffer: DataBuffer}): JSX.Element {
-  return reactive(() => {
-    const data = p.buffer.data
-    return (
-      <React.Fragment>
-        {data.map(row => (
-          <div title={row[0]} key={row[0]}>
-            {row.map(text => (
-              <span key={text} style={{marginLeft: '1em'}}>{text}</span>
-            ))}
-          </div>
-        ))}
-      </React.Fragment>
     )
   })
 }

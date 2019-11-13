@@ -33,7 +33,7 @@ export class DataBuffer extends State {
           row.push(`cell r${y}c${x}`)
         data.push(row)
       }
-      await sleep(5000)
+      await sleep(80)
       this.loadedData = data
       this.viewport.loadedCells = t
     }
