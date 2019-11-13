@@ -16,13 +16,13 @@ export function AppDebugger(p: {viewport: Viewport, buffer: DataBuffer}): JSX.El
     const vp = p.viewport
     return (
       <div className={css.main}>
-        <AreaRect hint={'All Data'} area={vp.grid} px={vp.all} key={`grid-${counter}`}
+        <AreaRect hint={'All Data'} area={vp.allCells} px={vp.all} key={`all-${counter}`}
           className={css.database} style={place(1, 1, 10, 9)}>
           <AreaRect hint={'Surface'} area={vp.surfaceCells} px={vp.surface} inner={vp.loaded} key={`surface-${counter}`}
             className={css.component} style={place(2, 2, 9, 9)}>
-            <AreaRect hint={'Buffer'} area={vp.loadedCells} px={vp.loaded} key={`dataport-${counter}`}
+            <AreaRect hint={'Buffer'} area={vp.loadedCells} px={vp.loaded} key={`buffer-${counter}`}
               className={css.dataArea} style={place(2, 2, 9, 9)}>
-              <AreaRect hint={'Display'} area={vp.displayCells} px={vp.display} key={`viewport-${counter}`}
+              <AreaRect hint={'Display'} area={vp.displayCells} px={vp.display} key={`display-${counter}`}
                 className={css.viewport} style={place(3, 3, 8, 8)}>
                 <div style={{height: '1em'}}></div>
               </AreaRect>

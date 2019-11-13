@@ -24,7 +24,7 @@ export type IElement = {
 }
 
 export class Viewport extends State {
-  grid: Area
+  allCells: Area
   sizings = new GridSizing()
   element: IElement | null | undefined = undefined
   pixelsPerCell: number = 1
@@ -37,7 +37,7 @@ export class Viewport extends State {
 
   constructor(sizeX: number, sizeY: number) {
     super()
-    this.grid = area(0, 0, sizeX, sizeY)
+    this.allCells = area(0, 0, sizeX, sizeY)
   }
 
   @action
@@ -109,7 +109,7 @@ export class Viewport extends State {
   // Areas (pixels)
 
   get all(): Area {
-    return this.grid.scaleBy(this.cellToPixelFactor)
+    return this.allCells.scaleBy(this.cellToPixelFactor)
   }
 
   get buffer(): Area {
