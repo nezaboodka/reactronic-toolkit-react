@@ -9,7 +9,7 @@ import { DataBuffer } from '../model/DataBuffer'
 import { style } from './GridFrame.css'
 
 export function GridFrame(p: {cellWidth: number, cellHeight: number, buffer: DataBuffer}): JSX.Element {
-  return reactive(() => {
+  return reactive(counter => {
     const data = p.buffer.data
     const dim: React.CSSProperties = {
       overflow: 'hidden',
@@ -24,11 +24,16 @@ export function GridFrame(p: {cellWidth: number, cellHeight: number, buffer: Dat
       minHeight: `${p.cellHeight}px`,
       maxHeight: `${p.cellHeight}px`,
     }
+    const blink = counter % 2 === 0 ? style.classes.blink1 : style.classes.blink2
     return (
       <React.Fragment>
         {data.map((line, row) => line.map((cell, col) => (
           // <GridCell row={row} col={col} text={cell} style={dim}/>
-          <div title={cell} style={{...dim, gridRow: row + 1, gridColumn: col + 1}}>{cell}</div>
+          <div title={`v${counter}: ${cell}`}
+            className={blink}
+            style={{...dim, gridRow: row + 1, gridColumn: col + 1}}>
+            {cell}
+          </div>
         )))}
       </React.Fragment>
     )
@@ -39,7 +44,7 @@ export function GridCell(p: {row: number, col: number, text: string, style?: Rea
   return reactive(counter => {
     const blink = counter % 2 === 0 ? style.classes.blink1 : style.classes.blink2
     return (
-      <div title={p.text} className={blink} style={{...p.style, gridRow: p.row + 1, gridColumn: p.col + 1}}>{p.text}</div>
+      <div title={`v${counter}: ${p.text}`} className={blink} style={{...p.style, gridRow: p.row + 1, gridColumn: p.col + 1}}>{p.text}</div>
     )
   })
 }

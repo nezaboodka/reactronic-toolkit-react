@@ -13,28 +13,24 @@ export const style = restyle(() => {
     `,
     blink1: css`
       label: blink1;
-      animation: blink1a 1s ease;
+      animation: blink1a 0.3s ease;
       @keyframes blink1a {
-        0% { background-color: transparent; }
         1% { background-color: violet; }
-        100% { background-color: transparent; }
       }
       @keyframes blink1b {
-        0% { transform: scaleX(0); transform-origin: 0; }
-        100% { transform: scaleX(1); transform-origin: 0; }
+        0% { transform: scaleY(0); transform-origin: 0; }
+        100% { transform: scaleY(1); transform-origin: 0; }
       }
     `,
     blink2: css`
       label: blink2;
-      animation: blink2a 1s ease;
+      animation: blink2a 0.3s ease;
       @keyframes blink2a {
-        0% { background-color: transparent; }
         1% { background-color: violet; }
-        100% { background-color: transparent; }
       }
       @keyframes blink2b {
-        0% { transform: scaleX(0); transform-origin: 0; }
-        100% { transform: scaleX(1); transform-origin: 0; }
+        0% { transform: scaleY(0); transform-origin: 0; }
+        100% { transform: scaleY(1); transform-origin: 0; }
       }
     `,
   }
