@@ -23,7 +23,7 @@ export function VirtualScroll(p: {
     p.viewport.setElement(element, pxPerRow)
   }, [])
 
-  return reactive(() => {
+  return reactive(counter => {
     const s = p.viewport.surface
     const surfaceStyle: React.CSSProperties = {
       position: 'relative',
@@ -51,7 +51,7 @@ export function VirtualScroll(p: {
       maxHeight: `${d.size.y}`,
     }
     return (
-      <div ref={ref} className={p.className} style={p.style}
+      <div title={`${counter}`} ref={ref} className={p.className} style={p.style}
         onScroll={e => p.viewport.onScroll()}>
         <div style={surfaceStyle}>
           <div className={p.dataClassName} style={dataStyle}>

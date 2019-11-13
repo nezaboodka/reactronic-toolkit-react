@@ -22,8 +22,8 @@ export function GridFrame(p: {cellWidth: number, cellHeight: number, buffer: Dat
     return (
       <React.Fragment>
         {data.map((line, row) => line.map((cell, col) => (
-          <GridCell key={`${cell} @ r${base.y + row}c${base.x + col}`}
-            hint={`${cell} @ r${base.y + row}c${base.x + col}`}
+          <GridCell key={`r${base.y + row}c${base.x + col}: ${cell}`}
+            hint={`r${base.y + row}c${base.x + col}: ${cell}`}
             row={base.y + row} col={base.x + col} text={cell}
             style={dim}/>
         )))}
@@ -33,18 +33,15 @@ export function GridFrame(p: {cellWidth: number, cellHeight: number, buffer: Dat
 }
 
 export function GridCell(p: {hint: string, row: number, col: number, text: string, style?: React.CSSProperties}): JSX.Element {
-  return reactive(counter => {
-    const css = style.classes
-    const blink = counter % 2 === 0 ? css.blink1 : css.blink2
-    const place: React.CSSProperties = {
-      ...p.style,
-      gridRow: p.row + 1,
-      gridColumn: p.col + 1,
-    }
-    return (
-      <div title={`v${counter}: ${p.hint}`} className={cx(css.cell, blink)} style={place}>
-        {p.text}
-      </div>
-    )
-  })
+  const css = style.classes
+  const place: React.CSSProperties = {
+    ...p.style,
+    gridRow: p.row + 1,
+    gridColumn: p.col + 1,
+  }
+  return (
+    <div title={`${p.hint}`} className={cx(css.cell, css.blink1)} style={place}>
+      {p.text}
+    </div>
+  )
 }

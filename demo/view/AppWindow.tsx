@@ -26,10 +26,14 @@ export function AppWindow(p: {app: Application}): JSX.Element {
           <GridFrame buffer={buf} cellHeight={vp.resolution} cellWidth={vp.resolution * vp.sizing.defaultCellWidthFactor}/>
         </VirtualScroll>
         <div className={css.toolbar} style={place(10, 2, 10, 2)}>
-          <button onClick={e => elem ? elem.scrollTop += 1 : {}}
-            disabled={!elem}>▼ 1 px</button>
-          <button onClick={e => elem ? elem.scrollTop -= 1 : {}}
-            disabled={!elem}>▲ 1 px</button>
+          <button onClick={e => elem ? elem.scrollTop += 21 : {}}
+            disabled={!elem}>▼</button>
+          <button onClick={e => elem ? elem.scrollTop -= 21 : {}}
+            disabled={!elem}>▲</button>
+          <button onClick={e => elem ? elem.scrollLeft += 5*21 : {}}
+            disabled={!elem}>►</button>
+          <button onClick={e => elem ? elem.scrollLeft -= 5*21 : {}}
+            disabled={!elem}>◄</button>
           <button onClick={e => elem ? elem.scrollTop += 1072 : {}}
             disabled={!elem}>▼ 1K px</button>
           <button onClick={e => elem ? elem.scrollTop -= 1072 : {}}
