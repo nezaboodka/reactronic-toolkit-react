@@ -35,7 +35,9 @@ export class DataBuffer extends State {
       }
       await sleep(80)
       this.loadedData = data
-      this.viewport.loadedCells = t
+      vp.loadedCells = t
+      if (!vp.grid.envelops(t))
+        vp.grid = vp.grid.moveCenterTo(t.center, vp.allCells).round()
     }
   }
 }

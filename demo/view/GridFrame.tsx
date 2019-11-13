@@ -4,47 +4,47 @@
 // License: https://raw.githubusercontent.com/nezaboodka/reactronic/master/LICENSE
 
 import * as React from 'react'
-import { reactive } from '../../source/index'
+import { cx } from 'emotion'
+import { reactive, xy } from '../../source/index'
 import { DataBuffer } from '../model/DataBuffer'
 import { style } from './GridFrame.css'
 
 export function GridFrame(p: {cellWidth: number, cellHeight: number, buffer: DataBuffer}): JSX.Element {
-  return reactive(counter => {
+  return reactive(() => {
     const data = p.buffer.data
+    const area = p.buffer.viewport.loadedCells
+    const grid = p.buffer.viewport.grid
+    const base = xy(area.x - grid.x, area.y - grid.y)
     const dim: React.CSSProperties = {
-      overflow: 'hidden',
-      boxSizing: 'border-box',
-      borderBottom: '0.5px dashed rgba(127, 127, 127, 0.75)',
-      borderRight: '0.5px dashed rgba(127, 127, 127, 0.75)',
-      padding: '0 0.25em',
       width: `${p.cellWidth}px`,
-      minWidth: `${p.cellWidth}px`,
-      maxWidth: `${p.cellWidth}px`,
       height: `${p.cellHeight}px`,
-      minHeight: `${p.cellHeight}px`,
-      maxHeight: `${p.cellHeight}px`,
     }
-    const blink = counter % 2 === 0 ? style.classes.blink1 : style.classes.blink2
     return (
       <React.Fragment>
         {data.map((line, row) => line.map((cell, col) => (
-          // <GridCell row={row} col={col} text={cell} style={dim}/>
-          <div title={`v${counter}: ${cell}`}
-            className={blink}
-            style={{...dim, gridRow: row + 1, gridColumn: col + 1}}>
-            {cell}
-          </div>
+          <GridCell key={`${cell} @ r${base.y + row}c${base.x + col}`}
+            hint={`${cell} @ r${base.y + row}c${base.x + col}`}
+            row={base.y + row} col={base.x + col} text={cell}
+            style={dim}/>
         )))}
       </React.Fragment>
     )
   })
 }
 
-export function GridCell(p: {row: number, col: number, text: string, style?: React.CSSProperties}): JSX.Element {
+export function GridCell(p: {hint: string, row: number, col: number, text: string, style?: React.CSSProperties}): JSX.Element {
   return reactive(counter => {
-    const blink = counter % 2 === 0 ? style.classes.blink1 : style.classes.blink2
+    const css = style.classes
+    const blink = counter % 2 === 0 ? css.blink1 : css.blink2
+    const place: React.CSSProperties = {
+      ...p.style,
+      gridRow: p.row + 1,
+      gridColumn: p.col + 1,
+    }
     return (
-      <div title={`v${counter}: ${p.text}`} className={blink} style={{...p.style, gridRow: p.row + 1, gridColumn: p.col + 1}}>{p.text}</div>
+      <div title={`v${counter}: ${p.hint}`} className={cx(css.cell, blink)} style={place}>
+        {p.text}
+      </div>
     )
   })
 }

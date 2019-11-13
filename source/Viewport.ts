@@ -7,9 +7,10 @@ import { State, action, trigger, Monitor, Cache } from 'reactronic'
 import { XY, xy, Area, area, num } from './Area'
 
 export const SURFACE_PIXEL_LIMIT: Area = area(0, 0, 1000123, 1000123)
+export const GRID_CELL_LIMIT: Area = area(0, 0, 999, 999)
 export type Guide = { index: number, coord: number }
 export class Sizing {
-  defaultCellWidthFactor: number = 10 // measured in cell height ('em')
+  defaultCellWidthFactor: number = 5 // measured in cell height ('em')
   customCellWidth: Guide[] = [] // in pixels?
   customCellHeight: Guide[] = [] // in pixels?
 }
@@ -30,8 +31,9 @@ export class Viewport extends State {
   resolution: number = 1 // pixels per cell
   surface: Area = Area.ZERO
   thumb: Area = Area.ZERO
+  grid: Area = Area.ZERO
   display: Area = Area.ZERO
-  bufferSize: XY = xy(1.01, 3.01)
+  bufferSize: XY = xy(1.00, 1.00)
   loadedCells: Area = Area.ZERO
   scrollingMonitor: Monitor = Monitor.create('scrolling', 20)
 
@@ -47,12 +49,14 @@ export class Viewport extends State {
       this.resolution = resolution
       this.surface = this.all.truncateBy(SURFACE_PIXEL_LIMIT)
       this.thumb = new Area(0, 0, element.clientWidth, element.clientHeight)
-      Cache.of(this.moveViewport).setup({monitor: this.scrollingMonitor})
+      this.grid = this.allCells.truncateBy(GRID_CELL_LIMIT)
       this.display = new Area(0, 0, element.clientWidth, element.clientHeight)
+      Cache.of(this.moveViewport).setup({monitor: this.scrollingMonitor})
     }
     else {
-      this.display = Area.ZERO
       Cache.of(this.moveViewport).setup({monitor: null})
+      this.display = Area.ZERO
+      this.grid = Area.ZERO
       this.thumb = Area.ZERO
       this.surface = Area.ZERO
       this.resolution = 1

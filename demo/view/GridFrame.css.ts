@@ -11,6 +11,14 @@ export const style = restyle(() => {
     main: css`
       label: main;
     `,
+    cell: css`
+      label: cell;
+      overflow: hidden;
+      box-sizing: border-box;
+      border-bottom: 0.5px dashed rgba(127, 127, 127, 0.75);
+      border-right: 0.5px dashed rgba(127, 127, 127, 0.75);
+      padding: 0 0.25em;
+    `,
     blink1: css`
       label: blink1;
       animation: blink1a 0.3s ease;
