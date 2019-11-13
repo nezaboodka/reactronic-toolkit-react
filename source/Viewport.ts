@@ -148,7 +148,7 @@ export class Viewport extends State {
 
   @action
   moveViewport(cx: number, cy: number): void {
-    // console.log(`scroll: ${cy} (∆ ${cy - this.canvasThumb.y}), h=${this.element ? this.element.scrollHeight : '?'}`)
+    // console.log(`scroll: ${cy} (∆ ${cy - this.thumb.y}), h=${this.element ? this.element.scrollHeight : '?'}`)
     const s0 = this.surface.moveTo(Area.ZERO, this.all)
     this.thumb = this.thumb.moveTo(xy(cx, cy), s0)
     const t = this.thumb
@@ -186,10 +186,9 @@ export class Viewport extends State {
   }
 
   @trigger
-  rebaseCanvas(): void {
+  rebaseSurface(): void {
     const element = this.element
     if (element && !this.scrollingMonitor.busy) {
-      // console.log('rebase')
       let s = this.surface
       let t = this.thumb
       const d = this.display
@@ -219,7 +218,7 @@ export class Viewport extends State {
   }
 
   @trigger
-  syncCanvasThumbWithElement(): void {
+  syncThumbWithElement(): void {
     const element = this.element
     if (element) {
       const t = this.thumb
