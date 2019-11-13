@@ -27,9 +27,9 @@ export class DataBuffer extends State {
     if (!t.equalTo(vp.loadedCells)) {
       const data: string[][] = []
       const till = t.till
-      for (let y = t.y; y < till.y; y++) {
+      for (let y = t.y; y <= till.y; y++) {
         const row: string[] = []
-        for (let x = t.x; x < till.x; x++)
+        for (let x = t.x; x <= till.x; x++)
           row.push(`cell r${y}c${x}`)
         data.push(row)
       }

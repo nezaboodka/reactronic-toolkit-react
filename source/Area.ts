@@ -81,13 +81,13 @@ export class Area extends XY {
       Math.round(this.size.x), Math.round(this.size.y))
   }
 
-  floor(): Area {
+  roundToOuter(): Area {
     return area(
       Math.floor(this.x), Math.floor(this.y),
       Math.ceil(this.size.x), Math.ceil(this.size.y))
   }
 
-  ceil(): Area {
+  roundToInner(): Area {
     return area(
       Math.ceil(this.x), Math.ceil(this.y),
       Math.floor(this.size.x), Math.floor(this.size.y))

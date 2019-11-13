@@ -10,7 +10,10 @@ export function VirtualScroll(p: {
   viewport: Viewport,
   children: JSX.Element,
   className?: string,
-  style?: React.CSSProperties}): JSX.Element {
+  dataClassName?: string,
+  style?: React.CSSProperties,
+  dataStyle?: React.CSSProperties}): JSX.Element {
+
   const ref = React.useCallback(element => {
     let pxPerRow = 16
     if (element) {
@@ -19,28 +22,40 @@ export function VirtualScroll(p: {
     }
     p.viewport.setElement(element, pxPerRow)
   }, [])
+
   return reactive(() => {
     const vp = p.viewport
     const canvas = vp.canvas
-    const loaded = vp.loaded
-    const cs: React.CSSProperties = {} // canvas style
-    cs.position = 'relative'
-    cs.overflow = 'hidden'
-    cs.boxSizing = 'border-box'
-    cs.whiteSpace = 'nowrap' // temporary
-    cs.width = cs.minWidth = cs.maxWidth = `${canvas.size.x}px`
-    cs.height = cs.minHeight = cs.maxHeight = `${canvas.size.y}px`
-    const ls: React.CSSProperties = {} // loaded style
-    ls.position = 'absolute'
-    ls.left = `${loaded.x - canvas.x}px`
-    ls.top = `${loaded.y - canvas.y}px`
-    ls.width = ls.minWidth = ls.maxWidth = `${loaded.size.x}`
-    ls.height = ls.minHeight = ls.maxHeight = `${loaded.size.y}`
+    const canvasStyle: React.CSSProperties = {
+      position: 'relative',
+      overflow: 'hidden',
+      boxSizing: 'border-box',
+      whiteSpace: 'nowrap', // temporary
+      width: `${canvas.size.x}px`,
+      minWidth: `${canvas.size.x}px`,
+      maxWidth: `${canvas.size.x}px`,
+      height: `${canvas.size.y}px`,
+      minHeight: `${canvas.size.y}px`,
+      maxHeight: `${canvas.size.y}px`,
+    }
+    const data = vp.loaded
+    const dataStyle: React.CSSProperties = {
+      ...p.dataStyle,
+      position: 'absolute',
+      left: `${data.x - canvas.x}px`,
+      top: `${data.y - canvas.y}px`,
+      width: `${data.size.x}`,
+      minWidth: `${data.size.x}`,
+      maxWidth: `${data.size.x}`,
+      height: `${data.size.y}`,
+      minHeight: `${data.size.y}`,
+      maxHeight: `${data.size.y}`,
+    }
     return (
-      <div ref={ref} onScroll={e => p.viewport.onScroll()}
-        className={p.className} style={p.style}>
-        <div style={cs}>
-          <div style={ls}>{p.children}</div>
+      <div ref={ref} className={p.className} style={p.style}
+        onScroll={e => p.viewport.onScroll()}>
+        <div style={canvasStyle}>
+          <div className={p.dataClassName} style={dataStyle}>{p.children}</div>
         </div>
       </div>
     )

@@ -45,9 +45,9 @@ export const style = restyle(() => {
       border-top: 0.5px solid rgba(127, 127, 127, 0.2);
       border-left: 0.5px solid rgba(127, 127, 127, 0.2);
     `,
-    content: css`
-      label: content;
-      overflow: hidden;
+    grid: css`
+      label: grid;
+      display: grid;
     `,
     visualizer: css`
       label: visualizer;

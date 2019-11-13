@@ -9,7 +9,7 @@ import { XY, xy, Area, area, num } from './Area'
 export const CANVAS_PIXEL_LIMIT: Area = area(0, 0, 1000123, 1000123)
 export type GridLine = { index: number, coord: number }
 export class GridSizing {
-  defaultCellWidthFactor: number = 4 // measured in cell height ('em')
+  defaultCellWidthFactor: number = 6 // measured in cell height ('em')
   customCellWidth: GridLine[] = [] // in pixels?
   customCellHeight: GridLine[] = [] // in pixels?
 }
@@ -25,7 +25,7 @@ export type IElement = {
 
 export class Viewport extends State {
   grid: Area
-  gridSizing = new GridSizing()
+  sizings = new GridSizing()
   element: IElement | null | undefined = undefined
   pixelsPerCell: number = 1
   canvas: Area = Area.ZERO
@@ -64,7 +64,7 @@ export class Viewport extends State {
 
   get cellToPixelFactor(): XY {
     const ppr = this.pixelsPerCell
-    return xy(ppr * this.gridSizing.defaultCellWidthFactor, ppr)
+    return xy(ppr * this.sizings.defaultCellWidthFactor, ppr)
   }
 
   get pixelToCellFactor(): XY {
@@ -144,7 +144,7 @@ export class Viewport extends State {
 
   get bufferCells(): Area {
     const v = this.viewCells
-    return v.zoomAt(v.center, this.bufferingFactor).floor().truncateBy(this.grid)
+    return v.zoomAt(v.center, this.bufferingFactor).roundToOuter().truncateBy(this.grid)
   }
 
   get viewCells(): Area {

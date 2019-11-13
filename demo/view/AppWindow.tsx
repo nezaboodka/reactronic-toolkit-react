@@ -9,7 +9,7 @@ import { place } from '../tools/common'
 import { AppDebugger } from './AppDebugger'
 import { VirtualScroll } from '../../source/components/VirtualScroll'
 import { Application } from '../model/Application'
-import { DataGrid } from './DataGrid'
+import { GridFrame } from './GridFrame'
 import { style } from './AppWindow.css'
 
 export function AppWindow(p: {app: Application}): JSX.Element {
@@ -21,8 +21,9 @@ export function AppWindow(p: {app: Application}): JSX.Element {
     return (
       <div className={css.window}>
         <VirtualScroll viewport={vp}
-          className={css.scroll} style={place(2, 2, 9, 9)}>
-          <DataGrid buffer={buf}/>
+          className={css.scroll} style={place(2, 2, 9, 9)}
+          dataClassName={css.grid}>
+          <GridFrame buffer={buf} cellHeight={vp.pixelsPerCell} cellWidth={vp.pixelsPerCell * vp.sizings.defaultCellWidthFactor}/>
         </VirtualScroll>
         <div className={css.toolbar} style={place(10, 2, 10, 2)}>
           <button onClick={e => elem ? elem.scrollTop += 1 : {}}
