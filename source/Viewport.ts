@@ -31,7 +31,7 @@ export class Viewport extends State {
   canvas: Area = Area.ZERO
   canvasThumb: Area = Area.ZERO
   view: Area = Area.ZERO
-  bufferingFactor: XY = xy(1.0, 3.0)
+  bufferingFactor: XY = xy(1.01, 3.01)
   loadedCells: Area = Area.ZERO
   scrollingMonitor: Monitor = Monitor.create('scrolling', 20)
 
