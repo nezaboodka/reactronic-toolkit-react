@@ -24,8 +24,7 @@ export function VirtualScroll(p: {
   }, [])
 
   return reactive(() => {
-    const vp = p.viewport
-    const s = vp.surface
+    const s = p.viewport.surface
     const surfaceStyle: React.CSSProperties = {
       position: 'relative',
       overflow: 'hidden',
@@ -38,7 +37,7 @@ export function VirtualScroll(p: {
       minHeight: `${s.size.y}px`,
       maxHeight: `${s.size.y}px`,
     }
-    const d = vp.loaded
+    const d = p.viewport.loaded
     const dataStyle: React.CSSProperties = {
       ...p.dataStyle,
       position: 'absolute',
@@ -55,7 +54,9 @@ export function VirtualScroll(p: {
       <div ref={ref} className={p.className} style={p.style}
         onScroll={e => p.viewport.onScroll()}>
         <div style={surfaceStyle}>
-          <div className={p.dataClassName} style={dataStyle}>{p.children}</div>
+          <div className={p.dataClassName} style={dataStyle}>
+            {p.children}
+          </div>
         </div>
       </div>
     )
