@@ -8,16 +8,12 @@ import { Viewport } from '../../source/index'
 
 export class DataBuffer extends State {
   readonly viewport: Viewport
-  private loadedData: string[][]
+  data: string[]
 
   constructor(viewport: Viewport) {
     super()
     this.viewport = viewport
-    this.loadedData = []
-  }
-
-  get data(): string[][] {
-    return this.loadedData
+    this.data = []
   }
 
   @trigger @reentrance(Reentrance.CancelPrevious)
@@ -25,16 +21,13 @@ export class DataBuffer extends State {
     const vp = this.viewport
     const t = vp.bufferCells
     if (!t.equalTo(vp.loadedCells)) {
-      const data: string[][] = []
+      const data: string[] = []
       const till = t.till
-      for (let y = t.y; y <= till.y; y++) {
-        const row: string[] = []
+      for (let y = t.y; y <= till.y; y++)
         for (let x = t.x; x <= till.x; x++)
-          row.push(`cell r${y}c${x}`)
-        data.push(row)
-      }
-      await sleep(80)
-      this.loadedData = data
+          data.push(`${y}:${x}`)
+      await sleep(50)
+      this.data = data
       vp.loadedCells = t
       if (!vp.grid.envelops(t))
         vp.grid = vp.grid.moveCenterTo(t.center, vp.allCells).round()

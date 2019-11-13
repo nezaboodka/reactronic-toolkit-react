@@ -21,7 +21,7 @@ export const style = restyle(() => {
     `,
     blink1: css`
       label: blink1;
-      animation: blink1a 0.3s ease;
+      animation: blink1a 3s ease;
       @keyframes blink1a {
         1% { background-color: violet; }
       }
@@ -32,7 +32,7 @@ export const style = restyle(() => {
     `,
     blink2: css`
       label: blink2;
-      animation: blink2a 0.3s ease;
+      animation: blink2a 3s ease;
       @keyframes blink2a {
         1% { background-color: violet; }
       }

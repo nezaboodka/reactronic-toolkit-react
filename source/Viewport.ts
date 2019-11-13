@@ -10,7 +10,7 @@ export const SURFACE_PIXEL_LIMIT: Area = area(0, 0, 1000123, 1000123)
 export const GRID_CELL_LIMIT: Area = area(0, 0, 999, 999)
 export type Guide = { index: number, coord: number }
 export class Sizing {
-  defaultCellWidthFactor: number = 5 // measured in cell height ('em')
+  defaultCellWidthFactor: number = 8 // measured in cell height ('em')
   customCellWidth: Guide[] = [] // in pixels?
   customCellHeight: Guide[] = [] // in pixels?
 }
