@@ -128,7 +128,7 @@ export class Viewport extends State {
 
   get bufferCells(): Area {
     const d = this.displayCells
-    return d.zoomAt(d.center, this.bufferSize).truncateBy(this.all).roundToOuter()
+    return d.zoomAt(d.center, this.bufferSize).truncateBy(this.all).roundToOuter().truncateBy(this.allCells)
   }
 
   get displayCells(): Area {
