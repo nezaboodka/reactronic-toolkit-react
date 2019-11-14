@@ -13,7 +13,6 @@ export const SURFACE_GRID_SIZE_LIMIT: Area = area(0, 0, 999, 999)
 export type Guide = { index: number, coord: number }
 
 export class Sizing {
-  defaultCellWidthFactor: number = 8 // measured in cell height ('em')
   customCellWidth: Guide[] = [] // in pixels?
   customCellHeight: Guide[] = [] // in pixels?
 }
@@ -30,7 +29,7 @@ export type IElement = {
 export class GridTelescope extends State {
   allCells: Area
   element: IElement | null | undefined = undefined
-  resolution: number = 1 // pixels per cell
+  resolution: XY = xy(1, 1) // pixels per cell
   surface: Area = Area.ZERO
   thumb: Area = Area.ZERO
   viewport: Area = Area.ZERO
@@ -49,7 +48,7 @@ export class GridTelescope extends State {
   setElement(element: IElement | null, resolution: number): void {
     if (element) {
       this.element = element
-      this.resolution = resolution
+      this.resolution = xy(resolution * 8, resolution)
       this.surface = this.all.truncateBy(SURFACE_PIXEL_SIZE_LIMIT)
       this.thumb = new Area(0, 0, element.clientWidth, element.clientHeight)
       this.viewport = new Area(0, 0, element.clientWidth, element.clientHeight)
@@ -62,21 +61,16 @@ export class GridTelescope extends State {
       this.viewport = Area.ZERO
       this.thumb = Area.ZERO
       this.surface = Area.ZERO
-      this.resolution = 1
+      this.resolution = xy(1, 1)
       this.element = undefined
     }
   }
 
   // Factors
 
-  get cellToPixelFactor(): XY {
-    const r = this.resolution
-    return xy(r * this.sizing.defaultCellWidthFactor, r)
-  }
-
   get pixelToCellFactor(): XY {
-    const c2p = this.cellToPixelFactor
-    return xy(1 / c2p.x, 1 / c2p.y)
+    const r = this.resolution
+    return xy(1 / r.x, 1 / r.y)
   }
 
   get viewportToSurfaceFactor(): XY {
@@ -116,15 +110,15 @@ export class GridTelescope extends State {
   // Areas (pixels)
 
   get all(): Area {
-    return this.allCells.scaleBy(this.cellToPixelFactor)
+    return this.allCells.scaleBy(this.resolution)
   }
 
   get buffer(): Area {
-    return this.bufferCells.scaleBy(this.cellToPixelFactor)
+    return this.bufferCells.scaleBy(this.resolution)
   }
 
   get loaded(): Area {
-    return this.loadedCells.scaleBy(this.cellToPixelFactor)
+    return this.loadedCells.scaleBy(this.resolution)
   }
 
   // Areas (cells)

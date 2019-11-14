@@ -18,22 +18,21 @@ export function AppWindow(p: {app: Application}): JSX.Element {
     const t = p.app.telescope
     const loader = p.app.loader
     const elem = t.element
-    const xRes = t.resolution * t.sizing.defaultCellWidthFactor
-    const yRes = t.resolution
+    const res = t.resolution
     return (
       <div className={css.window}>
         <VirtualGrid telescope={t} style={place(2, 2, 9, 9)}
           className={css.scroll} dataClassName={css.grid}>
-          <DataFragment loader={loader} cellWidth={xRes} cellHeight={yRes}/>
+          <DataFragment loader={loader} cellWidth={res.x} cellHeight={res.y}/>
         </VirtualGrid>
         <div className={css.toolbar} style={place(10, 2, 10, 2)}>
-          <button onClick={e => elem ? elem.scrollTop += yRes : {}}
+          <button onClick={e => elem ? elem.scrollTop += res.y : {}}
             disabled={!elem}>▼</button>
-          <button onClick={e => elem ? elem.scrollTop -= yRes : {}}
+          <button onClick={e => elem ? elem.scrollTop -= res.y : {}}
             disabled={!elem}>▲</button>
-          <button onClick={e => elem ? elem.scrollLeft += xRes : {}}
+          <button onClick={e => elem ? elem.scrollLeft += res.x : {}}
             disabled={!elem}>►</button>
-          <button onClick={e => elem ? elem.scrollLeft -= xRes : {}}
+          <button onClick={e => elem ? elem.scrollLeft -= res.x : {}}
             disabled={!elem}>◄</button>
           <button onClick={e => elem ? elem.scrollTop += 1072 : {}}
             disabled={!elem}>▼ 1K px</button>

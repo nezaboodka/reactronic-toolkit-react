@@ -42,11 +42,11 @@ export function TelescopeDebugger(p: {telescope: GridTelescope}): JSX.Element {
             <div>
               Viewport-to-Canvas = {num(t.viewport.scaleBy(t.allToSurfaceFactor).y, 15)}
             </div>
-            <div>Font Size (resolution): {t.resolution}</div>
+            <div>Font Size (resolution): {t.resolution.y}</div>
             <div>{num(t.all.size.y / t.surface.size.y, 1)} <i>all data pixels in a single surface pixel out of</i> {num(t.surface.size.y)}</div>
             <div>{num(t.viewportToSurfaceFactor.y, 1)} <i>canvas pixels in a single viewport pixel out of</i> {num(t.viewport.size.y)}</div>
             <div>{num(t.viewportToAllFactor.y, 1)} <i>all data pixels in a single viewport pixel out of</i> {num(t.viewport.size.y)}</div>
-            <div>{num(t.viewportToAllFactor.y / t.resolution, -3)} <i>cells in a single viewport pixel out of</i> {num(t.viewport.size.y)}</div>
+            <div>{num(t.viewportToAllFactor.y / t.resolution.y, -3)} <i>cells in a single viewport pixel out of</i> {num(t.viewport.size.y)}</div>
             <br/>
           </div>
         </AreaRect>
