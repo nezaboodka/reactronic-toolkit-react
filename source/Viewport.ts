@@ -33,9 +33,9 @@ export class Viewport extends State {
   thumb: Area = Area.ZERO
   grid: Area = Area.ZERO
   display: Area = Area.ZERO
-  bufferSize: XY = xy(1.00, 1.00)
+  bufferSize: XY = xy(1.0, 1.0)
   loadedCells: Area = Area.ZERO
-  scrollingMonitor: Monitor = Monitor.create('scrolling', 20)
+  scrollingMonitor: Monitor = Monitor.create('scrolling', 30)
 
   constructor(sizeX: number, sizeY: number) {
     super()
@@ -132,7 +132,7 @@ export class Viewport extends State {
 
   get bufferCells(): Area {
     const d = this.displayCells
-    return d.zoomAt(d.center, this.bufferSize).truncateBy(this.all).roundToOuter().truncateBy(this.allCells)
+    return d.zoomAt(d.center, this.bufferSize).roundToOuter().truncateBy(this.allCells)
   }
 
   get displayCells(): Area {

@@ -83,14 +83,18 @@ export class Area extends XY {
 
   roundToOuter(): Area {
     return area(
-      Math.floor(this.x), Math.floor(this.y),
-      Math.ceil(this.size.x), Math.ceil(this.size.y))
+      Math.floor(this.x),
+      Math.floor(this.y),
+      Math.ceil(this.size.x + this.x - Math.floor(this.x)),
+      Math.ceil(this.size.y + this.y - Math.floor(this.y)))
   }
 
   roundToInner(): Area {
     return area(
-      Math.ceil(this.x), Math.ceil(this.y),
-      Math.floor(this.size.x), Math.floor(this.size.y))
+      Math.ceil(this.x),
+      Math.ceil(this.y),
+      Math.floor(this.size.x + this.x - Math.ceil(this.x)),
+      Math.floor(this.size.y + this.y - Math.ceil(this.y)))
   }
 
   truncateBy(bounds: Area): Area {

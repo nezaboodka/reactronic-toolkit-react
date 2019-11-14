@@ -18,6 +18,8 @@ export function AppWindow(p: {app: Application}): JSX.Element {
     const vp = p.app.viewport
     const buf = p.app.buffer
     const elem = vp.element
+    const xRes = vp.resolution * vp.sizing.defaultCellWidthFactor
+    const yRes = vp.resolution
     return (
       <div className={css.window}>
         <VirtualScroll viewport={vp}
@@ -26,13 +28,13 @@ export function AppWindow(p: {app: Application}): JSX.Element {
           <GridFrame buffer={buf} cellHeight={vp.resolution} cellWidth={vp.resolution * vp.sizing.defaultCellWidthFactor}/>
         </VirtualScroll>
         <div className={css.toolbar} style={place(10, 2, 10, 2)}>
-          <button onClick={e => elem ? elem.scrollTop += 21 : {}}
+          <button onClick={e => elem ? elem.scrollTop += yRes : {}}
             disabled={!elem}>▼</button>
-          <button onClick={e => elem ? elem.scrollTop -= 21 : {}}
+          <button onClick={e => elem ? elem.scrollTop -= yRes : {}}
             disabled={!elem}>▲</button>
-          <button onClick={e => elem ? elem.scrollLeft += 5*21 : {}}
+          <button onClick={e => elem ? elem.scrollLeft += xRes : {}}
             disabled={!elem}>►</button>
-          <button onClick={e => elem ? elem.scrollLeft -= 5*21 : {}}
+          <button onClick={e => elem ? elem.scrollLeft -= xRes : {}}
             disabled={!elem}>◄</button>
           <button onClick={e => elem ? elem.scrollTop += 1072 : {}}
             disabled={!elem}>▼ 1K px</button>
