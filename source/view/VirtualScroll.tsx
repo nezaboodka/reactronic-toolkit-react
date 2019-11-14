@@ -9,7 +9,7 @@ import { Telescope } from '/model/Telescope'
 import { reactive } from '/tools/reactive.ts'
 
 export function VirtualScroll(p: {
-  projector: Telescope,
+  telescope: Telescope,
   children: JSX.Element,
   className?: string,
   dataClassName?: string,
@@ -22,11 +22,11 @@ export function VirtualScroll(p: {
       const fs = window.getComputedStyle(element).fontSize
       resolution = parseFloat(fs.substr(0, fs.length - 2))
     }
-    p.projector.setElement(element, resolution)
+    p.telescope.setElement(element, resolution)
   }, [])
 
   return reactive(() => {
-    const s = p.projector.surface
+    const s = p.telescope.surface
     const sw = `${s.size.x}px`
     const sh = `${s.size.y}px`
     const surfaceStyle: React.CSSProperties = {
@@ -36,7 +36,7 @@ export function VirtualScroll(p: {
       width: sw, minWidth: sw, maxWidth: sw,
       height: sh, minHeight: sh, maxHeight: sh,
     }
-    const l = p.projector.loaded
+    const l = p.telescope.loaded
     const lw = `${l.size.x}`
     const lh = `${l.size.y}`
     const dataStyle: React.CSSProperties = {
@@ -49,8 +49,8 @@ export function VirtualScroll(p: {
     }
     return (
       <div ref={ref} className={p.className} style={p.style}
-        onScroll={e => p.projector.handleElementScroll()}
-        onWheel={e => p.projector.handleElementWheel(e.deltaX, e.deltaY, e.deltaZ, e.deltaMode)}>
+        onScroll={e => p.telescope.handleElementScroll()}
+        onWheel={e => p.telescope.handleElementWheel(e.deltaX, e.deltaY, e.deltaZ, e.deltaMode)}>
         <div style={surfaceStyle}>
           <div className={p.dataClassName} style={dataStyle}>
             {p.children}

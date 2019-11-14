@@ -19,9 +19,9 @@ export class DataBuffer extends State {
 
   @trigger @reentrance(Reentrance.CancelPrevious)
   async load(): Promise<void> {
-    const vp = this.telescope
-    const buf = vp.bufferCells
-    if (!buf.equalTo(vp.loadedCells)) {
+    const t = this.telescope
+    const buf = t.bufferCells
+    if (!buf.equalTo(t.loadedCells)) {
       const data: string[] = []
       const till = buf.till
       for (let y = buf.y; y <= till.y; y++)
@@ -29,7 +29,7 @@ export class DataBuffer extends State {
           data.push(`${y}:${x}`)
       await sleep(130)
       this.data = data
-      vp.confirmLoadedCells(buf)
+      t.confirmLoadedCells(buf)
     }
   }
 }
