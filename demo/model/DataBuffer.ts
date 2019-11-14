@@ -4,21 +4,21 @@
 // License: https://raw.githubusercontent.com/nezaboodka/reactronic/master/LICENSE
 
 import { State, sleep, trigger, reentrance, Reentrance } from 'reactronic'
-import { Viewport } from '../../source/index'
+import { VirtualProjector } from '../../source/index'
 
 export class DataBuffer extends State {
-  readonly viewport: Viewport
+  readonly projector: VirtualProjector
   data: string[]
 
-  constructor(viewport: Viewport) {
+  constructor(projector: VirtualProjector) {
     super()
-    this.viewport = viewport
+    this.projector = projector
     this.data = []
   }
 
   @trigger @reentrance(Reentrance.CancelPrevious)
   async load(): Promise<void> {
-    const vp = this.viewport
+    const vp = this.projector
     const buf = vp.bufferCells
     if (!buf.equalTo(vp.loadedCells)) {
       const data: string[] = []

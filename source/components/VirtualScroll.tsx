@@ -4,10 +4,10 @@
 // License: https://raw.githubusercontent.com/nezaboodka/reactronic/master/LICENSE
 
 import * as React from 'react'
-import { reactive, VirtualDisplay } from '../index'
+import { reactive, VirtualProjector } from '../index'
 
 export function VirtualScroll(p: {
-  display: VirtualDisplay,
+  projector: VirtualProjector,
   children: JSX.Element,
   className?: string,
   dataClassName?: string,
@@ -20,11 +20,11 @@ export function VirtualScroll(p: {
       const fs = window.getComputedStyle(element).fontSize
       resolution = parseFloat(fs.substr(0, fs.length - 2))
     }
-    p.display.setElement(element, resolution)
+    p.projector.setElement(element, resolution)
   }, [])
 
   return reactive(() => {
-    const s = p.display.surface
+    const s = p.projector.surface
     const sw = `${s.size.x}px`
     const sh = `${s.size.y}px`
     const surfaceStyle: React.CSSProperties = {
@@ -34,21 +34,21 @@ export function VirtualScroll(p: {
       width: sw, minWidth: sw, maxWidth: sw,
       height: sh, minHeight: sh, maxHeight: sh,
     }
-    const d = p.display.loaded
-    const dw = `${d.size.x}`
-    const dh = `${d.size.y}`
+    const l = p.projector.loaded
+    const lw = `${l.size.x}`
+    const lh = `${l.size.y}`
     const dataStyle: React.CSSProperties = {
       ...p.dataStyle,
       position: 'absolute',
-      left: `${d.x - s.x}px`,
-      top: `${d.y - s.y}px`,
-      width: dw, minWidth: dw, maxWidth: dw,
-      height: dh, minHeight: dh, maxHeight: dh,
+      left: `${l.x - s.x}px`,
+      top: `${l.y - s.y}px`,
+      width: lw, minWidth: lw, maxWidth: lw,
+      height: lh, minHeight: lh, maxHeight: lh,
     }
     return (
       <div ref={ref} className={p.className} style={p.style}
-        onScroll={e => p.display.handleElementScroll()}
-        onWheel={e => p.display.handleElementWheel(e.deltaX, e.deltaY, e.deltaZ, e.deltaMode)}>
+        onScroll={e => p.projector.handleElementScroll()}
+        onWheel={e => p.projector.handleElementWheel(e.deltaX, e.deltaY, e.deltaZ, e.deltaMode)}>
         <div style={surfaceStyle}>
           <div className={p.dataClassName} style={dataStyle}>
             {p.children}

@@ -15,14 +15,14 @@ import { style } from './AppWindow.css'
 export function AppWindow(p: {app: Application}): JSX.Element {
   return reactive(() => {
     const css = style.classes
-    const d = p.app.display
+    const vp = p.app.projector
     const buf = p.app.buffer
-    const elem = d.element
-    const xRes = d.resolution * d.sizing.defaultCellWidthFactor
-    const yRes = d.resolution
+    const elem = vp.element
+    const xRes = vp.resolution * vp.sizing.defaultCellWidthFactor
+    const yRes = vp.resolution
     return (
       <div className={css.window}>
-        <VirtualScroll display={d}
+        <VirtualScroll projector={vp}
           className={css.scroll} style={place(2, 2, 9, 9)}
           dataClassName={css.grid}>
           <GridFrame buffer={buf} cellWidth={xRes} cellHeight={yRes}/>
@@ -42,11 +42,11 @@ export function AppWindow(p: {app: Application}): JSX.Element {
             disabled={!elem}>▲ 1K px</button>
           <button onClick={e => elem ? elem.scrollTop = elem.scrollHeight - elem.clientHeight - 1 : {}}
             disabled={!elem}>▼ End</button>
-          <button onClick={e => elem ? alert(`${elem.scrollTop}, ${elem.scrollHeight}, ${d.surface.size.y}`) : {}}
+          <button onClick={e => elem ? alert(`${elem.scrollTop}, ${elem.scrollHeight}, ${vp.surface.size.y}`) : {}}
             disabled={!elem}>▲ Begin</button>
         </div>
         <div className={css.visualizer} style={place(10, 3, 10, 5)}>
-          <AppDebugger display={d} buffer={buf}/>
+          <AppDebugger projector={vp} buffer={buf}/>
         </div>
       </div>
     )

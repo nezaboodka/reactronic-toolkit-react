@@ -24,7 +24,7 @@ export type IElement = {
   scrollTop: number
 }
 
-export class VirtualDisplay extends State {
+export class VirtualProjector extends State {
   allCells: Area
   element: IElement | null | undefined = undefined
   resolution: number = 1 // pixels per cell
@@ -167,37 +167,37 @@ export class VirtualDisplay extends State {
     this.thumb = this.thumb.moveTo(xy(cx, cy), s0)
     const t = this.thumb
     let s = this.surface
-    let d = this.viewport
+    let v = this.viewport
     const x = s.x + t.x
     const y = s.y + t.y
     const s2a = this.surfaceToAllFactor
-    const dx = Math.abs(x - d.x)
-    if (dx > 2 * d.size.x || (dx > d.size.x / 2 && (cx < 1 || cx >= s.size.x - d.size.x))) {
-      const d2 = d.moveTo(xy(Math.ceil(cx * s2a.x), d.y), this.all)
-      if (!d2.equalTo(d)) {
-        this.viewport = d = d2
-        this.surface = s = s.moveTo(xy(d2.x - t.x, s.y), this.all)
+    const dx = Math.abs(x - v.x)
+    if (dx > 2 * v.size.x || (dx > v.size.x / 2 && (cx < 1 || cx >= s.size.x - v.size.x))) {
+      const v2 = v.moveTo(xy(Math.ceil(cx * s2a.x), v.y), this.all)
+      if (!v2.equalTo(v)) {
+        this.viewport = v = v2
+        this.surface = s = s.moveTo(xy(v2.x - t.x, s.y), this.all)
       }
     }
     else {
-      const d2 = d.moveTo(xy(x, d.y), this.all)
-      if (!d2.equalTo(d)) {
-        this.viewport = d = d2
+      const v2 = v.moveTo(xy(x, v.y), this.all)
+      if (!v2.equalTo(v)) {
+        this.viewport = v = v2
         // to adjust surface
       }
     }
-    const dy = Math.abs(y - d.y)
-    if (dy > 2 * d.size.y || (dy > d.size.y / 2 && (cy < 1 || cy >= s.size.y - d.size.y))) {
-      const d2 = d.moveTo(xy(d.x, Math.ceil(cy * s2a.y)), this.all)
-      if (!d2.equalTo(d)) {
-        this.viewport = d = d2
-        this.surface = s = s.moveTo(xy(s.x, d2.y - t.y), this.all)
+    const dy = Math.abs(y - v.y)
+    if (dy > 2 * v.size.y || (dy > v.size.y / 2 && (cy < 1 || cy >= s.size.y - v.size.y))) {
+      const v2 = v.moveTo(xy(v.x, Math.ceil(cy * s2a.y)), this.all)
+      if (!v2.equalTo(v)) {
+        this.viewport = v = v2
+        this.surface = s = s.moveTo(xy(s.x, v2.y - t.y), this.all)
       }
     }
     else {
-      const d2 = d.moveTo(xy(d.x, y), this.all)
-      if (!d2.equalTo(d)) {
-        this.viewport = d = d2
+      const v2 = v.moveTo(xy(v.x, y), this.all)
+      if (!v2.equalTo(v)) {
+        this.viewport = v = v2
         // to adjust surface
       }
     }
@@ -209,24 +209,24 @@ export class VirtualDisplay extends State {
     if (element && !this.scrollingMonitor.busy) {
       let s = this.surface
       let t = this.thumb
-      const d = this.viewport
-      const d2s = this.viewportToSurfaceFactor
-      const precise = d.scaleBy(this.allToSurfaceFactor)
-      const median = xy(precise.x + d2s.x/2, precise.y + d2s.y/2)
+      const v = this.viewport
+      const v2s = this.viewportToSurfaceFactor
+      const precise = v.scaleBy(this.allToSurfaceFactor)
+      const median = xy(precise.x + v2s.x/2, precise.y + v2s.y/2)
       const diff = xy(t.x - median.x, t.y - median.y)
-      if (Math.abs(diff.x) > d2s.x/3) {
-        const tip = d2s.x * ((s.size.x / 2 - precise.x) / s.size.x)
+      if (Math.abs(diff.x) > v2s.x/3) {
+        const tip = v2s.x * ((s.size.x / 2 - precise.x) / s.size.x)
         const t2 = t.moveTo(xy(precise.x + tip, t.y), s.moveTo(Area.ZERO, this.all))
-        const s2 = s.moveTo(xy(d.x - t2.x, s.y), this.all)
+        const s2 = s.moveTo(xy(v.x - t2.x, s.y), this.all)
         if (!s2.equalTo(s)) {
           this.surface = s = s2
           this.thumb = t = t2
         }
       }
-      if (Math.abs(diff.y) > d2s.y/3) {
-        const tip = d2s.y * ((s.size.y / 2 - precise.y) / s.size.y)
+      if (Math.abs(diff.y) > v2s.y/3) {
+        const tip = v2s.y * ((s.size.y / 2 - precise.y) / s.size.y)
         const t2 = t.moveTo(xy(t.x, precise.y + tip), s.moveTo(Area.ZERO, this.all))
-        const s2 = s.moveTo(xy(s.x, d.y - t2.y), this.all)
+        const s2 = s.moveTo(xy(s.x, v.y - t2.y), this.all)
         if (!s2.equalTo(s)) {
           this.surface = s = s2
           this.thumb = t = t2
