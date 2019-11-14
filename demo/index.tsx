@@ -6,8 +6,8 @@
 import * as React from 'react'
 import * as ReactDOM from 'react-dom'
 import { Action, Tools as RT, TraceLevel } from 'reactronic'
-import { Application } from './model/Application'
-import { AppWindow } from './view/AppWindow'
+import { Application } from '@model/Application'
+import { AppWindow } from '@view/AppWindow'
 
 RT.setTrace(TraceLevel.Off)
 RT.performanceWarningThreshold = 0 // disable

@@ -4,7 +4,7 @@
 // License: https://raw.githubusercontent.com/nezaboodka/reactronic/master/LICENSE
 
 import { State, sleep, trigger, reentrance, Reentrance } from 'reactronic'
-import { VirtualProjector } from '../../source/index'
+import { VirtualProjector } from '@toolkit'
 
 export class DataBuffer extends State {
   readonly projector: VirtualProjector

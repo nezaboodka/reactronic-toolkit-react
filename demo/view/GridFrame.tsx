@@ -6,7 +6,7 @@
 import * as React from 'react'
 import { reactive, xy } from '@toolkit'
 import { cx } from 'emotion'
-import { DataBuffer } from '../model/DataBuffer'
+import { DataBuffer } from '@model/DataBuffer'
 import { style } from './GridFrame.css'
 
 export function GridFrame(p: {cellWidth: number, cellHeight: number, buffer: DataBuffer}): JSX.Element {

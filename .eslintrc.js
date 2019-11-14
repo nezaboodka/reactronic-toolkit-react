@@ -1,6 +1,6 @@
 module.exports = {
   parser: '@typescript-eslint/parser',
-  plugins: ['@typescript-eslint'],
+  plugins: ['@typescript-eslint', 'simple-import-sort'],
   extends: ['plugin:@typescript-eslint/recommended'],
   'rules': {
     'indent': ['error', 2, { 'SwitchCase': 1 }],
@@ -11,6 +11,8 @@ module.exports = {
     'no-trailing-spaces': 'error',
     'no-unexpected-multiline': 'error',
     'object-shorthand': ['error', 'always'],
+    // 'import-order': 'off',
+    // 'simple-import-sort/sort': 'error',
     '@typescript-eslint/no-explicit-any': 'off',
     '@typescript-eslint/no-unused-vars': 'off',
     '@typescript-eslint/no-inferrable-types': 'off',

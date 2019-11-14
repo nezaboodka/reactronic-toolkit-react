@@ -21,6 +21,8 @@ module.exports = {
     extensions: ['.tsx', '.ts', '.js', '.css'],
     alias: {
       '@toolkit': path.resolve(__dirname, 'source', 'index.ts'),
+      '@model': path.resolve(__dirname, 'demo', 'model'),
+      '@view': path.resolve(__dirname, 'demo', 'view'),
     },
   },
 

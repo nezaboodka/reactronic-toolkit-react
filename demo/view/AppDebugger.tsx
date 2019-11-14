@@ -5,8 +5,8 @@
 
 import * as React from 'react'
 import { reactive, VirtualProjector, place, num } from '@toolkit'
-import { DataBuffer } from '../model/DataBuffer'
-import { AreaRect } from './AreaRect'
+import { DataBuffer } from '@model/DataBuffer'
+import { AreaRect } from '@view/AreaRect'
 import { style } from './AppDebugger.css'
 
 export function AppDebugger(p: {projector: VirtualProjector, buffer: DataBuffer}): JSX.Element {
