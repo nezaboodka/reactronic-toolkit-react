@@ -5,13 +5,13 @@
 
 import { Reentrance,reentrance, sleep, State, trigger } from 'reactronic'
 
-import { Telescope } from '@reactronic-toolkit-react'
+import { DataTelescope } from '@reactronic-toolkit-react'
 
 export class DataBuffer extends State {
-  readonly telescope: Telescope
+  readonly telescope: DataTelescope
   data: string[]
 
-  constructor(telescope: Telescope) {
+  constructor(telescope: DataTelescope) {
     super()
     this.telescope = telescope
     this.data = []

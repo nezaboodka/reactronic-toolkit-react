@@ -5,11 +5,11 @@
 
 import * as React from 'react'
 
-import { Telescope } from '/model/Telescope'
+import { DataTelescope } from '/model/DataTelescope'
 import { reactive } from '/tools/reactive.ts'
 
 export function VirtualScroll(p: {
-  telescope: Telescope,
+  telescope: DataTelescope,
   children: JSX.Element,
   className?: string,
   dataClassName?: string,

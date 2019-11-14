@@ -5,7 +5,7 @@
 
 export * from '/model/Area'
 export * from '/model/GroupEvents'
-export * from '/model/Telescope'
+export * from '/model/DataTelescope'
 export * from '/model/UserInput'
 
 export * from '/view/RComponent'
