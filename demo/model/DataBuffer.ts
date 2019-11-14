@@ -5,23 +5,23 @@
 
 import { Reentrance,reentrance, sleep, State, trigger } from 'reactronic'
 
-import { VirtualGrid } from '@reactronic-toolkit-react'
+import { GridTelescope } from '@reactronic-toolkit-react'
 
 export class DataBuffer extends State {
-  readonly grid: VirtualGrid
+  readonly telescope: GridTelescope
   data: string[]
 
-  constructor(grid: VirtualGrid) {
+  constructor(telescope: GridTelescope) {
     super()
-    this.grid = grid
+    this.telescope = telescope
     this.data = []
   }
 
   @trigger @reentrance(Reentrance.CancelPrevious)
   async load(): Promise<void> {
-    const g = this.grid
-    const buf = g.bufferCells
-    if (!buf.equalTo(g.loadedCells)) {
+    const t = this.telescope
+    const buf = t.bufferCells
+    if (!buf.equalTo(t.loadedCells)) {
       const data: string[] = []
       const till = buf.till
       for (let y = buf.y; y <= till.y; y++)
@@ -29,7 +29,7 @@ export class DataBuffer extends State {
           data.push(`${y}:${x}`)
       await sleep(130)
       this.data = data
-      g.confirmLoadedCells(buf)
+      t.confirmLoadedCells(buf)
     }
   }
 }
