@@ -4,7 +4,8 @@
 // License: https://raw.githubusercontent.com/nezaboodka/reactronic/master/LICENSE
 
 import * as React from 'react'
-import { reactive, VirtualProjector } from '../index'
+import { reactive } from '../tools/reactive'
+import { VirtualProjector } from '../library/VirtualProjector'
 
 export function VirtualScroll(p: {
   projector: VirtualProjector,
