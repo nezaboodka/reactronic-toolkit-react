@@ -9,7 +9,7 @@ import * as React from 'react'
 import { reactive, xy } from '@reactronic-toolkit-react'
 import { DataLoader } from '/m/DataLoader'
 
-import { style } from './GridFrame.css'
+import { style } from './DataFragment.css'
 
 export function DataFragment(p: {cellWidth: number, cellHeight: number, loader: DataLoader}): JSX.Element {
   return reactive(() => {
