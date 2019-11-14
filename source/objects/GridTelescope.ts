@@ -226,8 +226,7 @@ export class GridTelescope extends State {
 
   @trigger
   protected syncThumbAndSurface(): void {
-    const d = this.display
-    if (d && !this.scrollingMonitor.busy)
+    if (this.display && !this.scrollingMonitor.busy)
       this.rebaseSurface()
   }
 
