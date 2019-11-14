@@ -259,8 +259,9 @@ export class UserInput extends State {
   clearResult(): void {
     this.scrollDeltaX = 0
     this.scrollDeltaY = 0
-    this.resultPointerButton = PointerButton.None
+    this.resultKey = ''
     this.resultModifiers = KeyboardModifiers.None
+    this.resultPointerButton = PointerButton.None
     this.resultOperation = UserOperation.None
   }
 
@@ -280,8 +281,8 @@ export class UserInput extends State {
   }
 
   private updateResult(operation: UserOperation): void {
-    this.resultPointerButton = operation === UserOperation.Scroll ? PointerButton.None : this.pointerButtonDown
     this.resultModifiers = this.modifiers
+    this.resultPointerButton = operation === UserOperation.Scroll ? PointerButton.None : this.pointerButtonDown
     this.resultOperation = operation
   }
 
