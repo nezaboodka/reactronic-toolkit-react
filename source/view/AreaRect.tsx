@@ -9,7 +9,7 @@ import { TraceLevel } from 'reactronic'
 
 import { Area, num, place, reactive } from '@reactronic-toolkit-react'
 
-import { style } from './TelescopeDebugger.css'
+import { style } from './AreaRect.css'
 
 export function AreaRect(p: {
   hint: string,
@@ -23,24 +23,24 @@ export function AreaRect(p: {
     const css = style.classes
     return (
       <div className={cx(css.area, p.className)} style={p.style}>
-        <div className={css.areaHint} style={place(2, 2, 9, 2)}>
+        <div className={css.hint} style={place(2, 2, 9, 2)}>
           {p.hint}: {num(p.area.size.y, -3)} rows, {num(p.area.size.x, -3)} columns<br/>
           <i>↕ {num(p.px.size.y, 1)} px, {num(p.px.size.x, 1)} px</i>
         </div>
-        <div className={css.areaFrom} style={place(5, 2, 9, 2)}>
+        <div className={css.from} style={place(5, 2, 9, 2)}>
           {num(p.area.from.y, 3)}<br/>
           <i>{num(p.px.from.y, 1)} px</i>
         </div>
-        <div className={css.areaTill} style={place(5, 9, 9, 9)}>
+        <div className={css.till} style={place(5, 9, 9, 9)}>
           <i>{num(p.px.till.y, 1)} px</i><br/>
           {num(p.area.till.y, 3)}
         </div>
         {p.inner && (
-          <div className={css.areaOuter} style={place(2, 3, 9, 3)}>
+          <div className={css.outer} style={place(2, 3, 9, 3)}>
             <i>Gap: {num(p.inner.y - p.px.y, 1)} px</i>
           </div>
         )}
-        <div className={css.areaCenter} style={place(5, 5, 6, 6)}>{p.children}</div>
+        <div className={css.center} style={place(5, 5, 6, 6)}>{p.children}</div>
       </div>
     )
   }, TraceLevel.Suppress)

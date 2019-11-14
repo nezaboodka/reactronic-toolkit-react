@@ -42,39 +42,5 @@ export const style = restyle(() => {
       border: 1px solid #8DFFA6;
       color: #8DFFA6;
     `,
-    area: css`
-      label: area;
-      display: grid;
-      grid-template-columns: repeat(4, auto) 1fr 1fr repeat(4, auto);
-      grid-template-rows: repeat(4, auto) 1fr 1fr repeat(4, auto);
-      background-color: rgba(127, 127, 127, 0.1);
-      box-shadow: 0.05em 0.05em 0.2em 0.5px black;
-      text-shadow: 0 0 2px black;
-      padding: 0.25em 0;
-      margin: 0.5em 1em;
-    `,
-    areaOuter: css`
-      label: areaOuter;
-      text-align: center;
-    `,
-    areaHint: css`
-      label: areaHint;
-      text-align: left;
-      margin-left: 0.25em;
-    `,
-    areaFrom: css`
-      label: areaFrom;
-      text-align: right;
-      margin-right: 0.25em;
-    `,
-    areaTill: css`
-      label: areaTill;
-      text-align: right;
-      margin-right: 0.25em;
-    `,
-    areaCenter: css`
-      label: areaCenter;
-      text-align: center;
-    `,
   }
 })
