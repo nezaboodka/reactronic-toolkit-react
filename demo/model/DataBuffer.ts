@@ -26,7 +26,7 @@ export class DataBuffer extends State {
       for (let y = t.y; y <= till.y; y++)
         for (let x = t.x; x <= till.x; x++)
           data.push(`${y}:${x}`)
-      await sleep(50)
+      await sleep(130)
       this.data = data
       vp.loadedCells = t
       if (!vp.grid.envelops(t))
