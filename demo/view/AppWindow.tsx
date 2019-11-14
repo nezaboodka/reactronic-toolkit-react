@@ -7,8 +7,8 @@ import * as React from 'react'
 
 import { place, reactive, VirtualGrid } from '@reactronic-toolkit-react'
 import { Application } from '/m/Application'
-import { AppDebugger } from '/v/AppDebugger'
 import { GridFrame } from '/v/GridFrame'
+import { TelescopeDebugger } from '/view/TelescopeDebugger'
 
 import { style } from './AppWindow.css'
 
@@ -22,9 +22,8 @@ export function AppWindow(p: {app: Application}): JSX.Element {
     const yRes = t.resolution
     return (
       <div className={css.window}>
-        <VirtualGrid telescope={t}
-          className={css.scroll} style={place(2, 2, 9, 9)}
-          dataClassName={css.grid}>
+        <VirtualGrid telescope={t} style={place(2, 2, 9, 9)}
+          className={css.scroll} dataClassName={css.grid}>
           <GridFrame buffer={buf} cellWidth={xRes} cellHeight={yRes}/>
         </VirtualGrid>
         <div className={css.toolbar} style={place(10, 2, 10, 2)}>
@@ -46,7 +45,7 @@ export function AppWindow(p: {app: Application}): JSX.Element {
             disabled={!elem}>▲ Begin</button>
         </div>
         <div className={css.visualizer} style={place(10, 3, 10, 5)}>
-          <AppDebugger telescope={t} buffer={buf}/>
+          <TelescopeDebugger telescope={t}/>
         </div>
       </div>
     )

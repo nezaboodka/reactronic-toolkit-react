@@ -9,7 +9,7 @@ import { TraceLevel } from 'reactronic'
 
 import { Area, num, place, reactive } from '@reactronic-toolkit-react'
 
-import { style } from './AppDebugger.css'
+import { style } from './TelescopeDebugger.css'
 
 export function AreaRect(p: {
   hint: string,

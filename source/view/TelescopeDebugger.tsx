@@ -6,12 +6,11 @@
 import * as React from 'react'
 
 import { GridTelescope, num, place, reactive } from '@reactronic-toolkit-react'
-import { DataBuffer } from '/m/DataBuffer'
-import { AreaRect } from '/v/AreaRect'
+import { AreaRect } from '/view/AreaRect'
 
-import { style } from './AppDebugger.css'
+import { style } from './TelescopeDebugger.css'
 
-export function AppDebugger(p: {telescope: GridTelescope, buffer: DataBuffer}): JSX.Element {
+export function TelescopeDebugger(p: {telescope: GridTelescope}): JSX.Element {
   return reactive(counter => {
     const css = style.classes
     const t = p.telescope
