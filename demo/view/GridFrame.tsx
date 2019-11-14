@@ -16,8 +16,8 @@ export function GridFrame(p: {cellWidth: number, cellHeight: number, buffer: Dat
     const data = p.buffer.data
     const t = p.buffer.telescope
     const area = t.loadedCells
-    const grid = t.loadedCellsTargetGrid
-    const origin = xy(area.x - grid.x, area.y - grid.y)
+    const target = t.loadedCellsTarget
+    const origin = xy(area.x - target.x, area.y - target.y)
     const dim: React.CSSProperties = { width: `${p.cellWidth}px`, height: `${p.cellHeight}px` }
     return (
       <React.Fragment>
