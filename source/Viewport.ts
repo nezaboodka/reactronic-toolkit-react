@@ -51,10 +51,10 @@ export class Viewport extends State {
       this.thumb = new Area(0, 0, element.clientWidth, element.clientHeight)
       this.grid = this.allCells.truncateBy(GRID_CELL_LIMIT)
       this.display = new Area(0, 0, element.clientWidth, element.clientHeight)
-      Cache.of(this.moveViewport).setup({monitor: this.scrollingMonitor})
+      Cache.of(this.moveViewportTo).setup({monitor: this.scrollingMonitor})
     }
     else {
-      Cache.of(this.moveViewport).setup({monitor: null})
+      Cache.of(this.moveViewportTo).setup({monitor: null})
       this.display = Area.ZERO
       this.grid = Area.ZERO
       this.thumb = Area.ZERO
@@ -146,12 +146,12 @@ export class Viewport extends State {
     if (element) {
       const t = this.thumb
       if (Math.abs(t.y - element.scrollTop) > 0.1 || Math.abs(t.x - element.scrollLeft) > 0.1)
-        this.moveViewport(element.scrollLeft, element.scrollTop)
+        this.moveViewportTo(element.scrollLeft, element.scrollTop)
     }
   }
 
   @action
-  moveViewport(cx: number, cy: number): void {
+  moveViewportTo(cx: number, cy: number): void {
     // console.log(`scroll: ${cy} (∆ ${cy - this.thumb.y}), h=${this.element ? this.element.scrollHeight : '?'}`)
     const s0 = this.surface.moveTo(Area.ZERO, this.all)
     this.thumb = this.thumb.moveTo(xy(cx, cy), s0)
@@ -233,11 +233,11 @@ export class Viewport extends State {
     }
   }
 
-  @action
-  zoomAt(origin: XY, factor: number): void {
-    origin = this.surface.moveBy(origin, this.all)
-    this.display = this.display.zoomAt(origin, xy(factor, factor))
-  }
+  // @action
+  // zoomAt(origin: XY, factor: number): void {
+  //   origin = this.surface.moveBy(origin, this.all)
+  //   this.display = this.display.zoomAt(origin, xy(factor, factor))
+  // }
 }
 
 export function dumpArea(a: Area, fr?: number): string {
