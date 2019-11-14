@@ -161,9 +161,8 @@ export class GridTelescope extends State {
   @action
   protected moveViewportTo(cx: number, cy: number): void {
     // console.log(`scroll: ${cy} (∆ ${cy - this.thumb.y}), h=${this.element ? this.element.scrollHeight : '?'}`)
-    const s0 = this.surface.moveTo(Area.ZERO, this.all)
-    this.thumb = this.thumb.moveTo(xy(cx, cy), s0)
-    const t = this.thumb
+    const bounds = this.surface.moveTo(Area.ZERO, this.all)
+    const t = this.thumb = this.thumb.moveTo(xy(cx, cy), bounds)
     let s = this.surface
     let v = this.viewport
     const x = s.x + t.x
