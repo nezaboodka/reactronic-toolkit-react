@@ -26,7 +26,6 @@ export type IElement = {
 
 export class Viewport extends State {
   allCells: Area
-  sizing = new Sizing()
   element: IElement | null | undefined = undefined
   resolution: number = 1 // pixels per cell
   surface: Area = Area.ZERO
@@ -35,6 +34,7 @@ export class Viewport extends State {
   display: Area = Area.ZERO
   bufferSize: XY = xy(1.0, 1.0)
   loadedCells: Area = Area.ZERO
+  sizing = new Sizing()
   scrollingMonitor: Monitor = Monitor.create('scrolling', 30)
 
   constructor(sizeX: number, sizeY: number) {
