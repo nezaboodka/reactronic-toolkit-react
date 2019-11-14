@@ -28,7 +28,7 @@ export function GridFrame(p: {cellWidth: number, cellHeight: number, buffer: Dat
           const col = origin.x + x - area.x
           const key = `R${row}C${col}:Y${y}X${x}`
           return (
-            <GridCell key={key} hint={key}
+            <Cell key={key} hint={key}
               row={row} col={col} text={cell}
               style={dim}/>
           )
@@ -38,7 +38,7 @@ export function GridFrame(p: {cellWidth: number, cellHeight: number, buffer: Dat
   })
 }
 
-export function GridCell(p: {hint: string, row: number, col: number, text: string, style?: React.CSSProperties}): JSX.Element {
+function Cell(p: {hint: string, row: number, col: number, text: string, style?: React.CSSProperties}): JSX.Element {
   const css = style.classes
   const place: React.CSSProperties = {
     ...p.style,
