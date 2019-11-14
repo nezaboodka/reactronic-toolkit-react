@@ -47,7 +47,8 @@ export function VirtualScroll(p: {
     }
     return (
       <div ref={ref} className={p.className} style={p.style}
-        onScroll={e => p.viewport.handleElementScroll()}>
+        onScroll={e => p.viewport.handleElementScroll()}
+        onWheel={e => p.viewport.handleElementWheel(e.deltaX, e.deltaY, e.deltaZ, e.deltaMode)}>
         <div style={surfaceStyle}>
           <div className={p.dataClassName} style={dataStyle}>
             {p.children}

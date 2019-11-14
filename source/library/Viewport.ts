@@ -150,6 +150,10 @@ export class Viewport extends State {
     }
   }
 
+  handleElementWheel(dx: number, dy: number, dz: number, mode: number): void {
+    // console.log(`wheel: ${dy} (mode=${mode})`)
+  }
+
   confirmLoadedCells(a: Area): void {
     this.loadedCells = a
     if (!this.surfaceGrid.envelops(a))
