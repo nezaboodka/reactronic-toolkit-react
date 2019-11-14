@@ -9,7 +9,9 @@ import { Area, area, num, XY, xy } from '/model/Area'
 
 export const SURFACE_PIXEL_SIZE_LIMIT: Area = area(0, 0, 1000123, 1000123)
 export const SURFACE_GRID_SIZE_LIMIT: Area = area(0, 0, 999, 999)
+
 export type Guide = { index: number, coord: number }
+
 export class Sizing {
   defaultCellWidthFactor: number = 8 // measured in cell height ('em')
   customCellWidth: Guide[] = [] // in pixels?
