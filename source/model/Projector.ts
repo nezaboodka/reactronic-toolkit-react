@@ -31,7 +31,7 @@ export class Projector extends State {
   resolution: number = 1 // pixels per cell
   surface: Area = Area.ZERO
   thumb: Area = Area.ZERO
-  surfaceGrid: Area = Area.ZERO
+  grid: Area = Area.ZERO
   viewport: Area = Area.ZERO
   bufferSize: XY = xy(1.0, 1.0)
   loadedCells: Area = Area.ZERO
@@ -50,14 +50,14 @@ export class Projector extends State {
       this.resolution = resolution
       this.surface = this.all.truncateBy(SURFACE_PIXEL_SIZE_LIMIT)
       this.thumb = new Area(0, 0, element.clientWidth, element.clientHeight)
-      this.surfaceGrid = this.allCells.truncateBy(SURFACE_GRID_SIZE_LIMIT)
+      this.grid = this.allCells.truncateBy(SURFACE_GRID_SIZE_LIMIT)
       this.viewport = new Area(0, 0, element.clientWidth, element.clientHeight)
       Cache.of(this.moveViewportTo).setup({monitor: this.scrollingMonitor})
     }
     else {
       Cache.of(this.moveViewportTo).setup({monitor: null})
       this.viewport = Area.ZERO
-      this.surfaceGrid = Area.ZERO
+      this.grid = Area.ZERO
       this.thumb = Area.ZERO
       this.surface = Area.ZERO
       this.resolution = 1
@@ -157,8 +157,8 @@ export class Projector extends State {
 
   confirmLoadedCells(a: Area): void {
     this.loadedCells = a
-    if (!this.surfaceGrid.envelops(a))
-      this.surfaceGrid = this.surfaceGrid.moveCenterTo(a.center, this.allCells).round()
+    if (!this.grid.envelops(a))
+      this.grid = this.grid.moveCenterTo(a.center, this.allCells).round()
   }
 
   @action
