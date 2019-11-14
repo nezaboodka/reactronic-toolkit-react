@@ -14,9 +14,9 @@ import { style } from './GridFrame.css'
 export function GridFrame(p: {cellWidth: number, cellHeight: number, buffer: DataBuffer}): JSX.Element {
   return reactive(() => {
     const data = p.buffer.data
-    const t = p.buffer.telescope
-    const area = t.loadedCells
-    const target = t.loadedCellsTarget
+    const g = p.buffer.grid
+    const area = g.loadedCells
+    const target = g.loadedCellsTarget
     const origin = xy(area.x - target.x, area.y - target.y)
     const dim: React.CSSProperties = { width: `${p.cellWidth}px`, height: `${p.cellHeight}px` }
     return (
