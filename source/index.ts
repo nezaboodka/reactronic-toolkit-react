@@ -3,7 +3,7 @@
 // Copyright (C) 2019 Yury Chetyrko <ychetyrko@gmail.com>
 // License: https://raw.githubusercontent.com/nezaboodka/reactronic/master/LICENSE
 
-export * from './tools/Component'
+export * from './components/RComponent'
 export * from './tools/reactive'
 export * from './tools/restyle'
 export * from './tools/GroupEvents'
