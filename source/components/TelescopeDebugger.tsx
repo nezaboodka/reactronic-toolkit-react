@@ -6,8 +6,8 @@
 import * as React from 'react'
 
 import { GridTelescope, num, place, reactive } from '@reactronic-toolkit-react'
-import { AreaRect } from '/view/AreaRect'
 
+import { AreaRect } from './AreaRect'
 import { style } from './TelescopeDebugger.css'
 
 export function TelescopeDebugger(p: {telescope: GridTelescope}): JSX.Element {

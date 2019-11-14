@@ -3,13 +3,13 @@
 // Copyright (C) 2019 Yury Chetyrko <ychetyrko@gmail.com>
 // License: https://raw.githubusercontent.com/nezaboodka/reactronic/master/LICENSE
 
-export * from '/model/Area'
-export * from '/model/GroupEvents'
-export * from '/model/GridTelescope'
-export * from '/model/UserInput'
+export * from './objects/Area'
+export * from './objects/GroupEvents'
+export * from './objects/GridTelescope'
+export * from './objects/UserInput'
 
-export * from '/view/RComponent'
-export * from '/view/VirtualGrid'
+export * from './components/RComponent'
+export * from './components/VirtualGrid'
 
 export * from '/tools/reactive'
 export * from '/tools/restyle'

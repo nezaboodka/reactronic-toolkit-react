@@ -5,7 +5,7 @@
 
 import * as React from 'react'
 
-import { GridTelescope } from '/model/GridTelescope'
+import { GridTelescope } from '/objects/GridTelescope'
 import { reactive } from '/tools/reactive.ts'
 
 export function VirtualGrid(p: {

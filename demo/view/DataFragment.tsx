@@ -7,7 +7,7 @@ import { cx } from 'emotion'
 import * as React from 'react'
 
 import { reactive, xy } from '@reactronic-toolkit-react'
-import { DataLoader } from '/m/DataLoader'
+import { DataLoader } from '~m/DataLoader'
 
 import { style } from './DataFragment.css'
 

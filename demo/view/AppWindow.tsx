@@ -6,11 +6,11 @@
 import * as React from 'react'
 
 import { place, reactive, VirtualGrid } from '@reactronic-toolkit-react'
-import { Application } from '/m/Application'
-import { DataFragment } from '/v/DataFragment'
-import { TelescopeDebugger } from '/view/TelescopeDebugger'
+import { TelescopeDebugger } from '/components/TelescopeDebugger'
+import { Application } from '~m/Application'
 
 import { style } from './AppWindow.css'
+import { DataFragment } from './DataFragment'
 
 export function AppWindow(p: {app: Application}): JSX.Element {
   return reactive(() => {
