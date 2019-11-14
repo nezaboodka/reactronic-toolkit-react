@@ -22,7 +22,7 @@ export function VirtualGrid(p: {
       const fs = window.getComputedStyle(element).fontSize
       resolution = parseFloat(fs.substr(0, fs.length - 2))
     }
-    p.telescope.setElement(element, resolution)
+    p.telescope.setDisplay(element, resolution)
   }, [])
 
   return reactive(() => {
@@ -49,8 +49,8 @@ export function VirtualGrid(p: {
     }
     return (
       <div ref={ref} className={p.className} style={p.style}
-        onScroll={e => p.telescope.handleElementScroll()}
-        onWheel={e => p.telescope.handleElementWheel(e.deltaX, e.deltaY, e.deltaZ, e.deltaMode)}>
+        onScroll={e => p.telescope.handleDisplayScroll()}
+        onWheel={e => p.telescope.handleDisplayWheel(e.deltaX, e.deltaY, e.deltaZ, e.deltaMode)}>
         <div style={surfaceStyle}>
           <div className={p.dataClassName} style={dataStyle}>
             {p.children}

@@ -17,7 +17,7 @@ export function AppWindow(p: {app: Application}): JSX.Element {
     const css = style.classes
     const t = p.app.telescope
     const loader = p.app.loader
-    const elem = t.element
+    const d = t.display
     const res = t.resolution
     return (
       <div className={css.window}>
@@ -26,22 +26,22 @@ export function AppWindow(p: {app: Application}): JSX.Element {
           <DataFragment loader={loader} cellWidth={res.x} cellHeight={res.y}/>
         </VirtualGrid>
         <div className={css.toolbar} style={place(10, 2, 10, 2)}>
-          <button onClick={e => elem ? elem.scrollTop += res.y : {}}
-            disabled={!elem}>▼</button>
-          <button onClick={e => elem ? elem.scrollTop -= res.y : {}}
-            disabled={!elem}>▲</button>
-          <button onClick={e => elem ? elem.scrollLeft += res.x : {}}
-            disabled={!elem}>►</button>
-          <button onClick={e => elem ? elem.scrollLeft -= res.x : {}}
-            disabled={!elem}>◄</button>
-          <button onClick={e => elem ? elem.scrollTop += 1072 : {}}
-            disabled={!elem}>▼ 1K px</button>
-          <button onClick={e => elem ? elem.scrollTop -= 1072 : {}}
-            disabled={!elem}>▲ 1K px</button>
-          <button onClick={e => elem ? elem.scrollTop = elem.scrollHeight - elem.clientHeight - 1 : {}}
-            disabled={!elem}>▼ End</button>
-          <button onClick={e => elem ? alert(`${elem.scrollTop}, ${elem.scrollHeight}, ${t.surface.size.y}`) : {}}
-            disabled={!elem}>▲ Begin</button>
+          <button onClick={e => d ? d.scrollTop += res.y : {}}
+            disabled={!d}>▼</button>
+          <button onClick={e => d ? d.scrollTop -= res.y : {}}
+            disabled={!d}>▲</button>
+          <button onClick={e => d ? d.scrollLeft += res.x : {}}
+            disabled={!d}>►</button>
+          <button onClick={e => d ? d.scrollLeft -= res.x : {}}
+            disabled={!d}>◄</button>
+          <button onClick={e => d ? d.scrollTop += 1072 : {}}
+            disabled={!d}>▼ 1K px</button>
+          <button onClick={e => d ? d.scrollTop -= 1072 : {}}
+            disabled={!d}>▲ 1K px</button>
+          <button onClick={e => d ? d.scrollTop = d.scrollHeight - d.clientHeight - 1 : {}}
+            disabled={!d}>▼ End</button>
+          <button onClick={e => d ? alert(`${d.scrollTop}, ${d.scrollHeight}, ${t.surface.size.y}`) : {}}
+            disabled={!d}>▲ Begin</button>
         </div>
         <div className={css.visualizer} style={place(10, 3, 10, 5)}>
           <TelescopeDebugger telescope={t}/>
