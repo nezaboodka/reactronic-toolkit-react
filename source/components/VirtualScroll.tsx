@@ -4,10 +4,10 @@
 // License: https://raw.githubusercontent.com/nezaboodka/reactronic/master/LICENSE
 
 import * as React from 'react'
-import { reactive, Viewport } from '../index'
+import { reactive, VirtualDisplay } from '../index'
 
 export function VirtualScroll(p: {
-  viewport: Viewport,
+  display: VirtualDisplay,
   children: JSX.Element,
   className?: string,
   dataClassName?: string,
@@ -20,11 +20,11 @@ export function VirtualScroll(p: {
       const fs = window.getComputedStyle(element).fontSize
       resolution = parseFloat(fs.substr(0, fs.length - 2))
     }
-    p.viewport.setElement(element, resolution)
+    p.display.setElement(element, resolution)
   }, [])
 
   return reactive(() => {
-    const s = p.viewport.surface
+    const s = p.display.surface
     const sw = `${s.size.x}px`
     const sh = `${s.size.y}px`
     const surfaceStyle: React.CSSProperties = {
@@ -34,7 +34,7 @@ export function VirtualScroll(p: {
       width: sw, minWidth: sw, maxWidth: sw,
       height: sh, minHeight: sh, maxHeight: sh,
     }
-    const d = p.viewport.loaded
+    const d = p.display.loaded
     const dw = `${d.size.x}`
     const dh = `${d.size.y}`
     const dataStyle: React.CSSProperties = {
@@ -47,8 +47,8 @@ export function VirtualScroll(p: {
     }
     return (
       <div ref={ref} className={p.className} style={p.style}
-        onScroll={e => p.viewport.handleElementScroll()}
-        onWheel={e => p.viewport.handleElementWheel(e.deltaX, e.deltaY, e.deltaZ, e.deltaMode)}>
+        onScroll={e => p.display.handleElementScroll()}
+        onWheel={e => p.display.handleElementWheel(e.deltaX, e.deltaY, e.deltaZ, e.deltaMode)}>
         <div style={surfaceStyle}>
           <div className={p.dataClassName} style={dataStyle}>
             {p.children}

@@ -24,14 +24,14 @@ export type IElement = {
   scrollTop: number
 }
 
-export class Viewport extends State {
+export class VirtualDisplay extends State {
   allCells: Area
   element: IElement | null | undefined = undefined
   resolution: number = 1 // pixels per cell
   surface: Area = Area.ZERO
   thumb: Area = Area.ZERO
   surfaceGrid: Area = Area.ZERO
-  display: Area = Area.ZERO
+  viewport: Area = Area.ZERO
   bufferSize: XY = xy(1.0, 1.0)
   loadedCells: Area = Area.ZERO
   sizing = new Sizing()
@@ -50,12 +50,12 @@ export class Viewport extends State {
       this.surface = this.all.truncateBy(SURFACE_PIXEL_SIZE_LIMIT)
       this.thumb = new Area(0, 0, element.clientWidth, element.clientHeight)
       this.surfaceGrid = this.allCells.truncateBy(SURFACE_GRID_SIZE_LIMIT)
-      this.display = new Area(0, 0, element.clientWidth, element.clientHeight)
+      this.viewport = new Area(0, 0, element.clientWidth, element.clientHeight)
       Cache.of(this.moveViewportTo).setup({monitor: this.scrollingMonitor})
     }
     else {
       Cache.of(this.moveViewportTo).setup({monitor: null})
-      this.display = Area.ZERO
+      this.viewport = Area.ZERO
       this.surfaceGrid = Area.ZERO
       this.thumb = Area.ZERO
       this.surface = Area.ZERO
@@ -76,21 +76,21 @@ export class Viewport extends State {
     return xy(1 / c2p.x, 1 / c2p.y)
   }
 
-  get displayToSurfaceFactor(): XY {
+  get viewportToSurfaceFactor(): XY {
     const s = this.surface.size
-    const d = this.display.size
-    return xy(s.x / (d.x - 1), s.y / (d.y - 1))
+    const v = this.viewport.size
+    return xy(s.x / (v.x - 1), s.y / (v.y - 1))
   }
 
-  get surfaceToDisplayFactor(): XY {
-    const d2s = this.displayToSurfaceFactor
-    return xy(1 / d2s.x, 1 / d2s.y)
+  get surfaceToViewportFactor(): XY {
+    const v2s = this.viewportToSurfaceFactor
+    return xy(1 / v2s.x, 1 / v2s.y)
   }
 
   get surfaceToAllFactor(): XY {
     const a = this.all.size
     const s = this.surface.size
-    const d = this.display.size
+    const d = this.viewport.size
     return xy(a.x / (s.x - d.x), a.y / (s.y - d.y))
   }
 
@@ -99,15 +99,15 @@ export class Viewport extends State {
     return xy(1 / s2a.x, 1 / s2a.y)
   }
 
-  get displayToAllFactor(): XY {
+  get viewportToAllFactor(): XY {
     const a = this.all.size
-    const d = this.display.size
-    return xy(a.x / (d.x - 1), a.y / (d.y - 1))
+    const v = this.viewport.size
+    return xy(a.x / (v.x - 1), a.y / (v.y - 1))
   }
 
-  get allToDisplayFactor(): XY {
-    const d2a = this.displayToAllFactor
-    return xy(1 / d2a.x, 1 / d2a.y)
+  get allToViewportFactor(): XY {
+    const v2a = this.viewportToAllFactor
+    return xy(1 / v2a.x, 1 / v2a.y)
   }
 
   // Areas (pixels)
@@ -131,12 +131,12 @@ export class Viewport extends State {
   }
 
   get bufferCells(): Area {
-    const d = this.displayCells
+    const d = this.viewportCells
     return d.zoomAt(d.center, this.bufferSize).roundToOuter().truncateBy(this.allCells)
   }
 
-  get displayCells(): Area {
-    return this.display.scaleBy(this.pixelToCellFactor)
+  get viewportCells(): Area {
+    return this.viewport.scaleBy(this.pixelToCellFactor)
   }
 
   // Actions
@@ -167,7 +167,7 @@ export class Viewport extends State {
     this.thumb = this.thumb.moveTo(xy(cx, cy), s0)
     const t = this.thumb
     let s = this.surface
-    let d = this.display
+    let d = this.viewport
     const x = s.x + t.x
     const y = s.y + t.y
     const s2a = this.surfaceToAllFactor
@@ -175,27 +175,31 @@ export class Viewport extends State {
     if (dx > 2 * d.size.x || (dx > d.size.x / 2 && (cx < 1 || cx >= s.size.x - d.size.x))) {
       const d2 = d.moveTo(xy(Math.ceil(cx * s2a.x), d.y), this.all)
       if (!d2.equalTo(d)) {
-        this.display = d = d2
+        this.viewport = d = d2
         this.surface = s = s.moveTo(xy(d2.x - t.x, s.y), this.all)
       }
     }
     else {
       const d2 = d.moveTo(xy(x, d.y), this.all)
-      if (!d2.equalTo(d))
-        this.display = d = d2
+      if (!d2.equalTo(d)) {
+        this.viewport = d = d2
+        // to adjust surface
+      }
     }
     const dy = Math.abs(y - d.y)
     if (dy > 2 * d.size.y || (dy > d.size.y / 2 && (cy < 1 || cy >= s.size.y - d.size.y))) {
       const d2 = d.moveTo(xy(d.x, Math.ceil(cy * s2a.y)), this.all)
       if (!d2.equalTo(d)) {
-        this.display = d = d2
+        this.viewport = d = d2
         this.surface = s = s.moveTo(xy(s.x, d2.y - t.y), this.all)
       }
     }
     else {
       const d2 = d.moveTo(xy(d.x, y), this.all)
-      if (!d2.equalTo(d))
-        this.display = d = d2
+      if (!d2.equalTo(d)) {
+        this.viewport = d = d2
+        // to adjust surface
+      }
     }
   }
 
@@ -205,8 +209,8 @@ export class Viewport extends State {
     if (element && !this.scrollingMonitor.busy) {
       let s = this.surface
       let t = this.thumb
-      const d = this.display
-      const d2s = this.displayToSurfaceFactor
+      const d = this.viewport
+      const d2s = this.viewportToSurfaceFactor
       const precise = d.scaleBy(this.allToSurfaceFactor)
       const median = xy(precise.x + d2s.x/2, precise.y + d2s.y/2)
       const diff = xy(t.x - median.x, t.y - median.y)
@@ -246,7 +250,7 @@ export class Viewport extends State {
   // @action
   // zoomAt(origin: XY, factor: number): void {
   //   origin = this.surface.moveBy(origin, this.all)
-  //   this.display = this.display.zoomAt(origin, xy(factor, factor))
+  //   this.viewport = this.viewport.zoomAt(origin, xy(factor, factor))
   // }
 }
 

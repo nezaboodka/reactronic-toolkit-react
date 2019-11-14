@@ -4,10 +4,10 @@
 // License: https://raw.githubusercontent.com/nezaboodka/reactronic/master/LICENSE
 
 import { State } from 'reactronic'
-import { Viewport } from '../../source/index'
+import { VirtualDisplay } from '../../source/index'
 import { DataBuffer } from './DataBuffer'
 
 export class Application extends State {
-  readonly viewport = new Viewport(10000, 1000000000000)
-  readonly buffer = new DataBuffer(this.viewport)
+  readonly display = new VirtualDisplay(10000, 1000000000000)
+  readonly buffer = new DataBuffer(this.display)
 }
