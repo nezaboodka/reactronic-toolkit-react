@@ -25,7 +25,7 @@ export type IElement = {
   scrollTop: number
 }
 
-export class DataTelescope extends State {
+export class GridTelescope extends State {
   allCells: Area
   element: IElement | null | undefined = undefined
   resolution: number = 1 // pixels per cell

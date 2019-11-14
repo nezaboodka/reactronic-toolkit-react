@@ -5,10 +5,10 @@
 
 import { State } from 'reactronic'
 
-import { DataTelescope } from '@reactronic-toolkit-react'
+import { GridTelescope } from '@reactronic-toolkit-react'
 import { DataBuffer } from '/m/DataBuffer'
 
 export class Application extends State {
-  readonly telescope = new DataTelescope(10000, 1000000000000)
+  readonly telescope = new GridTelescope(10000, 1000000000000)
   readonly buffer = new DataBuffer(this.telescope)
 }
