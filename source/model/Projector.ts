@@ -162,7 +162,7 @@ export class Projector extends State {
   }
 
   @action
-  moveViewportTo(cx: number, cy: number): void {
+  protected moveViewportTo(cx: number, cy: number): void {
     // console.log(`scroll: ${cy} (∆ ${cy - this.thumb.y}), h=${this.element ? this.element.scrollHeight : '?'}`)
     const s0 = this.surface.moveTo(Area.ZERO, this.all)
     this.thumb = this.thumb.moveTo(xy(cx, cy), s0)
@@ -205,7 +205,7 @@ export class Projector extends State {
   }
 
   @trigger
-  rebaseSurface(): void {
+  protected rebaseSurface(): void {
     const element = this.element
     if (element && !this.scrollingMonitor.busy) {
       let s = this.surface
@@ -237,7 +237,7 @@ export class Projector extends State {
   }
 
   @trigger
-  syncThumbWithElement(): void {
+  protected syncThumbWithElement(): void {
     const element = this.element
     if (element) {
       const t = this.thumb
