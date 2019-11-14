@@ -5,21 +5,21 @@
 
 import { Reentrance,reentrance, sleep, State, trigger } from 'reactronic'
 
-import { Projector } from '@reactronic-toolkit-react'
+import { Telescope } from '@reactronic-toolkit-react'
 
 export class DataBuffer extends State {
-  readonly projector: Projector
+  readonly telescope: Telescope
   data: string[]
 
-  constructor(projector: Projector) {
+  constructor(telescope: Telescope) {
     super()
-    this.projector = projector
+    this.telescope = telescope
     this.data = []
   }
 
   @trigger @reentrance(Reentrance.CancelPrevious)
   async load(): Promise<void> {
-    const vp = this.projector
+    const vp = this.telescope
     const buf = vp.bufferCells
     if (!buf.equalTo(vp.loadedCells)) {
       const data: string[] = []

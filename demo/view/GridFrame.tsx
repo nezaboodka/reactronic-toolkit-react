@@ -14,7 +14,7 @@ import { style } from './GridFrame.css'
 export function GridFrame(p: {cellWidth: number, cellHeight: number, buffer: DataBuffer}): JSX.Element {
   return reactive(() => {
     const data = p.buffer.data
-    const vp = p.buffer.projector
+    const vp = p.buffer.telescope
     const area = vp.loadedCells
     const grid = vp.grid
     const origin = xy(area.x - grid.x, area.y - grid.y)

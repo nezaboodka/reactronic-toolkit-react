@@ -15,7 +15,7 @@ import { style } from './AppWindow.css'
 export function AppWindow(p: {app: Application}): JSX.Element {
   return reactive(() => {
     const css = style.classes
-    const vp = p.app.projector
+    const vp = p.app.telescope
     const buf = p.app.buffer
     const elem = vp.element
     const xRes = vp.resolution * vp.sizing.defaultCellWidthFactor

@@ -5,11 +5,11 @@
 
 import * as React from 'react'
 
-import { Projector } from '/model/Projector'
+import { Telescope } from '/model/Telescope'
 import { reactive } from '/tools/reactive.ts'
 
 export function VirtualScroll(p: {
-  projector: Projector,
+  projector: Telescope,
   children: JSX.Element,
   className?: string,
   dataClassName?: string,

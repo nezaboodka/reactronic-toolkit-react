@@ -5,13 +5,13 @@
 
 import * as React from 'react'
 
-import { num, place, Projector, reactive } from '@reactronic-toolkit-react'
+import { num, place, reactive, Telescope } from '@reactronic-toolkit-react'
 import { DataBuffer } from '/m/DataBuffer'
 import { AreaRect } from '/v/AreaRect'
 
 import { style } from './AppDebugger.css'
 
-export function AppDebugger(p: {projector: Projector, buffer: DataBuffer}): JSX.Element {
+export function AppDebugger(p: {projector: Telescope, buffer: DataBuffer}): JSX.Element {
   return reactive(counter => {
     const css = style.classes
     const vp = p.projector

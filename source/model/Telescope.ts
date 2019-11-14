@@ -25,7 +25,7 @@ export type IElement = {
   scrollTop: number
 }
 
-export class Projector extends State {
+export class Telescope extends State {
   allCells: Area
   element: IElement | null | undefined = undefined
   resolution: number = 1 // pixels per cell
