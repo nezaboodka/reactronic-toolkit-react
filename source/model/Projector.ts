@@ -25,7 +25,7 @@ export type IElement = {
   scrollTop: number
 }
 
-export class VirtualProjector extends State {
+export class Projector extends State {
   allCells: Area
   element: IElement | null | undefined = undefined
   resolution: number = 1 // pixels per cell

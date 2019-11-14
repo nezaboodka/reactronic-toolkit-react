@@ -5,13 +5,13 @@
 
 import { Reentrance,reentrance, sleep, State, trigger } from 'reactronic'
 
-import { VirtualProjector } from '@reactronic-toolkit-react'
+import { Projector } from '@reactronic-toolkit-react'
 
 export class DataBuffer extends State {
-  readonly projector: VirtualProjector
+  readonly projector: Projector
   data: string[]
 
-  constructor(projector: VirtualProjector) {
+  constructor(projector: Projector) {
     super()
     this.projector = projector
     this.data = []

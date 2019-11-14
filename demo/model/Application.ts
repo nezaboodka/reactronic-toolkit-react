@@ -5,10 +5,10 @@
 
 import { State } from 'reactronic'
 
-import { VirtualProjector } from '@reactronic-toolkit-react'
+import { Projector } from '@reactronic-toolkit-react'
 import { DataBuffer } from '/m/DataBuffer'
 
 export class Application extends State {
-  readonly projector = new VirtualProjector(10000, 1000000000000)
+  readonly projector = new Projector(10000, 1000000000000)
   readonly buffer = new DataBuffer(this.projector)
 }
