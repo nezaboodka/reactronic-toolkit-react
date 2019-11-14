@@ -16,8 +16,7 @@ export function DataFragment(p: {cellWidth: number, cellHeight: number, loader: 
     const data = p.loader.data
     const t = p.loader.telescope
     const area = t.loadedCells
-    const env = t.envelope
-    const zero = xy(area.x - env.x, area.y - env.y)
+    const zero = xy(area.x - t.page.x, area.y - t.page.y)
     const dim: React.CSSProperties = { width: `${p.cellWidth}px`, height: `${p.cellHeight}px` }
     return (
       <React.Fragment>
