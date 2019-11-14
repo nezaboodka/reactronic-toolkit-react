@@ -15,43 +15,47 @@ export function VirtualScroll(p: {
   dataStyle?: React.CSSProperties}): JSX.Element {
 
   const ref = React.useCallback(element => {
-    let pxPerRow = 16
+    let resolution = 1
     if (element) {
       const fs = window.getComputedStyle(element).fontSize
-      pxPerRow = parseFloat(fs.substr(0, fs.length - 2))
+      resolution = parseFloat(fs.substr(0, fs.length - 2))
     }
-    p.viewport.setElement(element, pxPerRow)
+    p.viewport.setElement(element, resolution)
   }, [])
 
-  return reactive(counter => {
+  return reactive(() => {
     const s = p.viewport.surface
+    const sw = `${s.size.x}px`
+    const sh = `${s.size.y}px`
     const surfaceStyle: React.CSSProperties = {
       position: 'relative',
       overflow: 'hidden',
       boxSizing: 'border-box',
       whiteSpace: 'nowrap', // temporary
-      width: `${s.size.x}px`,
-      minWidth: `${s.size.x}px`,
-      maxWidth: `${s.size.x}px`,
-      height: `${s.size.y}px`,
-      minHeight: `${s.size.y}px`,
-      maxHeight: `${s.size.y}px`,
+      width: sw,
+      minWidth: sw,
+      maxWidth: sw,
+      height: sh,
+      minHeight: sh,
+      maxHeight: sh,
     }
     const d = p.viewport.loaded
+    const dw = `${d.size.x}`
+    const dh = `${d.size.y}`
     const dataStyle: React.CSSProperties = {
       ...p.dataStyle,
       position: 'absolute',
       left: `${d.x - s.x}px`,
       top: `${d.y - s.y}px`,
-      width: `${d.size.x}`,
-      minWidth: `${d.size.x}`,
-      maxWidth: `${d.size.x}`,
-      height: `${d.size.y}`,
-      minHeight: `${d.size.y}`,
-      maxHeight: `${d.size.y}`,
+      width: dw,
+      minWidth: dw,
+      maxWidth: dw,
+      height: dh,
+      minHeight: dh,
+      maxHeight: dh,
     }
     return (
-      <div title={`${counter}`} ref={ref} className={p.className} style={p.style}
+      <div ref={ref} className={p.className} style={p.style}
         onScroll={e => p.viewport.onScroll()}>
         <div style={surfaceStyle}>
           <div className={p.dataClassName} style={dataStyle}>
