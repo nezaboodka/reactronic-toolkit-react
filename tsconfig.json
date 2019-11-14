@@ -33,6 +33,9 @@
     "emitDecoratorMetadata": true,
     "experimentalDecorators": true,
     "jsx": "react",
+    "paths": {
+      "@toolkit": ["index.ts"]
+    },
     "plugins": [
       {
           "name": "typescript-styled-plugin",

@@ -4,8 +4,8 @@
 // License: https://raw.githubusercontent.com/nezaboodka/reactronic/master/LICENSE
 
 import * as React from 'react'
+import { reactive, xy } from '@toolkit'
 import { cx } from 'emotion'
-import { reactive, xy } from '../../source/index'
 import { DataBuffer } from '../model/DataBuffer'
 import { style } from './GridFrame.css'
 

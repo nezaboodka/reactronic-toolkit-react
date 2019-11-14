@@ -4,8 +4,7 @@
 // License: https://raw.githubusercontent.com/nezaboodka/reactronic/master/LICENSE
 
 import * as React from 'react'
-import { reactive, VirtualProjector, num } from '../../source/index'
-import { place } from '../tools/common'
+import { reactive, VirtualProjector, place, num } from '@toolkit'
 import { DataBuffer } from '../model/DataBuffer'
 import { AreaRect } from './AreaRect'
 import { style } from './AppDebugger.css'

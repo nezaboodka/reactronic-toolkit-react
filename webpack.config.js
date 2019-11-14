@@ -3,6 +3,7 @@ const webpack = require('webpack')
 const HtmlWebpackPlugin = require('html-webpack-plugin')
 
 module.exports = {
+  devtool: 'source-map', // enable sourcemaps for debugging webpack output
   mode: 'development', // 'production' | 'development' | 'none'
   entry: {
     vendors: ['react', 'react-dom'],
@@ -16,11 +17,11 @@ module.exports = {
     ignored: /node_modules/,
   },
 
-  // Enable sourcemaps for debugging webpack output.
-  devtool: 'source-map',
-
   resolve: {
     extensions: ['.tsx', '.ts', '.js', '.css'],
+    alias: {
+      '@toolkit': path.resolve(__dirname, 'source', 'index.ts'),
+    },
   },
 
   module: {

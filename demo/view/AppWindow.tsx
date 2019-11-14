@@ -4,8 +4,7 @@
 // License: https://raw.githubusercontent.com/nezaboodka/reactronic/master/LICENSE
 
 import * as React from 'react'
-import { reactive } from '../../source/index'
-import { place } from '../tools/common'
+import { reactive, place } from '@toolkit'
 import { AppDebugger } from './AppDebugger'
 import { VirtualScroll } from '../../source/components/VirtualScroll'
 import { Application } from '../model/Application'

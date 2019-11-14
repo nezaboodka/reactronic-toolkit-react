@@ -5,8 +5,7 @@
 
 import * as React from 'react'
 import { TraceLevel } from 'reactronic'
-import { reactive, Area, num } from '../../source/index'
-import { place } from '../tools/common'
+import { reactive, Area, place, num } from '@toolkit'
 import { cx } from 'emotion'
 import { style } from './AppDebugger.css'
 
