@@ -6,9 +6,9 @@
 import * as React from 'react'
 
 import { place, reactive, VirtualScroll } from '@reactronic-toolkit-react'
-import { Application } from '~/model/Application'
-import { AppDebugger } from '~/view/AppDebugger'
-import { GridFrame } from '~/view/GridFrame'
+import { Application } from '/m/Application'
+import { AppDebugger } from '/v/AppDebugger'
+import { GridFrame } from '/v/GridFrame'
 
 import { style } from './AppWindow.css'
 

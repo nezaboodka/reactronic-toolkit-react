@@ -6,8 +6,8 @@
 import * as React from 'react'
 
 import { num, place, reactive, VirtualProjector } from '@reactronic-toolkit-react'
-import { DataBuffer } from '~/model/DataBuffer'
-import { AreaRect } from '~/view/AreaRect'
+import { DataBuffer } from '/m/DataBuffer'
+import { AreaRect } from '/v/AreaRect'
 
 import { style } from './AppDebugger.css'
 

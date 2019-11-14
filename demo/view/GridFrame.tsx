@@ -7,7 +7,7 @@ import { cx } from 'emotion'
 import * as React from 'react'
 
 import { reactive, xy } from '@reactronic-toolkit-react'
-import { DataBuffer } from '~/model/DataBuffer'
+import { DataBuffer } from '/m/DataBuffer'
 
 import { style } from './GridFrame.css'
 
