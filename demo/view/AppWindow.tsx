@@ -5,7 +5,7 @@
 
 import * as React from 'react'
 
-import { place, reactive, VirtualScroll } from '@reactronic-toolkit-react'
+import { place, reactive, VirtualGrid } from '@reactronic-toolkit-react'
 import { Application } from '/m/Application'
 import { AppDebugger } from '/v/AppDebugger'
 import { GridFrame } from '/v/GridFrame'
@@ -22,11 +22,11 @@ export function AppWindow(p: {app: Application}): JSX.Element {
     const yRes = t.resolution
     return (
       <div className={css.window}>
-        <VirtualScroll grid={t}
+        <VirtualGrid telescope={t}
           className={css.scroll} style={place(2, 2, 9, 9)}
           dataClassName={css.grid}>
           <GridFrame buffer={buf} cellWidth={xRes} cellHeight={yRes}/>
-        </VirtualScroll>
+        </VirtualGrid>
         <div className={css.toolbar} style={place(10, 2, 10, 2)}>
           <button onClick={e => elem ? elem.scrollTop += yRes : {}}
             disabled={!elem}>▼</button>

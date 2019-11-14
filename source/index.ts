@@ -9,7 +9,7 @@ export * from '/model/GridTelescope'
 export * from '/model/UserInput'
 
 export * from '/view/RComponent'
-export * from '/view/VirtualScroll'
+export * from '/view/VirtualGrid'
 
 export * from '/tools/reactive'
 export * from '/tools/restyle'
