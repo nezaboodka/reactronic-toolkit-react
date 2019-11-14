@@ -35,7 +35,7 @@ export class GridTelescope extends State {
   viewport: Area = Area.ZERO
   bufferSize: XY = xy(1.0, 1.0)
   loadedCells: Area = Area.ZERO
-  targetLayoutGrid: Area = Area.ZERO
+  targetContainer: Area = Area.ZERO
   sizing = new Sizing()
   scrollingMonitor: Monitor = Monitor.create('scrolling', 30)
 
@@ -52,12 +52,12 @@ export class GridTelescope extends State {
       this.surface = this.all.truncateBy(SURFACE_SIZE_LIMIT)
       this.thumb = new Area(0, 0, element.clientWidth, element.clientHeight)
       this.viewport = new Area(0, 0, element.clientWidth, element.clientHeight)
-      this.targetLayoutGrid = this.allCells.truncateBy(ENVELOPE_SIZE_LIMIT)
+      this.targetContainer = this.allCells.truncateBy(ENVELOPE_SIZE_LIMIT)
       Cache.of(this.moveViewportTo).setup({monitor: this.scrollingMonitor})
     }
     else {
       Cache.of(this.moveViewportTo).setup({monitor: null})
-      this.targetLayoutGrid = Area.ZERO
+      this.targetContainer = Area.ZERO
       this.viewport = Area.ZERO
       this.thumb = Area.ZERO
       this.surface = Area.ZERO
@@ -153,9 +153,9 @@ export class GridTelescope extends State {
 
   setLoadedCells(a: Area): void {
     this.loadedCells = a
-    const tlg = this.targetLayoutGrid
-    if (!tlg.envelops(a))
-      this.targetLayoutGrid = tlg.moveCenterTo(a.center, this.allCells).round()
+    const tc = this.targetContainer
+    if (!tc.envelops(a))
+      this.targetContainer = tc.moveCenterTo(a.center, this.allCells).round()
   }
 
   @action
