@@ -5,8 +5,8 @@
 
 import * as React from 'react'
 
-import { VirtualProjector } from '../library/VirtualProjector'
-import { reactive } from '../tools/reactive'
+import { VirtualProjector } from '/model/VirtualProjector'
+import { reactive } from '/tools/reactive'
 
 export function VirtualScroll(p: {
   projector: VirtualProjector,
