@@ -204,36 +204,39 @@ export class Projector extends State {
     }
   }
 
-  @trigger
   protected rebaseSurface(): void {
-    const element = this.element
-    if (element && !this.scrollingMonitor.busy) {
-      let s = this.surface
-      let t = this.thumb
-      const v = this.viewport
-      const v2s = this.viewportToSurfaceFactor
-      const precise = v.scaleBy(this.allToSurfaceFactor)
-      const median = xy(precise.x + v2s.x/2, precise.y + v2s.y/2)
-      const diff = xy(t.x - median.x, t.y - median.y)
-      if (Math.abs(diff.x) > v2s.x/3) {
-        const tip = v2s.x * ((s.size.x / 2 - precise.x) / s.size.x)
-        const t2 = t.moveTo(xy(precise.x + tip, t.y), s.moveTo(Area.ZERO, this.all))
-        const s2 = s.moveTo(xy(v.x - t2.x, s.y), this.all)
-        if (!s2.equalTo(s)) {
-          this.surface = s = s2
-          this.thumb = t = t2
-        }
-      }
-      if (Math.abs(diff.y) > v2s.y/3) {
-        const tip = v2s.y * ((s.size.y / 2 - precise.y) / s.size.y)
-        const t2 = t.moveTo(xy(t.x, precise.y + tip), s.moveTo(Area.ZERO, this.all))
-        const s2 = s.moveTo(xy(s.x, v.y - t2.y), this.all)
-        if (!s2.equalTo(s)) {
-          this.surface = s = s2
-          this.thumb = t = t2
-        }
+    let s = this.surface
+    let t = this.thumb
+    const v = this.viewport
+    const v2s = this.viewportToSurfaceFactor
+    const precise = v.scaleBy(this.allToSurfaceFactor)
+    const median = xy(precise.x + v2s.x/2, precise.y + v2s.y/2)
+    const diff = xy(t.x - median.x, t.y - median.y)
+    if (Math.abs(diff.x) > v2s.x/3) {
+      const tip = v2s.x * ((s.size.x / 2 - precise.x) / s.size.x)
+      const t2 = t.moveTo(xy(precise.x + tip, t.y), s.moveTo(Area.ZERO, this.all))
+      const s2 = s.moveTo(xy(v.x - t2.x, s.y), this.all)
+      if (!s2.equalTo(s)) {
+        this.surface = s = s2
+        this.thumb = t = t2
       }
     }
+    if (Math.abs(diff.y) > v2s.y/3) {
+      const tip = v2s.y * ((s.size.y / 2 - precise.y) / s.size.y)
+      const t2 = t.moveTo(xy(t.x, precise.y + tip), s.moveTo(Area.ZERO, this.all))
+      const s2 = s.moveTo(xy(s.x, v.y - t2.y), this.all)
+      if (!s2.equalTo(s)) {
+        this.surface = s = s2
+        this.thumb = t = t2
+      }
+    }
+  }
+
+  @trigger
+  protected syncThumbAndSurface(): void {
+    const element = this.element
+    if (element && !this.scrollingMonitor.busy)
+      this.rebaseSurface()
   }
 
   @trigger
