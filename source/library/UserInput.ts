@@ -3,7 +3,7 @@
 // Copyright (C) 2019 Yury Chetyrko <ychetyrko@gmail.com>
 // License: https://raw.githubusercontent.com/nezaboodka/reactronic/master/LICENSE
 
-import { State, action } from 'reactronic'
+import { action, State } from 'reactronic'
 
 export enum KeyboardModifiers {
   None = 0,

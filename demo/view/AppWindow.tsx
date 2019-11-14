@@ -4,10 +4,12 @@
 // License: https://raw.githubusercontent.com/nezaboodka/reactronic/master/LICENSE
 
 import * as React from 'react'
-import { reactive, place, VirtualScroll } from '@toolkit'
-import { Application } from '@model/Application'
-import { AppDebugger } from '@view/AppDebugger'
-import { GridFrame } from '@view/GridFrame'
+
+import { place, reactive, VirtualScroll } from '@reactronic-toolkit-react'
+import { Application } from '~/model/Application'
+import { AppDebugger } from '~/view/AppDebugger'
+import { GridFrame } from '~/view/GridFrame'
+
 import { style } from './AppWindow.css'
 
 export function AppWindow(p: {app: Application}): JSX.Element {

@@ -4,7 +4,8 @@
 // License: https://raw.githubusercontent.com/nezaboodka/reactronic/master/LICENSE
 
 import { css } from 'emotion'
-import { restyle } from '@toolkit'
+
+import { restyle } from '@reactronic-toolkit-react'
 
 export const style = restyle(() => {
   return {

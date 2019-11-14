@@ -3,10 +3,12 @@
 // Copyright (C) 2019 Yury Chetyrko <ychetyrko@gmail.com>
 // License: https://raw.githubusercontent.com/nezaboodka/reactronic/master/LICENSE
 
-import * as React from 'react'
-import { reactive, xy } from '@toolkit'
 import { cx } from 'emotion'
-import { DataBuffer } from '@model/DataBuffer'
+import * as React from 'react'
+
+import { reactive, xy } from '@reactronic-toolkit-react'
+import { DataBuffer } from '~/model/DataBuffer'
+
 import { style } from './GridFrame.css'
 
 export function GridFrame(p: {cellWidth: number, cellHeight: number, buffer: DataBuffer}): JSX.Element {

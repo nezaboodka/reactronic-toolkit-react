@@ -4,9 +4,11 @@
 // License: https://raw.githubusercontent.com/nezaboodka/reactronic/master/LICENSE
 
 import * as React from 'react'
-import { reactive, VirtualProjector, place, num } from '@toolkit'
-import { DataBuffer } from '@model/DataBuffer'
-import { AreaRect } from '@view/AreaRect'
+
+import { num, place, reactive, VirtualProjector } from '@reactronic-toolkit-react'
+import { DataBuffer } from '~/model/DataBuffer'
+import { AreaRect } from '~/view/AreaRect'
+
 import { style } from './AppDebugger.css'
 
 export function AppDebugger(p: {projector: VirtualProjector, buffer: DataBuffer}): JSX.Element {

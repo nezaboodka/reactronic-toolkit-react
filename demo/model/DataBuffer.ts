@@ -3,8 +3,9 @@
 // Copyright (C) 2019 Yury Chetyrko <ychetyrko@gmail.com>
 // License: https://raw.githubusercontent.com/nezaboodka/reactronic/master/LICENSE
 
-import { State, sleep, trigger, reentrance, Reentrance } from 'reactronic'
-import { VirtualProjector } from '@toolkit'
+import { Reentrance,reentrance, sleep, State, trigger } from 'reactronic'
+
+import { VirtualProjector } from '@reactronic-toolkit-react'
 
 export class DataBuffer extends State {
   readonly projector: VirtualProjector

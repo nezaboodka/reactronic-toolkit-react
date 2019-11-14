@@ -4,8 +4,9 @@
 // License: https://raw.githubusercontent.com/nezaboodka/reactronic/master/LICENSE
 
 import { State } from 'reactronic'
-import { VirtualProjector } from '@toolkit'
-import { DataBuffer } from '@model/DataBuffer'
+
+import { VirtualProjector } from '@reactronic-toolkit-react'
+import { DataBuffer } from '~/model/DataBuffer'
 
 export class Application extends State {
   readonly projector = new VirtualProjector(10000, 1000000000000)

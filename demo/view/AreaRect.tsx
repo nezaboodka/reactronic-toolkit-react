@@ -3,10 +3,12 @@
 // Copyright (C) 2019 Yury Chetyrko <ychetyrko@gmail.com>
 // License: https://raw.githubusercontent.com/nezaboodka/reactronic/master/LICENSE
 
+import { cx } from 'emotion'
 import * as React from 'react'
 import { TraceLevel } from 'reactronic'
-import { reactive, Area, place, num } from '@toolkit'
-import { cx } from 'emotion'
+
+import { Area, num, place, reactive } from '@reactronic-toolkit-react'
+
 import { style } from './AppDebugger.css'
 
 export function AreaRect(p: {
