@@ -49,8 +49,7 @@ export function VirtualGrid(p: {
     }
     return (
       <div ref={ref} className={p.className} style={p.style}
-        onScroll={e => p.telescope.handleDisplayScroll()}
-        onWheel={e => p.telescope.handleDisplayWheel(e.deltaX, e.deltaY, e.deltaZ, e.deltaMode)}>
+        onScroll={e => p.telescope.handleDisplayScroll()}>
         <div style={surfaceStyle}>
           <div className={p.dataClassName} style={dataStyle}>
             {p.children}

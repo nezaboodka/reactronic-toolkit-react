@@ -147,10 +147,6 @@ export class GridTelescope extends State {
     }
   }
 
-  handleDisplayWheel(dx: number, dy: number, dz: number, mode: number): void {
-    // console.log(`wheel: ${dy} (mode=${mode})`)
-  }
-
   setLoadedCells(a: Area): void {
     this.loadedCells = a
     const tc = this.targetContainer
