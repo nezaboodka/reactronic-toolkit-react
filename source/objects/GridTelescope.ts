@@ -138,7 +138,7 @@ export class GridTelescope extends State {
 
   // Actions
 
-  handleDisplayScroll(): void {
+  onScroll(): void {
     const d = this.display
     if (d) {
       const t = this.thumb
