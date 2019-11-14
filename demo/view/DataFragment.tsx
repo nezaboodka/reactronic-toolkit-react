@@ -7,14 +7,14 @@ import { cx } from 'emotion'
 import * as React from 'react'
 
 import { reactive, xy } from '@reactronic-toolkit-react'
-import { DataBuffer } from '/m/DataBuffer'
+import { DataLoader } from '/m/DataLoader'
 
 import { style } from './GridFrame.css'
 
-export function GridFrame(p: {cellWidth: number, cellHeight: number, buffer: DataBuffer}): JSX.Element {
+export function DataFragment(p: {cellWidth: number, cellHeight: number, loader: DataLoader}): JSX.Element {
   return reactive(() => {
-    const data = p.buffer.data
-    const t = p.buffer.telescope
+    const data = p.loader.data
+    const t = p.loader.telescope
     const area = t.loadedCells
     const target = t.loadedCellsTarget
     const origin = xy(area.x - target.x, area.y - target.y)

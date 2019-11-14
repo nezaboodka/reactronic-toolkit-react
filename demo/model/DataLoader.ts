@@ -7,7 +7,7 @@ import { Reentrance,reentrance, sleep, State, trigger } from 'reactronic'
 
 import { GridTelescope } from '@reactronic-toolkit-react'
 
-export class DataBuffer extends State {
+export class DataLoader extends State {
   readonly telescope: GridTelescope
   data: string[]
 

@@ -7,7 +7,7 @@ import * as React from 'react'
 
 import { place, reactive, VirtualGrid } from '@reactronic-toolkit-react'
 import { Application } from '/m/Application'
-import { GridFrame } from '/v/GridFrame'
+import { DataFragment } from '/v/DataFragment'
 import { TelescopeDebugger } from '/view/TelescopeDebugger'
 
 import { style } from './AppWindow.css'
@@ -16,7 +16,7 @@ export function AppWindow(p: {app: Application}): JSX.Element {
   return reactive(() => {
     const css = style.classes
     const t = p.app.telescope
-    const buf = p.app.buffer
+    const loader = p.app.loader
     const elem = t.element
     const xRes = t.resolution * t.sizing.defaultCellWidthFactor
     const yRes = t.resolution
@@ -24,7 +24,7 @@ export function AppWindow(p: {app: Application}): JSX.Element {
       <div className={css.window}>
         <VirtualGrid telescope={t} style={place(2, 2, 9, 9)}
           className={css.scroll} dataClassName={css.grid}>
-          <GridFrame buffer={buf} cellWidth={xRes} cellHeight={yRes}/>
+          <DataFragment loader={loader} cellWidth={xRes} cellHeight={yRes}/>
         </VirtualGrid>
         <div className={css.toolbar} style={place(10, 2, 10, 2)}>
           <button onClick={e => elem ? elem.scrollTop += yRes : {}}
