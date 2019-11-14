@@ -19,18 +19,16 @@ export class DataBuffer extends State {
   @trigger @reentrance(Reentrance.CancelPrevious)
   async load(): Promise<void> {
     const vp = this.viewport
-    const t = vp.bufferCells
-    if (!t.equalTo(vp.loadedCells)) {
+    const buf = vp.bufferCells
+    if (!buf.equalTo(vp.loadedCells)) {
       const data: string[] = []
-      const till = t.till
-      for (let y = t.y; y <= till.y; y++)
-        for (let x = t.x; x <= till.x; x++)
+      const till = buf.till
+      for (let y = buf.y; y <= till.y; y++)
+        for (let x = buf.x; x <= till.x; x++)
           data.push(`${y}:${x}`)
       await sleep(130)
       this.data = data
-      vp.loadedCells = t
-      if (!vp.grid.envelops(t))
-        vp.grid = vp.grid.moveCenterTo(t.center, vp.allCells).round()
+      vp.confirmLoadedCells(buf)
     }
   }
 }

@@ -6,8 +6,8 @@
 import { State, action, trigger, Monitor, Cache } from 'reactronic'
 import { XY, xy, Area, area, num } from './Area'
 
-export const SURFACE_PIXEL_LIMIT: Area = area(0, 0, 1000123, 1000123)
-export const GRID_CELL_LIMIT: Area = area(0, 0, 999, 999)
+export const SURFACE_PIXEL_SIZE_LIMIT: Area = area(0, 0, 1000123, 1000123)
+export const SURFACE_GRID_SIZE_LIMIT: Area = area(0, 0, 999, 999)
 export type Guide = { index: number, coord: number }
 export class Sizing {
   defaultCellWidthFactor: number = 8 // measured in cell height ('em')
@@ -30,7 +30,7 @@ export class Viewport extends State {
   resolution: number = 1 // pixels per cell
   surface: Area = Area.ZERO
   thumb: Area = Area.ZERO
-  grid: Area = Area.ZERO
+  surfaceGrid: Area = Area.ZERO
   display: Area = Area.ZERO
   bufferSize: XY = xy(1.0, 1.0)
   loadedCells: Area = Area.ZERO
@@ -47,16 +47,16 @@ export class Viewport extends State {
     if (element) {
       this.element = element
       this.resolution = resolution
-      this.surface = this.all.truncateBy(SURFACE_PIXEL_LIMIT)
+      this.surface = this.all.truncateBy(SURFACE_PIXEL_SIZE_LIMIT)
       this.thumb = new Area(0, 0, element.clientWidth, element.clientHeight)
-      this.grid = this.allCells.truncateBy(GRID_CELL_LIMIT)
+      this.surfaceGrid = this.allCells.truncateBy(SURFACE_GRID_SIZE_LIMIT)
       this.display = new Area(0, 0, element.clientWidth, element.clientHeight)
       Cache.of(this.moveViewportTo).setup({monitor: this.scrollingMonitor})
     }
     else {
       Cache.of(this.moveViewportTo).setup({monitor: null})
       this.display = Area.ZERO
-      this.grid = Area.ZERO
+      this.surfaceGrid = Area.ZERO
       this.thumb = Area.ZERO
       this.surface = Area.ZERO
       this.resolution = 1
@@ -141,13 +141,19 @@ export class Viewport extends State {
 
   // Actions
 
-  onScroll(): void {
+  handleElementScroll(): void {
     const element = this.element
     if (element) {
       const t = this.thumb
       if (Math.abs(t.y - element.scrollTop) > 0.1 || Math.abs(t.x - element.scrollLeft) > 0.1)
         this.moveViewportTo(element.scrollLeft, element.scrollTop)
     }
+  }
+
+  confirmLoadedCells(a: Area): void {
+    this.loadedCells = a
+    if (!this.surfaceGrid.envelops(a))
+      this.surfaceGrid = this.surfaceGrid.moveCenterTo(a.center, this.allCells).round()
   }
 
   @action

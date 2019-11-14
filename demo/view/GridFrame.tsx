@@ -13,24 +13,20 @@ export function GridFrame(p: {cellWidth: number, cellHeight: number, buffer: Dat
   return reactive(() => {
     const data = p.buffer.data
     const area = p.buffer.viewport.loadedCells
-    const grid = p.buffer.viewport.grid
+    const grid = p.buffer.viewport.surfaceGrid
     const origin = xy(area.x - grid.x, area.y - grid.y)
-    const dim: React.CSSProperties = {
-      width: `${p.cellWidth}px`,
-      height: `${p.cellHeight}px`,
-    }
+    const dim: React.CSSProperties = { width: `${p.cellWidth}px`, height: `${p.cellHeight}px` }
     return (
       <React.Fragment>
         {data.map((cell, i) => {
-          const y = area.y + Math.floor(i / area.size.x)
-          const x = area.x + i % area.size.x
-          const row = origin.y + y - area.y
-          const col = origin.x + x - area.x
-          const key = `R${row}C${col}:Y${y}X${x}`
+          const y = Math.floor(i / area.size.x)
+          const x = i % area.size.x
+          const r = origin.y + y
+          const c = origin.x + x
+          const key = `R${r}C${c}:Y${area.y + y}X${area.x + x}`
           return (
-            <Cell key={key} hint={key}
-              row={row} col={col} text={cell}
-              style={dim}/>
+            <Cell key={key} hint={key} style={dim}
+              row={r} col={c} text={cell}/>
           )
         })}
       </React.Fragment>

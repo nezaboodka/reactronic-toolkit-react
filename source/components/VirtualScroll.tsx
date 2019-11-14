@@ -31,13 +31,8 @@ export function VirtualScroll(p: {
       position: 'relative',
       overflow: 'hidden',
       boxSizing: 'border-box',
-      whiteSpace: 'nowrap', // temporary
-      width: sw,
-      minWidth: sw,
-      maxWidth: sw,
-      height: sh,
-      minHeight: sh,
-      maxHeight: sh,
+      width: sw, minWidth: sw, maxWidth: sw,
+      height: sh, minHeight: sh, maxHeight: sh,
     }
     const d = p.viewport.loaded
     const dw = `${d.size.x}`
@@ -47,16 +42,12 @@ export function VirtualScroll(p: {
       position: 'absolute',
       left: `${d.x - s.x}px`,
       top: `${d.y - s.y}px`,
-      width: dw,
-      minWidth: dw,
-      maxWidth: dw,
-      height: dh,
-      minHeight: dh,
-      maxHeight: dh,
+      width: dw, minWidth: dw, maxWidth: dw,
+      height: dh, minHeight: dh, maxHeight: dh,
     }
     return (
       <div ref={ref} className={p.className} style={p.style}
-        onScroll={e => p.viewport.onScroll()}>
+        onScroll={e => p.viewport.handleElementScroll()}>
         <div style={surfaceStyle}>
           <div className={p.dataClassName} style={dataStyle}>
             {p.children}
