@@ -29,7 +29,7 @@ export class DataLoader extends State {
           data.push(`${y}:${x}`)
       await sleep(130)
       this.data = data
-      t.confirmLoadedCells(buf)
+      t.setLoadedCells(buf)
     }
   }
 }
