@@ -16,16 +16,16 @@ export function DataFragment(p: {cellWidth: number, cellHeight: number, loader: 
     const data = p.loader.data
     const t = p.loader.telescope
     const area = t.loadedCells
-    const tg = t.targetGrid
-    const origin = xy(area.x - tg.x, area.y - tg.y)
+    const env = t.envelope
+    const zero = xy(area.x - env.x, area.y - env.y)
     const dim: React.CSSProperties = { width: `${p.cellWidth}px`, height: `${p.cellHeight}px` }
     return (
       <React.Fragment>
         {data.map((cell, i) => {
           const y = Math.floor(i / area.size.x)
           const x = i % area.size.x
-          const r = origin.y + y
-          const c = origin.x + x
+          const r = zero.y + y
+          const c = zero.x + x
           const key = `R${r}C${c}:Y${area.y + y}X${area.x + x}`
           return (
             <Cell key={key} hint={key} style={dim}
