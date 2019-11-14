@@ -22,18 +22,18 @@ export const style = restyle(() => {
         font-size: smaller;
       }
     `,
-    component: css`
-      label: component;
-      border: 1px solid white;
-      color: white;
-    `,
-    database: css`
-      label: database;
+    all: css`
+      label: all;
       border: 1px solid silver;
       color: silver;
     `,
-    dataArea: css`
-      label: dataArea;
+    surface: css`
+      label: surface;
+      border: 1px solid white;
+      color: white;
+    `,
+    buffer: css`
+      label: buffer;
       border: 1px solid #FFFFA0;
       color: #FFFFA0;
     `,
@@ -54,7 +54,7 @@ export const style = restyle(() => {
       margin: 0.5em 1em;
     `,
     areaOuter: css`
-      label: areaParent;
+      label: areaOuter;
       text-align: center;
     `,
     areaHint: css`
@@ -75,13 +75,6 @@ export const style = restyle(() => {
     areaCenter: css`
       label: areaCenter;
       text-align: center;
-    `,
-    coords: css`
-      display: inline-block;
-      text-align: left;
-    `,
-    px: css`
-      font-size: smaller;
     `,
   }
 })
