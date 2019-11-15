@@ -17,7 +17,7 @@ export class Sizing {
   customCellHeight: Guide[] = [] // in pixels?
 }
 
-export type IDisplay = {
+export type IDevice = {
   readonly clientWidth: number
   readonly clientHeight: number
   readonly scrollWidth: number
@@ -28,7 +28,7 @@ export type IDisplay = {
 
 export class GridTelescope extends State {
   allCells: Area
-  display: IDisplay | null | undefined = undefined
+  device: IDevice | null | undefined = undefined
   resolution: XY = xy(1, 1) // pixels per cell
   surface: Area = Area.ZERO
   thumb: Area = Area.ZERO
@@ -45,13 +45,13 @@ export class GridTelescope extends State {
   }
 
   @action
-  setDisplay(display: IDisplay | null, resolution: number): void {
-    if (display) {
-      this.display = display
+  setDevice(device: IDevice | null, resolution: number): void {
+    if (device) {
+      this.device = device
       this.resolution = xy(resolution * 8, resolution)
       this.surface = this.all.truncateBy(SURFACE_SIZE_LIMIT)
-      this.thumb = new Area(0, 0, display.clientWidth, display.clientHeight)
-      this.viewport = new Area(0, 0, display.clientWidth, display.clientHeight)
+      this.thumb = new Area(0, 0, device.clientWidth, device.clientHeight)
+      this.viewport = new Area(0, 0, device.clientWidth, device.clientHeight)
       this.container = this.allCells.truncateBy(CONTAINER_SIZE_LIMIT)
       Cache.of(this.moveViewportTo).setup({monitor: this.scrollingMonitor})
     }
@@ -62,7 +62,7 @@ export class GridTelescope extends State {
       this.thumb = Area.ZERO
       this.surface = Area.ZERO
       this.resolution = xy(1, 1)
-      this.display = undefined
+      this.device = undefined
     }
   }
 
@@ -139,7 +139,7 @@ export class GridTelescope extends State {
   // Actions
 
   onScroll(): void {
-    const d = this.display
+    const d = this.device
     if (d) {
       const t = this.thumb
       if (Math.abs(t.y - d.scrollTop) > 0.1 || Math.abs(t.x - d.scrollLeft) > 0.1)
@@ -156,7 +156,7 @@ export class GridTelescope extends State {
 
   @action
   protected moveViewportTo(cx: number, cy: number): void {
-    // console.log(`scroll: ${cy} (∆ ${cy - this.thumb.y}), h=${this.display ? this.display.scrollHeight : '?'}`)
+    // console.log(`scroll: ${cy} (∆ ${cy - this.thumb.y}), h=${this.device ? this.device.scrollHeight : '?'}`)
     const bounds = this.surface.moveTo(Area.ZERO, this.all)
     const t = this.thumb = this.thumb.moveTo(xy(cx, cy), bounds)
     let s = this.surface
@@ -226,13 +226,13 @@ export class GridTelescope extends State {
 
   @trigger
   protected syncThumbAndSurface(): void {
-    if (this.display && !this.scrollingMonitor.busy)
+    if (this.device && !this.scrollingMonitor.busy)
       this.rebaseSurface()
   }
 
   @trigger
-  protected syncThumbWithDisplay(): void {
-    const d = this.display
+  protected syncThumbWithDevice(): void {
+    const d = this.device
     if (d) {
       const t = this.thumb
       if (Math.abs(t.x - d.scrollLeft) > 0.1)

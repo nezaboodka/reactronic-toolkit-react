@@ -22,7 +22,7 @@ export function VirtualGrid(p: {
       const fs = window.getComputedStyle(element).fontSize
       resolution = parseFloat(fs.substr(0, fs.length - 2))
     }
-    p.telescope.setDisplay(element, resolution)
+    p.telescope.setDevice(element, resolution)
   }, [])
 
   return reactive(() => {

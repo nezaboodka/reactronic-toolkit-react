@@ -17,7 +17,7 @@ export function AppWindow(p: {app: Application}): JSX.Element {
     const css = style.classes
     const t = p.app.telescope
     const loader = p.app.loader
-    const d = t.display
+    const d = t.device
     const res = t.resolution
     return (
       <div className={css.window}>
