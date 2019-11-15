@@ -32,7 +32,7 @@ export class GridTelescope extends State {
   resolution: XY = xy(1, 1) // pixels per cell
   surface: Area = Area.ZERO
   thumb: Area = Area.ZERO
-  viewport: Area = Area.ZERO
+  view: Area = Area.ZERO
   bufferSize: XY = xy(1.0, 1.0)
   loadedCells: Area = Area.ZERO
   container: Area = Area.ZERO
@@ -51,14 +51,14 @@ export class GridTelescope extends State {
       this.resolution = xy(resolution * 8, resolution)
       this.surface = this.all.truncateBy(SURFACE_SIZE_LIMIT)
       this.thumb = new Area(0, 0, device.clientWidth, device.clientHeight)
-      this.viewport = new Area(0, 0, device.clientWidth, device.clientHeight)
+      this.view = new Area(0, 0, device.clientWidth, device.clientHeight)
       this.container = this.allCells.truncateBy(CONTAINER_SIZE_LIMIT)
-      Cache.of(this.moveViewportTo).setup({monitor: this.scrollingMonitor})
+      Cache.of(this.moveTo).setup({monitor: this.scrollingMonitor})
     }
     else {
-      Cache.of(this.moveViewportTo).setup({monitor: null})
+      Cache.of(this.moveTo).setup({monitor: null})
       this.container = Area.ZERO
-      this.viewport = Area.ZERO
+      this.view = Area.ZERO
       this.thumb = Area.ZERO
       this.surface = Area.ZERO
       this.resolution = xy(1, 1)
@@ -73,22 +73,22 @@ export class GridTelescope extends State {
     return xy(1 / r.x, 1 / r.y)
   }
 
-  get viewportToSurfaceFactor(): XY {
+  get viewToSurfaceFactor(): XY {
     const s = this.surface.size
-    const v = this.viewport.size
+    const v = this.view.size
     return xy(s.x / (v.x - 1), s.y / (v.y - 1))
   }
 
-  get surfaceToViewportFactor(): XY {
-    const v2s = this.viewportToSurfaceFactor
+  get surfaceToViewFactor(): XY {
+    const v2s = this.viewToSurfaceFactor
     return xy(1 / v2s.x, 1 / v2s.y)
   }
 
   get surfaceToAllFactor(): XY {
     const a = this.all.size
     const s = this.surface.size
-    const d = this.viewport.size
-    return xy(a.x / (s.x - d.x), a.y / (s.y - d.y))
+    const v = this.view.size
+    return xy(a.x / (s.x - v.x), a.y / (s.y - v.y))
   }
 
   get allToSurfaceFactor(): XY {
@@ -96,14 +96,14 @@ export class GridTelescope extends State {
     return xy(1 / s2a.x, 1 / s2a.y)
   }
 
-  get viewportToAllFactor(): XY {
+  get viewToAllFactor(): XY {
     const a = this.all.size
-    const v = this.viewport.size
+    const v = this.view.size
     return xy(a.x / (v.x - 1), a.y / (v.y - 1))
   }
 
-  get allToViewportFactor(): XY {
-    const v2a = this.viewportToAllFactor
+  get allToViewFactor(): XY {
+    const v2a = this.viewToAllFactor
     return xy(1 / v2a.x, 1 / v2a.y)
   }
 
@@ -128,12 +128,12 @@ export class GridTelescope extends State {
   }
 
   get bufferCells(): Area {
-    const d = this.viewportCells
-    return d.zoomAt(d.center, this.bufferSize).roundToOuter().truncateBy(this.allCells)
+    const vc = this.viewCells
+    return vc.zoomAt(vc.center, this.bufferSize).roundToOuter().truncateBy(this.allCells)
   }
 
-  get viewportCells(): Area {
-    return this.viewport.scaleBy(this.pixelToCellFactor)
+  get viewCells(): Area {
+    return this.view.scaleBy(this.pixelToCellFactor)
   }
 
   // Actions
@@ -143,7 +143,7 @@ export class GridTelescope extends State {
     if (d) {
       const t = this.thumb
       if (Math.abs(t.y - d.scrollTop) > 0.1 || Math.abs(t.x - d.scrollLeft) > 0.1)
-        this.moveViewportTo(d.scrollLeft, d.scrollTop)
+        this.moveTo(d.scrollLeft, d.scrollTop)
     }
   }
 
@@ -155,12 +155,12 @@ export class GridTelescope extends State {
   }
 
   @action
-  protected moveViewportTo(cx: number, cy: number): void {
+  protected moveTo(cx: number, cy: number): void {
     // console.log(`scroll: ${cy} (∆ ${cy - this.thumb.y}), h=${this.device ? this.device.scrollHeight : '?'}`)
     const bounds = this.surface.moveTo(Area.ZERO, this.all)
     const t = this.thumb = this.thumb.moveTo(xy(cx, cy), bounds)
     let s = this.surface
-    let v = this.viewport
+    let v = this.view
     const x = s.x + t.x
     const y = s.y + t.y
     const s2a = this.surfaceToAllFactor
@@ -168,14 +168,14 @@ export class GridTelescope extends State {
     if (dx > 2 * v.size.x || (dx > v.size.x / 2 && (cx < 1 || cx >= s.size.x - v.size.x))) {
       const v2 = v.moveTo(xy(Math.ceil(cx * s2a.x), v.y), this.all)
       if (!v2.equalTo(v)) {
-        this.viewport = v = v2
+        this.view = v = v2
         this.surface = s = s.moveTo(xy(v2.x - t.x, s.y), this.all)
       }
     }
     else {
       const v2 = v.moveTo(xy(x, v.y), this.all)
       if (!v2.equalTo(v)) {
-        this.viewport = v = v2
+        this.view = v = v2
         // to adjust surface
       }
     }
@@ -183,14 +183,14 @@ export class GridTelescope extends State {
     if (dy > 2 * v.size.y || (dy > v.size.y / 2 && (cy < 1 || cy >= s.size.y - v.size.y))) {
       const v2 = v.moveTo(xy(v.x, Math.ceil(cy * s2a.y)), this.all)
       if (!v2.equalTo(v)) {
-        this.viewport = v = v2
+        this.view = v = v2
         this.surface = s = s.moveTo(xy(s.x, v2.y - t.y), this.all)
       }
     }
     else {
       const v2 = v.moveTo(xy(v.x, y), this.all)
       if (!v2.equalTo(v)) {
-        this.viewport = v = v2
+        this.view = v = v2
         // to adjust surface
       }
     }
@@ -199,8 +199,8 @@ export class GridTelescope extends State {
   protected rebaseSurface(): void {
     let s = this.surface
     let t = this.thumb
-    const v = this.viewport
-    const v2s = this.viewportToSurfaceFactor
+    const v = this.view
+    const v2s = this.viewToSurfaceFactor
     const precise = v.scaleBy(this.allToSurfaceFactor)
     const median = xy(precise.x + v2s.x/2, precise.y + v2s.y/2)
     const diff = xy(t.x - median.x, t.y - median.y)
