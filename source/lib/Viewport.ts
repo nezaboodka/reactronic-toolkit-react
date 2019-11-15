@@ -208,22 +208,23 @@ export class Viewport extends State {
   protected rebaseSurface(): void {
     const z = this.surface.atZero()
     const scrollbarPixelStep = this.visibleToSurfaceFactor
-    const ideal = this.visible.scaleBy(this.allToSurfaceFactor)
-    const optimal = ideal.moveBy(xy(scrollbarPixelStep.x/2, scrollbarPixelStep.y/2), z)
-    if (Math.abs(optimal.x - this.thumb.x) > scrollbarPixelStep.x/3) {
+    const logicalThumb = this.visible.scaleBy(this.allToSurfaceFactor)
+    const optimum = logicalThumb.moveBy(
+      xy(scrollbarPixelStep.x/2, scrollbarPixelStep.y/2), z)
+    if (Math.abs(optimum.x - this.thumb.x) > scrollbarPixelStep.x/3) {
       const surface = this.surface
-      const rebase = scrollbarPixelStep.x * ((surface.size.x*2/3 - ideal.x) / surface.size.x)
-      const t2 = this.thumb.moveTo(xy(ideal.x + rebase, this.thumb.y), z)
+      const rebase = scrollbarPixelStep.x * ((surface.size.x*2/3 - logicalThumb.x) / surface.size.x)
+      const t2 = this.thumb.moveTo(xy(logicalThumb.x + rebase, this.thumb.y), z)
       const s2 = surface.moveTo(xy(this.visible.x - t2.x, surface.y), this.all)
       if (!s2.equalTo(surface)) {
         this.surface = s2
         this.thumb = t2
       }
     }
-    if (Math.abs(optimal.y - this.thumb.y) > scrollbarPixelStep.y/3) {
+    if (Math.abs(optimum.y - this.thumb.y) > scrollbarPixelStep.y/3) {
       const surface = this.surface
-      const rebase = scrollbarPixelStep.y * ((surface.size.y*2/3 - ideal.y) / surface.size.y)
-      const t2 = this.thumb.moveTo(xy(this.thumb.x, ideal.y + rebase), z)
+      const rebase = scrollbarPixelStep.y * ((surface.size.y*2/3 - logicalThumb.y) / surface.size.y)
+      const t2 = this.thumb.moveTo(xy(this.thumb.x, logicalThumb.y + rebase), z)
       const s2 = surface.moveTo(xy(surface.x, this.visible.y - t2.y), this.all)
       if (!s2.equalTo(surface)) {
         // console.log(`rebase: ${rebase} // diff=${diff.y}, thumb=${t.y}->${t2.y}, surface=${s.y}->${s2.y}`)
