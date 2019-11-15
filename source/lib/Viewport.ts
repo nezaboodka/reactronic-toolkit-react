@@ -156,7 +156,7 @@ export class Viewport extends State {
 
   @action
   protected moveTo(cx: number, cy: number): void {
-    console.log(`scroll: ${this.thumb.y}->${cy}, h=${this.component ? this.component.scrollHeight : '?'}`)
+    // console.log(`scroll: ${this.thumb.y}->${cy}, h=${this.component ? this.component.scrollHeight : '?'}`)
     const bounds = this.surface.moveTo(Area.ZERO, this.all)
     const t = this.thumb = this.thumb.moveTo(xy(cx, cy), bounds)
     let s = this.surface
@@ -166,7 +166,7 @@ export class Viewport extends State {
     const s2a = this.surfaceToAllFactor
     const dx = Math.abs(x - v.x)
     if (dx > 2 * v.size.x || (dx > v.size.x / 2 && (cx < 1 || cx >= s.size.x - v.size.x))) {
-      const v2 = v.moveTo(xy(Math.ceil(cx * s2a.x), v.y), this.all)
+      const v2 = v.moveTo(xy(Math.ceil((cx - this.visibleToSurfaceFactor.x/2) * s2a.x), v.y), this.all)
       if (!v2.equalTo(v)) {
         this.visible = v = v2
         this.surface = s = s.moveTo(xy(v2.x - t.x, s.y), this.all)
@@ -181,8 +181,9 @@ export class Viewport extends State {
     }
     const dy = Math.abs(y - v.y)
     if (dy > 2 * v.size.y || (dy > v.size.y / 2 && (cy < 1 || cy >= s.size.y - v.size.y))) {
-      const v2 = v.moveTo(xy(v.x, Math.ceil(cy * s2a.y)), this.all)
+      const v2 = v.moveTo(xy(v.x, Math.ceil((cy - this.visibleToSurfaceFactor.y/2) * s2a.y)), this.all)
       if (!v2.equalTo(v)) {
+        // console.log(` jump: ${v.y}->${v2.y} (${v2.y - v.y})`)
         this.visible = v = v2
         this.surface = s = s.moveTo(xy(s.x, v2.y - t.y), this.all)
       }
@@ -190,6 +191,7 @@ export class Viewport extends State {
     else {
       const v2 = v.moveTo(xy(v.x, y), this.all)
       if (!v2.equalTo(v)) {
+        // console.log(` move: ${v.y}->${v2.y} (${v2.y - v.y})`)
         this.visible = v = v2
         // to adjust surface
       }
@@ -205,7 +207,7 @@ export class Viewport extends State {
     const median = xy(precise.x + v2s.x/2, precise.y + v2s.y/2)
     const diff = xy(t.x - median.x, t.y - median.y)
     if (Math.abs(diff.x) > v2s.x/3) {
-      const rebase = v2s.x * ((2*s.size.x/3 - precise.x) / s.size.x)
+      const rebase = v2s.x * ((s.size.x*2/3 - precise.x) / s.size.x)
       const t2 = t.moveTo(xy(precise.x + rebase, t.y), s.moveTo(Area.ZERO, this.all))
       const s2 = s.moveTo(xy(v.x - t2.x, s.y), this.all)
       if (!s2.equalTo(s)) {
@@ -214,14 +216,17 @@ export class Viewport extends State {
       }
     }
     if (Math.abs(diff.y) > v2s.y/3) {
-      const rebase = v2s.y * ((2*s.size.y/3 - precise.y) / s.size.y)
+      const rebase = v2s.y * ((s.size.y*2/3 - precise.y) / s.size.y)
       const t2 = t.moveTo(xy(t.x, precise.y + rebase), s.moveTo(Area.ZERO, this.all))
       const s2 = s.moveTo(xy(s.x, v.y - t2.y), this.all)
       if (!s2.equalTo(s)) {
-        console.log(`rebase: ${rebase} // diff=${diff.y}, thumb=${t.y}->${t2.y}, surface=${s.y}->${s2.y}`)
+        // console.log(`rebase: ${rebase} // diff=${diff.y}, thumb=${t.y}->${t2.y}, surface=${s.y}->${s2.y}`)
         this.surface = s = s2
         this.thumb = t = t2
       }
+      // else {
+      //   console.log(`no-rebase: ${rebase} // diff=${diff.y}, thumb=${t.y}->${t2.y}, surface=${s.y}->${s2.y}`)
+      // }
     }
   }
 
