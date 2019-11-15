@@ -5,7 +5,7 @@
 
 import * as React from 'react'
 
-import { place, reactive, VirtualGrid } from '@reactronic-toolkit-react'
+import { DataViewport, place, reactive } from '@reactronic-toolkit-react'
 import { ViewportDebugger } from '/components/ViewportDebugger'
 import { Application } from '~m/Application'
 
@@ -21,10 +21,10 @@ export function AppWindow(p: {app: Application}): JSX.Element {
     const res = v.resolution
     return (
       <div className={css.window}>
-        <VirtualGrid viewport={v} style={place(2, 2, 9, 9)}
+        <DataViewport viewport={v} style={place(2, 2, 9, 9)}
           className={css.scroll} dataClassName={css.grid}>
           <DataFragment loader={loader} cellWidth={res.x} cellHeight={res.y}/>
-        </VirtualGrid>
+        </DataViewport>
         <div className={css.toolbar} style={place(10, 2, 10, 2)}>
           <button onClick={e => c ? c.scrollTop += res.y : {}}
             disabled={!c}>▼</button>

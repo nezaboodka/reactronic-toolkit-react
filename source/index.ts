@@ -9,7 +9,7 @@ export * from '/objects/GridViewport'
 export * from '/objects/UserInput'
 
 export * from '/components/RComponent'
-export * from '/components/VirtualGrid'
+export * from '/components/DataViewport'
 
 export * from '/tools/reactive'
 export * from '/tools/restyle'

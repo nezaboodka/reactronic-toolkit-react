@@ -8,7 +8,7 @@ import * as React from 'react'
 import { GridViewport } from '/objects/GridViewport'
 import { reactive } from '/tools/reactive.ts'
 
-export function VirtualGrid(p: {
+export function DataViewport(p: {
   viewport: GridViewport,
   children: JSX.Element,
   className?: string,
