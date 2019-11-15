@@ -7,9 +7,9 @@ import * as React from 'react'
 
 import { place, reactive, ViewportDebugger, ViewportPanel } from '@reactronic-toolkit-react'
 import { Application } from '/app/Application'
+import { DataFragment } from '/view/DataFragment'
 
 import { style } from './AppWindow.css'
-import { DataFragment } from './DataFragment'
 
 export function AppWindow(p: {app: Application}): JSX.Element {
   return reactive(() => {
