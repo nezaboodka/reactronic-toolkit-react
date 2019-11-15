@@ -28,7 +28,7 @@ export function DataFragment(p: {loader: DataLoader, cellWidth: number, cellHeig
           const c = zero.x + x
           const key = `R${r}C${c}:Y${area.y + y}X${area.x + x}`
           return (
-            <Cell key={key} hint={key} style={dim}
+            <GridCell key={key} hint={key} style={dim}
               row={r} col={c} text={cell}/>
           )
         })}
@@ -37,7 +37,7 @@ export function DataFragment(p: {loader: DataLoader, cellWidth: number, cellHeig
   })
 }
 
-function Cell(p: {hint: string, row: number, col: number, text: string, style?: React.CSSProperties}): JSX.Element {
+function GridCell(p: {hint: string, row: number, col: number, text: string, style?: React.CSSProperties}): JSX.Element {
   const css = style.classes
   const place: React.CSSProperties = {
     ...p.style,
