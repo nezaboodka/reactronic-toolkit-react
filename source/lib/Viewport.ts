@@ -32,7 +32,7 @@ export class Viewport extends State {
   resolution: XY = xy(1, 1) // pixels per cell
   surface: Area = Area.ZERO
   thumb: Area = Area.ZERO
-  display: Area = Area.ZERO
+  visible: Area = Area.ZERO
   bufferSize: XY = xy(1.0, 1.0)
   loadedCells: Area = Area.ZERO
   targetGrid: Area = Area.ZERO
@@ -51,14 +51,14 @@ export class Viewport extends State {
       this.resolution = xy(resolution * 8, resolution)
       this.surface = this.all.truncateBy(SURFACE_SIZE_LIMIT)
       this.thumb = new Area(0, 0, component.clientWidth, component.clientHeight)
-      this.display = new Area(0, 0, component.clientWidth, component.clientHeight)
+      this.visible = new Area(0, 0, component.clientWidth, component.clientHeight)
       this.targetGrid = this.allCells.truncateBy(TARGET_GRID_SIZE_LIMIT)
       Cache.of(this.moveTo).setup({monitor: this.scrollingMonitor})
     }
     else {
       Cache.of(this.moveTo).setup({monitor: null})
       this.targetGrid = Area.ZERO
-      this.display = Area.ZERO
+      this.visible = Area.ZERO
       this.thumb = Area.ZERO
       this.surface = Area.ZERO
       this.resolution = xy(1, 1)
@@ -73,22 +73,22 @@ export class Viewport extends State {
     return xy(1 / r.x, 1 / r.y)
   }
 
-  get displayToSurfaceFactor(): XY {
+  get visibleToSurfaceFactor(): XY {
     const s = this.surface.size
-    const d = this.display.size
-    return xy(s.x / (d.x - 1), s.y / (d.y - 1))
+    const v = this.visible.size
+    return xy(s.x / (v.x - 1), s.y / (v.y - 1))
   }
 
-  get surfaceToDisplayFactor(): XY {
-    const d2s = this.displayToSurfaceFactor
-    return xy(1 / d2s.x, 1 / d2s.y)
+  get surfaceToVisibleFactor(): XY {
+    const v2s = this.visibleToSurfaceFactor
+    return xy(1 / v2s.x, 1 / v2s.y)
   }
 
   get surfaceToAllFactor(): XY {
     const a = this.all.size
     const s = this.surface.size
-    const d = this.display.size
-    return xy(a.x / (s.x - d.x), a.y / (s.y - d.y))
+    const v = this.visible.size
+    return xy(a.x / (s.x - v.x), a.y / (s.y - v.y))
   }
 
   get allToSurfaceFactor(): XY {
@@ -96,15 +96,15 @@ export class Viewport extends State {
     return xy(1 / s2a.x, 1 / s2a.y)
   }
 
-  get displayToAllFactor(): XY {
+  get visibleToAllFactor(): XY {
     const a = this.all.size
-    const d = this.display.size
-    return xy(a.x / (d.x - 1), a.y / (d.y - 1))
+    const v = this.visible.size
+    return xy(a.x / (v.x - 1), a.y / (v.y - 1))
   }
 
-  get allToDisplayFactor(): XY {
-    const d2a = this.displayToAllFactor
-    return xy(1 / d2a.x, 1 / d2a.y)
+  get allToVisibleFactor(): XY {
+    const v2a = this.visibleToAllFactor
+    return xy(1 / v2a.x, 1 / v2a.y)
   }
 
   // Areas (pixels)
@@ -128,12 +128,12 @@ export class Viewport extends State {
   }
 
   get bufferCells(): Area {
-    const dc = this.displayCells
-    return dc.zoomAt(dc.center, this.bufferSize).roundToOuter().truncateBy(this.allCells)
+    const vc = this.visibleCells
+    return vc.zoomAt(vc.center, this.bufferSize).roundToOuter().truncateBy(this.allCells)
   }
 
-  get displayCells(): Area {
-    return this.display.scaleBy(this.pixelToCellFactor)
+  get visibleCells(): Area {
+    return this.visible.scaleBy(this.pixelToCellFactor)
   }
 
   // Actions
@@ -159,38 +159,38 @@ export class Viewport extends State {
     // console.log(`scroll: ${cy} (∆ ${cy - this.thumb.y}), h=${this.component ? this.component.scrollHeight : '?'}`)
     const bounds = this.surface.moveTo(Area.ZERO, this.all)
     const t = this.thumb = this.thumb.moveTo(xy(cx, cy), bounds)
-    let surf = this.surface
-    let disp = this.display
-    const x = surf.x + t.x
-    const y = surf.y + t.y
+    let s = this.surface
+    let v = this.visible
+    const x = s.x + t.x
+    const y = s.y + t.y
     const s2a = this.surfaceToAllFactor
-    const dx = Math.abs(x - disp.x)
-    if (dx > 2 * disp.size.x || (dx > disp.size.x / 2 && (cx < 1 || cx >= surf.size.x - disp.size.x))) {
-      const disp2 = disp.moveTo(xy(Math.ceil(cx * s2a.x), disp.y), this.all)
-      if (!disp2.equalTo(disp)) {
-        this.display = disp = disp2
-        this.surface = surf = surf.moveTo(xy(disp2.x - t.x, surf.y), this.all)
+    const dx = Math.abs(x - v.x)
+    if (dx > 2 * v.size.x || (dx > v.size.x / 2 && (cx < 1 || cx >= s.size.x - v.size.x))) {
+      const v2 = v.moveTo(xy(Math.ceil(cx * s2a.x), v.y), this.all)
+      if (!v2.equalTo(v)) {
+        this.visible = v = v2
+        this.surface = s = s.moveTo(xy(v2.x - t.x, s.y), this.all)
       }
     }
     else {
-      const disp2 = disp.moveTo(xy(x, disp.y), this.all)
-      if (!disp2.equalTo(disp)) {
-        this.display = disp = disp2
+      const v2 = v.moveTo(xy(x, v.y), this.all)
+      if (!v2.equalTo(v)) {
+        this.visible = v = v2
         // to adjust surface
       }
     }
-    const dy = Math.abs(y - disp.y)
-    if (dy > 2 * disp.size.y || (dy > disp.size.y / 2 && (cy < 1 || cy >= surf.size.y - disp.size.y))) {
-      const disp2 = disp.moveTo(xy(disp.x, Math.ceil(cy * s2a.y)), this.all)
-      if (!disp2.equalTo(disp)) {
-        this.display = disp = disp2
-        this.surface = surf = surf.moveTo(xy(surf.x, disp2.y - t.y), this.all)
+    const dy = Math.abs(y - v.y)
+    if (dy > 2 * v.size.y || (dy > v.size.y / 2 && (cy < 1 || cy >= s.size.y - v.size.y))) {
+      const v2 = v.moveTo(xy(v.x, Math.ceil(cy * s2a.y)), this.all)
+      if (!v2.equalTo(v)) {
+        this.visible = v = v2
+        this.surface = s = s.moveTo(xy(s.x, v2.y - t.y), this.all)
       }
     }
     else {
-      const disp2 = disp.moveTo(xy(disp.x, y), this.all)
-      if (!disp2.equalTo(disp)) {
-        this.display = disp = disp2
+      const v2 = v.moveTo(xy(v.x, y), this.all)
+      if (!v2.equalTo(v)) {
+        this.visible = v = v2
         // to adjust surface
       }
     }
@@ -199,24 +199,24 @@ export class Viewport extends State {
   protected rebaseSurface(): void {
     let s = this.surface
     let t = this.thumb
-    const disp = this.display
-    const d2s = this.displayToSurfaceFactor
-    const precise = disp.scaleBy(this.allToSurfaceFactor)
-    const median = xy(precise.x + d2s.x/2, precise.y + d2s.y/2)
+    const v = this.visible
+    const v2s = this.visibleToSurfaceFactor
+    const precise = v.scaleBy(this.allToSurfaceFactor)
+    const median = xy(precise.x + v2s.x/2, precise.y + v2s.y/2)
     const diff = xy(t.x - median.x, t.y - median.y)
-    if (Math.abs(diff.x) > d2s.x/3) {
-      const advance = d2s.x * ((2*s.size.x/3 - precise.x) / s.size.x)
+    if (Math.abs(diff.x) > v2s.x/3) {
+      const advance = v2s.x * ((2*s.size.x/3 - precise.x) / s.size.x)
       const t2 = t.moveTo(xy(precise.x + advance, t.y), s.moveTo(Area.ZERO, this.all))
-      const s2 = s.moveTo(xy(disp.x - t2.x, s.y), this.all)
+      const s2 = s.moveTo(xy(v.x - t2.x, s.y), this.all)
       if (!s2.equalTo(s)) {
         this.surface = s = s2
         this.thumb = t = t2
       }
     }
-    if (Math.abs(diff.y) > d2s.y/3) {
-      const advance = d2s.y * ((2*s.size.y/3 - precise.y) / s.size.y)
+    if (Math.abs(diff.y) > v2s.y/3) {
+      const advance = v2s.y * ((2*s.size.y/3 - precise.y) / s.size.y)
       const t2 = t.moveTo(xy(t.x, precise.y + advance), s.moveTo(Area.ZERO, this.all))
-      const s2 = s.moveTo(xy(s.x, disp.y - t2.y), this.all)
+      const s2 = s.moveTo(xy(s.x, v.y - t2.y), this.all)
       if (!s2.equalTo(s)) {
         this.surface = s = s2
         this.thumb = t = t2
