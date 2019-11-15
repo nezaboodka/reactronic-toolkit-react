@@ -165,38 +165,38 @@ export class Viewport extends State {
   @action
   protected moveTo(sx: number, sy: number): void {
     // console.log(`scroll: ${this.thumb.y}->${cy}, h=${this.component ? this.component.scrollHeight : '?'}`)
-    const z = this.surface.atZero()
     let v = this.visible
-    let surface = this.surface
+    let s = this.surface
+    const z = this.surface.atZero()
     const thumb = this.thumb = this.thumb.moveTo(xy(sx, sy), z)
-    const x = surface.x + thumb.x
-    const y = surface.y + thumb.y
-    const dx = Math.abs(x - v.x)
-    if (dx > 2 * v.size.x || (dx > v.size.x / 2 && (sx < 1 || sx >= surface.size.x - v.size.x))) {
+    const vx2 = s.x + thumb.x
+    const vy2 = s.y + thumb.y
+    const dx = Math.abs(vx2 - v.x)
+    if (dx > 2 * v.size.x || (dx > v.size.x / 2 && (sx < 1 || sx >= s.size.x - v.size.x))) {
       const v2 = v.moveTo(xy(Math.ceil(sx * this.surfaceToAllFactor.x), v.y), this.all)
       if (!v2.equalTo(v)) {
         this.visible = v = v2
-        this.surface = surface = surface.moveTo(xy(v2.x - thumb.x, surface.y), this.all)
+        this.surface = s = s.moveTo(xy(v2.x - thumb.x, s.y), this.all)
       }
     }
     else {
-      const v2 = v.moveTo(xy(x, v.y), this.all)
+      const v2 = v.moveTo(xy(vx2, v.y), this.all)
       if (!v2.equalTo(v)) {
         this.visible = v = v2
         // to adjust surface
       }
     }
-    const dy = Math.abs(y - v.y)
-    if (dy > 2 * v.size.y || (dy > v.size.y / 2 && (sy < 1 || sy >= surface.size.y - v.size.y))) {
+    const dy = Math.abs(vy2 - v.y)
+    if (dy > 2 * v.size.y || (dy > v.size.y / 2 && (sy < 1 || sy >= s.size.y - v.size.y))) {
       const v2 = v.moveTo(xy(v.x, Math.ceil(sy * this.surfaceToAllFactor.y)), this.all)
       if (!v2.equalTo(v)) {
         // console.log(` jump: ${v.y}->${v2.y} (${v2.y - v.y})`)
         this.visible = v = v2
-        this.surface = surface = surface.moveTo(xy(surface.x, v2.y - thumb.y), this.all)
+        this.surface = s = s.moveTo(xy(s.x, v2.y - thumb.y), this.all)
       }
     }
     else {
-      const v2 = v.moveTo(xy(v.x, y), this.all)
+      const v2 = v.moveTo(xy(v.x, vy2), this.all)
       if (!v2.equalTo(v)) {
         // console.log(` move: ${v.y}->${v2.y} (${v2.y - v.y})`)
         this.visible = v = v2
