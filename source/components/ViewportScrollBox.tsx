@@ -8,7 +8,7 @@ import * as React from 'react'
 import { Viewport } from '../lib/Viewport'
 import { reactive } from '../tools/reactive'
 
-export function ViewportPanel(p: {
+export function ViewportScrollBox(p: {
   viewport: Viewport,
   children: JSX.Element,
   className?: string,
