@@ -156,7 +156,7 @@ export class Viewport extends State {
 
   @action
   protected moveTo(cx: number, cy: number): void {
-    // console.log(`scroll: ${cy} (∆ ${cy - this.thumb.y}), h=${this.device ? this.device.scrollHeight : '?'}`)
+    // console.log(`scroll: ${cy} (∆ ${cy - this.thumb.y}), h=${this.component ? this.component.scrollHeight : '?'}`)
     const bounds = this.surface.moveTo(Area.ZERO, this.all)
     const t = this.thumb = this.thumb.moveTo(xy(cx, cy), bounds)
     let surf = this.surface
@@ -204,7 +204,7 @@ export class Viewport extends State {
     const precise = disp.scaleBy(this.allToSurfaceFactor)
     const median = xy(precise.x + d2s.x/2, precise.y + d2s.y/2)
     const diff = xy(t.x - median.x, t.y - median.y)
-    if (Math.abs(diff.x) > d2s.x/3) {
+    if (Math.abs(diff.x) > 3*d2s.x/4) {
       const tip = d2s.x * ((s.size.x / 2 - precise.x) / s.size.x)
       const t2 = t.moveTo(xy(precise.x + tip, t.y), s.moveTo(Area.ZERO, this.all))
       const s2 = s.moveTo(xy(disp.x - t2.x, s.y), this.all)
@@ -213,7 +213,8 @@ export class Viewport extends State {
         this.thumb = t = t2
       }
     }
-    if (Math.abs(diff.y) > d2s.y/3) {
+    if (Math.abs(diff.y) > 3*d2s.y/4) {
+      // console.log(`rebase: ${diff.y} diff`)
       const tip = d2s.y * ((s.size.y / 2 - precise.y) / s.size.y)
       const t2 = t.moveTo(xy(t.x, precise.y + tip), s.moveTo(Area.ZERO, this.all))
       const s2 = s.moveTo(xy(s.x, disp.y - t2.y), this.all)
