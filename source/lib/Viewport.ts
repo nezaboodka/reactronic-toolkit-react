@@ -142,7 +142,7 @@ export class Viewport extends State {
     const d = this.component
     if (d) {
       const t = this.thumb
-      if (Math.abs(t.y - d.scrollTop) > 0.1 || Math.abs(t.x - d.scrollLeft) > 0.1)
+      if (Math.abs(t.y - d.scrollTop) > 0.2 || Math.abs(t.x - d.scrollLeft) > 0.2)
         this.moveTo(d.scrollLeft, d.scrollTop)
     }
   }
@@ -214,13 +214,13 @@ export class Viewport extends State {
       }
     }
     if (Math.abs(diff.y) > d2s.y/3) {
-      // console.log(`rebase: ${diff.y} diff`)
       const advance = d2s.y * ((2*s.size.y/3 - precise.y) / s.size.y)
       const t2 = t.moveTo(xy(t.x, precise.y + advance), s.moveTo(Area.ZERO, this.all))
       const s2 = s.moveTo(xy(s.x, disp.y - t2.y), this.all)
       if (!s2.equalTo(s)) {
         this.surface = s = s2
         this.thumb = t = t2
+        // console.log(`rebase: ${diff.y} diff, thumb=${t.y}, surface=${s2.y}`)
       }
     }
   }
