@@ -8,7 +8,7 @@ import { action, Cache,Monitor, State, trigger } from 'reactronic'
 import { Area, area, num, XY, xy } from './Area'
 
 export const SURFACE_SIZE_LIMIT: Area = area(0, 0, 1000123, 1000123)
-export const ENVELOPE_SIZE_LIMIT: Area = area(0, 0, 999, 999)
+export const CONTAINER_SIZE_LIMIT: Area = area(0, 0, 999, 999)
 
 export type Guide = { index: number, coord: number }
 
@@ -35,7 +35,7 @@ export class GridTelescope extends State {
   viewport: Area = Area.ZERO
   bufferSize: XY = xy(1.0, 1.0)
   loadedCells: Area = Area.ZERO
-  targetContainer: Area = Area.ZERO
+  container: Area = Area.ZERO
   sizing = new Sizing()
   scrollingMonitor: Monitor = Monitor.create('scrolling', 30)
 
@@ -52,12 +52,12 @@ export class GridTelescope extends State {
       this.surface = this.all.truncateBy(SURFACE_SIZE_LIMIT)
       this.thumb = new Area(0, 0, display.clientWidth, display.clientHeight)
       this.viewport = new Area(0, 0, display.clientWidth, display.clientHeight)
-      this.targetContainer = this.allCells.truncateBy(ENVELOPE_SIZE_LIMIT)
+      this.container = this.allCells.truncateBy(CONTAINER_SIZE_LIMIT)
       Cache.of(this.moveViewportTo).setup({monitor: this.scrollingMonitor})
     }
     else {
       Cache.of(this.moveViewportTo).setup({monitor: null})
-      this.targetContainer = Area.ZERO
+      this.container = Area.ZERO
       this.viewport = Area.ZERO
       this.thumb = Area.ZERO
       this.surface = Area.ZERO
@@ -149,9 +149,9 @@ export class GridTelescope extends State {
 
   setLoadedCells(a: Area): void {
     this.loadedCells = a
-    const tc = this.targetContainer
-    if (!tc.envelops(a))
-      this.targetContainer = tc.moveCenterTo(a.center, this.allCells).round()
+    const c = this.container
+    if (!c.envelops(a))
+      this.container = c.moveCenterTo(a.center, this.allCells).round()
   }
 
   @action
