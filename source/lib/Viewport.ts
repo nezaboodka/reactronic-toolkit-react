@@ -37,7 +37,7 @@ export class Viewport extends State {
   loadedCells: Area = Area.ZERO
   targetGrid: Area = Area.ZERO
   sizing = new Sizing()
-  scrollingMonitor: Monitor = Monitor.create('scrolling', 30)
+  scrollingMonitor: Monitor = Monitor.create('scrolling', 500)
 
   constructor(sizeX: number, sizeY: number) {
     super()
@@ -156,7 +156,7 @@ export class Viewport extends State {
 
   @action
   protected moveTo(cx: number, cy: number): void {
-    // console.log(`scroll: ${cy} (∆ ${cy - this.thumb.y}), h=${this.component ? this.component.scrollHeight : '?'}`)
+    console.log(`scroll: ${this.thumb.y}->${cy}, h=${this.component ? this.component.scrollHeight : '?'}`)
     const bounds = this.surface.moveTo(Area.ZERO, this.all)
     const t = this.thumb = this.thumb.moveTo(xy(cx, cy), bounds)
     let s = this.surface
@@ -200,13 +200,13 @@ export class Viewport extends State {
     let s = this.surface
     let t = this.thumb
     const v = this.visible
-    const v2s = this.visibleToSurfaceFactor
     const precise = v.scaleBy(this.allToSurfaceFactor)
+    const v2s = this.visibleToSurfaceFactor
     const median = xy(precise.x + v2s.x/2, precise.y + v2s.y/2)
     const diff = xy(t.x - median.x, t.y - median.y)
     if (Math.abs(diff.x) > v2s.x/3) {
-      const advance = v2s.x * ((2*s.size.x/3 - precise.x) / s.size.x)
-      const t2 = t.moveTo(xy(precise.x + advance, t.y), s.moveTo(Area.ZERO, this.all))
+      const rebase = v2s.x * ((2*s.size.x/3 - precise.x) / s.size.x)
+      const t2 = t.moveTo(xy(precise.x + rebase, t.y), s.moveTo(Area.ZERO, this.all))
       const s2 = s.moveTo(xy(v.x - t2.x, s.y), this.all)
       if (!s2.equalTo(s)) {
         this.surface = s = s2
@@ -214,13 +214,13 @@ export class Viewport extends State {
       }
     }
     if (Math.abs(diff.y) > v2s.y/3) {
-      const advance = v2s.y * ((2*s.size.y/3 - precise.y) / s.size.y)
-      const t2 = t.moveTo(xy(t.x, precise.y + advance), s.moveTo(Area.ZERO, this.all))
+      const rebase = v2s.y * ((2*s.size.y/3 - precise.y) / s.size.y)
+      const t2 = t.moveTo(xy(t.x, precise.y + rebase), s.moveTo(Area.ZERO, this.all))
       const s2 = s.moveTo(xy(s.x, v.y - t2.y), this.all)
       if (!s2.equalTo(s)) {
+        console.log(`rebase: ${rebase} // diff=${diff.y}, thumb=${t.y}->${t2.y}, surface=${s.y}->${s2.y}`)
         this.surface = s = s2
         this.thumb = t = t2
-        // console.log(`rebase: ${diff.y} diff, thumb=${t.y}, surface=${s2.y}`)
       }
     }
   }
