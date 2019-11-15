@@ -163,21 +163,20 @@ export class Viewport extends State {
   }
 
   @action
-  protected moveTo(cx: number, cy: number): void {
+  protected moveTo(sx: number, sy: number): void {
     // console.log(`scroll: ${this.thumb.y}->${cy}, h=${this.component ? this.component.scrollHeight : '?'}`)
     const z = this.surface.atZero()
-    const t = this.thumb = this.thumb.moveTo(xy(cx, cy), z)
-    let s = this.surface
     let v = this.visible
-    const x = s.x + t.x
-    const y = s.y + t.y
-    const s2a = this.surfaceToAllFactor
+    let surface = this.surface
+    const thumb = this.thumb = this.thumb.moveTo(xy(sx, sy), z)
+    const x = surface.x + thumb.x
+    const y = surface.y + thumb.y
     const dx = Math.abs(x - v.x)
-    if (dx > 2 * v.size.x || (dx > v.size.x / 2 && (cx < 1 || cx >= s.size.x - v.size.x))) {
-      const v2 = v.moveTo(xy(Math.ceil((cx - this.visibleToSurfaceFactor.x/2) * s2a.x), v.y), this.all)
+    if (dx > 2 * v.size.x || (dx > v.size.x / 2 && (sx < 1 || sx >= surface.size.x - v.size.x))) {
+      const v2 = v.moveTo(xy(Math.ceil((sx - this.visibleToSurfaceFactor.x/2) * this.surfaceToAllFactor.x), v.y), this.all)
       if (!v2.equalTo(v)) {
         this.visible = v = v2
-        this.surface = s = s.moveTo(xy(v2.x - t.x, s.y), this.all)
+        this.surface = surface = surface.moveTo(xy(v2.x - thumb.x, surface.y), this.all)
       }
     }
     else {
@@ -188,12 +187,12 @@ export class Viewport extends State {
       }
     }
     const dy = Math.abs(y - v.y)
-    if (dy > 2 * v.size.y || (dy > v.size.y / 2 && (cy < 1 || cy >= s.size.y - v.size.y))) {
-      const v2 = v.moveTo(xy(v.x, Math.ceil((cy - this.visibleToSurfaceFactor.y/2) * s2a.y)), this.all)
+    if (dy > 2 * v.size.y || (dy > v.size.y / 2 && (sy < 1 || sy >= surface.size.y - v.size.y))) {
+      const v2 = v.moveTo(xy(v.x, Math.ceil((sy - this.visibleToSurfaceFactor.y/2) * this.surfaceToAllFactor.y)), this.all)
       if (!v2.equalTo(v)) {
         // console.log(` jump: ${v.y}->${v2.y} (${v2.y - v.y})`)
         this.visible = v = v2
-        this.surface = s = s.moveTo(xy(s.x, v2.y - t.y), this.all)
+        this.surface = surface = surface.moveTo(xy(surface.x, v2.y - thumb.y), this.all)
       }
     }
     else {
@@ -208,29 +207,28 @@ export class Viewport extends State {
 
   protected rebaseSurface(): void {
     const z = this.surface.atZero()
-    const v2s = this.visibleToSurfaceFactor
+    const scrollbarPixelStep = this.visibleToSurfaceFactor
     const ideal = this.visible.scaleBy(this.allToSurfaceFactor)
-    const optimal = ideal.moveBy(xy(v2s.x/2, v2s.y/2), z)
-    let t = this.thumb
-    if (Math.abs(optimal.x - t.x) > v2s.x/3) {
+    const optimal = ideal.moveBy(xy(scrollbarPixelStep.x/2, scrollbarPixelStep.y/2), z)
+    if (Math.abs(optimal.x - this.thumb.x) > scrollbarPixelStep.x/3) {
       const surface = this.surface
-      const rebase = v2s.x * ((surface.size.x*2/3 - ideal.x) / surface.size.x)
-      const t2 = t.moveTo(xy(ideal.x + rebase, t.y), z)
+      const rebase = scrollbarPixelStep.x * ((surface.size.x*2/3 - ideal.x) / surface.size.x)
+      const t2 = this.thumb.moveTo(xy(ideal.x + rebase, this.thumb.y), z)
       const s2 = surface.moveTo(xy(this.visible.x - t2.x, surface.y), this.all)
       if (!s2.equalTo(surface)) {
         this.surface = s2
-        this.thumb = t = t2
+        this.thumb = t2
       }
     }
-    if (Math.abs(optimal.y - t.y) > v2s.y/3) {
+    if (Math.abs(optimal.y - this.thumb.y) > scrollbarPixelStep.y/3) {
       const surface = this.surface
-      const rebase = v2s.y * ((surface.size.y*2/3 - ideal.y) / surface.size.y)
-      const t2 = t.moveTo(xy(t.x, ideal.y + rebase), z)
+      const rebase = scrollbarPixelStep.y * ((surface.size.y*2/3 - ideal.y) / surface.size.y)
+      const t2 = this.thumb.moveTo(xy(this.thumb.x, ideal.y + rebase), z)
       const s2 = surface.moveTo(xy(surface.x, this.visible.y - t2.y), this.all)
       if (!s2.equalTo(surface)) {
         // console.log(`rebase: ${rebase} // diff=${diff.y}, thumb=${t.y}->${t2.y}, surface=${s.y}->${s2.y}`)
         this.surface = s2
-        this.thumb = t = t2
+        this.thumb = t2
       }
     }
   }
