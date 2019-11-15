@@ -6,7 +6,7 @@
 import { State } from 'reactronic'
 
 import { Viewport } from '@reactronic-toolkit-react'
-import { DataLoader } from '/model/DataLoader'
+import { DataLoader } from '/app/DataLoader'
 
 export class Application extends State {
   readonly viewport = new Viewport(10000, 1000000000000)

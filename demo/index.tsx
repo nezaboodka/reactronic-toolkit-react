@@ -7,7 +7,7 @@ import * as React from 'react'
 import * as ReactDOM from 'react-dom'
 import { Action, Tools as RT, TraceLevel } from 'reactronic'
 
-import { Application } from '/model/Application'
+import { Application } from '/app/Application'
 import { AppWindow } from '/view/AppWindow'
 
 RT.setTrace(TraceLevel.Off)

@@ -5,8 +5,8 @@
 
 import * as React from 'react'
 
-import { Viewport } from '/lib/Viewport'
-import { reactive } from '/tools/reactive.ts'
+import { Viewport } from '../lib/Viewport'
+import { reactive } from '../tools/reactive'
 
 export function DataViewport(p: {
   viewport: Viewport,

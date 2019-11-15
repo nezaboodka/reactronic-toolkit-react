@@ -35,9 +35,8 @@
     "jsx": "react",
     "paths": {
       "@reactronic-toolkit-react": ["index.ts"],
-      "/model/*": ["../demo/model/*"],
-      "/view/*": ["../demo/view/*"],
-      "/*": ["*"]
+      "/app/*": ["../demo/app/*"],
+      "/view/*": ["../demo/view/*"]
     },
     "plugins": [
       {

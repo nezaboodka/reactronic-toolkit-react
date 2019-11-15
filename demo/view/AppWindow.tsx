@@ -5,9 +5,8 @@
 
 import * as React from 'react'
 
-import { DataViewport, place, reactive } from '@reactronic-toolkit-react'
-import { ViewportDebugger } from '/components/ViewportDebugger'
-import { Application } from '/model/Application'
+import { DataViewport, place, reactive, ViewportDebugger } from '@reactronic-toolkit-react'
+import { Application } from '/app/Application'
 
 import { style } from './AppWindow.css'
 import { DataFragment } from './DataFragment'
