@@ -10,7 +10,7 @@ import { Area, area, num, XY, xy } from './Area'
 export const SURFACE_SIZE_LIMIT: Area = area(0, 0, 1000123, 1000123)
 export const TARGET_GRID_SIZE_LIMIT: Area = area(0, 0, 999, 999)
 
-export type Guide = { index: number, coord: number }
+export type Guide = { index: number, till: number }
 
 export class Sizing {
   customCellWidth: Guide[] = [] // in pixels?
