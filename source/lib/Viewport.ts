@@ -139,11 +139,11 @@ export class Viewport extends State {
   // Actions
 
   onScroll(): void {
-    const d = this.component
-    if (d) {
+    const c = this.component
+    if (c) {
       const t = this.thumb
-      if (Math.abs(t.y - d.scrollTop) > 0.2 || Math.abs(t.x - d.scrollLeft) > 0.2)
-        this.moveTo(d.scrollLeft, d.scrollTop)
+      if (Math.abs(t.y - c.scrollTop) > 0.2 || Math.abs(t.x - c.scrollLeft) > 0.2)
+        this.moveTo(c.scrollLeft, c.scrollTop)
     }
   }
 
