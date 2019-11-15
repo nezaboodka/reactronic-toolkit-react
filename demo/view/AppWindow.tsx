@@ -5,7 +5,7 @@
 
 import * as React from 'react'
 
-import { DataViewport, place, reactive, ViewportDebugger } from '@reactronic-toolkit-react'
+import { place, reactive, ViewportDebugger, ViewportPanel } from '@reactronic-toolkit-react'
 import { Application } from '/app/Application'
 
 import { style } from './AppWindow.css'
@@ -20,10 +20,10 @@ export function AppWindow(p: {app: Application}): JSX.Element {
     const res = v.resolution
     return (
       <div className={css.window}>
-        <DataViewport viewport={v} style={place(2, 2, 9, 9)}
+        <ViewportPanel viewport={v} style={place(2, 2, 9, 9)}
           className={css.scroll} dataClassName={css.grid}>
           <DataFragment loader={loader} cellWidth={res.x} cellHeight={res.y}/>
-        </DataViewport>
+        </ViewportPanel>
         <div className={css.toolbar} style={place(10, 2, 10, 2)}>
           <button onClick={e => c ? c.scrollTop += res.y : {}}
             disabled={!c}>▼</button>

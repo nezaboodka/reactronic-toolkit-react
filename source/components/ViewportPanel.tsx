@@ -8,7 +8,7 @@ import * as React from 'react'
 import { Viewport } from '../lib/Viewport'
 import { reactive } from '../tools/reactive'
 
-export function DataViewport(p: {
+export function ViewportPanel(p: {
   viewport: Viewport,
   children: JSX.Element,
   className?: string,
