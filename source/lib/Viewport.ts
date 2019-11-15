@@ -149,8 +149,8 @@ export class Viewport extends State {
     const c = this.component
     if (c) {
       const thumb = this.thumb
-      if (Math.abs(thumb.y - c.scrollTop) > 0.2 ||
-        Math.abs(thumb.x - c.scrollLeft) > 0.2)
+      if (Math.abs(thumb.y - c.scrollTop) >= 0.5/devicePixelRatio ||
+        Math.abs(thumb.x - c.scrollLeft) >= 0.5/devicePixelRatio)
         this.moveTo(c.scrollLeft, c.scrollTop)
     }
   }
