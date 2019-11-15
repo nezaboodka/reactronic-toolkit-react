@@ -199,29 +199,29 @@ export class Viewport extends State {
   }
 
   protected rebaseSurface(): void {
-    let s = this.surface
     let t = this.thumb
     const v = this.visible
     const precise = v.scaleBy(this.allToSurfaceFactor)
     const v2s = this.visibleToSurfaceFactor
     const median = xy(precise.x + v2s.x/2, precise.y + v2s.y/2)
-    const diff = xy(t.x - median.x, t.y - median.y)
-    if (Math.abs(diff.x) > v2s.x/3) {
+    if (Math.abs(t.x - median.x) > v2s.x/3) {
+      const s = this.surface
       const rebase = v2s.x * ((s.size.x*2/3 - precise.x) / s.size.x)
       const t2 = t.moveTo(xy(precise.x + rebase, t.y), s.moveTo(Area.ZERO, this.all))
       const s2 = s.moveTo(xy(v.x - t2.x, s.y), this.all)
       if (!s2.equalTo(s)) {
-        this.surface = s = s2
+        this.surface = s2
         this.thumb = t = t2
       }
     }
-    if (Math.abs(diff.y) > v2s.y/3) {
+    if (Math.abs(t.y - median.y) > v2s.y/3) {
+      const s = this.surface
       const rebase = v2s.y * ((s.size.y*2/3 - precise.y) / s.size.y)
       const t2 = t.moveTo(xy(t.x, precise.y + rebase), s.moveTo(Area.ZERO, this.all))
       const s2 = s.moveTo(xy(s.x, v.y - t2.y), this.all)
       if (!s2.equalTo(s)) {
         // console.log(`rebase: ${rebase} // diff=${diff.y}, thumb=${t.y}->${t2.y}, surface=${s.y}->${s2.y}`)
-        this.surface = s = s2
+        this.surface = s2
         this.thumb = t = t2
       }
       // else {
