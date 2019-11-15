@@ -7,11 +7,11 @@ import { cx } from 'emotion'
 import * as React from 'react'
 
 import { reactive, xy } from '@reactronic-toolkit-react'
-import { DataLoader } from '~m/DataLoader'
+import { DataLoader } from '/model/DataLoader'
 
 import { style } from './DataFragment.css'
 
-export function DataFragment(p: {cellWidth: number, cellHeight: number, loader: DataLoader}): JSX.Element {
+export function DataFragment(p: {loader: DataLoader, cellWidth: number, cellHeight: number}): JSX.Element {
   return reactive(() => {
     const data = p.loader.data
     const v = p.loader.viewport
