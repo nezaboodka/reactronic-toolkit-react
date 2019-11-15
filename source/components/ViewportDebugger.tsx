@@ -20,9 +20,9 @@ export function ViewportDebugger(p: {viewport: Viewport}): JSX.Element {
           className={css.all} style={place(1, 1, 10, 9)}>
           <AreaRect hint={'Surface'} area={v.surfaceCells} px={v.surface} inner={v.loaded} key={`surface-${counter}`}
             className={css.surface} style={place(2, 2, 9, 9)}>
-            <AreaRect hint={'Buffer'} area={v.bufferCells} px={v.buffer} key={`buffer-${counter}`}
+            <AreaRect hint={'Loaded Data'} area={v.loadedCells} px={v.loaded} key={`buffer-${counter}`}
               className={css.buffer} style={place(2, 2, 9, 9)}>
-              <AreaRect hint={'Viewport'} area={v.displayCells} px={v.display} key={`viewport-${counter}`}
+              <AreaRect hint={'Visible Data'} area={v.displayCells} px={v.display} key={`viewport-${counter}`}
                 className={css.viewport} style={place(3, 3, 8, 8)}>
                 <div style={{height: '1em'}}></div>
               </AreaRect>
