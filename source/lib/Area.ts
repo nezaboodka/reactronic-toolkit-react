@@ -31,6 +31,10 @@ export class Area extends XY {
     return this.moveBy(xy(pos.x - this.x, pos.y - this.y), bounds)
   }
 
+  atZero(): Area {
+    return this.moveTo(Area.ZERO, Area.INFINITY)
+  }
+
   moveCenterTo(pos: XY, bounds: Area): Area {
     const c = this.center
     return this.moveBy(xy(pos.x - c.x, pos.y - c.y), bounds)
