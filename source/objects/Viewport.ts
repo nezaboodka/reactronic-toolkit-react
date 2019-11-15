@@ -26,7 +26,7 @@ export type IComponent = {
   scrollTop: number
 }
 
-export class GridViewport extends State {
+export class Viewport extends State {
   allCells: Area
   component: IComponent | null | undefined = undefined
   resolution: XY = xy(1, 1) // pixels per cell

@@ -5,12 +5,12 @@
 
 import * as React from 'react'
 
-import { GridViewport, num, place, reactive } from '@reactronic-toolkit-react'
+import { num, place, reactive, Viewport } from '@reactronic-toolkit-react'
 
 import { AreaRect } from './AreaRect'
 import { style } from './ViewportDebugger.css'
 
-export function ViewportDebugger(p: {viewport: GridViewport}): JSX.Element {
+export function ViewportDebugger(p: {viewport: Viewport}): JSX.Element {
   return reactive(counter => {
     const css = style.classes
     const v = p.viewport

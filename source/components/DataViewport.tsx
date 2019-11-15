@@ -5,11 +5,11 @@
 
 import * as React from 'react'
 
-import { GridViewport } from '/objects/GridViewport'
+import { Viewport } from '/objects/Viewport'
 import { reactive } from '/tools/reactive.ts'
 
 export function DataViewport(p: {
-  viewport: GridViewport,
+  viewport: Viewport,
   children: JSX.Element,
   className?: string,
   dataClassName?: string,

@@ -5,13 +5,13 @@
 
 import { Reentrance,reentrance, sleep, State, trigger } from 'reactronic'
 
-import { GridViewport } from '@reactronic-toolkit-react'
+import { Viewport } from '@reactronic-toolkit-react'
 
 export class DataLoader extends State {
-  readonly viewport: GridViewport
+  readonly viewport: Viewport
   data: string[]
 
-  constructor(viewport: GridViewport) {
+  constructor(viewport: Viewport) {
     super()
     this.viewport = viewport
     this.data = []
