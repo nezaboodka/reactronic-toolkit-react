@@ -3,10 +3,10 @@
 // Copyright (C) 2019 Yury Chetyrko <ychetyrko@gmail.com>
 // License: https://raw.githubusercontent.com/nezaboodka/reactronic/master/LICENSE
 
-export * from '/objects/Area'
-export * from '/objects/GroupEvents'
-export * from '/objects/Viewport'
-export * from '/objects/UserInput'
+export * from './lib/Area'
+export * from './lib/GroupEvents'
+export * from './lib/Viewport'
+export * from './lib/UserInput'
 
 export * from '/components/RComponent'
 export * from '/components/DataViewport'

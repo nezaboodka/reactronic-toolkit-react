@@ -5,7 +5,7 @@
 
 import { action, Cache,Monitor, State, trigger } from 'reactronic'
 
-import { Area, area, num, XY, xy } from './Area'
+import { Area, area, num, XY, xy } from '/lib/Area'
 
 export const SURFACE_SIZE_LIMIT: Area = area(0, 0, 1000123, 1000123)
 export const TARGET_GRID_SIZE_LIMIT: Area = area(0, 0, 999, 999)

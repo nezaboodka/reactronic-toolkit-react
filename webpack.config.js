@@ -23,7 +23,7 @@ module.exports = {
       '@reactronic-toolkit-react': path.resolve(__dirname, 'source', 'index.ts'),
       '~m': path.resolve(__dirname, 'demo', 'model'),
       '~v': path.resolve(__dirname, 'demo', 'view'),
-      '/objects':  path.resolve(__dirname, 'source', 'objects'),
+      '/lib':  path.resolve(__dirname, 'source', 'lib'),
       '/components':  path.resolve(__dirname, 'source', 'components'),
       '/tools':  path.resolve(__dirname, 'source', 'tools'),
     },
