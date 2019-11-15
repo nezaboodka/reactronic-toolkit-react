@@ -5,7 +5,7 @@
 
 export * from '/objects/Area'
 export * from '/objects/GroupEvents'
-export * from '/objects/GridTelescope'
+export * from '/objects/GridViewport'
 export * from '/objects/UserInput'
 
 export * from '/components/RComponent'

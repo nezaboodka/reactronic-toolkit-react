@@ -26,7 +26,7 @@ export type IDevice = {
   scrollTop: number
 }
 
-export class GridTelescope extends State {
+export class GridViewport extends State {
   allCells: Area
   device: IDevice | null | undefined = undefined
   resolution: XY = xy(1, 1) // pixels per cell

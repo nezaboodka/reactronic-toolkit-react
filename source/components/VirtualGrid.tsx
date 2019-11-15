@@ -5,11 +5,11 @@
 
 import * as React from 'react'
 
-import { GridTelescope } from '/objects/GridTelescope'
+import { GridViewport } from '/objects/GridViewport'
 import { reactive } from '/tools/reactive.ts'
 
 export function VirtualGrid(p: {
-  telescope: GridTelescope,
+  viewport: GridViewport,
   children: JSX.Element,
   className?: string,
   dataClassName?: string,
@@ -22,11 +22,11 @@ export function VirtualGrid(p: {
       const fs = window.getComputedStyle(element).fontSize
       resolution = parseFloat(fs.substr(0, fs.length - 2))
     }
-    p.telescope.setDevice(element, resolution)
+    p.viewport.setDevice(element, resolution)
   }, [])
 
   return reactive(() => {
-    const s = p.telescope.surface
+    const s = p.viewport.surface
     const sw = `${s.size.x}px`
     const sh = `${s.size.y}px`
     const surfaceStyle: React.CSSProperties = {
@@ -36,7 +36,7 @@ export function VirtualGrid(p: {
       width: sw, minWidth: sw, maxWidth: sw,
       height: sh, minHeight: sh, maxHeight: sh,
     }
-    const l = p.telescope.loaded
+    const l = p.viewport.loaded
     const lw = `${l.size.x}`
     const lh = `${l.size.y}`
     const dataStyle: React.CSSProperties = {
@@ -49,7 +49,7 @@ export function VirtualGrid(p: {
     }
     return (
       <div ref={ref} className={p.className} style={p.style}
-        onScroll={e => p.telescope.onScroll()}>
+        onScroll={e => p.viewport.onScroll()}>
         <div style={surfaceStyle}>
           <div className={p.dataClassName} style={dataStyle}>
             {p.children}

@@ -6,7 +6,7 @@
 import * as React from 'react'
 
 import { place, reactive, VirtualGrid } from '@reactronic-toolkit-react'
-import { TelescopeDebugger } from '/components/TelescopeDebugger'
+import { ViewportDebugger } from '/components/ViewportDebugger'
 import { Application } from '~m/Application'
 
 import { style } from './AppWindow.css'
@@ -15,13 +15,13 @@ import { DataFragment } from './DataFragment'
 export function AppWindow(p: {app: Application}): JSX.Element {
   return reactive(() => {
     const css = style.classes
-    const t = p.app.telescope
+    const v = p.app.viewport
     const loader = p.app.loader
-    const d = t.device
-    const res = t.resolution
+    const d = v.device
+    const res = v.resolution
     return (
       <div className={css.window}>
-        <VirtualGrid telescope={t} style={place(2, 2, 9, 9)}
+        <VirtualGrid viewport={v} style={place(2, 2, 9, 9)}
           className={css.scroll} dataClassName={css.grid}>
           <DataFragment loader={loader} cellWidth={res.x} cellHeight={res.y}/>
         </VirtualGrid>
@@ -40,11 +40,11 @@ export function AppWindow(p: {app: Application}): JSX.Element {
             disabled={!d}>▲ 1K px</button>
           <button onClick={e => d ? d.scrollTop = d.scrollHeight - d.clientHeight - 1 : {}}
             disabled={!d}>▼ End</button>
-          <button onClick={e => d ? alert(`${d.scrollTop}, ${d.scrollHeight}, ${t.surface.size.y}`) : {}}
+          <button onClick={e => d ? alert(`${d.scrollTop}, ${d.scrollHeight}, ${v.surface.size.y}`) : {}}
             disabled={!d}>▲ Begin</button>
         </div>
         <div className={css.visualizer} style={place(10, 3, 10, 5)}>
-          <TelescopeDebugger telescope={t}/>
+          <ViewportDebugger viewport={v}/>
         </div>
       </div>
     )

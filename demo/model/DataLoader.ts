@@ -5,23 +5,23 @@
 
 import { Reentrance,reentrance, sleep, State, trigger } from 'reactronic'
 
-import { GridTelescope } from '@reactronic-toolkit-react'
+import { GridViewport } from '@reactronic-toolkit-react'
 
 export class DataLoader extends State {
-  readonly telescope: GridTelescope
+  readonly viewport: GridViewport
   data: string[]
 
-  constructor(telescope: GridTelescope) {
+  constructor(viewport: GridViewport) {
     super()
-    this.telescope = telescope
+    this.viewport = viewport
     this.data = []
   }
 
   @trigger @reentrance(Reentrance.CancelPrevious)
   async load(): Promise<void> {
-    const t = this.telescope
-    const buf = t.bufferCells
-    if (!buf.equalTo(t.loadedCells)) {
+    const v = this.viewport
+    const buf = v.bufferCells
+    if (!buf.equalTo(v.loadedCells)) {
       const data: string[] = []
       const till = buf.till
       for (let y = buf.y; y <= till.y; y++)
@@ -29,7 +29,7 @@ export class DataLoader extends State {
           data.push(`${y}:${x}`)
       await sleep(130)
       this.data = data
-      t.setLoadedCells(buf)
+      v.setLoadedCells(buf)
     }
   }
 }
