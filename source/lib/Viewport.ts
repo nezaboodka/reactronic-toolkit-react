@@ -211,19 +211,19 @@ export class Viewport extends State {
     const optimal = this.visible.scaleBy(this.allToSurfaceFactor).moveBy(
       xy(scrollPixelStep.x/2, scrollPixelStep.y/2), z)
     if (Math.abs(optimal.x - this.thumb.x) > scrollPixelStep.x/4) {
-      const surface = this.surface
+      const s = this.surface
       const t2 = this.thumb.moveTo(xy(optimal.x, this.thumb.y), z)
-      const s2 = surface.moveTo(xy(this.visible.x - t2.x, surface.y), this.all)
-      if (!s2.equalTo(surface)) {
+      const s2 = s.moveTo(xy(this.visible.x - t2.x, s.y), this.all)
+      if (!s2.equalTo(s)) {
         this.surface = s2
         this.thumb = t2
       }
     }
     if (Math.abs(optimal.y - this.thumb.y) > scrollPixelStep.y/4) {
-      const surface = this.surface
+      const s = this.surface
       const t2 = this.thumb.moveTo(xy(this.thumb.x, optimal.y), z)
-      const s2 = surface.moveTo(xy(surface.x, this.visible.y - t2.y), this.all)
-      if (!s2.equalTo(surface)) {
+      const s2 = s.moveTo(xy(s.x, this.visible.y - t2.y), this.all)
+      if (!s2.equalTo(s)) {
         // console.log(`rebase: ${rebase} // diff=${diff.y}, thumb=${t.y}->${t2.y}, surface=${s.y}->${s2.y}`)
         this.surface = s2
         this.thumb = t2
