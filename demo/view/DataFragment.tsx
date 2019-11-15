@@ -16,8 +16,8 @@ export function DataFragment(p: {cellWidth: number, cellHeight: number, loader: 
     const data = p.loader.data
     const v = p.loader.viewport
     const area = v.loadedCells
-    const container = v.container
-    const zero = xy(area.x - container.x, area.y - container.y)
+    const tg = v.targetGrid
+    const zero = xy(area.x - tg.x, area.y - tg.y)
     const dim: React.CSSProperties = { width: `${p.cellWidth}px`, height: `${p.cellHeight}px` }
     return (
       <React.Fragment>

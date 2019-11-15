@@ -17,7 +17,7 @@ export function AppWindow(p: {app: Application}): JSX.Element {
     const css = style.classes
     const v = p.app.viewport
     const loader = p.app.loader
-    const d = v.device
+    const c = v.component
     const res = v.resolution
     return (
       <div className={css.window}>
@@ -26,22 +26,22 @@ export function AppWindow(p: {app: Application}): JSX.Element {
           <DataFragment loader={loader} cellWidth={res.x} cellHeight={res.y}/>
         </VirtualGrid>
         <div className={css.toolbar} style={place(10, 2, 10, 2)}>
-          <button onClick={e => d ? d.scrollTop += res.y : {}}
-            disabled={!d}>▼</button>
-          <button onClick={e => d ? d.scrollTop -= res.y : {}}
-            disabled={!d}>▲</button>
-          <button onClick={e => d ? d.scrollLeft += res.x : {}}
-            disabled={!d}>►</button>
-          <button onClick={e => d ? d.scrollLeft -= res.x : {}}
-            disabled={!d}>◄</button>
-          <button onClick={e => d ? d.scrollTop += 1072 : {}}
-            disabled={!d}>▼ 1K px</button>
-          <button onClick={e => d ? d.scrollTop -= 1072 : {}}
-            disabled={!d}>▲ 1K px</button>
-          <button onClick={e => d ? d.scrollTop = d.scrollHeight - d.clientHeight - 1 : {}}
-            disabled={!d}>▼ End</button>
-          <button onClick={e => d ? alert(`${d.scrollTop}, ${d.scrollHeight}, ${v.surface.size.y}`) : {}}
-            disabled={!d}>▲ Begin</button>
+          <button onClick={e => c ? c.scrollTop += res.y : {}}
+            disabled={!c}>▼</button>
+          <button onClick={e => c ? c.scrollTop -= res.y : {}}
+            disabled={!c}>▲</button>
+          <button onClick={e => c ? c.scrollLeft += res.x : {}}
+            disabled={!c}>►</button>
+          <button onClick={e => c ? c.scrollLeft -= res.x : {}}
+            disabled={!c}>◄</button>
+          <button onClick={e => c ? c.scrollTop += 1072 : {}}
+            disabled={!c}>▼ 1K px</button>
+          <button onClick={e => c ? c.scrollTop -= 1072 : {}}
+            disabled={!c}>▲ 1K px</button>
+          <button onClick={e => c ? c.scrollTop = c.scrollHeight - c.clientHeight - 1 : {}}
+            disabled={!c}>▼ End</button>
+          <button onClick={e => c ? alert(`${c.scrollTop}, ${c.scrollHeight}, ${v.surface.size.y}`) : {}}
+            disabled={!c}>▲ Begin</button>
         </div>
         <div className={css.visualizer} style={place(10, 3, 10, 5)}>
           <ViewportDebugger viewport={v}/>

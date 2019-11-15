@@ -8,7 +8,7 @@ import { action, Cache,Monitor, State, trigger } from 'reactronic'
 import { Area, area, num, XY, xy } from './Area'
 
 export const SURFACE_SIZE_LIMIT: Area = area(0, 0, 1000123, 1000123)
-export const CONTAINER_SIZE_LIMIT: Area = area(0, 0, 999, 999)
+export const TARGET_GRID_SIZE_LIMIT: Area = area(0, 0, 999, 999)
 
 export type Guide = { index: number, coord: number }
 
@@ -17,7 +17,7 @@ export class Sizing {
   customCellHeight: Guide[] = [] // in pixels?
 }
 
-export type IDevice = {
+export type IComponent = {
   readonly clientWidth: number
   readonly clientHeight: number
   readonly scrollWidth: number
@@ -28,14 +28,14 @@ export type IDevice = {
 
 export class GridViewport extends State {
   allCells: Area
-  device: IDevice | null | undefined = undefined
+  component: IComponent | null | undefined = undefined
   resolution: XY = xy(1, 1) // pixels per cell
   surface: Area = Area.ZERO
   thumb: Area = Area.ZERO
   view: Area = Area.ZERO
   bufferSize: XY = xy(1.0, 1.0)
   loadedCells: Area = Area.ZERO
-  container: Area = Area.ZERO
+  targetGrid: Area = Area.ZERO
   sizing = new Sizing()
   scrollingMonitor: Monitor = Monitor.create('scrolling', 30)
 
@@ -45,24 +45,24 @@ export class GridViewport extends State {
   }
 
   @action
-  setDevice(device: IDevice | null, resolution: number): void {
-    if (device) {
-      this.device = device
+  setComponent(component: IComponent | null, resolution: number): void {
+    if (component) {
+      this.component = component
       this.resolution = xy(resolution * 8, resolution)
       this.surface = this.all.truncateBy(SURFACE_SIZE_LIMIT)
-      this.thumb = new Area(0, 0, device.clientWidth, device.clientHeight)
-      this.view = new Area(0, 0, device.clientWidth, device.clientHeight)
-      this.container = this.allCells.truncateBy(CONTAINER_SIZE_LIMIT)
+      this.thumb = new Area(0, 0, component.clientWidth, component.clientHeight)
+      this.view = new Area(0, 0, component.clientWidth, component.clientHeight)
+      this.targetGrid = this.allCells.truncateBy(TARGET_GRID_SIZE_LIMIT)
       Cache.of(this.moveTo).setup({monitor: this.scrollingMonitor})
     }
     else {
       Cache.of(this.moveTo).setup({monitor: null})
-      this.container = Area.ZERO
+      this.targetGrid = Area.ZERO
       this.view = Area.ZERO
       this.thumb = Area.ZERO
       this.surface = Area.ZERO
       this.resolution = xy(1, 1)
-      this.device = undefined
+      this.component = undefined
     }
   }
 
@@ -139,7 +139,7 @@ export class GridViewport extends State {
   // Actions
 
   onScroll(): void {
-    const d = this.device
+    const d = this.component
     if (d) {
       const t = this.thumb
       if (Math.abs(t.y - d.scrollTop) > 0.1 || Math.abs(t.x - d.scrollLeft) > 0.1)
@@ -147,11 +147,11 @@ export class GridViewport extends State {
     }
   }
 
-  setLoadedCells(a: Area): void {
-    this.loadedCells = a
-    const c = this.container
-    if (!c.envelops(a))
-      this.container = c.moveCenterTo(a.center, this.allCells).round()
+  setLoadedCells(lc: Area): void {
+    this.loadedCells = lc
+    const tg = this.targetGrid
+    if (!tg.envelops(lc))
+      this.targetGrid = tg.moveCenterTo(lc.center, this.allCells).round()
   }
 
   @action
@@ -226,19 +226,19 @@ export class GridViewport extends State {
 
   @trigger
   protected syncThumbAndSurface(): void {
-    if (this.device && !this.scrollingMonitor.busy)
+    if (this.component && !this.scrollingMonitor.busy)
       this.rebaseSurface()
   }
 
   @trigger
   protected syncThumbWithDevice(): void {
-    const d = this.device
-    if (d) {
+    const c = this.component
+    if (c) {
       const t = this.thumb
-      if (Math.abs(t.x - d.scrollLeft) > 0.1)
-        d.scrollLeft = t.x
-      if (Math.abs(t.y - d.scrollTop) > 0.1)
-        d.scrollTop = t.y
+      if (Math.abs(t.x - c.scrollLeft) > 0.1)
+        c.scrollLeft = t.x
+      if (Math.abs(t.y - c.scrollTop) > 0.1)
+        c.scrollTop = t.y
     }
   }
 
