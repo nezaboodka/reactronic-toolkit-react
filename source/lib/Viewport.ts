@@ -166,7 +166,6 @@ export class Viewport extends State {
   protected moveTo(sx: number, sy: number): void {
     // console.log(`scroll: ${this.thumb.y}->${cy}, h=${this.component ? this.component.scrollHeight : '?'}`)
     const z = this.surface.atZero()
-    const scrollPixelStep = this.visibleToSurfaceFactor
     let v = this.visible
     let surface = this.surface
     const thumb = this.thumb = this.thumb.moveTo(xy(sx, sy), z)
