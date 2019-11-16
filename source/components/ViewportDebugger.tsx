@@ -22,7 +22,7 @@ export function ViewportDebugger(p: {viewport: Viewport}): JSX.Element {
             className={css.surface} style={place(2, 2, 9, 9)}>
             <AreaRect hint={'Loaded'} area={vp.loadedCells} px={vp.loaded} key={`buffer-${counter}`}
               className={css.buffer} style={place(2, 2, 9, 9)}>
-              <AreaRect hint={'Visible'} area={vp.visibleCells} px={vp.visible} key={`viewport-${counter}`}
+              <AreaRect hint={'Visible'} area={vp.windowCells} px={vp.window} key={`viewport-${counter}`}
                 className={css.viewport} style={place(3, 3, 8, 8)}>
                 <div style={{height: '1em'}}></div>
               </AreaRect>
@@ -37,16 +37,16 @@ export function ViewportDebugger(p: {viewport: Viewport}): JSX.Element {
               Thumb: {num(vp.thumb.y, 1)} of {num(vp.surface.size.y, 1)} canvas pixels,
             </div>
             <div>
-              Thumb Pixel = {num(vp.thumb.scaleBy(vp.surfaceToVisibleFactor).y, 3)}
+              Thumb Pixel = {num(vp.thumb.scaleBy(vp.surfaceToWindowFactor).y, 3)}
             </div>
             <div>
-              Viewport-to-Canvas = {num(vp.visible.scaleBy(vp.allToSurfaceFactor).y, 15)}
+              Viewport-to-Canvas = {num(vp.window.scaleBy(vp.allToSurfaceFactor).y, 15)}
             </div>
             <div>Resolution: {vp.resolution.y} (font size)</div>
             <div>{num(vp.all.size.y / vp.surface.size.y, 1)} <i>all data pixels in a single surface pixel out of</i> {num(vp.surface.size.y)}</div>
-            <div>{num(vp.visibleToSurfaceFactor.y, 1)} <i>surface pixels in a single viewport pixel out of</i> {num(vp.visible.size.y)}</div>
-            <div>{num(vp.visibleToAllFactor.y, 1)} <i>all data pixels in a single viewport pixel out of</i> {num(vp.visible.size.y)}</div>
-            <div>{num(vp.visibleToAllFactor.y / vp.resolution.y, -3)} <i>cells in a single viewport pixel out of</i> {num(vp.visible.size.y)}</div>
+            <div>{num(vp.windowToSurfaceFactor.y, 1)} <i>surface pixels in a single viewport pixel out of</i> {num(vp.window.size.y)}</div>
+            <div>{num(vp.windowToAllFactor.y, 1)} <i>all data pixels in a single viewport pixel out of</i> {num(vp.window.size.y)}</div>
+            <div>{num(vp.windowToAllFactor.y / vp.resolution.y, -3)} <i>cells in a single viewport pixel out of</i> {num(vp.window.size.y)}</div>
             <br/>
           </div>
         </AreaRect>

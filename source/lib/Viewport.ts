@@ -32,7 +32,7 @@ export class Viewport extends State {
   resolution: XY = xy(1, 1) // pixels per cell
   surface: Area = Area.ZERO
   thumb: Area = Area.ZERO
-  visible: Area = Area.ZERO
+  window: Area = Area.ZERO
   bufferSize: XY = xy(1.0, 1.0)
   loadedCells: Area = Area.ZERO
   targetGrid: Area = Area.ZERO
@@ -51,14 +51,14 @@ export class Viewport extends State {
       this.resolution = xy(resolution * 8, resolution)
       this.surface = this.all.truncateBy(SURFACE_SIZE_LIMIT)
       this.thumb = new Area(0, 0, component.clientWidth, component.clientHeight)
-      this.visible = new Area(0, 0, component.clientWidth, component.clientHeight)
+      this.window = new Area(0, 0, component.clientWidth, component.clientHeight)
       this.targetGrid = this.allCells.truncateBy(TARGET_GRID_SIZE_LIMIT)
       Cache.of(this.moveTo).setup({monitor: this.scrollingMonitor})
     }
     else {
       Cache.of(this.moveTo).setup({monitor: null})
       this.targetGrid = Area.ZERO
-      this.visible = Area.ZERO
+      this.window = Area.ZERO
       this.thumb = Area.ZERO
       this.surface = Area.ZERO
       this.resolution = xy(1, 1)
@@ -73,26 +73,26 @@ export class Viewport extends State {
     return xy(1 / r.x, 1 / r.y)
   }
 
-  get visibleToSurfaceFactor(): XY {
+  get windowToSurfaceFactor(): XY {
     const surface = this.surface
-    const visible = this.visible
+    const w = this.window
     return xy(
-      surface.size.x / (visible.size.x - 1),
-      surface.size.y / (visible.size.y - 1))
+      surface.size.x / (w.size.x - 1),
+      surface.size.y / (w.size.y - 1))
   }
 
-  get surfaceToVisibleFactor(): XY {
-    const v2s = this.visibleToSurfaceFactor
-    return xy(1 / v2s.x, 1 / v2s.y)
+  get surfaceToWindowFactor(): XY {
+    const w2s = this.windowToSurfaceFactor
+    return xy(1 / w2s.x, 1 / w2s.y)
   }
 
   get surfaceToAllFactor(): XY {
     const all = this.all
     const surface = this.surface
-    const visible = this.visible
+    const w = this.window
     return xy(
-      all.size.x / (surface.size.x - visible.size.x),
-      all.size.y / (surface.size.y - visible.size.y))
+      all.size.x / (surface.size.x - w.size.x),
+      all.size.y / (surface.size.y - w.size.y))
   }
 
   get allToSurfaceFactor(): XY {
@@ -100,17 +100,17 @@ export class Viewport extends State {
     return xy(1 / s2a.x, 1 / s2a.y)
   }
 
-  get visibleToAllFactor(): XY {
+  get windowToAllFactor(): XY {
     const all = this.all
-    const visible = this.visible
+    const w = this.window
     return xy(
-      all.size.x / (visible.size.x - 1),
-      all.size.y / (visible.size.y - 1))
+      all.size.x / (w.size.x - 1),
+      all.size.y / (w.size.y - 1))
   }
 
-  get allToVisibleFactor(): XY {
-    const v2a = this.visibleToAllFactor
-    return xy(1 / v2a.x, 1 / v2a.y)
+  get allToWindowFactor(): XY {
+    const w2a = this.windowToAllFactor
+    return xy(1 / w2a.x, 1 / w2a.y)
   }
 
   // Areas (pixels)
@@ -134,13 +134,13 @@ export class Viewport extends State {
   }
 
   get bufferCells(): Area {
-    const vc = this.visibleCells
-    const buf = vc.zoomAt(vc.center, this.bufferSize)
+    const w = this.windowCells
+    const buf = w.zoomAt(w.center, this.bufferSize)
     return buf.roundToOuter().truncateBy(this.allCells)
   }
 
-  get visibleCells(): Area {
-    return this.visible.scaleBy(this.pixelToCellFactor)
+  get windowCells(): Area {
+    return this.window.scaleBy(this.pixelToCellFactor)
   }
 
   // Events
@@ -163,14 +163,14 @@ export class Viewport extends State {
       this.targetGrid = tg.moveCenterTo(cells.center, this.allCells).round()
 
     const scroll = this.surface.atZero()
-    const scrollPixelStep = this.visibleToSurfaceFactor
-    const ideal = this.visible.scaleBy(this.allToSurfaceFactor)
+    const scrollPixelStep = this.windowToSurfaceFactor
+    const ideal = this.window.scaleBy(this.allToSurfaceFactor)
     let thumb = this.thumb
     if (Math.abs(ideal.x - thumb.x) > 4/5*scrollPixelStep.x || thumb.from.x < 1 || thumb.till.x >= scroll.size.x) {
       const s = this.surface
       const correction = 4/5*scrollPixelStep.x * (scroll.center.x - ideal.center.x) / scroll.size.x * 2
       const t2 = thumb.moveTo(xy(ideal.x + correction, thumb.y), scroll)
-      const s2 = s.moveTo(xy(this.visible.x - t2.x, s.y), this.all)
+      const s2 = s.moveTo(xy(this.window.x - t2.x, s.y), this.all)
       if (!s2.equalTo(s)) {
         this.surface = s2
         this.thumb = t2
@@ -181,7 +181,7 @@ export class Viewport extends State {
       const s = this.surface
       const correction = 4/5*scrollPixelStep.y * (scroll.center.y - ideal.center.y) / scroll.size.y * 2
       const t2 = thumb.moveTo(xy(thumb.x, ideal.y + correction), scroll)
-      const s2 = s.moveTo(xy(s.x, this.visible.y - t2.y), this.all)
+      const s2 = s.moveTo(xy(s.x, this.window.y - t2.y), this.all)
       if (!s2.equalTo(s)) {
         // console.log(`rebase: ${rebase} // diff=${diff.y}, thumb=${t.y}->${t2.y}, surface=${s.y}->${s2.y}`)
         this.surface = s2
@@ -199,16 +199,16 @@ export class Viewport extends State {
     const surface = this.surface
     const ratio = this.surfaceToAllFactor
     const t = this.thumb = this.thumb.moveTo(xy(left, top), surface.atZero())
-    let vp = this.visible
+    let w = this.window
 
-    const x = Viewport.move(t.x, t.till.x, surface.x, surface.size.x,
-      vp.x, vp.size.x, ratio.x)
-    const y = Viewport.move(t.y, t.till.y, surface.y, surface.size.y,
-      vp.y, vp.size.y, ratio.y)
+    const x = Viewport.adjust(w.x, w.size.x, t.x, t.till.x,
+      surface.x, surface.size.x, ratio.x)
+    const y = Viewport.adjust(w.y, w.size.y, t.y, t.till.y,
+      surface.y, surface.size.y, ratio.y)
 
-    vp = vp.moveTo(xy(x, y), this.all)
-    if (!vp.equalTo(this.visible))
-      this.visible = vp
+    w = w.moveTo(xy(x, y), this.all)
+    if (!w.equalTo(this.window))
+      this.window = w
   }
 
   @trigger
@@ -225,23 +225,23 @@ export class Viewport extends State {
 
   // Math
 
-  private static move(thumb: number, thumbTill: number,
+  private static adjust(window: number, windowSize: number,
+    thumb: number, thumbTill: number,
     surface: number, surfaceSize: number,
-    viewport: number, page: number, factor: number): number {
-    const delta = Math.abs(surface + thumb - viewport)
-    const jump = delta > 1.5*page ||
-      (delta > 0.5*page && (thumb < 1 || thumbTill >= surfaceSize))
+    factor: number): number {
+    const delta = Math.abs(surface + thumb - window)
+    const jump = delta > 1.5*windowSize ||
+      (delta > 0.5*windowSize && (thumb < 1 || thumbTill >= surfaceSize))
     return jump ? thumb * factor : surface + thumb
   }
 
-  // private rebase(): any {
+  // private rebase(thumb: number, thumbTill: number, surfaceSize: number): any {
   //   const scroll = this.surface.atZero()
   //   const scrollPixelStep = this.visibleToSurfaceFactor
   //   const ideal = this.visible.scaleBy(this.allToSurfaceFactor)
-  //   let thumb = this.thumb
-  //   if (Math.abs(ideal.x - thumb.x) > 4/5*scrollPixelStep.x || thumb.from.x < 1 || thumb.till.x >= scroll.size.x) {
+  //   if (Math.abs(ideal.x - thumb) > 4/5*scrollPixelStep.x || thumb < 1 || thumbTill >= surfaceSize) {
   //     const s = this.surface
-  //     const correction = 4/5*scrollPixelStep.x * (scroll.center.x - ideal.center.x) / scroll.size.x * 2
+  //     const correction = 4/5*scrollPixelStep.x * (scroll.center.x - ideal.center.x) / surfaceSize * 2
   //     const t2 = thumb.moveTo(xy(ideal.x + correction, thumb.y), scroll)
   //     const s2 = s.moveTo(xy(this.visible.x - t2.x, s.y), this.all)
   //     if (!s2.equalTo(s)) {
