@@ -37,7 +37,7 @@ export class Viewport extends State {
   loadedCells: Area = Area.ZERO
   targetGrid: Area = Area.ZERO
   sizing = new Sizing()
-  scrollingMonitor: Monitor = Monitor.create('scrolling', 750)
+  scrollingMonitor: Monitor = Monitor.create('scrolling', 20)
 
   constructor(sizeX: number, sizeY: number) {
     super()
@@ -173,7 +173,7 @@ export class Viewport extends State {
     const vy2 = s.y + thumb.y
     const dx = Math.abs(vx2 - v.x)
     if (dx > 2 * v.size.x || (dx > v.size.x / 2 && (sx < 1 || sx >= s.size.x - v.size.x))) {
-      const v2 = v.moveTo(xy(Math.ceil(sx * this.surfaceToAllFactor.x), v.y), this.all)
+      const v2 = v.moveTo(xy(sx * this.surfaceToAllFactor.x, v.y), this.all)
       if (!v2.equalTo(v)) {
         this.visible = v = v2
         this.surface = s = s.moveTo(xy(v2.x - thumb.x, s.y), this.all)
@@ -188,7 +188,7 @@ export class Viewport extends State {
     }
     const dy = Math.abs(vy2 - v.y)
     if (dy > 2 * v.size.y || (dy > v.size.y / 2 && (sy < 1 || sy >= s.size.y - v.size.y))) {
-      const v2 = v.moveTo(xy(v.x, Math.ceil(sy * this.surfaceToAllFactor.y)), this.all)
+      const v2 = v.moveTo(xy(v.x, sy * this.surfaceToAllFactor.y), this.all)
       if (!v2.equalTo(v)) {
         // console.log(` jump: ${v.y}->${v2.y} (${v2.y - v.y})`)
         this.visible = v = v2
@@ -210,18 +210,20 @@ export class Viewport extends State {
     const scrollPixelStep = this.visibleToSurfaceFactor
     const optimal = this.visible.scaleBy(this.allToSurfaceFactor).moveBy(
       xy(scrollPixelStep.x/2, scrollPixelStep.y/2), z)
-    if (Math.abs(optimal.x - this.thumb.x) > scrollPixelStep.x/4) {
+    let thumb = this.thumb
+    if (Math.abs(optimal.x - thumb.x) > scrollPixelStep.x/3) {
       const s = this.surface
-      const t2 = this.thumb.moveTo(xy(optimal.x, this.thumb.y), z)
+      const t2 = thumb.moveTo(xy(optimal.x, thumb.y), z)
       const s2 = s.moveTo(xy(this.visible.x - t2.x, s.y), this.all)
       if (!s2.equalTo(s)) {
         this.surface = s2
         this.thumb = t2
       }
     }
-    if (Math.abs(optimal.y - this.thumb.y) > scrollPixelStep.y/4) {
+    thumb = this.thumb
+    if (Math.abs(optimal.y - thumb.y) > scrollPixelStep.y/3) {
       const s = this.surface
-      const t2 = this.thumb.moveTo(xy(this.thumb.x, optimal.y), z)
+      const t2 = thumb.moveTo(xy(thumb.x, optimal.y), z)
       const s2 = s.moveTo(xy(s.x, this.visible.y - t2.y), this.all)
       if (!s2.equalTo(s)) {
         // console.log(`rebase: ${rebase} // diff=${diff.y}, thumb=${t.y}->${t2.y}, surface=${s.y}->${s2.y}`)
