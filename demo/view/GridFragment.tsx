@@ -9,9 +9,9 @@ import * as React from 'react'
 import { reactive, xy } from '@reactronic-toolkit-react'
 import { DataLoader } from '/app/DataLoader'
 
-import { style } from './DataFragment.css'
+import { style } from './GridFragment.css'
 
-export function DataFragment(p: {loader: DataLoader}): JSX.Element {
+export function GridFragment(p: {loader: DataLoader}): JSX.Element {
   return reactive(() => {
     const data = p.loader.data
     const vp = p.loader.viewport
