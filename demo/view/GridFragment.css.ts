@@ -20,6 +20,20 @@ export const style = restyle(() => {
       border-right: 0.5px dashed rgba(127, 127, 127, 0.5);
       padding: 0 0.25em;
     `,
+    fade: css`
+      label: fade;
+      animation: fade 1s ease;
+      @keyframes fade {
+        0% { color: transparent; }
+      }
+    `,
+    scale: css`
+      label: scale;
+      animation: scale 0.2s ease-out;
+      @keyframes scale {
+        0% { transform: scaleY(0); transform-origin: 0 100%; }
+      }
+    `,
     blink1: css`
       label: blink1;
       animation: blink1a 1s ease;

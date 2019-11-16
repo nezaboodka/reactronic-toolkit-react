@@ -3,7 +3,7 @@
 // Copyright (C) 2019 Yury Chetyrko <ychetyrko@gmail.com>
 // License: https://raw.githubusercontent.com/nezaboodka/reactronic/master/LICENSE
 
-import { action, Cache,Monitor, State, trigger } from 'reactronic'
+import { action, State, trigger } from 'reactronic'
 
 import { Area, area, num, XY, xy } from './Area'
 
@@ -33,11 +33,11 @@ export class Viewport extends State {
   surface: Area = Area.ZERO
   thumb: Area = Area.ZERO
   window: Area = Area.ZERO
-  bufferSize: XY = xy(1.0, 1.0)
+  bufferSize: XY = xy(1.0, 3.0)
   loadedCells: Area = Area.ZERO
   targetGrid: Area = Area.ZERO
   sizing = new Sizing()
-  scrollingMonitor: Monitor = Monitor.create('scrolling', 500)
+  // scrollingMonitor: Monitor = Monitor.create('scrolling', 500)
 
   constructor(sizeX: number, sizeY: number) {
     super()
@@ -53,10 +53,10 @@ export class Viewport extends State {
       this.thumb = new Area(0, 0, component.clientWidth, component.clientHeight)
       this.window = new Area(0, 0, component.clientWidth, component.clientHeight)
       this.targetGrid = this.allCells.truncateBy(TARGET_GRID_SIZE_LIMIT)
-      Cache.of(this.moveTo).setup({monitor: this.scrollingMonitor})
+      // Cache.of(this.moveTo).setup({monitor: this.scrollingMonitor})
     }
     else {
-      Cache.of(this.moveTo).setup({monitor: null})
+      // Cache.of(this.moveTo).setup({monitor: null})
       this.targetGrid = Area.ZERO
       this.window = Area.ZERO
       this.thumb = Area.ZERO
