@@ -198,13 +198,13 @@ export class Viewport extends State {
 
     const surface = this.surface
     const ratio = this.surfaceToAllFactor
-    const t = this.thumb = this.thumb.moveTo(xy(left, top), surface.atZero())
+    const thumb = this.thumb = this.thumb.moveTo(xy(left, top), surface.atZero())
     let w = this.window
 
-    const x = Viewport.adjust(w.x, w.size.x, t.x, t.till.x,
-      surface.x, surface.size.x, ratio.x)
-    const y = Viewport.adjust(w.y, w.size.y, t.y, t.till.y,
-      surface.y, surface.size.y, ratio.y)
+    const x = Viewport.scroll(w.x, w.size.x,
+      thumb.x, thumb.till.x, surface.x, surface.size.x, ratio.x)
+    const y = Viewport.scroll(w.y, w.size.y,
+      thumb.y, thumb.till.y, surface.y, surface.size.y, ratio.y)
 
     w = w.moveTo(xy(x, y), this.all)
     if (!w.equalTo(this.window))
@@ -225,7 +225,7 @@ export class Viewport extends State {
 
   // Math
 
-  private static adjust(window: number, windowSize: number,
+  private static scroll(window: number, windowSize: number,
     thumb: number, thumbTill: number,
     surface: number, surfaceSize: number,
     factor: number): number {
@@ -235,14 +235,14 @@ export class Viewport extends State {
     return jump ? thumb * factor : surface + thumb
   }
 
-  protected rebase(window: number, surface: number, surfaceSize: number,
+  protected static rebase(window: number, surface: number, surfaceSize: number,
     thumb: number, thumbTill: number, page: number,
     factor: number): { thumb: number, surface: number } {
     const ideal = window * factor
-    let result = { surface, thumb }
+    const result = { thumb, surface }
     if (Math.abs(ideal - thumb) > 4/5*page || thumb < 1 || thumbTill >= surfaceSize) {
-      thumb = ideal + 4/5*page * (surfaceSize/2 - ideal) / surfaceSize * 2
-      result = { thumb, surface: window - thumb }
+      result.thumb = ideal + 4/5*page * (surfaceSize/2 - ideal) / surfaceSize * 2
+      result.surface = window - result.thumb
     }
     return result
   }
