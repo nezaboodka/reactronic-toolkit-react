@@ -245,7 +245,8 @@ export class Viewport extends State {
       result.surface = window - result.thumb
     }
     // else if (thumb < 1 || thumbTill >= surfaceSize) {
-    //   result.thumb = ideal + 4/5*page * (surfaceSize/2 - ideal) / surfaceSize * 2
+    //   if (ideal > 0)
+    //     result.thumb = ideal + 4/5*page * (surfaceSize/2 - ideal) / surfaceSize * 2
     //   result.surface = window - result.thumb
     // }
     else if (surface !== window - result.thumb) {
