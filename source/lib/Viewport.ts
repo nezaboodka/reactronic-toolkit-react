@@ -201,9 +201,9 @@ export class Viewport extends State {
     const thumb = this.thumb = this.thumb.moveTo(xy(left, top), surface.atZero())
     let w = this.window
 
-    const x = Viewport.scroll(w.x, w.size.x,
+    const x = Viewport.jumpOrShift(w.x, w.size.x,
       thumb.x, thumb.till.x, surface.x, surface.size.x, ratio.x)
-    const y = Viewport.scroll(w.y, w.size.y,
+    const y = Viewport.jumpOrShift(w.y, w.size.y,
       thumb.y, thumb.till.y, surface.y, surface.size.y, ratio.y)
 
     w = w.moveTo(xy(x, y), this.all)
@@ -225,7 +225,7 @@ export class Viewport extends State {
 
   // Math
 
-  private static scroll(window: number, windowSize: number,
+  private static jumpOrShift(window: number, windowSize: number,
     thumb: number, thumbTill: number,
     surface: number, surfaceSize: number,
     factor: number): number {
