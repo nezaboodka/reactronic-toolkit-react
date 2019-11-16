@@ -174,11 +174,9 @@ export class Viewport extends State {
     const thumb = this.thumb = this.thumb.moveTo(xy(left, top), surface.atZero())
     let vp = this.visible
 
-    const x = Viewport.move(
-      thumb.x, surface.x, vp.x, vp.size.x, ratio.x,
+    const x = Viewport.move(thumb.x, surface.x, vp.x, vp.size.x, ratio.x,
       thumb.from.x < 1 || thumb.till.x >= surface.size.x)
-    const y = Viewport.move(
-      thumb.y, surface.y, vp.y, vp.size.y, ratio.y,
+    const y = Viewport.move(thumb.y, surface.y, vp.y, vp.size.y, ratio.y,
       thumb.from.y < 1 || thumb.till.y >= surface.size.y)
 
     vp = vp.moveTo(xy(x, y), this.all)
