@@ -190,7 +190,7 @@ export class Viewport extends State {
     }
   }
 
-  // Actions
+  // Actions & Triggers
 
   @action
   protected moveTo(left: number, top: number): void {
@@ -201,20 +201,14 @@ export class Viewport extends State {
     const thumb = this.thumb = this.thumb.moveTo(xy(left, top), surface.atZero())
     let vp = this.visible
 
-    const x = this.move(thumb.x, surface.x, vp.x, vp.size.x, ratio.x,
-      thumb.from.x < 1 || thumb.till.x >= surface.size.x)
-    const y = this.move(thumb.y, surface.y, vp.y, vp.size.y, ratio.y,
-      thumb.from.y < 1 || thumb.till.y >= surface.size.y)
+    const x = this.move(thumb.x, surface.x, vp.x, vp.size.x,
+      ratio.x, thumb.till.x, surface.size.x)
+    const y = this.move(thumb.y, surface.y, vp.y, vp.size.y,
+      ratio.y, thumb.till.y, surface.size.y)
 
     vp = vp.moveTo(xy(x, y), this.all)
     if (!vp.equalTo(this.visible))
       this.visible = vp
-  }
-
-  private move(thumb: number, surface: number, viewport: number, page: number, factor: number, edge: boolean): number {
-    const delta = Math.abs(surface + thumb - viewport)
-    const jump = delta > 1.5*page || (edge && delta > 0.5*page)
-    return jump ? thumb * factor : surface + thumb
   }
 
   @trigger
@@ -227,6 +221,16 @@ export class Viewport extends State {
       if (Math.abs(thumb.y - c.scrollTop) > 0.1)
         c.scrollTop = thumb.y
     }
+  }
+
+  // Math
+
+  private move(thumb: number, surface: number, viewport: number,
+    page: number, factor: number, thumbTill: number, surfaceSize: number): number {
+    const delta = Math.abs(surface + thumb - viewport)
+    const jump = delta > 1.5*page ||
+      (delta > 0.5*page && (thumb < 1 || thumbTill >= surfaceSize))
+    return jump ? thumb * factor : surface + thumb
   }
 }
 
