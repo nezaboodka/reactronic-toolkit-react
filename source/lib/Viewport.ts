@@ -195,7 +195,6 @@ export class Viewport extends State {
   @action
   protected moveTo(left: number, top: number): void {
     // console.log(`scroll: ${this.thumb.y}->${cy}, h=${this.component ? this.component.scrollHeight : '?'}`)
-
     const surface = this.surface
     const ratio = this.surfaceToAllFactor
     const thumb = this.thumb.moveTo(xy(left, top), surface.atZero())
