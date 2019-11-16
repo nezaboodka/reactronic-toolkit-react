@@ -149,8 +149,8 @@ export class Viewport extends State {
     const c = this.component
     if (c) {
       const t = this.thumb
-      if (Math.abs(t.y - c.scrollTop) >= 0.5/devicePixelRatio ||
-        Math.abs(t.x - c.scrollLeft) >= 0.5/devicePixelRatio)
+      if (Math.abs(t.y - c.scrollTop) > 1/devicePixelRatio ||
+        Math.abs(t.x - c.scrollLeft) > 1/devicePixelRatio)
         this.moveTo(c.scrollLeft, c.scrollTop)
     }
   }
@@ -177,10 +177,13 @@ export class Viewport extends State {
     const y = Viewport.rebase(window.y, surface.y, surface.size.y,
       thumb.y, thumb.till.y, scrollPixelStep.y, ratio.y)
 
-    thumb = thumb.moveTo(xy(x.thumb, y.thumb), scroll)
     surface = surface.moveTo(xy(x.surface, y.surface), this.all)
     if (!surface.equalTo(this.surface))
     {
+      // console.log(`rebase: ${this.surface.y}(${this.surface.x}) -> ${surface.y}(${surface.x}), h=${this.component ? this.component.scrollHeight : '?'}`)
+      thumb = thumb.moveTo(xy(
+        surface.x !== this.surface.x ? x.thumb : thumb.x,
+        surface.y !== this.surface.y ? y.thumb : thumb.y), scroll)
       this.surface = surface
       this.thumb = thumb
     }
@@ -190,7 +193,7 @@ export class Viewport extends State {
 
   @action
   protected moveTo(left: number, top: number): void {
-    // console.log(`scroll: ${this.thumb.y}->${cy}, h=${this.component ? this.component.scrollHeight : '?'}`)
+    // console.log(`scroll: ${this.thumb.y}->${top}, h=${this.component ? this.component.scrollHeight : '?'}`)
     const surface = this.surface
     const ratio = this.surfaceToAllFactor
     const thumb = this.thumb.moveTo(xy(left, top), surface.atZero())
@@ -236,12 +239,16 @@ export class Viewport extends State {
     factor: number): { thumb: number, surface: number } {
     const ideal = window * factor
     const result = { thumb, surface }
-    if (Math.abs(ideal - thumb) > 4/5*page) {
+    if (Math.abs(ideal - thumb) > 1/5*page) {
       result.thumb = ideal + 4/5*page * (surfaceSize/2 - ideal) / surfaceSize * 2
       result.surface = window - result.thumb
     }
     else if (thumb < 1 || thumbTill >= surfaceSize) {
-      // coming soon...
+      result.thumb = ideal + 4/5*page * (surfaceSize/2 - ideal) / surfaceSize * 2
+      result.surface = window - result.thumb
+    }
+    else if (surface !== window - result.thumb) {
+      result.surface = window - result.thumb
     }
     return result
   }

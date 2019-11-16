@@ -3,7 +3,7 @@
 // Copyright (C) 2019 Yury Chetyrko <ychetyrko@gmail.com>
 // License: https://raw.githubusercontent.com/nezaboodka/reactronic/master/LICENSE
 
-import { Reentrance,reentrance, sleep, State, trigger } from 'reactronic'
+import { Action, Reentrance, reentrance, sleep, State, trigger } from 'reactronic'
 
 import { Viewport } from '@reactronic-toolkit-react'
 
@@ -28,8 +28,10 @@ export class DataLoader extends State {
         for (let x = buf.x; x <= till.x; x++)
           data.push(`${y}:${x}`)
       await sleep(130)
-      this.data = data
-      vp.ready(buf)
+      if (!Action.current.isCanceled) {
+        this.data = data
+        vp.ready(buf)
+      }
     }
   }
 }

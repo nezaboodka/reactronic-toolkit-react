@@ -23,20 +23,24 @@ export function AreaRect(p: {
     const css = style.classes
     return (
       <div className={cx(css.area, p.className)} style={p.style}>
-        <div className={css.hint} style={place(2, 2, 9, 2)}>
+        <div title={`Rows x Columns: ${num(p.area.size.y, -3)} x ${num(p.area.size.x, -3)}`}
+          className={css.hint} style={place(2, 2, 9, 2)}>
           {p.hint}: {num(p.area.size.y, -3)} rows<br/>
           <i>↕ {num(p.px.size.y, 1)} px, {num(p.px.size.x, 1)} px</i>
         </div>
-        <div className={css.from} style={place(5, 2, 9, 2)}>
+        <div title={`y:${num(p.area.from.y, 3)}, x:${num(p.area.from.x, 3)}`}
+          className={css.from} style={place(5, 2, 9, 2)}>
           {num(p.area.from.y, 3)}<br/>
           <i>{num(p.px.from.y, 1)} px</i>
         </div>
-        <div className={css.till} style={place(5, 9, 9, 9)}>
+        <div title={`y:${num(p.px.till.y, 1)} px, x:${num(p.px.till.x, 1)}`}
+          className={css.till} style={place(5, 9, 9, 9)}>
           <i>{num(p.px.till.y, 1)} px</i><br/>
           {num(p.area.till.y, 3)}
         </div>
         {p.inner && (
-          <div className={css.outer} style={place(2, 3, 9, 3)}>
+          <div title={`y:${num(p.inner.y - p.px.y, 1)} px, x:${num(p.inner.x - p.px.x, 1)}`}
+            className={css.outer} style={place(2, 3, 9, 3)}>
             <i>Gap: {num(p.inner.y - p.px.y, 1)} px</i>
           </div>
         )}
