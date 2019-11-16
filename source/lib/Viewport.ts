@@ -235,21 +235,17 @@ export class Viewport extends State {
     return jump ? thumb * factor : surface + thumb
   }
 
-  // private rebase(thumb: number, thumbTill: number, surfaceSize: number): any {
-  //   const scroll = this.surface.atZero()
-  //   const scrollPixelStep = this.visibleToSurfaceFactor
-  //   const ideal = this.visible.scaleBy(this.allToSurfaceFactor)
-  //   if (Math.abs(ideal.x - thumb) > 4/5*scrollPixelStep.x || thumb < 1 || thumbTill >= surfaceSize) {
-  //     const s = this.surface
-  //     const correction = 4/5*scrollPixelStep.x * (scroll.center.x - ideal.center.x) / surfaceSize * 2
-  //     const t2 = thumb.moveTo(xy(ideal.x + correction, thumb.y), scroll)
-  //     const s2 = s.moveTo(xy(this.visible.x - t2.x, s.y), this.all)
-  //     if (!s2.equalTo(s)) {
-  //       this.surface = s2
-  //       this.thumb = t2
-  //     }
-  //   }
-  // }
+  protected rebase(window: number, surface: number, surfaceSize: number,
+    thumb: number, thumbTill: number, page: number,
+    factor: number): { thumb: number, surface: number } {
+    const ideal = window * factor
+    let result = { surface, thumb }
+    if (Math.abs(ideal - thumb) > 4/5*page || thumb < 1 || thumbTill >= surfaceSize) {
+      thumb = ideal + 4/5*page * (surfaceSize/2 - ideal) / surfaceSize * 2
+      result = { thumb, surface: window - thumb }
+    }
+    return result
+  }
 }
 
 export function dumpArea(a: Area, fr?: number): string {
