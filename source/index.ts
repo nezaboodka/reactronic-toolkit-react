@@ -13,5 +13,5 @@ export * from './tools/restyle'
 export * from './tools/place'
 
 export * from './components/RComponent'
-export * from './components/ViewportScrollBox'
+export * from './components/ScrollBox'
 export * from './components/ViewportDebugger'
