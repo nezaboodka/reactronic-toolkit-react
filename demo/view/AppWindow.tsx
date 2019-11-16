@@ -21,8 +21,8 @@ export function AppWindow(p: {app: Application}): JSX.Element {
     return (
       <div className={css.window}>
         <ScrollBox viewport={vp} style={place(2, 2, 9, 9)}
-          className={css.scroll} dataClassName={css.grid}>
-          <DataFragment loader={loader} cellWidth={res.x} cellHeight={res.y}/>
+          className={css.scroll} contentClassName={css.grid}>
+          <DataFragment loader={loader}/>
         </ScrollBox>
         <div className={css.toolbar} style={place(10, 2, 10, 2)}>
           <button onClick={e => c ? c.scrollTop += res.y : {}}

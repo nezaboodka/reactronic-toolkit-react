@@ -11,22 +11,25 @@ import { DataLoader } from '/app/DataLoader'
 
 import { style } from './DataFragment.css'
 
-export function DataFragment(p: {loader: DataLoader, cellWidth: number, cellHeight: number}): JSX.Element {
+export function DataFragment(p: {loader: DataLoader}): JSX.Element {
   return reactive(() => {
     const data = p.loader.data
     const vp = p.loader.viewport
-    const area = vp.loadedCells
+    const cells = vp.loadedCells
     const tg = vp.targetGrid
-    const zero = xy(area.x - tg.x, area.y - tg.y)
-    const dim: React.CSSProperties = { width: `${p.cellWidth}px`, height: `${p.cellHeight}px` }
+    const zero = xy(cells.x - tg.x, cells.y - tg.y)
+    const dim: React.CSSProperties = {
+      width: `${vp.resolution.x}px`,
+      height: `${vp.resolution.y}px`,
+    }
     return (
       <React.Fragment>
         {data.map((cell, i) => {
-          const y = Math.floor(i / area.size.x)
-          const x = i % area.size.x
+          const y = Math.floor(i / cells.size.x)
+          const x = i % cells.size.x
           const r = zero.y + y
           const c = zero.x + x
-          const key = `R${r}C${c}:Y${area.y + y}X${area.x + x}`
+          const key = `R${r}C${c}:Y${cells.y + y}X${cells.x + x}`
           return (
             <GridCell key={key} hint={key} style={dim}
               row={r} col={c} text={cell}/>

@@ -12,9 +12,9 @@ export function ScrollBox(p: {
   viewport: Viewport,
   children: JSX.Element,
   className?: string,
-  dataClassName?: string,
   style?: React.CSSProperties,
-  dataStyle?: React.CSSProperties}): JSX.Element {
+  contentClassName?: string,
+  contentStyle?: React.CSSProperties}): JSX.Element {
 
   const ref = React.useCallback(element => {
     let resolution = 1
@@ -40,7 +40,7 @@ export function ScrollBox(p: {
     const lw = `${l.size.x}px`
     const lh = `${l.size.y}px`
     const dataStyle: React.CSSProperties = {
-      ...p.dataStyle,
+      ...p.contentStyle,
       position: 'absolute',
       left: `${l.x - s.x}px`,
       top: `${l.y - s.y}px`,
@@ -51,7 +51,7 @@ export function ScrollBox(p: {
       <div ref={ref} className={p.className} style={p.style}
         onScroll={e => p.viewport.scroll()}>
         <div style={surfaceStyle}>
-          <div className={p.dataClassName} style={dataStyle}>
+          <div className={p.contentClassName} style={dataStyle}>
             {p.children}
           </div>
         </div>
