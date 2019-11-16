@@ -19,9 +19,9 @@ export class DataLoader extends State {
 
   @trigger @reentrance(Reentrance.CancelPrevious)
   async load(): Promise<void> {
-    const v = this.viewport
-    const buf = v.bufferCells
-    if (!buf.equalTo(v.loadedCells)) {
+    const vp = this.viewport
+    const buf = vp.bufferCells
+    if (!buf.equalTo(vp.loadedCells)) {
       const data: string[] = []
       const till = buf.till
       for (let y = buf.y; y <= till.y; y++)
@@ -29,7 +29,7 @@ export class DataLoader extends State {
           data.push(`${y}:${x}`)
       await sleep(130)
       this.data = data
-      v.ready(buf)
+      vp.ready(buf)
     }
   }
 }

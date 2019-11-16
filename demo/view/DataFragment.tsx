@@ -14,9 +14,9 @@ import { style } from './DataFragment.css'
 export function DataFragment(p: {loader: DataLoader, cellWidth: number, cellHeight: number}): JSX.Element {
   return reactive(() => {
     const data = p.loader.data
-    const v = p.loader.viewport
-    const area = v.loadedCells
-    const tg = v.targetGrid
+    const vp = p.loader.viewport
+    const area = vp.loadedCells
+    const tg = vp.targetGrid
     const zero = xy(area.x - tg.x, area.y - tg.y)
     const dim: React.CSSProperties = { width: `${p.cellWidth}px`, height: `${p.cellHeight}px` }
     return (

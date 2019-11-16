@@ -14,13 +14,13 @@ import { style } from './AppWindow.css'
 export function AppWindow(p: {app: Application}): JSX.Element {
   return reactive(() => {
     const css = style.classes
-    const v = p.app.viewport
+    const vp = p.app.viewport
     const loader = p.app.loader
-    const c = v.component
-    const res = v.resolution
+    const c = vp.component
+    const res = vp.resolution
     return (
       <div className={css.window}>
-        <ViewportScrollBox viewport={v} style={place(2, 2, 9, 9)}
+        <ViewportScrollBox viewport={vp} style={place(2, 2, 9, 9)}
           className={css.scroll} dataClassName={css.grid}>
           <DataFragment loader={loader} cellWidth={res.x} cellHeight={res.y}/>
         </ViewportScrollBox>
@@ -39,11 +39,11 @@ export function AppWindow(p: {app: Application}): JSX.Element {
             disabled={!c}>▲ 1K px</button>
           <button onClick={e => c ? c.scrollTop = c.scrollHeight - c.clientHeight - 1 : {}}
             disabled={!c}>▼ End</button>
-          <button onClick={e => c ? alert(`${c.scrollTop}, ${c.scrollHeight}, ${v.surface.size.y}`) : {}}
+          <button onClick={e => c ? alert(`${c.scrollTop}, ${c.scrollHeight}, ${vp.surface.size.y}`) : {}}
             disabled={!c}>▲ Begin</button>
         </div>
         <div className={css.visualizer} style={place(10, 3, 10, 5)}>
-          <ViewportDebugger viewport={v}/>
+          <ViewportDebugger viewport={vp}/>
         </div>
       </div>
     )
