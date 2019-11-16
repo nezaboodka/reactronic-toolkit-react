@@ -8,13 +8,10 @@ import { Reentrance, reentrance, sleep, State, trigger } from 'reactronic'
 import { Viewport } from '@reactronic-toolkit-react'
 
 export class DataLoader extends State {
-  readonly viewport: Viewport
-  data: string[]
-
-  constructor(viewport: Viewport) {
+  constructor(
+    readonly viewport: Viewport,
+    public data: string[] = []) {
     super()
-    this.viewport = viewport
-    this.data = []
   }
 
   @trigger @reentrance(Reentrance.RunSideBySide)
