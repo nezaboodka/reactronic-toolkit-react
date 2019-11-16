@@ -230,7 +230,7 @@ export class Viewport extends State {
     surface: number, surfaceSize: number,
     factor: number): number {
     const delta = Math.abs(surface + thumb - window)
-    const jump = delta > 1.5*windowSize ||
+    const jump = delta > 3*windowSize ||
       (delta > 0.5*windowSize && (thumb < 1 || thumbTill >= surfaceSize))
     return jump ? thumb * factor : surface + thumb
   }
