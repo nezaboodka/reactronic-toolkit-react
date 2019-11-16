@@ -37,7 +37,7 @@ export class Viewport extends State {
   loadedCells: Area = Area.ZERO
   targetGrid: Area = Area.ZERO
   sizing = new Sizing()
-  scrollingMonitor: Monitor = Monitor.create('scrolling', 20)
+  scrollingMonitor: Monitor = Monitor.create('scrolling', 500)
 
   constructor(sizeX: number, sizeY: number) {
     super()
@@ -74,11 +74,11 @@ export class Viewport extends State {
   }
 
   get visibleToSurfaceFactor(): XY {
-    const surface = this.surface.size
-    const visible = this.visible.size
+    const surface = this.surface
+    const visible = this.visible
     return xy(
-      surface.x / (visible.x - 1),
-      surface.y / (visible.y - 1))
+      surface.size.x / (visible.size.x - 1),
+      surface.size.y / (visible.size.y - 1))
   }
 
   get surfaceToVisibleFactor(): XY {
@@ -87,12 +87,12 @@ export class Viewport extends State {
   }
 
   get surfaceToAllFactor(): XY {
-    const all = this.all.size
-    const surface = this.surface.size
-    const visible = this.visible.size
+    const all = this.all
+    const surface = this.surface
+    const visible = this.visible
     return xy(
-      all.x / (surface.x - visible.x),
-      all.y / (surface.y - visible.y))
+      all.size.x / (surface.size.x - visible.size.x),
+      all.size.y / (surface.size.y - visible.size.y))
   }
 
   get allToSurfaceFactor(): XY {
@@ -101,11 +101,11 @@ export class Viewport extends State {
   }
 
   get visibleToAllFactor(): XY {
-    const all = this.all.size
-    const visible = this.visible.size
+    const all = this.all
+    const visible = this.visible
     return xy(
-      all.x / (visible.x - 1),
-      all.y / (visible.y - 1))
+      all.size.x / (visible.size.x - 1),
+      all.size.y / (visible.size.y - 1))
   }
 
   get allToVisibleFactor(): XY {
@@ -143,7 +143,7 @@ export class Viewport extends State {
     return this.visible.scaleBy(this.pixelToCellFactor)
   }
 
-  // Actions
+  // Events
 
   onScroll(): void {
     const c = this.component
@@ -157,63 +157,50 @@ export class Viewport extends State {
 
   setLoadedCells(cells: Area): void {
     this.loadedCells = cells
-    const target = this.targetGrid
-    if (!target.envelops(cells))
-      this.targetGrid = target.moveCenterTo(cells.center, this.allCells).round()
+    const tg = this.targetGrid
+    if (!tg.envelops(cells))
+      this.targetGrid = tg.moveCenterTo(cells.center, this.allCells).round()
+    this.rebase()
   }
+
+  // Actions
 
   @action
-  protected moveTo(sx: number, sy: number): void {
+  protected moveTo(left: number, top: number): void {
     // console.log(`scroll: ${this.thumb.y}->${cy}, h=${this.component ? this.component.scrollHeight : '?'}`)
-    let v = this.visible
-    let s = this.surface
-    const z = this.surface.atZero()
-    const thumb = this.thumb = this.thumb.moveTo(xy(sx, sy), z)
-    const vx2 = s.x + thumb.x
-    const vy2 = s.y + thumb.y
-    const dx = Math.abs(vx2 - v.x)
-    if (dx > 2 * v.size.x || (dx > v.size.x / 2 && (thumb.from.x < 1 || thumb.till.x >= z.size.x))) {
-      const v2 = v.moveTo(xy(Math.ceil(sx * this.surfaceToAllFactor.x), v.y), this.all)
-      if (!v2.equalTo(v)) {
-        this.visible = v = v2
-        this.surface = s = s.moveTo(xy(v2.x - thumb.x, s.y), this.all)
-      }
-    }
-    else {
-      const v2 = v.moveTo(xy(vx2, v.y), this.all)
-      if (!v2.equalTo(v)) {
-        this.visible = v = v2
-        // to adjust surface
-      }
-    }
-    const dy = Math.abs(vy2 - v.y)
-    if (dy > 2 * v.size.y || (dy > v.size.y / 2 && (thumb.from.y < 1 || thumb.till.y >= z.size.y))) {
-      const v2 = v.moveTo(xy(v.x, Math.ceil(sy * this.surfaceToAllFactor.y)), this.all)
-      if (!v2.equalTo(v)) {
-        // console.log(` jump: ${v.y}->${v2.y} (${v2.y - v.y})`)
-        this.visible = v = v2
-        this.surface = s = s.moveTo(xy(s.x, v2.y - thumb.y), this.all)
-      }
-    }
-    else {
-      const v2 = v.moveTo(xy(v.x, vy2), this.all)
-      if (!v2.equalTo(v)) {
-        // console.log(` move: ${v.y}->${v2.y} (${v2.y - v.y})`)
-        this.visible = v = v2
-        // to adjust surface
-      }
-    }
+
+    const surface = this.surface
+    const ratio = this.surfaceToAllFactor
+    const thumb = this.thumb = this.thumb.moveTo(xy(left, top), surface.atZero())
+    let vp = this.visible
+
+    const x = Viewport.move(
+      thumb.x, surface.x, vp.x, vp.size.x, ratio.x,
+      thumb.from.x < 1 || thumb.till.x >= surface.size.x)
+    const y = Viewport.move(
+      thumb.y, surface.y, vp.y, vp.size.y, ratio.y,
+      thumb.from.y < 1 || thumb.till.y >= surface.size.y)
+
+    vp = vp.moveTo(xy(x, y), this.all)
+    if (!vp.equalTo(this.visible))
+      this.visible = vp
   }
 
-  protected rebaseSurface(): void {
-    const z = this.surface.atZero()
+  private static move(thumb: number, surface: number, viewport: number, page: number, factor: number, edge: boolean): number {
+    const delta = Math.abs(surface + thumb - viewport)
+    const jump = delta > 1.5*page || (edge && delta > 0.5*page)
+    return jump ? thumb * factor : surface + thumb
+  }
+
+  private rebase(): void {
+    const scrollBox = this.surface.atZero()
     const scrollPixelStep = this.visibleToSurfaceFactor
-    const optimal = this.visible.scaleBy(this.allToSurfaceFactor).moveBy(
-      xy(scrollPixelStep.x/2, scrollPixelStep.y/2), z)
+    const ideal = this.visible.scaleBy(this.allToSurfaceFactor)
     let thumb = this.thumb
-    if (Math.abs(optimal.x - thumb.x) > scrollPixelStep.x/3 || thumb.from.x < 1 || thumb.till.x >= z.size.x) {
+    if (Math.abs(ideal.x - thumb.x) > 4/5*scrollPixelStep.x || thumb.from.x < 1 || thumb.till.x >= scrollBox.size.x) {
       const s = this.surface
-      const t2 = thumb.moveTo(xy(optimal.x, thumb.y), z)
+      const correction = 4/5*scrollPixelStep.x * (scrollBox.center.x - ideal.center.x) / scrollBox.size.x * 2
+      const t2 = thumb.moveTo(xy(ideal.x + correction, thumb.y), scrollBox)
       const s2 = s.moveTo(xy(this.visible.x - t2.x, s.y), this.all)
       if (!s2.equalTo(s)) {
         this.surface = s2
@@ -221,9 +208,10 @@ export class Viewport extends State {
       }
     }
     thumb = this.thumb
-    if (Math.abs(optimal.y - thumb.y) > scrollPixelStep.y/3 || thumb.from.y < 1 || thumb.till.y >= z.size.y) {
+    if (Math.abs(ideal.y - thumb.y) > 4/5*scrollPixelStep.y || thumb.from.y < 1 || thumb.till.y >= scrollBox.size.y) {
       const s = this.surface
-      const t2 = thumb.moveTo(xy(thumb.x, optimal.y), z)
+      const correction = 4/5*scrollPixelStep.y * (scrollBox.center.y - ideal.center.y) / scrollBox.size.y * 2
+      const t2 = thumb.moveTo(xy(thumb.x, ideal.y + correction), scrollBox)
       const s2 = s.moveTo(xy(s.x, this.visible.y - t2.y), this.all)
       if (!s2.equalTo(s)) {
         // console.log(`rebase: ${rebase} // diff=${diff.y}, thumb=${t.y}->${t2.y}, surface=${s.y}->${s2.y}`)
@@ -231,12 +219,6 @@ export class Viewport extends State {
         this.thumb = t2
       }
     }
-  }
-
-  @trigger
-  protected syncThumbAndSurface(): void {
-    if (this.component && !this.scrollingMonitor.busy)
-      this.rebaseSurface()
   }
 
   @trigger
@@ -250,12 +232,6 @@ export class Viewport extends State {
         c.scrollTop = thumb.y
     }
   }
-
-  // @action
-  // zoomAt(origin: XY, factor: number): void {
-  //   origin = this.surface.moveBy(origin, this.all)
-  //   this.viewport = this.viewport.zoomAt(origin, xy(factor, factor))
-  // }
 }
 
 export function dumpArea(a: Area, fr?: number): string {
