@@ -158,35 +158,31 @@ export class Viewport extends State {
   ready(cells: Area): void {
     this.loadedCells = cells
 
+    // Rebase target grid
     const tg = this.targetGrid
     if (!tg.envelops(cells))
       this.targetGrid = tg.moveCenterTo(cells.center, this.allCells).round()
 
+    // Rebase surface
     const scroll = this.surface.atZero()
     const scrollPixelStep = this.windowToSurfaceFactor
-    const ideal = this.window.scaleBy(this.allToSurfaceFactor)
+    // const ideal = this.window.scaleBy(this.allToSurfaceFactor)
+    const ratio = this.allToSurfaceFactor
+    const window = this.window
+    let surface = this.surface
     let thumb = this.thumb
-    if (Math.abs(ideal.x - thumb.x) > 4/5*scrollPixelStep.x || thumb.from.x < 1 || thumb.till.x >= scroll.size.x) {
-      const s = this.surface
-      const correction = 4/5*scrollPixelStep.x * (scroll.center.x - ideal.center.x) / scroll.size.x * 2
-      const t2 = thumb.moveTo(xy(ideal.x + correction, thumb.y), scroll)
-      const s2 = s.moveTo(xy(this.window.x - t2.x, s.y), this.all)
-      if (!s2.equalTo(s)) {
-        this.surface = s2
-        this.thumb = t2
-      }
-    }
-    thumb = this.thumb
-    if (Math.abs(ideal.y - thumb.y) > 4/5*scrollPixelStep.y || thumb.from.y < 1 || thumb.till.y >= scroll.size.y) {
-      const s = this.surface
-      const correction = 4/5*scrollPixelStep.y * (scroll.center.y - ideal.center.y) / scroll.size.y * 2
-      const t2 = thumb.moveTo(xy(thumb.x, ideal.y + correction), scroll)
-      const s2 = s.moveTo(xy(s.x, this.window.y - t2.y), this.all)
-      if (!s2.equalTo(s)) {
-        // console.log(`rebase: ${rebase} // diff=${diff.y}, thumb=${t.y}->${t2.y}, surface=${s.y}->${s2.y}`)
-        this.surface = s2
-        this.thumb = t2
-      }
+
+    const x = Viewport.rebase(window.x, surface.x, surface.size.x,
+      thumb.x, thumb.till.x, scrollPixelStep.x, ratio.x)
+    const y = Viewport.rebase(window.y, surface.y, surface.size.y,
+      thumb.y, thumb.till.y, scrollPixelStep.y, ratio.y)
+
+    thumb = thumb.moveTo(xy(x.thumb, y.thumb), scroll)
+    surface = surface.moveTo(xy(x.surface, y.surface), this.all)
+    if (!surface.equalTo(this.surface))
+    {
+      this.surface = surface
+      this.thumb = thumb
     }
   }
 
@@ -240,9 +236,12 @@ export class Viewport extends State {
     factor: number): { thumb: number, surface: number } {
     const ideal = window * factor
     const result = { thumb, surface }
-    if (Math.abs(ideal - thumb) > 4/5*page || thumb < 1 || thumbTill >= surfaceSize) {
+    if (Math.abs(ideal - thumb) > 4/5*page) {
       result.thumb = ideal + 4/5*page * (surfaceSize/2 - ideal) / surfaceSize * 2
       result.surface = window - result.thumb
+    }
+    else if (thumb < 1 || thumbTill >= surfaceSize) {
+      // coming soon...
     }
     return result
   }
