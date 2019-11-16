@@ -198,9 +198,9 @@ export class Viewport extends State {
 
     const surface = this.surface
     const ratio = this.surfaceToAllFactor
-    const thumb = this.thumb = this.thumb.moveTo(xy(left, top), surface.atZero())
-    let w = this.window
+    const thumb = this.thumb.moveTo(xy(left, top), surface.atZero())
 
+    let w = this.window
     const x = Viewport.jumpOrShift(w.x, w.size.x,
       thumb.x, thumb.till.x, surface.x, surface.size.x, ratio.x)
     const y = Viewport.jumpOrShift(w.y, w.size.y,
@@ -209,6 +209,7 @@ export class Viewport extends State {
     w = w.moveTo(xy(x, y), this.all)
     if (!w.equalTo(this.window))
       this.window = w
+    this.thumb = thumb
   }
 
   @trigger
