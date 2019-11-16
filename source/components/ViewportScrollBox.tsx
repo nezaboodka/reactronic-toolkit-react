@@ -37,8 +37,8 @@ export function ViewportScrollBox(p: {
       height: sh, minHeight: sh, maxHeight: sh,
     }
     const l = p.viewport.loaded
-    const lw = `${l.size.x}`
-    const lh = `${l.size.y}`
+    const lw = `${l.size.x}px`
+    const lh = `${l.size.y}px`
     const dataStyle: React.CSSProperties = {
       ...p.dataStyle,
       position: 'absolute',
