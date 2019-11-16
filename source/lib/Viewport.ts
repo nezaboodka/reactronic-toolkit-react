@@ -145,7 +145,7 @@ export class Viewport extends State {
 
   // Events
 
-  onScroll(): void {
+  scroll(): void {
     const c = this.component
     if (c) {
       const thumb = this.thumb
@@ -155,12 +155,39 @@ export class Viewport extends State {
     }
   }
 
-  setLoadedCells(cells: Area): void {
+  ready(cells: Area): void {
     this.loadedCells = cells
+
     const tg = this.targetGrid
     if (!tg.envelops(cells))
       this.targetGrid = tg.moveCenterTo(cells.center, this.allCells).round()
-    this.rebase()
+
+    const scroll = this.surface.atZero()
+    const scrollPixelStep = this.visibleToSurfaceFactor
+    const ideal = this.visible.scaleBy(this.allToSurfaceFactor)
+    let thumb = this.thumb
+    if (Math.abs(ideal.x - thumb.x) > 4/5*scrollPixelStep.x || thumb.from.x < 1 || thumb.till.x >= scroll.size.x) {
+      const s = this.surface
+      const correction = 4/5*scrollPixelStep.x * (scroll.center.x - ideal.center.x) / scroll.size.x * 2
+      const t2 = thumb.moveTo(xy(ideal.x + correction, thumb.y), scroll)
+      const s2 = s.moveTo(xy(this.visible.x - t2.x, s.y), this.all)
+      if (!s2.equalTo(s)) {
+        this.surface = s2
+        this.thumb = t2
+      }
+    }
+    thumb = this.thumb
+    if (Math.abs(ideal.y - thumb.y) > 4/5*scrollPixelStep.y || thumb.from.y < 1 || thumb.till.y >= scroll.size.y) {
+      const s = this.surface
+      const correction = 4/5*scrollPixelStep.y * (scroll.center.y - ideal.center.y) / scroll.size.y * 2
+      const t2 = thumb.moveTo(xy(thumb.x, ideal.y + correction), scroll)
+      const s2 = s.moveTo(xy(s.x, this.visible.y - t2.y), this.all)
+      if (!s2.equalTo(s)) {
+        // console.log(`rebase: ${rebase} // diff=${diff.y}, thumb=${t.y}->${t2.y}, surface=${s.y}->${s2.y}`)
+        this.surface = s2
+        this.thumb = t2
+      }
+    }
   }
 
   // Actions
@@ -188,35 +215,6 @@ export class Viewport extends State {
     const delta = Math.abs(surface + thumb - viewport)
     const jump = delta > 1.5*page || (edge && delta > 0.5*page)
     return jump ? thumb * factor : surface + thumb
-  }
-
-  private rebase(): void {
-    const scrollBox = this.surface.atZero()
-    const scrollPixelStep = this.visibleToSurfaceFactor
-    const ideal = this.visible.scaleBy(this.allToSurfaceFactor)
-    let thumb = this.thumb
-    if (Math.abs(ideal.x - thumb.x) > 4/5*scrollPixelStep.x || thumb.from.x < 1 || thumb.till.x >= scrollBox.size.x) {
-      const s = this.surface
-      const correction = 4/5*scrollPixelStep.x * (scrollBox.center.x - ideal.center.x) / scrollBox.size.x * 2
-      const t2 = thumb.moveTo(xy(ideal.x + correction, thumb.y), scrollBox)
-      const s2 = s.moveTo(xy(this.visible.x - t2.x, s.y), this.all)
-      if (!s2.equalTo(s)) {
-        this.surface = s2
-        this.thumb = t2
-      }
-    }
-    thumb = this.thumb
-    if (Math.abs(ideal.y - thumb.y) > 4/5*scrollPixelStep.y || thumb.from.y < 1 || thumb.till.y >= scrollBox.size.y) {
-      const s = this.surface
-      const correction = 4/5*scrollPixelStep.y * (scrollBox.center.y - ideal.center.y) / scrollBox.size.y * 2
-      const t2 = thumb.moveTo(xy(thumb.x, ideal.y + correction), scrollBox)
-      const s2 = s.moveTo(xy(s.x, this.visible.y - t2.y), this.all)
-      if (!s2.equalTo(s)) {
-        // console.log(`rebase: ${rebase} // diff=${diff.y}, thumb=${t.y}->${t2.y}, surface=${s.y}->${s2.y}`)
-        this.surface = s2
-        this.thumb = t2
-      }
-    }
   }
 
   @trigger

@@ -49,7 +49,7 @@ export function ViewportScrollBox(p: {
     }
     return (
       <div ref={ref} className={p.className} style={p.style}
-        onScroll={e => p.viewport.onScroll()}>
+        onScroll={e => p.viewport.scroll()}>
         <div style={surfaceStyle}>
           <div className={p.dataClassName} style={dataStyle}>
             {p.children}
