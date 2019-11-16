@@ -148,9 +148,9 @@ export class Viewport extends State {
   scroll(): void {
     const c = this.component
     if (c) {
-      const thumb = this.thumb
-      if (Math.abs(thumb.y - c.scrollTop) >= 0.5/devicePixelRatio ||
-        Math.abs(thumb.x - c.scrollLeft) >= 0.5/devicePixelRatio)
+      const t = this.thumb
+      if (Math.abs(t.y - c.scrollTop) >= 0.5/devicePixelRatio ||
+        Math.abs(t.x - c.scrollLeft) >= 0.5/devicePixelRatio)
         this.moveTo(c.scrollLeft, c.scrollTop)
     }
   }
@@ -201,9 +201,9 @@ export class Viewport extends State {
     const t = this.thumb = this.thumb.moveTo(xy(left, top), surface.atZero())
     let vp = this.visible
 
-    const x = this.move(t.x, t.till.x, surface.x, surface.size.x,
+    const x = Viewport.move(t.x, t.till.x, surface.x, surface.size.x,
       vp.x, vp.size.x, ratio.x)
-    const y = this.move(t.y, t.till.y, surface.y, surface.size.y,
+    const y = Viewport.move(t.y, t.till.y, surface.y, surface.size.y,
       vp.y, vp.size.y, ratio.y)
 
     vp = vp.moveTo(xy(x, y), this.all)
@@ -225,7 +225,7 @@ export class Viewport extends State {
 
   // Math
 
-  private move(thumb: number, thumbTill: number,
+  private static move(thumb: number, thumbTill: number,
     surface: number, surfaceSize: number,
     viewport: number, page: number, factor: number): number {
     const delta = Math.abs(surface + thumb - viewport)
@@ -233,6 +233,23 @@ export class Viewport extends State {
       (delta > 0.5*page && (thumb < 1 || thumbTill >= surfaceSize))
     return jump ? thumb * factor : surface + thumb
   }
+
+  // private rebase(): any {
+  //   const scroll = this.surface.atZero()
+  //   const scrollPixelStep = this.visibleToSurfaceFactor
+  //   const ideal = this.visible.scaleBy(this.allToSurfaceFactor)
+  //   let thumb = this.thumb
+  //   if (Math.abs(ideal.x - thumb.x) > 4/5*scrollPixelStep.x || thumb.from.x < 1 || thumb.till.x >= scroll.size.x) {
+  //     const s = this.surface
+  //     const correction = 4/5*scrollPixelStep.x * (scroll.center.x - ideal.center.x) / scroll.size.x * 2
+  //     const t2 = thumb.moveTo(xy(ideal.x + correction, thumb.y), scroll)
+  //     const s2 = s.moveTo(xy(this.visible.x - t2.x, s.y), this.all)
+  //     if (!s2.equalTo(s)) {
+  //       this.surface = s2
+  //       this.thumb = t2
+  //     }
+  //   }
+  // }
 }
 
 export function dumpArea(a: Area, fr?: number): string {
