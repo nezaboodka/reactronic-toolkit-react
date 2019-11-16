@@ -172,7 +172,7 @@ export class Viewport extends State {
     const vx2 = s.x + thumb.x
     const vy2 = s.y + thumb.y
     const dx = Math.abs(vx2 - v.x)
-    if (dx > 2 * v.size.x || (dx > v.size.x / 2 && (sx < 1 || sx >= s.size.x - v.size.x))) {
+    if (dx > 2 * v.size.x || (dx > v.size.x / 2 && (thumb.from.x < 1 || thumb.till.x >= z.size.x))) {
       const v2 = v.moveTo(xy(sx * this.surfaceToAllFactor.x, v.y), this.all)
       if (!v2.equalTo(v)) {
         this.visible = v = v2
@@ -187,7 +187,7 @@ export class Viewport extends State {
       }
     }
     const dy = Math.abs(vy2 - v.y)
-    if (dy > 2 * v.size.y || (dy > v.size.y / 2 && (sy < 1 || sy >= s.size.y - v.size.y))) {
+    if (dy > 2 * v.size.y || (dy > v.size.y / 2 && (thumb.from.y < 1 || thumb.till.y >= z.size.y))) {
       const v2 = v.moveTo(xy(v.x, sy * this.surfaceToAllFactor.y), this.all)
       if (!v2.equalTo(v)) {
         // console.log(` jump: ${v.y}->${v2.y} (${v2.y - v.y})`)
@@ -211,7 +211,7 @@ export class Viewport extends State {
     const optimal = this.visible.scaleBy(this.allToSurfaceFactor).moveBy(
       xy(scrollPixelStep.x/2, scrollPixelStep.y/2), z)
     let thumb = this.thumb
-    if (Math.abs(optimal.x - thumb.x) > scrollPixelStep.x/3) {
+    if (Math.abs(optimal.x - thumb.x) > scrollPixelStep.x/3 || thumb.from.x < 1 || thumb.till.x >= z.size.x) {
       const s = this.surface
       const t2 = thumb.moveTo(xy(optimal.x, thumb.y), z)
       const s2 = s.moveTo(xy(this.visible.x - t2.x, s.y), this.all)
@@ -221,7 +221,7 @@ export class Viewport extends State {
       }
     }
     thumb = this.thumb
-    if (Math.abs(optimal.y - thumb.y) > scrollPixelStep.y/3) {
+    if (Math.abs(optimal.y - thumb.y) > scrollPixelStep.y/3 || thumb.from.y < 1 || thumb.till.y >= z.size.y) {
       const s = this.surface
       const t2 = thumb.moveTo(xy(thumb.x, optimal.y), z)
       const s2 = s.moveTo(xy(s.x, this.visible.y - t2.y), this.all)
