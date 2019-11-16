@@ -198,13 +198,13 @@ export class Viewport extends State {
 
     const surface = this.surface
     const ratio = this.surfaceToAllFactor
-    const thumb = this.thumb = this.thumb.moveTo(xy(left, top), surface.atZero())
+    const t = this.thumb = this.thumb.moveTo(xy(left, top), surface.atZero())
     let vp = this.visible
 
-    const x = this.move(thumb.x, surface.x, vp.x, vp.size.x,
-      ratio.x, thumb.till.x, surface.size.x)
-    const y = this.move(thumb.y, surface.y, vp.y, vp.size.y,
-      ratio.y, thumb.till.y, surface.size.y)
+    const x = this.move(t.x, t.till.x, surface.x, surface.size.x,
+      vp.x, vp.size.x, ratio.x)
+    const y = this.move(t.y, t.till.y, surface.y, surface.size.y,
+      vp.y, vp.size.y, ratio.y)
 
     vp = vp.moveTo(xy(x, y), this.all)
     if (!vp.equalTo(this.visible))
@@ -225,8 +225,9 @@ export class Viewport extends State {
 
   // Math
 
-  private move(thumb: number, surface: number, viewport: number,
-    page: number, factor: number, thumbTill: number, surfaceSize: number): number {
+  private move(thumb: number, thumbTill: number,
+    surface: number, surfaceSize: number,
+    viewport: number, page: number, factor: number): number {
     const delta = Math.abs(surface + thumb - viewport)
     const jump = delta > 1.5*page ||
       (delta > 0.5*page && (thumb < 1 || thumbTill >= surfaceSize))
