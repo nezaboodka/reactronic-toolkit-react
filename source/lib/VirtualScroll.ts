@@ -26,7 +26,7 @@ export type IComponent = {
   scrollTop: number
 }
 
-export class Viewport extends State {
+export class VirtualScroll extends State {
   allCells: Area
   component: IComponent | null | undefined = undefined
   resolution: XY = xy(1, 1) // pixels per cell
@@ -173,9 +173,9 @@ export class Viewport extends State {
     let surface = this.surface
     let thumb = this.thumb
 
-    const x = Viewport.rebase(window.x, surface.x, surface.size.x,
+    const x = VirtualScroll.rebase(window.x, surface.x, surface.size.x,
       thumb.x, thumb.till.x, scrollPixelStep.x, ratio.x)
-    const y = Viewport.rebase(window.y, surface.y, surface.size.y,
+    const y = VirtualScroll.rebase(window.y, surface.y, surface.size.y,
       thumb.y, thumb.till.y, scrollPixelStep.y, ratio.y)
 
     surface = surface.moveTo(xy(x.surface, y.surface), this.all)
@@ -201,10 +201,10 @@ export class Viewport extends State {
     const thumb = this.thumb.moveTo(xy(left, top), surface.atZero())
 
     let w = this.window
-    const x = Viewport.jumpOrShift(w.x, w.size.x,
+    const x = VirtualScroll.jumpOrShift(w.x, w.size.x,
       thumb.x, thumb.till.x, surface.x, surface.size.x,
       scrollPixelStep.x, ratio.x)
-    const y = Viewport.jumpOrShift(w.y, w.size.y,
+    const y = VirtualScroll.jumpOrShift(w.y, w.size.y,
       thumb.y, thumb.till.y, surface.y, surface.size.y,
       scrollPixelStep.y, ratio.y)
 

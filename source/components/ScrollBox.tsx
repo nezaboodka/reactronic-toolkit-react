@@ -9,7 +9,7 @@ import { Viewport } from '../lib/Viewport'
 import { reactive } from '../tools/reactive'
 
 export function ScrollBox(p: {
-  viewport: Viewport,
+  scroll: Viewport,
   children: JSX.Element,
   className?: string,
   style?: React.CSSProperties,
@@ -22,11 +22,11 @@ export function ScrollBox(p: {
       const fs = window.getComputedStyle(element).fontSize
       resolution = parseFloat(fs.substr(0, fs.length - 2))
     }
-    p.viewport.setComponent(element, resolution)
+    p.scroll.setComponent(element, resolution)
   }, [])
 
   return reactive(() => {
-    const s = p.viewport.surface
+    const s = p.scroll.surface
     const sw = `${s.size.x}px`
     const sh = `${s.size.y}px`
     const surfaceStyle: React.CSSProperties = {
@@ -36,7 +36,7 @@ export function ScrollBox(p: {
       width: sw, minWidth: sw, maxWidth: sw,
       height: sh, minHeight: sh, maxHeight: sh,
     }
-    const l = p.viewport.loaded
+    const l = p.scroll.loaded
     const lw = `${l.size.x}px`
     const lh = `${l.size.y}px`
     const dataStyle: React.CSSProperties = {
@@ -49,7 +49,7 @@ export function ScrollBox(p: {
     }
     return (
       <div ref={ref} className={p.className} style={p.style}
-        onScroll={e => p.viewport.scroll()}>
+        onScroll={e => p.scroll.scroll()}>
         <div style={surfaceStyle}>
           <div className={p.contentClassName} style={dataStyle}>
             {p.children}

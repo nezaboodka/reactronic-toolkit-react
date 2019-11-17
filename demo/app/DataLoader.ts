@@ -4,11 +4,11 @@
 // License: https://raw.githubusercontent.com/nezaboodka/reactronic/master/LICENSE
 
 import { Reentrance, reentrance, sleep, State, trigger } from 'reactronic'
-import { Viewport } from 'reactronic-toolkit-react'
+import { VirtualScroll } from 'reactronic-toolkit-react'
 
 export class DataLoader extends State {
   constructor(
-    readonly viewport: Viewport,
+    readonly scroll: VirtualScroll,
     public data: string[] = []) {
     super()
   }
@@ -16,16 +16,16 @@ export class DataLoader extends State {
   @trigger @reentrance(Reentrance.CancelPrevious)
   async load(): Promise<void> {
     await sleep(0)
-    const vp = this.viewport
-    const buf = vp.bufferCells
-    if (!buf.equalTo(vp.loadedCells)) {
+    const scroll = this.scroll
+    const buf = scroll.bufferCells
+    if (!buf.equalTo(scroll.loadedCells)) {
       const data: string[] = []
       const till = buf.till
       for (let y = buf.y; y <= till.y; y++)
         for (let x = buf.x; x <= till.x; x++)
           data.push(`${y}:${x}`)
       this.data = data
-      vp.ready(buf)
+      scroll.ready(buf)
     }
   }
 }

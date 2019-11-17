@@ -14,13 +14,13 @@ import { style } from './GridFragment.css'
 export function GridFragment(p: {loader: DataLoader}): JSX.Element {
   return reactive(() => {
     const data = p.loader.data
-    const vp = p.loader.viewport
-    const cells = vp.loadedCells
-    const tg = vp.targetGrid
+    const scroll = p.loader.scroll
+    const cells = scroll.loadedCells
+    const tg = scroll.targetGrid
     const zero = xy(cells.x - tg.x, cells.y - tg.y)
     const dim: React.CSSProperties = {
-      width: `${vp.resolution.x}px`,
-      height: `${vp.resolution.y}px`,
+      width: `${scroll.resolution.x}px`,
+      height: `${scroll.resolution.y}px`,
     }
     return (
       <React.Fragment>

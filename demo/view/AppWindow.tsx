@@ -14,13 +14,13 @@ import { style } from './AppWindow.css'
 export function AppWindow(p: {app: Application}): JSX.Element {
   return reactive(() => {
     const css = style.classes
-    const vp = p.app.viewport
+    const scroll = p.app.scroll
     const loader = p.app.loader
-    const c = vp.component
-    const res = vp.resolution
+    const c = scroll.component
+    const res = scroll.resolution
     return (
       <div className={css.main}>
-        <ScrollBox viewport={vp} style={place(2, 2, 9, 9)}
+        <ScrollBox scroll={scroll} style={place(2, 2, 9, 9)}
           className={css.scroll} contentClassName={css.grid}>
           <GridFragment loader={loader}/>
         </ScrollBox>
@@ -39,11 +39,11 @@ export function AppWindow(p: {app: Application}): JSX.Element {
             disabled={!c}>▲ 1K px</button>
           <button onClick={e => c ? c.scrollTop = c.scrollHeight - c.clientHeight - 1 : {}}
             disabled={!c}>▼ End</button>
-          <button onClick={e => c ? alert(`${c.scrollTop}, ${c.scrollHeight}, ${vp.surface.size.y}`) : {}}
+          <button onClick={e => c ? alert(`${c.scrollTop}, ${c.scrollHeight}, ${scroll.surface.size.y}`) : {}}
             disabled={!c}>▲ Begin</button>
         </div>
         <div className={css.debugger} style={place(10, 3, 10, 5)}>
-          <ViewportDebugger viewport={vp}/>
+          <ViewportDebugger scroll={scroll}/>
         </div>
       </div>
     )

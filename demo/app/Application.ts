@@ -4,11 +4,11 @@
 // License: https://raw.githubusercontent.com/nezaboodka/reactronic/master/LICENSE
 
 import { State } from 'reactronic'
-import { Viewport } from 'reactronic-toolkit-react'
+import { VirtualScroll } from 'reactronic-toolkit-react'
 
 import { DataLoader } from '/app/DataLoader'
 
 export class Application extends State {
-  readonly viewport = new Viewport(10000, 1000000000000)
-  readonly loader = new DataLoader(this.viewport)
+  readonly scroll = new VirtualScroll(10000, 1000000000000)
+  readonly loader = new DataLoader(this.scroll)
 }
