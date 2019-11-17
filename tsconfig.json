@@ -34,7 +34,7 @@
     "experimentalDecorators": true,
     "jsx": "react",
     "paths": {
-      "@reactronic-toolkit-react": ["index.ts"],
+      "reactronic-toolkit-react": ["index.ts"],
       "/app/*": ["../demo/app/*"],
       "/view/*": ["../demo/view/*"]
     },

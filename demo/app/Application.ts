@@ -4,8 +4,8 @@
 // License: https://raw.githubusercontent.com/nezaboodka/reactronic/master/LICENSE
 
 import { State } from 'reactronic'
+import { Viewport } from 'reactronic-toolkit-react'
 
-import { Viewport } from '@reactronic-toolkit-react'
 import { DataLoader } from '/app/DataLoader'
 
 export class Application extends State {

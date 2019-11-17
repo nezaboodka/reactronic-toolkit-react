@@ -20,7 +20,7 @@ module.exports = {
   resolve: {
     extensions: ['.tsx', '.ts', '.js', '.css'],
     alias: {
-      '@reactronic-toolkit-react': path.resolve(__dirname, 'source', 'index.ts'),
+      'reactronic-toolkit-react': path.resolve(__dirname, 'source', 'index.ts'),
       '/app': path.resolve(__dirname, 'demo', 'app'),
       '/view': path.resolve(__dirname, 'demo', 'view'),
     },
