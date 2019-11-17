@@ -234,10 +234,13 @@ export class VirtualScroll extends State {
     const jump = delta > 3*viewportSize ||
       (delta > 0.5*viewportSize && (thumb < 1 || thumbTill >= surfaceSize))
     let result: number
-    if (jump)
+    if (jump) {
       result = (thumb - 4/5*scrollPixelStep * (surfaceSize/2 - thumb) / surfaceSize * 2) * factor
-    else
+    }
+    else {
       result = surface + thumb
+      // auto-rebase
+    }
     return result
   }
 
