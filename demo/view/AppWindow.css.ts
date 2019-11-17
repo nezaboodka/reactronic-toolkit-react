@@ -8,7 +8,7 @@ import { restyle } from 'reactronic-toolkit-react'
 
 export const style = restyle(() => {
   return {
-    window: css`
+    main: css`
       label: main;
       position: absolute;
       top: 0;
@@ -49,18 +49,12 @@ export const style = restyle(() => {
       label: grid;
       display: grid;
     `,
-    visualizer: css`
-      label: visualizer;
+    debugger: css`
+      label: debugger;
       width: 38vw;
       min-width: 38vw;
       max-width: 38vw;
       justify-self: center;
-    `,
-    from: css`
-      label: from;
-    `,
-    till: css`
-      label: till;
     `,
   }
 })

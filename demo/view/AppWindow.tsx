@@ -19,7 +19,7 @@ export function AppWindow(p: {app: Application}): JSX.Element {
     const c = vp.component
     const res = vp.resolution
     return (
-      <div className={css.window}>
+      <div className={css.main}>
         <ScrollBox viewport={vp} style={place(2, 2, 9, 9)}
           className={css.scroll} contentClassName={css.grid}>
           <GridFragment loader={loader}/>
@@ -42,7 +42,7 @@ export function AppWindow(p: {app: Application}): JSX.Element {
           <button onClick={e => c ? alert(`${c.scrollTop}, ${c.scrollHeight}, ${vp.surface.size.y}`) : {}}
             disabled={!c}>▲ Begin</button>
         </div>
-        <div className={css.visualizer} style={place(10, 3, 10, 5)}>
+        <div className={css.debugger} style={place(10, 3, 10, 5)}>
           <ViewportDebugger viewport={vp}/>
         </div>
       </div>
