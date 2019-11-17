@@ -5,11 +5,11 @@
 
 import * as React from 'react'
 
-import { Viewport } from '../lib/Viewport'
+import { VirtualScroll } from '../lib/VirtualScroll'
 import { reactive } from '../tools/reactive'
 
 export function ScrollBox(p: {
-  scroll: Viewport,
+  scroll: VirtualScroll,
   children: JSX.Element,
   className?: string,
   style?: React.CSSProperties,
