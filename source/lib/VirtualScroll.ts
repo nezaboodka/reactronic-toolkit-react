@@ -159,20 +159,17 @@ export class VirtualScroll extends State {
     // console.log(`ready: ${cells.y}..${cells.till.y}`)
     this.loadedCells = cells
 
-    // Rebase target grid
     const tg = this.targetGrid
     if (!tg.envelops(cells))
       this.targetGrid = tg.moveCenterTo(cells.center, this.allCells).round()
 
-    // Rebase surface
     const scroll = this.surface.atZero()
     const scrollPixelStep = this.viewportToSurfaceFactor
-    // const ideal = this.window.scaleBy(this.allToSurfaceFactor)
     const ratio = this.allToSurfaceFactor
     const vp = this.viewport
+
     let surface = this.surface
     let thumb = this.thumb
-
     const x = VirtualScroll.rebase(vp.x, surface.x, surface.size.x,
       thumb.x, thumb.till.x, scrollPixelStep.x, ratio.x)
     const y = VirtualScroll.rebase(vp.y, surface.y, surface.size.y,
