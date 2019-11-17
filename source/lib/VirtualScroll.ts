@@ -206,8 +206,10 @@ export class VirtualScroll extends State {
       scrollPixelStep.y, ratio.y)
 
     vp = vp.moveTo(xy(x, y), this.all)
-    if (!vp.equalTo(this.viewport))
+    if (!vp.equalTo(this.viewport)) {
       this.viewport = vp
+      this.surface = surface.moveTo(xy(vp.x - thumb.x, vp.y - thumb.y), this.all)
+    }
     this.thumb = thumb
   }
 
@@ -232,10 +234,8 @@ export class VirtualScroll extends State {
     const jump = delta > 3*viewportSize ||
       (delta > 0.5*viewportSize && (thumb < 1 || thumbTill >= surfaceSize))
     let result: number
-    if (jump) {
-      const precise = thumb * factor
-      result = precise // - 4/5*scrollPixelStep * (surfaceSize/2 - precise) / surfaceSize * 2
-    }
+    if (jump)
+      result = (thumb - 4/5*scrollPixelStep * (surfaceSize/2 - thumb) / surfaceSize * 2) * factor
     else
       result = surface + thumb
     return result
