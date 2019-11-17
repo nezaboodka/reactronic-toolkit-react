@@ -39,7 +39,7 @@ export const style = restyle(() => {
       margin-right: 0.25em;
     `,
     center: css`
-      label: areaCenter;
+      label: center;
       text-align: center;
     `,
   }
