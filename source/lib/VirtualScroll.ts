@@ -32,7 +32,7 @@ export class VirtualScroll extends State {
   resolution: XY = xy(1, 1) // pixels per cell
   surface: Area = Area.ZERO
   thumb: Area = Area.ZERO
-  window: Area = Area.ZERO
+  viewport: Area = Area.ZERO
   bufferSize: XY = xy(1.0, 1.5)
   loadedCells: Area = Area.ZERO
   targetGrid: Area = Area.ZERO
@@ -51,14 +51,14 @@ export class VirtualScroll extends State {
       this.resolution = xy(resolution * 8, resolution)
       this.surface = this.all.truncateBy(SURFACE_SIZE_LIMIT)
       this.thumb = new Area(0, 0, component.clientWidth, component.clientHeight)
-      this.window = new Area(0, 0, component.clientWidth, component.clientHeight)
+      this.viewport = new Area(0, 0, component.clientWidth, component.clientHeight)
       this.targetGrid = this.allCells.truncateBy(TARGET_GRID_SIZE_LIMIT)
       // Cache.of(this.moveTo).setup({monitor: this.scrollingMonitor})
     }
     else {
       // Cache.of(this.moveTo).setup({monitor: null})
       this.targetGrid = Area.ZERO
-      this.window = Area.ZERO
+      this.viewport = Area.ZERO
       this.thumb = Area.ZERO
       this.surface = Area.ZERO
       this.resolution = xy(1, 1)
@@ -73,26 +73,26 @@ export class VirtualScroll extends State {
     return xy(1 / r.x, 1 / r.y)
   }
 
-  get windowToSurfaceFactor(): XY {
+  get viewportToSurfaceFactor(): XY {
     const surface = this.surface
-    const w = this.window
+    const vp = this.viewport
     return xy(
-      surface.size.x / (w.size.x - 1),
-      surface.size.y / (w.size.y - 1))
+      surface.size.x / (vp.size.x - 1),
+      surface.size.y / (vp.size.y - 1))
   }
 
-  get surfaceToWindowFactor(): XY {
-    const w2s = this.windowToSurfaceFactor
-    return xy(1 / w2s.x, 1 / w2s.y)
+  get surfaceToViewportFactor(): XY {
+    const vp2s = this.viewportToSurfaceFactor
+    return xy(1 / vp2s.x, 1 / vp2s.y)
   }
 
   get surfaceToAllFactor(): XY {
     const all = this.all
     const surface = this.surface
-    const w = this.window
+    const vp = this.viewport
     return xy(
-      all.size.x / (surface.size.x - w.size.x),
-      all.size.y / (surface.size.y - w.size.y))
+      all.size.x / (surface.size.x - vp.size.x),
+      all.size.y / (surface.size.y - vp.size.y))
   }
 
   get allToSurfaceFactor(): XY {
@@ -100,17 +100,17 @@ export class VirtualScroll extends State {
     return xy(1 / s2a.x, 1 / s2a.y)
   }
 
-  get windowToAllFactor(): XY {
+  get viewportToAllFactor(): XY {
     const all = this.all
-    const w = this.window
+    const vp = this.viewport
     return xy(
-      all.size.x / (w.size.x - 1),
-      all.size.y / (w.size.y - 1))
+      all.size.x / (vp.size.x - 1),
+      all.size.y / (vp.size.y - 1))
   }
 
-  get allToWindowFactor(): XY {
-    const w2a = this.windowToAllFactor
-    return xy(1 / w2a.x, 1 / w2a.y)
+  get allToViewportFactor(): XY {
+    const vp2a = this.viewportToAllFactor
+    return xy(1 / vp2a.x, 1 / vp2a.y)
   }
 
   // Areas (pixels)
@@ -134,13 +134,13 @@ export class VirtualScroll extends State {
   }
 
   get bufferCells(): Area {
-    const w = this.windowCells
-    const buf = w.zoomAt(w.center, this.bufferSize)
+    const vpc = this.viewportCells
+    const buf = vpc.zoomAt(vpc.center, this.bufferSize)
     return buf.roundToOuter().truncateBy(this.allCells)
   }
 
-  get windowCells(): Area {
-    return this.window.scaleBy(this.pixelToCellFactor)
+  get viewportCells(): Area {
+    return this.viewport.scaleBy(this.pixelToCellFactor)
   }
 
   // Events
@@ -166,16 +166,16 @@ export class VirtualScroll extends State {
 
     // Rebase surface
     const scroll = this.surface.atZero()
-    const scrollPixelStep = this.windowToSurfaceFactor
+    const scrollPixelStep = this.viewportToSurfaceFactor
     // const ideal = this.window.scaleBy(this.allToSurfaceFactor)
     const ratio = this.allToSurfaceFactor
-    const window = this.window
+    const vp = this.viewport
     let surface = this.surface
     let thumb = this.thumb
 
-    const x = VirtualScroll.rebase(window.x, surface.x, surface.size.x,
+    const x = VirtualScroll.rebase(vp.x, surface.x, surface.size.x,
       thumb.x, thumb.till.x, scrollPixelStep.x, ratio.x)
-    const y = VirtualScroll.rebase(window.y, surface.y, surface.size.y,
+    const y = VirtualScroll.rebase(vp.y, surface.y, surface.size.y,
       thumb.y, thumb.till.y, scrollPixelStep.y, ratio.y)
 
     surface = surface.moveTo(xy(x.surface, y.surface), this.all)
@@ -197,20 +197,20 @@ export class VirtualScroll extends State {
     // console.log(`scroll: ${this.thumb.y}->${top}, h=${this.component ? this.component.scrollHeight : '?'}`)
     const surface = this.surface
     const ratio = this.surfaceToAllFactor
-    const scrollPixelStep = this.windowToSurfaceFactor
+    const scrollPixelStep = this.viewportToSurfaceFactor
     const thumb = this.thumb.moveTo(xy(left, top), surface.atZero())
 
-    let w = this.window
-    const x = VirtualScroll.jumpOrShift(w.x, w.size.x,
+    let vp = this.viewport
+    const x = VirtualScroll.jumpOrShift(vp.x, vp.size.x,
       thumb.x, thumb.till.x, surface.x, surface.size.x,
       scrollPixelStep.x, ratio.x)
-    const y = VirtualScroll.jumpOrShift(w.y, w.size.y,
+    const y = VirtualScroll.jumpOrShift(vp.y, vp.size.y,
       thumb.y, thumb.till.y, surface.y, surface.size.y,
       scrollPixelStep.y, ratio.y)
 
-    w = w.moveTo(xy(x, y), this.all)
-    if (!w.equalTo(this.window))
-      this.window = w
+    vp = vp.moveTo(xy(x, y), this.all)
+    if (!vp.equalTo(this.viewport))
+      this.viewport = vp
     this.thumb = thumb
   }
 
