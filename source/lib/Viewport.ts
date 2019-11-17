@@ -197,13 +197,16 @@ export class Viewport extends State {
     // console.log(`scroll: ${this.thumb.y}->${top}, h=${this.component ? this.component.scrollHeight : '?'}`)
     const surface = this.surface
     const ratio = this.surfaceToAllFactor
+    const scrollPixelStep = this.windowToSurfaceFactor
     const thumb = this.thumb.moveTo(xy(left, top), surface.atZero())
 
     let w = this.window
     const x = Viewport.jumpOrShift(w.x, w.size.x,
-      thumb.x, thumb.till.x, surface.x, surface.size.x, ratio.x)
+      thumb.x, thumb.till.x, surface.x, surface.size.x,
+      scrollPixelStep.x, ratio.x)
     const y = Viewport.jumpOrShift(w.y, w.size.y,
-      thumb.y, thumb.till.y, surface.y, surface.size.y, ratio.y)
+      thumb.y, thumb.till.y, surface.y, surface.size.y,
+      scrollPixelStep.y, ratio.y)
 
     w = w.moveTo(xy(x, y), this.all)
     if (!w.equalTo(this.window))
@@ -226,22 +229,30 @@ export class Viewport extends State {
   // Math
 
   private static jumpOrShift(window: number, windowSize: number,
-    thumb: number, thumbTill: number,
-    surface: number, surfaceSize: number,
-    factor: number): number {
+    thumb: number, thumbTill: number, surface: number, surfaceSize: number,
+    page: number, factor: number): number {
     const delta = Math.abs(surface + thumb - window)
     const jump = delta > 3*windowSize ||
       (delta > 0.5*windowSize && (thumb < 1 || thumbTill >= surfaceSize))
-    return jump ? thumb * factor : surface + thumb
+    let result: number
+    if (jump) {
+      // const ideal = thumb * factor
+      // const optimal = ideal + 4/5*page * (surfaceSize/2 - ideal) / surfaceSize * 2
+      result = thumb * factor
+    }
+    else
+      result = surface + thumb
+    return result
   }
 
-  protected static rebase(window: number, surface: number, surfaceSize: number,
-    thumb: number, thumbTill: number, page: number,
-    factor: number): { thumb: number, surface: number } {
+  protected static rebase(window: number,
+    surface: number, surfaceSize: number, thumb: number, thumbTill: number,
+    page: number, factor: number): { thumb: number, surface: number } {
     const ideal = window * factor
+    const optimal = ideal + 4/5*page * (surfaceSize/2 - ideal) / surfaceSize * 2
     const result = { thumb, surface }
-    if (Math.abs(ideal - thumb) > 1/5*page) {
-      result.thumb = ideal + 4/5*page * (surfaceSize/2 - ideal) / surfaceSize * 2
+    if (Math.abs(optimal - thumb) > 1/3*page) {
+      result.thumb = optimal
       result.surface = window - result.thumb
     }
     // else if (thumb < 1 || thumbTill >= surfaceSize) {
