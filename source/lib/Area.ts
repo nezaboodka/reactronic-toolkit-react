@@ -168,3 +168,7 @@ export function num(n: number, fr?: number): string {
   const s = fr !== undefined && fr < 0 ? n.toFixed(n % 1 !== 0 ? -fr : 0) : n.toFixed(fr)
   return s.replace(/\B(?=(\d{3})+(?!\d))/g, ' ')
 }
+
+// export function dumpArea(a: Area, fr?: number): string {
+//   return `x: ${num(a.x, fr)}, y: ${num(a.y, fr)}, w: ${num(a.x + a.size.x, fr)}, h: ${num(a.y + a.size.y, fr)}`
+// }

@@ -265,7 +265,3 @@ export class VirtualScroll extends State {
     return result
   }
 }
-
-export function dumpArea(a: Area, fr?: number): string {
-  return `x: ${num(a.x, fr)}, y: ${num(a.y, fr)}, w: ${num(a.x + a.size.x, fr)}, h: ${num(a.y + a.size.y, fr)}`
-}
