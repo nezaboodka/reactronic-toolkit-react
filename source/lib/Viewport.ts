@@ -33,7 +33,7 @@ export class Viewport extends State {
   surface: Area = Area.ZERO
   thumb: Area = Area.ZERO
   window: Area = Area.ZERO
-  bufferSize: XY = xy(1.0, 3.0)
+  bufferSize: XY = xy(1.0, 1.5)
   loadedCells: Area = Area.ZERO
   targetGrid: Area = Area.ZERO
   sizing = new Sizing()

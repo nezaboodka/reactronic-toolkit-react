@@ -14,9 +14,9 @@ export class DataLoader extends State {
     super()
   }
 
-  @trigger @reentrance(Reentrance.RunSideBySide)
+  @trigger @reentrance(Reentrance.CancelPrevious)
   async load(): Promise<void> {
-    await sleep(50)
+    await sleep(0)
     const vp = this.viewport
     const buf = vp.bufferCells
     if (!buf.equalTo(vp.loadedCells)) {

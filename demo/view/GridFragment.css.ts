@@ -22,7 +22,7 @@ export const style = restyle(() => {
     `,
     fade: css`
       label: fade;
-      animation: fade 1s ease;
+      animation: fade 0.1s ease;
       @keyframes fade {
         0% { color: transparent; }
       }
