@@ -225,40 +225,39 @@ export class VirtualScroll extends State {
 
   // Math
 
-  private static jumpOrShift(window: number, windowSize: number,
+  private static jumpOrShift(viewport: number, viewportSize: number,
     thumb: number, thumbTill: number, surface: number, surfaceSize: number,
-    page: number, factor: number): number {
-    const delta = Math.abs(surface + thumb - window)
-    const jump = delta > 3*windowSize ||
-      (delta > 0.5*windowSize && (thumb < 1 || thumbTill >= surfaceSize))
+    scrollPixelStep: number, factor: number): number {
+    const delta = Math.abs(surface + thumb - viewport)
+    const jump = delta > 3*viewportSize ||
+      (delta > 0.5*viewportSize && (thumb < 1 || thumbTill >= surfaceSize))
     let result: number
     if (jump) {
-      // const ideal = thumb * factor
-      // const optimal = ideal + 4/5*page * (surfaceSize/2 - ideal) / surfaceSize * 2
-      result = thumb * factor
+      const precise = thumb * factor
+      result = precise // - 4/5*scrollPixelStep * (surfaceSize/2 - precise) / surfaceSize * 2
     }
     else
       result = surface + thumb
     return result
   }
 
-  protected static rebase(window: number,
+  protected static rebase(viewport: number,
     surface: number, surfaceSize: number, thumb: number, thumbTill: number,
-    page: number, factor: number): { thumb: number, surface: number } {
-    const ideal = window * factor
-    const optimal = ideal + 4/5*page * (surfaceSize/2 - ideal) / surfaceSize * 2
+    scrollPixelStep: number, factor: number): { thumb: number, surface: number } {
+    const precise = viewport * factor
+    const optimal = precise + 4/5*scrollPixelStep * (surfaceSize/2 - precise) / surfaceSize * 2
     const result = { thumb, surface }
-    if (Math.abs(optimal - thumb) > 1/3*page) {
+    if (Math.abs(optimal - thumb) > 1/3*scrollPixelStep) {
       result.thumb = optimal
-      result.surface = window - result.thumb
+      result.surface = viewport - result.thumb
     }
     // else if (thumb < 1 || thumbTill >= surfaceSize) {
     //   if (ideal > 0)
     //     result.thumb = ideal + 4/5*page * (surfaceSize/2 - ideal) / surfaceSize * 2
-    //   result.surface = window - result.thumb
+    //   result.surface = viewport - result.thumb
     // }
-    else if (surface !== window - result.thumb) {
-      result.surface = window - result.thumb
+    else if (surface !== viewport - result.thumb) {
+      result.surface = viewport - result.thumb
     }
     return result
   }
