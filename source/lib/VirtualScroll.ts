@@ -33,7 +33,7 @@ export class VirtualScroll extends State {
   surface: Area = Area.ZERO
   thumb: Area = Area.ZERO
   viewport: Area = Area.ZERO
-  bufferSize: XY = xy(1.0, 1.5)
+  bufferSize: XY = xy(1.0, 4)
   loadedCells: Area = Area.ZERO
   targetGrid: Area = Area.ZERO
   sizing = new Sizing()
