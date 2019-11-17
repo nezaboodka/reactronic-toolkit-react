@@ -3,7 +3,9 @@
 // Copyright (C) 2019 Yury Chetyrko <ychetyrko@gmail.com>
 // License: https://raw.githubusercontent.com/nezaboodka/reactronic/master/LICENSE
 
-export function place(x1: number, y1: number, x2?: number, y2?: number): object {
+import * as React from 'react'
+
+export function place(x1: number, y1: number, x2?: number, y2?: number): React.CSSProperties {
   if (x2 === undefined)
     x2 = x1
   if (y2 === undefined)
