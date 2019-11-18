@@ -161,15 +161,15 @@ export class VirtualScroll extends State {
 
     const scroll = this.surface.atZero()
     const scrollPixelStep = this.viewportToSurfaceFactor
-    const ratio = this.allToSurfaceFactor
+    const a2s = this.allToSurfaceFactor
     const vp = this.viewport
 
     let surface = this.surface
     let thumb = this.thumb
     const x = VirtualScroll.rebase(vp.x, surface.x, surface.size.x,
-      thumb.x, thumb.till.x, scrollPixelStep.x, ratio.x)
+      thumb.x, thumb.till.x, scrollPixelStep.x, a2s.x)
     const y = VirtualScroll.rebase(vp.y, surface.y, surface.size.y,
-      thumb.y, thumb.till.y, scrollPixelStep.y, ratio.y)
+      thumb.y, thumb.till.y, scrollPixelStep.y, a2s.y)
 
     surface = surface.moveTo(xy(x.surface, y.surface), this.all)
     if (!surface.equalTo(this.surface))
@@ -232,7 +232,9 @@ export class VirtualScroll extends State {
       (thumb < 1 || thumbTill >= surfaceSize))
     const result = { thumb, viewport }
     if (jump) {
-      const correction = 4/5*scrollPixelStep * (surfaceSize/2 - thumb) / surfaceSize * 2
+      const factor = (surfaceSize/2 - thumb) / surfaceSize * 2
+      const correction = 4/5*scrollPixelStep * factor +
+        Math.sign(result.viewport - viewport) * 2/9 * scrollPixelStep
       result.viewport = (thumb - correction) * surfaceToAllRatio
     }
     else
@@ -243,9 +245,10 @@ export class VirtualScroll extends State {
 
   protected static rebase(viewport: number,
     surface: number, surfaceSize: number, thumb: number, thumbTill: number,
-    scrollPixelStep: number, factor: number): { thumb: number, surface: number } {
-    const precise = viewport * factor
-    const optimal = precise + 4/5*scrollPixelStep * (surfaceSize/2 - precise) / surfaceSize * 2
+    scrollPixelStep: number, allToSurfaceRatio: number): { thumb: number, surface: number } {
+    const precise = viewport * allToSurfaceRatio
+    const factor = (surfaceSize/2 - precise) / surfaceSize * 2
+    const optimal = precise + 4/5*scrollPixelStep * factor
     const result = { thumb, surface }
     if (Math.abs(optimal - thumb) > 1/3*scrollPixelStep) {
       result.thumb = optimal
