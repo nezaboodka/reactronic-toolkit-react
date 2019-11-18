@@ -8,7 +8,7 @@ import { action, State, trigger } from 'reactronic'
 import { Area, area, XY, xy } from './Area'
 
 export const SURFACE_SIZE_LIMIT: Area = area(0, 0, 1000123, 1000123)
-export const TARGET_GRID_SIZE_LIMIT: Area = area(0, 0, 999, 999)
+export const TARGET_GRID_SIZE_LIMIT: Area = area(0, 0, 899, 899)
 
 export type Guide = { index: number, till: number }
 
@@ -195,13 +195,13 @@ export class VirtualScroll extends State {
     const ready = this.ready.zoomAt(this.ready.center, xy(1/bufSize.x, 1/bufSize.y))
 
     let vp = this.viewport
-    const x = VirtualScroll.scrollViewportTo(thumb.x, thumb.till.x,
+    const x = VirtualScroll.getViewportByThumb(thumb.x, thumb.till.x,
       ready.x, vp.size.x, surface.x, surface.size.x,
       scrollPixelStep.x, s2a.x)
-    const y = VirtualScroll.scrollViewportTo(thumb.y, thumb.till.y,
+    const y = VirtualScroll.getViewportByThumb(thumb.y, thumb.till.y,
       ready.y, vp.size.y, surface.y, surface.size.y,
       scrollPixelStep.y, s2a.y)
-    vp = vp.moveTo(xy(x, y), this.all)
+    vp = vp.moveTo(xy(x.viewport, y.viewport), this.all)
     if (!vp.equalTo(this.viewport))
       this.viewport = vp
     this.thumb = thumb
@@ -221,39 +221,31 @@ export class VirtualScroll extends State {
 
   // Math
 
-  private static scrollViewportTo(thumb: number, thumbTill: number,
-    viewport: number, viewportSize: number, surface: number, surfaceSize: number,
-    scrollPixelStep: number, surfaceToAllRatio: number): number {
-    let result = surface + thumb
-    const diff = Math.abs(result - viewport)
-    const jump = diff > 3*viewportSize /*|| (diff > 0.5*viewportSize && (thumb < 1 || thumbTill >= surfaceSize))*/
+  private static getViewportByThumb(thumb: number, thumbTill: number,
+    existingViewport: number, viewportSize: number, surface: number, surfaceSize: number,
+    scrollPixelStep: number, surfaceToAllRatio: number): { thumb: number, viewport: number } {
+    const result = { thumb, viewport: surface + thumb }
+    const diff = Math.abs(result.viewport - existingViewport)
+    const jump = diff > 3*viewportSize || (diff > 0.5*viewportSize && (thumb < 1 || thumbTill >= surfaceSize))
     if (jump) {
       const fraction = 2 * (surfaceSize/2 - thumb) / surfaceSize
-      result = (thumb - 4/5*scrollPixelStep * fraction) * surfaceToAllRatio
+      result.viewport = (thumb - 4/5*scrollPixelStep * fraction) * surfaceToAllRatio
     }
     // if (vp !== result) console.log(`${jump ? 'jump' : 'shift'}: thumb=${thumb}, viewport=${vp}->${result}`)
     return result
   }
 
   protected static rebaseSurface(thumb: number, thumbTill: number,
-    viewport: number, surface: number, surfaceSize: number,
+    existingViewport: number, existingSurface: number, surfaceSize: number,
     scrollPixelStep: number, allToSurfaceRatio: number): { thumb: number, surface: number } {
-    const precise = viewport * allToSurfaceRatio
+    const precise = existingViewport * allToSurfaceRatio
     const fraction = 2 * (surfaceSize/2 - precise) / surfaceSize
     const optimal = precise + 4/5*scrollPixelStep * fraction
-    const result = { thumb, surface }
-    if (Math.abs(optimal - thumb) > 1/3*scrollPixelStep) {
+    const result = { thumb, surface: existingSurface }
+    if (Math.abs(optimal - thumb) > 1/3*scrollPixelStep)
       result.thumb = optimal
-      result.surface = viewport - result.thumb
-    }
-    // else if (thumb < 1 || thumbTill >= surfaceSize) {
-    //   if (ideal > 0)
-    //     result.thumb = ideal + 4/5*page * (surfaceSize/2 - ideal) / surfaceSize * 2
-    //   result.surface = viewport - result.thumb
-    // }
-    else if (surface !== viewport - result.thumb) {
-      result.surface = viewport - result.thumb
-    }
+    if (existingSurface !== existingViewport - result.thumb)
+      result.surface = existingViewport - result.thumb
     return result
   }
 }
