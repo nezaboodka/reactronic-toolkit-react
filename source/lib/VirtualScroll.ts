@@ -29,11 +29,11 @@ export type IComponent = {
 export class VirtualScroll extends State {
   allCells: Area
   component: IComponent | null | undefined = undefined
-  resolution: XY = xy(1, 1) // pixels per cell
+  ppc: XY = xy(1, 1) // pixels per cell
   surface: Area = Area.ZERO
   thumb: Area = Area.ZERO
   viewport: Area = Area.ZERO
-  bufferSize: XY = xy(1.0, 4)
+  bufferSize: XY = xy(1.0, 2.0)
   loadedCells: Area = Area.ZERO
   targetGrid: Area = Area.ZERO
   sizing = new Sizing()
@@ -44,10 +44,10 @@ export class VirtualScroll extends State {
   }
 
   @action
-  setComponent(component: IComponent | null, resolution: number): void {
+  setComponent(component: IComponent | null, fontSize: number): void {
     if (component) {
       this.component = component
-      this.resolution = xy(resolution * 8, resolution)
+      this.ppc = xy(fontSize * 8, fontSize)
       this.surface = this.all.truncateBy(SURFACE_SIZE_LIMIT)
       this.thumb = new Area(0, 0, component.clientWidth, component.clientHeight)
       this.viewport = new Area(0, 0, component.clientWidth, component.clientHeight)
@@ -58,7 +58,7 @@ export class VirtualScroll extends State {
       this.viewport = Area.ZERO
       this.thumb = Area.ZERO
       this.surface = Area.ZERO
-      this.resolution = xy(1, 1)
+      this.ppc = xy(1, 1)
       this.component = undefined
     }
   }
@@ -66,7 +66,7 @@ export class VirtualScroll extends State {
   // Factors
 
   get pixelToCellFactor(): XY {
-    const r = this.resolution
+    const r = this.ppc
     return xy(1 / r.x, 1 / r.y)
   }
 
@@ -113,15 +113,15 @@ export class VirtualScroll extends State {
   // Areas (pixels)
 
   get all(): Area {
-    return this.allCells.scaleBy(this.resolution)
+    return this.allCells.scaleBy(this.ppc)
   }
 
   get buffer(): Area {
-    return this.bufferCells.scaleBy(this.resolution)
+    return this.bufferCells.scaleBy(this.ppc)
   }
 
   get loaded(): Area {
-    return this.loadedCells.scaleBy(this.resolution)
+    return this.loadedCells.scaleBy(this.ppc)
   }
 
   // Areas (cells)

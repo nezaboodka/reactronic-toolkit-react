@@ -17,7 +17,7 @@ export function AppWindow(p: {app: Application}): JSX.Element {
     const scroll = p.app.scroll
     const loader = p.app.loader
     const c = scroll.component
-    const res = scroll.resolution
+    const ppc = scroll.ppc
     return (
       <div className={css.main}>
         <ScrollBox scroll={scroll} style={place(2, 2, 9, 9)}
@@ -25,13 +25,13 @@ export function AppWindow(p: {app: Application}): JSX.Element {
           <GridFragment loader={loader}/>
         </ScrollBox>
         <div className={css.toolbar} style={place(10, 2, 10, 2)}>
-          <button onClick={e => c ? c.scrollTop += res.y : {}}
+          <button onClick={e => c ? c.scrollTop += ppc.y : {}}
             disabled={!c}>▼</button>
-          <button onClick={e => c ? c.scrollTop -= res.y : {}}
+          <button onClick={e => c ? c.scrollTop -= ppc.y : {}}
             disabled={!c}>▲</button>
-          <button onClick={e => c ? c.scrollLeft += res.x : {}}
+          <button onClick={e => c ? c.scrollLeft += ppc.x : {}}
             disabled={!c}>►</button>
-          <button onClick={e => c ? c.scrollLeft -= res.x : {}}
+          <button onClick={e => c ? c.scrollLeft -= ppc.x : {}}
             disabled={!c}>◄</button>
           <button onClick={e => c ? c.scrollTop += 1072 : {}}
             disabled={!c}>▼ 1K px</button>

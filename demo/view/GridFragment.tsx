@@ -19,8 +19,8 @@ export function GridFragment(p: {loader: DataLoader}): JSX.Element {
     const tg = scroll.targetGrid
     const zero = xy(cells.x - tg.x, cells.y - tg.y)
     const dim: React.CSSProperties = {
-      width: `${scroll.resolution.x}px`,
-      height: `${scroll.resolution.y}px`,
+      width: `${scroll.ppc.x}px`,
+      height: `${scroll.ppc.y}px`,
     }
     return (
       <React.Fragment>
@@ -48,7 +48,7 @@ function GridCell(p: {hint: string, row: number, col: number, text: string, styl
     gridColumn: p.col + 1,
   }
   return (
-    <div title={`${p.hint}`} className={cx(css.cell)} style={place}>
+    <div title={`${p.hint}`} className={cx(css.cell, css.blink1)} style={place}>
       {p.text}
     </div>
   )

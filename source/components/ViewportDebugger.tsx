@@ -41,11 +41,11 @@ export function ViewportDebugger(p: {scroll: VirtualScroll}): JSX.Element {
             <div>
               Viewport-to-Canvas = {num(scroll.viewport.scaleBy(scroll.allToSurfaceFactor).y, 15)}
             </div>
-            <div>Resolution: {scroll.resolution.y} (font size)</div>
+            <div>Pixels per cell: {scroll.ppc.y} (font size)</div>
             <div>{num(scroll.all.size.y / scroll.surface.size.y, 1)} <i>all data pixels in a single surface pixel out of</i> {num(scroll.surface.size.y)}</div>
             <div>{num(scroll.viewportToSurfaceFactor.y, 1)} <i>surface pixels in a single viewport pixel out of</i> {num(scroll.viewport.size.y)}</div>
             <div>{num(scroll.viewportToAllFactor.y, 1)} <i>all data pixels in a single viewport pixel out of</i> {num(scroll.viewport.size.y)}</div>
-            <div>{num(scroll.viewportToAllFactor.y / scroll.resolution.y, -3)} <i>cells in a single viewport pixel out of</i> {num(scroll.viewport.size.y)}</div>
+            <div>{num(scroll.viewportToAllFactor.y / scroll.ppc.y, -3)} <i>cells in a single viewport pixel out of</i> {num(scroll.viewport.size.y)}</div>
             <br/>
           </div>
         </AreaRect>
