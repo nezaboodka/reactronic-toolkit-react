@@ -33,7 +33,7 @@ export class VirtualScroll extends State {
   surface: Area = Area.ZERO
   thumb: Area = Area.ZERO
   viewport: Area = Area.ZERO
-  bufferSize: XY = xy(1.0, 2.0)
+  bufferSize: XY = xy(1.0, 1.0)
   readyCells: Area = Area.ZERO
   targetGrid: Area = Area.ZERO
   sizing = new Sizing()
@@ -229,8 +229,8 @@ export class VirtualScroll extends State {
     viewport: number, viewportSize: number, surface: number, surfaceSize: number,
     scrollPixelStep: number, surfaceToAllRatio: number): number {
     const diff = Math.abs(surface + thumb - viewport)
-    const jump = diff > 3*viewportSize || (diff > 0.5*viewportSize &&
-      (thumb < 1 || thumbTill >= surfaceSize))
+    const jump = diff > 3*viewportSize /*|| (diff > 0.5*viewportSize &&
+      (thumb < 1 || thumbTill >= surfaceSize))*/
     let result: number
     if (jump) {
       const fraction = 2 * (surfaceSize/2 - thumb) / surfaceSize
