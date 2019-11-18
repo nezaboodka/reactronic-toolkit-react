@@ -9,6 +9,6 @@ import { VirtualScroll } from 'reactronic-toolkit-react'
 import { DataLoader } from '/app/DataLoader'
 
 export class Application extends State {
-  readonly scroll = new VirtualScroll(10000, 1000000000000)
+  readonly scroll = new VirtualScroll(10000, 1_000_000_000_000) // 1bn
   readonly loader = new DataLoader(this.scroll)
 }
