@@ -192,13 +192,15 @@ export class VirtualScroll extends State {
     const s2a = this.surfaceToAllFactor
     const scrollPixelStep = this.viewportToSurfaceFactor
     const thumb = this.thumb.moveTo(xy(left, top), surface.atZero())
+    const bufSize = this.bufferSize
+    const ready = this.ready.zoomAt(this.ready.center, xy(1/bufSize.x, 1/bufSize.y))
 
     let vp = this.viewport
     const x = VirtualScroll.shiftOrJump(thumb.x, thumb.till.x,
-      vp.x, vp.size.x, surface.x, surface.size.x,
+      ready.x, vp.size.x, surface.x, surface.size.x,
       scrollPixelStep.x, s2a.x)
     const y = VirtualScroll.shiftOrJump(thumb.y, thumb.till.y,
-      vp.y, vp.size.y, surface.y, surface.size.y,
+      ready.y, vp.size.y, surface.y, surface.size.y,
       scrollPixelStep.y, s2a.y)
 
     vp = vp.moveTo(xy(x, y), this.all)
@@ -231,9 +233,9 @@ export class VirtualScroll extends State {
       (thumb < 1 || thumbTill >= surfaceSize))
     let result: number
     if (jump) {
-      const factor = (thumb - surfaceSize/2) / surfaceSize * 2
+      const factor = (surfaceSize/2 - thumb) / surfaceSize * 2
       const correction = 4/5 * scrollPixelStep * factor
-      result = (thumb + correction) * surfaceToAllRatio
+      result = thumb * surfaceToAllRatio - correction
     }
     else
       result = surface + thumb
@@ -241,7 +243,7 @@ export class VirtualScroll extends State {
     return result
   }
 
-  protected static rebase( thumb: number, thumbTill: number,
+  protected static rebase(thumb: number, thumbTill: number,
     vp: number, surface: number, surfaceSize: number,
     scrollPixelStep: number, allToSurfaceRatio: number): { thumb: number, surface: number } {
     const precise = vp * allToSurfaceRatio
