@@ -231,9 +231,9 @@ export class VirtualScroll extends State {
       (thumb < 1 || thumbTill >= surfaceSize))
     let result: number
     if (jump) {
-      const factor = (surfaceSize/2 - thumb) / surfaceSize * 2
+      const factor = (thumb - surfaceSize/2) / surfaceSize * 2
       const correction = 4/5 * scrollPixelStep * factor
-      result = (thumb - correction) * surfaceToAllRatio
+      result = (thumb + correction) * surfaceToAllRatio
     }
     else
       result = surface + thumb
@@ -248,7 +248,7 @@ export class VirtualScroll extends State {
     const factor = (surfaceSize/2 - precise) / surfaceSize * 2
     const optimal = precise + 4/5*scrollPixelStep * factor
     const result = { thumb, surface }
-    if (Math.abs(optimal - thumb) > 2/5*scrollPixelStep) {
+    if (Math.abs(optimal - thumb) > 1/3*scrollPixelStep) {
       result.thumb = optimal
       result.surface = vp - result.thumb
     }
