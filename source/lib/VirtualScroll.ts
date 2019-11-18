@@ -155,7 +155,6 @@ export class VirtualScroll extends State {
   ready(cells: Area): void {
     // console.log(`ready: ${cells.y}..${cells.till.y}`)
     this.loadedCells = cells
-
     const tg = this.targetGrid
     if (!tg.envelops(cells))
       this.targetGrid = tg.moveCenterTo(cells.center, this.allCells).round()
@@ -190,17 +189,17 @@ export class VirtualScroll extends State {
   protected moveTo(left: number, top: number): void {
     // console.log(`scroll: ${this.thumb.y}->${top}, h=${this.component ? this.component.scrollHeight : '?'}`)
     const surface = this.surface
-    const ratio = this.surfaceToAllFactor
+    const s2a = this.surfaceToAllFactor
     const scrollPixelStep = this.viewportToSurfaceFactor
     const thumb = this.thumb.moveTo(xy(left, top), surface.atZero())
 
     let vp = this.viewport
-    const x = VirtualScroll.jumpOrShift(vp.x, vp.size.x,
-      thumb.x, thumb.till.x, surface.x, surface.size.x,
-      scrollPixelStep.x, ratio.x)
-    const y = VirtualScroll.jumpOrShift(vp.y, vp.size.y,
-      thumb.y, thumb.till.y, surface.y, surface.size.y,
-      scrollPixelStep.y, ratio.y)
+    const x = VirtualScroll.moveTo(thumb.x, thumb.till.x,
+      vp.x, vp.size.x, surface.x, surface.size.x,
+      scrollPixelStep.x, s2a.x)
+    const y = VirtualScroll.moveTo(thumb.y, thumb.till.y,
+      vp.y, vp.size.y, surface.y, surface.size.y,
+      scrollPixelStep.y, s2a.y)
 
     vp = vp.moveTo(xy(x, y), this.all)
     if (!vp.equalTo(this.viewport)) {
@@ -224,15 +223,16 @@ export class VirtualScroll extends State {
 
   // Math
 
-  private static jumpOrShift(viewport: number, viewportSize: number,
-    thumb: number, thumbTill: number, surface: number, surfaceSize: number,
-    scrollPixelStep: number, factor: number): number {
+  private static moveTo(thumb: number, thumbTill: number,
+    viewport: number, viewportSize: number,
+    surface: number, surfaceSize: number,
+    scrollPixelStep: number, surfaceToAllRatio: number): number {
     const delta = Math.abs(surface + thumb - viewport)
     const jump = delta > 3*viewportSize ||
       (delta > 0.5*viewportSize && (thumb < 1 || thumbTill >= surfaceSize))
     let result: number
     if (jump) {
-      result = (thumb - 4/5*scrollPixelStep * (surfaceSize/2 - thumb) / surfaceSize * 2) * factor
+      result = (thumb - 4/5*scrollPixelStep * (surfaceSize/2 - thumb) / surfaceSize * 2) * surfaceToAllRatio
     }
     else {
       result = surface + thumb
