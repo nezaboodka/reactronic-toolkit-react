@@ -10,7 +10,7 @@ export * from './lib/UserInput'
 
 export * from './tools/reactive'
 export * from './tools/restyle'
-export * from './tools/place'
+export * from './tools/etc'
 
 export * from './components/RComponent'
 export * from './components/ScrollBox'
