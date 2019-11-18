@@ -201,7 +201,7 @@ export class VirtualScroll extends State {
       vp.y, vp.size.y, surface.y, surface.size.y,
       scrollPixelStep.y, s2a.y)
 
-    vp = vp.moveTo(xy(x, y), this.all)
+    vp = vp.moveTo(xy(x.viewport, y.viewport), this.all)
     if (!vp.equalTo(this.viewport)) {
       this.viewport = vp
       this.surface = surface.moveTo(xy(vp.x - thumb.x, vp.y - thumb.y), this.all)
@@ -226,18 +226,31 @@ export class VirtualScroll extends State {
   private static moveTo(thumb: number, thumbTill: number,
     viewport: number, viewportSize: number,
     surface: number, surfaceSize: number,
-    scrollPixelStep: number, surfaceToAllRatio: number): number {
+    scrollPixelStep: number, surfaceToAllRatio: number): { thumb: number, viewport: number } {
     const delta = Math.abs(surface + thumb - viewport)
-    const jump = delta > 3*viewportSize ||
-      (delta > 0.5*viewportSize && (thumb < 1 || thumbTill >= surfaceSize))
-    let result: number
-    if (jump) {
-      result = (thumb - 4/5*scrollPixelStep * (surfaceSize/2 - thumb) / surfaceSize * 2) * surfaceToAllRatio
+    const jump = delta > 3*viewportSize || (delta > 0.5*viewportSize &&
+      (thumb < 1 || thumbTill >= surfaceSize))
+    const correction = 4/5*scrollPixelStep * (surfaceSize/2 - thumb) / surfaceSize * 2
+    const result = { thumb, viewport }
+    if (!jump) {
+      result.viewport = surface + thumb
+      // const precise = result.viewport / surfaceToAllRatio
+      // const optimal = precise + correction
+      // if (Math.abs(optimal - thumb) > 1/3*scrollPixelStep) {
+      //   result.thumb = optimal
+      //   result.surface = viewport - result.thumb
+      // }
+      // // else if (thumb < 1 || thumbTill >= surfaceSize) {
+      // //   if (ideal > 0)
+      // //     result.thumb = ideal + 4/5*page * (surfaceSize/2 - ideal) / surfaceSize * 2
+      // //   result.surface = viewport - result.thumb
+      // // }
+      // else if (surface !== viewport - result.thumb) {
+      //   result.surface = viewport - result.thumb
+      // }
     }
-    else {
-      result = surface + thumb
-      // auto-rebase
-    }
+    else
+      result.viewport = (thumb - correction) * surfaceToAllRatio // jump
     return result
   }
 
