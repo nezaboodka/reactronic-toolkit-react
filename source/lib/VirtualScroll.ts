@@ -37,7 +37,6 @@ export class VirtualScroll extends State {
   loadedCells: Area = Area.ZERO
   targetGrid: Area = Area.ZERO
   sizing = new Sizing()
-  // scrollingMonitor: Monitor = Monitor.create('scrolling', 500)
 
   constructor(sizeX: number, sizeY: number) {
     super()
@@ -53,10 +52,8 @@ export class VirtualScroll extends State {
       this.thumb = new Area(0, 0, component.clientWidth, component.clientHeight)
       this.viewport = new Area(0, 0, component.clientWidth, component.clientHeight)
       this.targetGrid = this.allCells.truncateBy(TARGET_GRID_SIZE_LIMIT)
-      // Cache.of(this.moveTo).setup({monitor: this.scrollingMonitor})
     }
     else {
-      // Cache.of(this.moveTo).setup({monitor: null})
       this.targetGrid = Area.ZERO
       this.viewport = Area.ZERO
       this.thumb = Area.ZERO
