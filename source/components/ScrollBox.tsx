@@ -26,9 +26,9 @@ export function ScrollBox(p: {
   }, [])
 
   return reactive(() => {
-    const s = p.scroll.surface
-    const sw = `${s.size.x}px`
-    const sh = `${s.size.y}px`
+    const surface = p.scroll.surface
+    const sw = `${surface.size.x}px`
+    const sh = `${surface.size.y}px`
     const surfaceStyle: React.CSSProperties = {
       position: 'relative',
       overflow: 'hidden',
@@ -36,20 +36,20 @@ export function ScrollBox(p: {
       width: sw, minWidth: sw, maxWidth: sw,
       height: sh, minHeight: sh, maxHeight: sh,
     }
-    const r = p.scroll.ready
-    const rw = `${r.size.x}px`
-    const rh = `${r.size.y}px`
+    const ready = p.scroll.ready
+    const rw = `${ready.size.x}px`
+    const rh = `${ready.size.y}px`
     const fragmentStyle: React.CSSProperties = {
       ...p.fragmentStyle,
       position: 'absolute',
-      left: `${r.x - s.x}px`,
-      top: `${r.y - s.y}px`,
+      left: `${ready.x - surface.x}px`,
+      top: `${ready.y - surface.y}px`,
       width: rw, minWidth: rw, maxWidth: rw,
       height: rh, minHeight: rh, maxHeight: rh,
     }
     return (
       <div ref={ref} className={p.className} style={p.style}
-        onScroll={e => p.scroll.scroll()}>
+        onScroll={e => p.scroll.onScroll()}>
         <div style={surfaceStyle}>
           <div className={p.fragmentClassName} style={fragmentStyle}>
             {p.children}
