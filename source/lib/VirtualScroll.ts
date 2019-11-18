@@ -165,9 +165,9 @@ export class VirtualScroll extends State {
 
     let surface = this.surface
     let thumb = this.thumb
-    const x = VirtualScroll.rebaseSurfaceInto(thumb.x, thumb.till.x,
+    const x = VirtualScroll.rebaseSurface(thumb.x, thumb.till.x,
       vp.x, surface.x, surface.size.x, scrollPixelStep.x, a2s.x)
-    const y = VirtualScroll.rebaseSurfaceInto(thumb.y, thumb.till.y,
+    const y = VirtualScroll.rebaseSurface(thumb.y, thumb.till.y,
       vp.y, surface.y, surface.size.y, scrollPixelStep.y, a2s.y)
 
     surface = surface.moveTo(xy(x.surface, y.surface), this.all)
@@ -235,7 +235,7 @@ export class VirtualScroll extends State {
     return result
   }
 
-  protected static rebaseSurfaceInto(thumb: number, thumbTill: number,
+  protected static rebaseSurface(thumb: number, thumbTill: number,
     viewport: number, surface: number, surfaceSize: number,
     scrollPixelStep: number, allToSurfaceRatio: number): { thumb: number, surface: number } {
     const precise = viewport * allToSurfaceRatio
