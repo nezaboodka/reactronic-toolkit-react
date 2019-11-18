@@ -17,9 +17,9 @@ export function ViewportDebugger(p: {scroll: VirtualScroll}): JSX.Element {
       <div className={css.main}>
         <AreaRect hint={'All'} area={scroll.allCells} px={scroll.all} key={`all-${counter}`}
           className={css.all} style={place(1, 1, 10, 9)}>
-          <AreaRect hint={'Surface'} area={scroll.surfaceCells} px={scroll.surface} inner={scroll.rendered} key={`surface-${counter}`}
+          <AreaRect hint={'Surface'} area={scroll.surfaceCells} px={scroll.surface} inner={scroll.ready} key={`surface-${counter}`}
             className={css.surface} style={place(2, 2, 9, 9)}>
-            <AreaRect hint={'Rendered'} area={scroll.renderedCells} px={scroll.rendered} key={`rendered-${counter}`}
+            <AreaRect hint={'Rendered'} area={scroll.readyCells} px={scroll.ready} key={`ready-${counter}`}
               className={css.buffer} style={place(2, 2, 9, 9)}>
               <AreaRect hint={'Viewport'} area={scroll.viewportCells} px={scroll.viewport} key={`viewport-${counter}`}
                 className={css.viewport} style={place(3, 3, 8, 8)}>

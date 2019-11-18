@@ -18,14 +18,14 @@ export class DataLoader extends State {
     await sleep(20)
     const vs = this.scroll
     const buffer = vs.bufferCells
-    if (!buffer.equalTo(vs.renderedCells)) {
+    if (!buffer.equalTo(vs.readyCells)) {
       const data: string[] = []
       const till = buffer.till
       for (let y = buffer.y; y <= till.y; y++)
         for (let x = buffer.x; x <= till.x; x++)
           data.push(`${y}:${x}`)
       this.data = data
-      vs.render(buffer)
+      vs.setReadyCells(buffer)
     }
   }
 }

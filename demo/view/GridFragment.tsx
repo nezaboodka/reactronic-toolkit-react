@@ -15,7 +15,7 @@ export function GridFragment(p: {loader: DataLoader}): JSX.Element {
   return reactive(() => {
     const data = p.loader.data
     const scroll = p.loader.scroll
-    const fragment = scroll.renderedCells
+    const fragment = scroll.readyCells
     const tg = scroll.targetGrid
     const zero = xy(fragment.x - tg.x, fragment.y - tg.y)
     const dim: React.CSSProperties = {

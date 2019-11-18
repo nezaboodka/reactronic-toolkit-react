@@ -36,7 +36,7 @@ export function ScrollBox(p: {
       width: sw, minWidth: sw, maxWidth: sw,
       height: sh, minHeight: sh, maxHeight: sh,
     }
-    const r = p.scroll.rendered
+    const r = p.scroll.ready
     const rw = `${r.size.x}px`
     const rh = `${r.size.y}px`
     const fragmentStyle: React.CSSProperties = {
