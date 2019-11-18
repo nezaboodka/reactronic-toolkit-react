@@ -228,18 +228,15 @@ export class VirtualScroll extends State {
   private static shiftOrJump(thumb: number, thumbTill: number,
     viewport: number, viewportSize: number, surface: number, surfaceSize: number,
     scrollPixelStep: number, surfaceToAllRatio: number): number {
-    const diff = Math.abs(surface + thumb - viewport)
-    const jump = diff > 3*viewportSize /*|| (diff > 0.5*viewportSize &&
-      (thumb < 1 || thumbTill >= surfaceSize))*/
-    let result: number
+    let vp2 = surface + thumb
+    const diff = Math.abs(vp2 - viewport)
+    const jump = diff > 3*viewportSize /*|| (diff > 0.5*viewportSize && (thumb < 1 || thumbTill >= surfaceSize))*/
     if (jump) {
       const fraction = 2 * (surfaceSize/2 - thumb) / surfaceSize
-      result = (thumb - 4/5*scrollPixelStep * fraction) * surfaceToAllRatio
+      vp2 = (thumb - 4/5*scrollPixelStep * fraction) * surfaceToAllRatio
     }
-    else
-      result = surface + thumb
     // if (vp !== result) console.log(`${jump ? 'jump' : 'shift'}: thumb=${thumb}, viewport=${vp}->${result}`)
-    return result
+    return vp2
   }
 
   protected static rebase(thumb: number, thumbTill: number,
