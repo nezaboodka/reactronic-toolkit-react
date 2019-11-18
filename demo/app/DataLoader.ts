@@ -16,16 +16,16 @@ export class DataLoader extends State {
   @trigger @reentrance(Reentrance.CancelPrevious)
   async load(): Promise<void> {
     await sleep(20)
-    const scroll = this.scroll
-    const buf = scroll.bufferCells
-    if (!buf.equalTo(scroll.loadedCells)) {
+    const vs = this.scroll
+    const buffer = vs.bufferCells
+    if (!buffer.equalTo(vs.renderedCells)) {
       const data: string[] = []
-      const till = buf.till
-      for (let y = buf.y; y <= till.y; y++)
-        for (let x = buf.x; x <= till.x; x++)
+      const till = buffer.till
+      for (let y = buffer.y; y <= till.y; y++)
+        for (let x = buffer.x; x <= till.x; x++)
           data.push(`${y}:${x}`)
       this.data = data
-      scroll.ready(buf)
+      vs.render(buffer)
     }
   }
 }

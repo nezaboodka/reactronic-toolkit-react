@@ -15,9 +15,9 @@ export function GridFragment(p: {loader: DataLoader}): JSX.Element {
   return reactive(() => {
     const data = p.loader.data
     const scroll = p.loader.scroll
-    const cells = scroll.loadedCells
+    const fragment = scroll.renderedCells
     const tg = scroll.targetGrid
-    const zero = xy(cells.x - tg.x, cells.y - tg.y)
+    const zero = xy(fragment.x - tg.x, fragment.y - tg.y)
     const dim: React.CSSProperties = {
       width: `${scroll.ppc.x}px`,
       height: `${scroll.ppc.y}px`,
@@ -25,11 +25,11 @@ export function GridFragment(p: {loader: DataLoader}): JSX.Element {
     return (
       <React.Fragment>
         {data.map((cell, i) => {
-          const y = Math.floor(i / cells.size.x)
-          const x = i % cells.size.x
+          const y = Math.floor(i / fragment.size.x)
+          const x = i % fragment.size.x
           const r = zero.y + y
           const c = zero.x + x
-          const key = `R${r}C${c}:Y${cells.y + y}X${cells.x + x}`
+          const key = `R${r}C${c}:Y${fragment.y + y}X${fragment.x + x}`
           return (
             <GridCell key={key} hint={key} style={dim}
               row={r} col={c} text={cell}/>

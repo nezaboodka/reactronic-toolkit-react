@@ -34,7 +34,7 @@ export class VirtualScroll extends State {
   thumb: Area = Area.ZERO
   viewport: Area = Area.ZERO
   bufferSize: XY = xy(1.0, 2.0)
-  loadedCells: Area = Area.ZERO
+  renderedCells: Area = Area.ZERO
   targetGrid: Area = Area.ZERO
   sizing = new Sizing()
 
@@ -120,8 +120,8 @@ export class VirtualScroll extends State {
     return this.bufferCells.scaleBy(this.ppc)
   }
 
-  get loaded(): Area {
-    return this.loadedCells.scaleBy(this.ppc)
+  get rendered(): Area {
+    return this.renderedCells.scaleBy(this.ppc)
   }
 
   // Areas (cells)
@@ -152,9 +152,9 @@ export class VirtualScroll extends State {
     }
   }
 
-  ready(cells: Area): void {
+  render(cells: Area): void {
     // console.log(`\nready: ${cells.y}..${cells.till.y}`)
-    this.loadedCells = cells
+    this.renderedCells = cells
     const tg = this.targetGrid
     if (!tg.envelops(cells))
       this.targetGrid = tg.moveCenterTo(cells.center, this.allCells).round()

@@ -20,8 +20,9 @@ export function AppWindow(p: {app: Application}): JSX.Element {
     const ppc = scroll.ppc
     return (
       <div className={css.main}>
-        <ScrollBox scroll={scroll} style={place(2, 2, 9, 9)}
-          className={css.scroll} contentClassName={css.grid}>
+        <ScrollBox scroll={scroll}
+          className={css.scroll} style={place(2, 2, 9, 9)}
+          fragmentClassName={css.grid}>
           <GridFragment loader={loader}/>
         </ScrollBox>
         <div className={css.toolbar} style={place(10, 2, 10, 2)}>

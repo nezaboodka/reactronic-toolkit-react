@@ -13,8 +13,8 @@ export function ScrollBox(p: {
   children: JSX.Element,
   className?: string,
   style?: React.CSSProperties,
-  contentClassName?: string,
-  contentStyle?: React.CSSProperties}): JSX.Element {
+  fragmentClassName?: string,
+  fragmentStyle?: React.CSSProperties}): JSX.Element {
 
   const ref = React.useCallback(element => {
     let resolution = 1
@@ -36,22 +36,22 @@ export function ScrollBox(p: {
       width: sw, minWidth: sw, maxWidth: sw,
       height: sh, minHeight: sh, maxHeight: sh,
     }
-    const l = p.scroll.loaded
-    const lw = `${l.size.x}px`
-    const lh = `${l.size.y}px`
-    const dataStyle: React.CSSProperties = {
-      ...p.contentStyle,
+    const r = p.scroll.rendered
+    const rw = `${r.size.x}px`
+    const rh = `${r.size.y}px`
+    const fragmentStyle: React.CSSProperties = {
+      ...p.fragmentStyle,
       position: 'absolute',
-      left: `${l.x - s.x}px`,
-      top: `${l.y - s.y}px`,
-      width: lw, minWidth: lw, maxWidth: lw,
-      height: lh, minHeight: lh, maxHeight: lh,
+      left: `${r.x - s.x}px`,
+      top: `${r.y - s.y}px`,
+      width: rw, minWidth: rw, maxWidth: rw,
+      height: rh, minHeight: rh, maxHeight: rh,
     }
     return (
       <div ref={ref} className={p.className} style={p.style}
         onScroll={e => p.scroll.scroll()}>
         <div style={surfaceStyle}>
-          <div className={p.contentClassName} style={dataStyle}>
+          <div className={p.fragmentClassName} style={fragmentStyle}>
             {p.children}
           </div>
         </div>
