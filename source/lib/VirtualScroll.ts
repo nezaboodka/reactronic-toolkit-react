@@ -224,10 +224,10 @@ export class VirtualScroll extends State {
   // Math
 
   private static shiftOrJump(thumb: number, thumbTill: number,
-    vp: number, vpSize: number, surface: number, surfaceSize: number,
+    existing: number, vpSize: number, surface: number, surfaceSize: number,
     scrollPixelStep: number, surfaceToAllRatio: number): number {
-    const delta = Math.abs(surface + thumb - vp)
-    const jump = delta > 3*vpSize || (delta > 0.5*vpSize &&
+    const diff = Math.abs(surface + thumb - existing)
+    const jump = diff > 3*vpSize || (diff > 0.5*vpSize &&
       (thumb < 1 || thumbTill >= surfaceSize))
     let result: number
     if (jump) {
