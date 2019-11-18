@@ -187,17 +187,17 @@ export class VirtualScroll extends State {
 
   @action
   protected moveTo(left: number, top: number): void {
-    // console.log(`scroll: ${this.thumb.y}->${top}, h=${this.component ? this.component.scrollHeight : '?'}`)
+    // console.log(`\nscroll: ${this.thumb.y}->${top}, h=${this.component ? this.component.scrollHeight : '?'}`)
     const surface = this.surface
     const s2a = this.surfaceToAllFactor
     const scrollPixelStep = this.viewportToSurfaceFactor
     const thumb = this.thumb.moveTo(xy(left, top), surface.atZero())
 
     let vp = this.viewport
-    const x = VirtualScroll.moveTo(thumb.x, thumb.till.x,
+    const x = VirtualScroll.shiftOrJump(thumb.x, thumb.till.x,
       vp.x, vp.size.x, surface.x, surface.size.x,
       scrollPixelStep.x, s2a.x)
-    const y = VirtualScroll.moveTo(thumb.y, thumb.till.y,
+    const y = VirtualScroll.shiftOrJump(thumb.y, thumb.till.y,
       vp.y, vp.size.y, surface.y, surface.size.y,
       scrollPixelStep.y, s2a.y)
 
@@ -223,34 +223,21 @@ export class VirtualScroll extends State {
 
   // Math
 
-  private static moveTo(thumb: number, thumbTill: number,
+  private static shiftOrJump(thumb: number, thumbTill: number,
     viewport: number, viewportSize: number,
     surface: number, surfaceSize: number,
     scrollPixelStep: number, surfaceToAllRatio: number): { thumb: number, viewport: number } {
     const delta = Math.abs(surface + thumb - viewport)
-    const jump = delta > 3*viewportSize || (delta > 0.5*viewportSize &&
+    const jump = delta > viewportSize || (delta > 0.5*viewportSize &&
       (thumb < 1 || thumbTill >= surfaceSize))
-    const correction = 4/5*scrollPixelStep * (surfaceSize/2 - thumb) / surfaceSize * 2
     const result = { thumb, viewport }
-    if (!jump) {
-      result.viewport = surface + thumb
-      // const precise = result.viewport / surfaceToAllRatio
-      // const optimal = precise + correction
-      // if (Math.abs(optimal - thumb) > 1/3*scrollPixelStep) {
-      //   result.thumb = optimal
-      //   result.surface = viewport - result.thumb
-      // }
-      // // else if (thumb < 1 || thumbTill >= surfaceSize) {
-      // //   if (ideal > 0)
-      // //     result.thumb = ideal + 4/5*page * (surfaceSize/2 - ideal) / surfaceSize * 2
-      // //   result.surface = viewport - result.thumb
-      // // }
-      // else if (surface !== viewport - result.thumb) {
-      //   result.surface = viewport - result.thumb
-      // }
+    if (jump) {
+      const correction = 4/5*scrollPixelStep * (surfaceSize/2 - thumb) / surfaceSize * 2
+      result.viewport = (thumb - correction) * surfaceToAllRatio
     }
     else
-      result.viewport = (thumb - correction) * surfaceToAllRatio // jump
+      result.viewport = surface + thumb
+    // if (viewport !== result.viewport) console.log(`${jump ? 'jump' : 'shift'}: thumb=${thumb}, viewport=${viewport}->${result.viewport}`)
     return result
   }
 
