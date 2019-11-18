@@ -153,7 +153,7 @@ export class VirtualScroll extends State {
   }
 
   ready(cells: Area): void {
-    // console.log(`ready: ${cells.y}..${cells.till.y}`)
+    // console.log(`\nready: ${cells.y}..${cells.till.y}`)
     this.loadedCells = cells
     const tg = this.targetGrid
     if (!tg.envelops(cells))
@@ -166,10 +166,10 @@ export class VirtualScroll extends State {
 
     let surface = this.surface
     let thumb = this.thumb
-    const x = VirtualScroll.rebase(vp.x, surface.x, surface.size.x,
-      thumb.x, thumb.till.x, scrollPixelStep.x, a2s.x)
-    const y = VirtualScroll.rebase(vp.y, surface.y, surface.size.y,
-      thumb.y, thumb.till.y, scrollPixelStep.y, a2s.y)
+    const x = VirtualScroll.rebase(thumb.x, thumb.till.x, vp.x,
+      surface.x, surface.size.x, scrollPixelStep.x, a2s.x)
+    const y = VirtualScroll.rebase(thumb.y, thumb.till.y, vp.y,
+      surface.y, surface.size.y, scrollPixelStep.y, a2s.y)
 
     surface = surface.moveTo(xy(x.surface, y.surface), this.all)
     if (!surface.equalTo(this.surface))
@@ -201,7 +201,7 @@ export class VirtualScroll extends State {
       vp.y, vp.size.y, surface.y, surface.size.y,
       scrollPixelStep.y, s2a.y)
 
-    vp = vp.moveTo(xy(x.viewport, y.viewport), this.all)
+    vp = vp.moveTo(xy(x, y), this.all)
     if (!vp.equalTo(this.viewport)) {
       this.viewport = vp
       this.surface = surface.moveTo(xy(vp.x - thumb.x, vp.y - thumb.y), this.all)
@@ -224,42 +224,41 @@ export class VirtualScroll extends State {
   // Math
 
   private static shiftOrJump(thumb: number, thumbTill: number,
-    viewport: number, viewportSize: number,
-    surface: number, surfaceSize: number,
-    scrollPixelStep: number, surfaceToAllRatio: number): { thumb: number, viewport: number } {
-    const delta = Math.abs(surface + thumb - viewport)
-    const jump = delta > 3*viewportSize || (delta > 0.5*viewportSize &&
+    vp: number, vpSize: number, surface: number, surfaceSize: number,
+    scrollPixelStep: number, surfaceToAllRatio: number): number {
+    const delta = Math.abs(surface + thumb - vp)
+    const jump = delta > 3*vpSize || (delta > 0.5*vpSize &&
       (thumb < 1 || thumbTill >= surfaceSize))
-    const result = { thumb, viewport }
+    let result: number
     if (jump) {
       const factor = (surfaceSize/2 - thumb) / surfaceSize * 2
       const correction = 4/5 * scrollPixelStep * factor
-      result.viewport = (thumb - correction) * surfaceToAllRatio
+      result = (thumb - correction) * surfaceToAllRatio
     }
     else
-      result.viewport = surface + thumb
-    // if (viewport !== result.viewport) console.log(`${jump ? 'jump' : 'shift'}: thumb=${thumb}, viewport=${viewport}->${result.viewport}`)
+      result = surface + thumb
+    // if (vp !== result) console.log(`${jump ? 'jump' : 'shift'}: thumb=${thumb}, viewport=${vp}->${result}`)
     return result
   }
 
-  protected static rebase(viewport: number,
-    surface: number, surfaceSize: number, thumb: number, thumbTill: number,
+  protected static rebase( thumb: number, thumbTill: number,
+    vp: number, surface: number, surfaceSize: number,
     scrollPixelStep: number, allToSurfaceRatio: number): { thumb: number, surface: number } {
-    const precise = viewport * allToSurfaceRatio
+    const precise = vp * allToSurfaceRatio
     const factor = (surfaceSize/2 - precise) / surfaceSize * 2
     const optimal = precise + 4/5*scrollPixelStep * factor
     const result = { thumb, surface }
     if (Math.abs(optimal - thumb) > 2/5*scrollPixelStep) {
       result.thumb = optimal
-      result.surface = viewport - result.thumb
+      result.surface = vp - result.thumb
     }
     // else if (thumb < 1 || thumbTill >= surfaceSize) {
     //   if (ideal > 0)
     //     result.thumb = ideal + 4/5*page * (surfaceSize/2 - ideal) / surfaceSize * 2
     //   result.surface = viewport - result.thumb
     // }
-    else if (surface !== viewport - result.thumb) {
-      result.surface = viewport - result.thumb
+    else if (surface !== vp - result.thumb) {
+      result.surface = vp - result.thumb
     }
     return result
   }
