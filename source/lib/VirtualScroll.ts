@@ -228,13 +228,12 @@ export class VirtualScroll extends State {
     surface: number, surfaceSize: number,
     scrollPixelStep: number, surfaceToAllRatio: number): { thumb: number, viewport: number } {
     const delta = Math.abs(surface + thumb - viewport)
-    const jump = delta > viewportSize || (delta > 0.5*viewportSize &&
+    const jump = delta > 3*viewportSize || (delta > 0.5*viewportSize &&
       (thumb < 1 || thumbTill >= surfaceSize))
     const result = { thumb, viewport }
     if (jump) {
       const factor = (surfaceSize/2 - thumb) / surfaceSize * 2
-      const correction = 4/5*scrollPixelStep * factor +
-        Math.sign(result.viewport - viewport) * 2/9 * scrollPixelStep
+      const correction = 4/5*scrollPixelStep * factor
       result.viewport = (thumb - correction) * surfaceToAllRatio
     }
     else
