@@ -219,11 +219,20 @@ export class VirtualScroll extends State {
       const fraction = 2 * (surfaceSize/2 - precise) / surfaceSize
       const optimal = Math.ceil(precise + 4/5 * scrollbarPixelSize * fraction)
       surface = p.viewport - optimal
-      if ((thumb <= 0 || thumb + viewportSize >= surfaceSize ||
-        (ready && Math.abs(optimal - thumb) > 1/3 * scrollbarPixelSize)) &&
-        surface >= 0 && surface + surfaceSize < surfaceSize * surfaceToAllRatio) {
-        p.thumb = optimal
-        p.surface = surface
+      if (thumb <= 0 || thumb >= surfaceSize - viewportSize ||
+        (ready && Math.abs(optimal - thumb) > 1/3 * scrollbarPixelSize)) {
+        if (surface < 0) {
+          p.thumb = optimal + surface
+          p.surface = 0
+        }
+        // else if (surface >= surfaceSize * surfaceToAllRatio - surfaceSize) {
+        //   p.thumb = optimal - ((surfaceSize * surfaceToAllRatio - surfaceSize) - surface)
+        //   p.surface = surfaceSize * surfaceToAllRatio - surfaceSize
+        // }
+        else {
+          p.thumb = optimal
+          p.surface = surface
+        }
         console.log(`rebase: thumb=${thumb}->${p.thumb}, viewport=${p.viewport}, surface=${p.surface}, jump=${stamp}`)
       }
       else if (existingViewport !== p.viewport)
