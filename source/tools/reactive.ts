@@ -40,7 +40,7 @@ class Rx<V> extends State {
   }
 
   @trigger
-  revise(): void {
+  trigger(): void {
     if (Cache.of(this.render).invalid)
       separate(this.refresh, {rx: this, counter: this.counter + 1})
   }
@@ -64,7 +64,7 @@ function createRx<V>(hint: string | undefined, trace: Trace | undefined): Rx<V> 
     RT.setTraceHint(rx, hint)
   if (trace) {
     Cache.of(rx.render).setup({trace})
-    Cache.of(rx.revise).setup({trace})
+    Cache.of(rx.trigger).setup({trace})
   }
   return rx
 }
