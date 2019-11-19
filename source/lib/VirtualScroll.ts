@@ -196,14 +196,14 @@ export class VirtualScroll extends State {
 
   private static calcScrollPos(existingViewport: number, viewportSize: number,
     surface: number, surfaceSize: number, thumb: number, jumping: number,
-    scrollPixelStep: number, surfaceToAllRatio: number): ScrollPos {
+    scrollbarPixelSize: number, surfaceToAllRatio: number): ScrollPos {
     const now = Date.now()
     const p: ScrollPos = { viewport: surface + thumb, surface, thumb, jumping: 0 }
     const diff = Math.abs(p.viewport - existingViewport)
     const jump = diff > 3 * viewportSize || now - jumping < 20 // ms
     if (jump) {
       const fraction = 2 * (surfaceSize/2 - thumb) / surfaceSize
-      p.viewport = (thumb - 4/5 * scrollPixelStep * fraction) * surfaceToAllRatio
+      p.viewport = (thumb - 4/5 * scrollbarPixelSize * fraction) * surfaceToAllRatio
       if (p.viewport < 0 || p.viewport + viewportSize >= surfaceSize * surfaceToAllRatio)
         p.viewport = thumb * surfaceToAllRatio
       p.surface = p.viewport - thumb
@@ -213,9 +213,9 @@ export class VirtualScroll extends State {
     else {
       const precise = p.viewport / surfaceToAllRatio
       const fraction = 2 * (surfaceSize/2 - precise) / surfaceSize
-      const optimal = Math.ceil(precise + 4/5 * scrollPixelStep * fraction)
+      const optimal = Math.ceil(precise + 4/5 * scrollbarPixelSize * fraction)
       const rebase = p.viewport - optimal
-      if (Math.abs(optimal - thumb) > 1/3 * scrollPixelStep &&
+      if (Math.abs(optimal - thumb) > 1/3 * scrollbarPixelSize &&
         rebase >= 0 && rebase + surfaceSize < surfaceSize * surfaceToAllRatio) {
         p.thumb = optimal
         p.surface = rebase
