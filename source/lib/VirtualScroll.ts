@@ -26,7 +26,7 @@ export type IComponent = {
   scrollTop: number
 }
 
-type ScrollPos = { viewport: number, surface: number, thumb: number, jumping: number }
+type ScrollPos = { viewport: number, surface: number, thumb: number, timestamp: number }
 
 export class VirtualScroll extends State {
   allCells: Area
@@ -35,7 +35,7 @@ export class VirtualScroll extends State {
   surface: Area = Area.ZERO
   thumb: Area = Area.ZERO
   viewport: Area = Area.ZERO
-  jumping: XY = xy(0, 0) // timestamp
+  timestamp: XY = xy(0, 0)
   bufferSize: XY = xy(1.0, 1.0)
   readyCells: Area = Area.ZERO
   targetGrid: Area = Area.ZERO
@@ -170,16 +170,16 @@ export class VirtualScroll extends State {
     // console.log(`\nscroll: ${this.thumb.y}->${top}, h=${this.component ? this.component.scrollHeight : '?'}`)
     const s2a = this.surfaceToAllFactor
     const scrollPixelStep = this.viewportToSurfaceFactor
-    const jumping = this.jumping
+    const ts = this.timestamp
     let vp = this.viewport
     let surface = this.surface
     let thumb = this.thumb.moveTo(xy(left, top), surface.atZero())
 
     const x = VirtualScroll.calcScrollPos(vp.x, vp.size.x,
-      surface.x, surface.size.x, thumb.x, jumping.x,
+      surface.x, surface.size.x, thumb.x, ts.x,
       scrollPixelStep.x, s2a.x)
     const y = VirtualScroll.calcScrollPos(vp.y, vp.size.y,
-      surface.y, surface.size.y, thumb.y, jumping.y,
+      surface.y, surface.size.y, thumb.y, ts.y,
       scrollPixelStep.y, s2a.y)
 
     vp = vp.moveTo(xy(x.viewport, y.viewport), this.all)
@@ -191,14 +191,14 @@ export class VirtualScroll extends State {
       this.surface = surface
     if (!thumb.equalTo(this.thumb))
       this.thumb = thumb
-    this.jumping = xy(x.jumping, y.jumping)
+    this.timestamp = xy(x.timestamp, y.timestamp)
   }
 
   private static calcScrollPos(existingViewport: number, viewportSize: number,
     surface: number, surfaceSize: number, thumb: number, jumping: number,
     scrollbarPixelSize: number, surfaceToAllRatio: number): ScrollPos {
     const now = Date.now()
-    const p: ScrollPos = { viewport: surface + thumb, surface, thumb, jumping: 0 }
+    const p: ScrollPos = { viewport: surface + thumb, surface, thumb, timestamp: 0 }
     const diff = Math.abs(p.viewport - existingViewport)
     const jump = diff > 3 * viewportSize || now - jumping < 20 // ms
     if (jump) {
@@ -207,7 +207,7 @@ export class VirtualScroll extends State {
       if (p.viewport < 0 || p.viewport + viewportSize >= surfaceSize * surfaceToAllRatio)
         p.viewport = thumb * surfaceToAllRatio
       p.surface = p.viewport - thumb
-      p.jumping = now
+      p.timestamp = now
       console.log(`jump: thumb=${p.thumb}, viewport=${p.viewport}, surface=${p.surface}`)
     }
     else {
