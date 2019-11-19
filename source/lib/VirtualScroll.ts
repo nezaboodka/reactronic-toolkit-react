@@ -179,10 +179,10 @@ export class VirtualScroll extends State {
     let surface = this.surface
     let thumb = this.thumb.moveTo(xy(left, top), surface.atZero())
 
-    const x = VirtualScroll.getTargetScrollPos(vp.x, vp.size.x,
+    const x = VirtualScroll.getNewScrollPos(vp.x, vp.size.x,
       surface.x, surface.size.x, thumb.x, stamp.x,
       scrollPixelStep.x, s2a.x, ready)
-    const y = VirtualScroll.getTargetScrollPos(vp.y, vp.size.y,
+    const y = VirtualScroll.getNewScrollPos(vp.y, vp.size.y,
       surface.y, surface.size.y, thumb.y, stamp.y,
       scrollPixelStep.y, s2a.y, ready)
 
@@ -198,21 +198,21 @@ export class VirtualScroll extends State {
     this.stamp = xy(x.stamp, y.stamp)
   }
 
-  private static getTargetScrollPos(existingViewport: number, viewportSize: number,
+  private static getNewScrollPos(existingViewport: number, viewportSize: number,
     surface: number, surfaceSize: number, thumb: number, stamp: number,
     scrollbarPixelSize: number, surfaceToAllRatio: number, ready: boolean): ScrollPos {
     const now = Date.now()
     const p: ScrollPos = { viewport: surface + thumb, surface, thumb, stamp: 0 }
     const diff = Math.abs(p.viewport - existingViewport)
-    const jump = diff > 3 * viewportSize || now - stamp < 20 // ms
-    if (jump) {
+    const long = diff > 3 * viewportSize || now - stamp < 20 // ms
+    if (long) {
       const fraction = 2 * (surfaceSize/2 - thumb) / surfaceSize
       p.viewport = (thumb - 4/5 * scrollbarPixelSize * fraction) * surfaceToAllRatio
       if (p.viewport < 0 || p.viewport + viewportSize >= surfaceSize * surfaceToAllRatio)
         p.viewport = thumb * surfaceToAllRatio
       p.surface = p.viewport - thumb
       p.stamp = now
-      console.log(`jump: thumb=${p.thumb}, viewport=${p.viewport}, surface=${p.surface}`)
+      console.log(`long: thumb=${p.thumb}, viewport=${p.viewport}, surface=${p.surface}`)
     }
     else {
       const precise = p.viewport / surfaceToAllRatio
@@ -236,7 +236,7 @@ export class VirtualScroll extends State {
         console.log(`rebase: thumb=${thumb}->${p.thumb}, viewport=${p.viewport}, surface=${p.surface}, jump=${stamp}`)
       }
       else if (existingViewport !== p.viewport)
-        console.log(`scroll: thumb=${p.thumb}, viewport=${p.viewport}, surface=${p.surface}`)
+        console.log(`short: thumb=${p.thumb}, viewport=${p.viewport}, surface=${p.surface}`)
     }
     // if (vp !== result) console.log(`${jump ? 'jump' : 'shift'}: thumb=${thumb}, viewport=${vp}->${result}`)
     return p
