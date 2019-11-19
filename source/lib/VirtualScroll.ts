@@ -35,6 +35,7 @@ export class VirtualScroll extends State {
   surface: Area = Area.ZERO
   thumb: Area = Area.ZERO
   viewport: Area = Area.ZERO
+  prev: XY = xy(0, 0)
   stamp: XY = xy(0, 0)
   bufferSize: XY = xy(1.0, 1.0)
   readyCells: Area = Area.ZERO
@@ -149,9 +150,10 @@ export class VirtualScroll extends State {
     const c = this.component
     if (c) {
       const t = this.thumb
+      console.log(`onscroll: ${c.scrollTop}`)
       if (Math.abs(t.y - c.scrollTop) > 1/devicePixelRatio ||
         Math.abs(t.x - c.scrollLeft) > 1/devicePixelRatio)
-        this.scrollTo(c.scrollLeft, c.scrollTop)
+        this.scrollTo(c.scrollLeft, c.scrollTop, false)
     }
   }
 
@@ -161,13 +163,15 @@ export class VirtualScroll extends State {
     const tg = this.targetGrid
     if (!tg.envelops(cells))
       this.targetGrid = tg.moveCenterTo(cells.center, this.allCells).round()
+
+    this.scrollTo(this.thumb.x, this.thumb.y, true) // temp
   }
 
   // Actions & Triggers
 
   @action
-  protected scrollTo(left: number, top: number): void {
-    // console.log(`\nscroll: ${this.thumb.y}->${top}, h=${this.component ? this.component.scrollHeight : '?'}`)
+  protected scrollTo(left: number, top: number, ready: boolean): void {
+    // console.log(`\nscrollTo: ${this.thumb.y}->${top}, h=${this.component ? this.component.scrollHeight : '?'}`)
     const s2a = this.surfaceToAllFactor
     const scrollPixelStep = this.viewportToSurfaceFactor
     const stamp = this.stamp
@@ -177,10 +181,10 @@ export class VirtualScroll extends State {
 
     const x = VirtualScroll.getTargetScrollPos(vp.x, vp.size.x,
       surface.x, surface.size.x, thumb.x, stamp.x,
-      scrollPixelStep.x, s2a.x)
+      scrollPixelStep.x, s2a.x, ready)
     const y = VirtualScroll.getTargetScrollPos(vp.y, vp.size.y,
       surface.y, surface.size.y, thumb.y, stamp.y,
-      scrollPixelStep.y, s2a.y)
+      scrollPixelStep.y, s2a.y, ready)
 
     vp = vp.moveTo(xy(x.viewport, y.viewport), this.all)
     surface = surface.moveTo(xy(x.surface, y.surface), this.all)
@@ -196,7 +200,7 @@ export class VirtualScroll extends State {
 
   private static getTargetScrollPos(existingViewport: number, viewportSize: number,
     surface: number, surfaceSize: number, thumb: number, stamp: number,
-    scrollbarPixelSize: number, surfaceToAllRatio: number): ScrollPos {
+    scrollbarPixelSize: number, surfaceToAllRatio: number, ready: boolean): ScrollPos {
     const now = Date.now()
     const p: ScrollPos = { viewport: surface + thumb, surface, thumb, stamp: 0 }
     const diff = Math.abs(p.viewport - existingViewport)
@@ -214,11 +218,12 @@ export class VirtualScroll extends State {
       const precise = p.viewport / surfaceToAllRatio
       const fraction = 2 * (surfaceSize/2 - precise) / surfaceSize
       const optimal = Math.ceil(precise + 4/5 * scrollbarPixelSize * fraction)
-      const rebase = p.viewport - optimal
-      if (Math.abs(optimal - thumb) > 1/3 * scrollbarPixelSize &&
-        rebase >= 0 && rebase + surfaceSize < surfaceSize * surfaceToAllRatio) {
+      surface = p.viewport - optimal
+      if ((thumb <= 0 || thumb + viewportSize >= surfaceSize ||
+        (ready && Math.abs(optimal - thumb) > 1/3 * scrollbarPixelSize)) &&
+        surface >= 0 && surface + surfaceSize < surfaceSize * surfaceToAllRatio) {
         p.thumb = optimal
-        p.surface = rebase
+        p.surface = surface
         console.log(`rebase: thumb=${thumb}->${p.thumb}, viewport=${p.viewport}, surface=${p.surface}, jump=${stamp}`)
       }
       else if (existingViewport !== p.viewport)
