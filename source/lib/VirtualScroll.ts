@@ -171,14 +171,16 @@ export class VirtualScroll extends State {
     const s2a = this.surfaceToAllFactor
     const scrollPixelStep = this.viewportToSurfaceFactor
     const jumping = this.jumping
-
     let vp = this.viewport
     let surface = this.surface
     let thumb = this.thumb.moveTo(xy(left, top), surface.atZero())
-    const x = VirtualScroll.scroll(vp.x, vp.size.x, surface.x, surface.size.x,
-      thumb.x, jumping.x, scrollPixelStep.x, s2a.x)
-    const y = VirtualScroll.scroll(vp.y, vp.size.y, surface.y, surface.size.y,
-      thumb.y, jumping.y, scrollPixelStep.y, s2a.y)
+
+    const x = VirtualScroll.calcScrollPos(vp.x, vp.size.x,
+      surface.x, surface.size.x, thumb.x, jumping.x,
+      scrollPixelStep.x, s2a.x)
+    const y = VirtualScroll.calcScrollPos(vp.y, vp.size.y,
+      surface.y, surface.size.y, thumb.y, jumping.y,
+      scrollPixelStep.y, s2a.y)
 
     vp = vp.moveTo(xy(x.viewport, y.viewport), this.all)
     surface = surface.moveTo(xy(x.surface, y.surface), this.all)
@@ -192,7 +194,7 @@ export class VirtualScroll extends State {
     this.jumping = xy(x.jumping, y.jumping)
   }
 
-  private static scroll(existingViewport: number, viewportSize: number,
+  private static calcScrollPos(existingViewport: number, viewportSize: number,
     surface: number, surfaceSize: number, thumb: number, jumping: number,
     scrollPixelStep: number, surfaceToAllRatio: number): ScrollPos {
     const now = Date.now()
