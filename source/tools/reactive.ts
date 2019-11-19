@@ -13,7 +13,7 @@ export function reactive(render: (counter: number) => JSX.Element, trace?: Parti
   rx.counter = state.counter
   rx.refresh = refresh // just in case React will change refresh on each rendering
   React.useEffect(rx.unmount, [])
-  return rx.view(render, action)
+  return rx.render(render, action)
 }
 
 // export function reactiveJs<E>(run: (element: E) => void, trace?: Partial<Trace>, action?: Action): (element: E) => void {
@@ -35,13 +35,13 @@ type ReactState<V> = { rx: Rx<V>, counter: number }
 
 class Rx<V> extends State {
   @cached
-  view(generate: (counter: number) => V, action?: Action): V {
-    return action ? action.inspect(() => generate(this.counter)) : generate(this.counter)
+  render(render: (counter: number) => V, action?: Action): V {
+    return action ? action.inspect(() => render(this.counter)) : render(this.counter)
   }
 
   @trigger
-  keepFresh(): void {
-    if (Cache.of(this.view).invalid)
+  revise(): void {
+    if (Cache.of(this.render).invalid)
       separate(this.refresh, {rx: this, counter: this.counter + 1})
   }
 
@@ -63,8 +63,8 @@ function createRx<V>(hint: string | undefined, trace: Trace | undefined): Rx<V> 
   if (hint)
     RT.setTraceHint(rx, hint)
   if (trace) {
-    Cache.of(rx.view).setup({trace})
-    Cache.of(rx.keepFresh).setup({trace})
+    Cache.of(rx.render).setup({trace})
+    Cache.of(rx.revise).setup({trace})
   }
   return rx
 }
