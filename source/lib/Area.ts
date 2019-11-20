@@ -3,6 +3,8 @@
 // Copyright (C) 2019 Yury Chetyrko <ychetyrko@gmail.com>
 // License: https://raw.githubusercontent.com/nezaboodka/reactronic/master/LICENSE
 
+import { moveBy } from './etc'
+
 export class XY {
   readonly x: number
   readonly y: number
@@ -42,24 +44,8 @@ export class Area extends XY {
 
   moveBy(delta: XY, bounds: Area): Area {
     // return this.moveTo(xy(this.x + delta.x, this.y + delta.y), bounds)
-
-    const dx = this.x + delta.x - bounds.x
-    const dy = this.y + delta.y - bounds.y
-    const ox = bounds.x + bounds.size.x - (this.x + delta.x + this.size.x)
-    const oy = bounds.y + bounds.size.y - (this.y + delta.y + this.size.y)
-
-    let x = this.x + delta.x
-    let y = this.y + delta.y
-
-    if (dx < 0)
-      x = bounds.x
-    if (dy < 0)
-      y = bounds.y
-    if (ox < 0)
-      x += ox
-    if (oy < 0)
-      y += oy
-
+    const x = moveBy(this.x, this.size.x, delta.x, bounds.x, bounds.size.x)
+    const y = moveBy(this.y, this.size.y, delta.y, bounds.y, bounds.size.y)
     return area(x, y, this.size.x, this.size.y)
   }
 
@@ -103,25 +89,24 @@ export class Area extends XY {
 
   truncateBy(bounds: Area): Area {
     const dx = this.x - bounds.x
-    const dy = this.y - bounds.y
     const ox = bounds.x + bounds.size.x - (this.x + this.size.x)
-    const oy = bounds.y + bounds.size.y - (this.y + this.size.y)
-
     let x = this.x
-    let y = this.y
     let sx = this.size.x
-    let sy = this.size.y
-
     if (dx < 0) {
       x = bounds.x
       sx += dx
     }
+    if (ox < 0)
+      sx += ox
+
+    const dy = this.y - bounds.y
+    const oy = bounds.y + bounds.size.y - (this.y + this.size.y)
+    let y = this.y
+    let sy = this.size.y
     if (dy < 0) {
       y = bounds.y
       sy += dy
     }
-    if (ox < 0)
-      sx += ox
     if (oy < 0)
       sy += oy
 
