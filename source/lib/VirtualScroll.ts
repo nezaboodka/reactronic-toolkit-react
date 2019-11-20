@@ -153,10 +153,10 @@ export class VirtualScroll extends State {
     const c = this.component
     if (c) {
       const t = this.thumb
-      console.log(`onscroll: ${c.scrollTop}`)
+      // console.log(`onscroll: ${c.scrollTop}`)
       if (Math.abs(t.y - c.scrollTop) > 1/devicePixelRatio ||
         Math.abs(t.x - c.scrollLeft) > 1/devicePixelRatio)
-        this.apply(c.scrollLeft, c.scrollTop, false)
+        this.handleThumbMove(c.scrollLeft, c.scrollTop, false)
     }
   }
 
@@ -166,14 +166,13 @@ export class VirtualScroll extends State {
     const tg = this.targetGrid
     if (!tg.envelops(cells))
       this.targetGrid = tg.moveCenterTo(cells.center, this.allCells).round()
-
-    this.apply(this.thumb.x, this.thumb.y, true) // temp
+    this.handleThumbMove(this.thumb.x, this.thumb.y, true)
   }
 
   // Actions & Triggers
 
-  protected apply(left: number, top: number, ready: boolean): void {
-    // console.log(`\nscrollTo: ${this.thumb.y}->${top}, h=${this.component ? this.component.scrollHeight : '?'}`)
+  protected handleThumbMove(left: number, top: number, ready: boolean): void {
+    // console.log(`\napply: ${this.thumb.y}->${top}, h=${this.component ? this.component.scrollHeight : '?'}`)
     const s2a = this.surfaceToAllFactor
     const scrollPixelStep = this.viewportToSurfaceFactor
     const stamp = this.stamp
@@ -259,7 +258,7 @@ export class VirtualScroll extends State {
   @trigger
   protected rebaseIfNeeded(): void {
     if (!this.progressing.busy) {
-      passive(() => this.apply(this.thumb.x, this.thumb.y, true))
+      passive(() => this.handleThumbMove(this.thumb.x, this.thumb.y, true))
     }
   }
 }
