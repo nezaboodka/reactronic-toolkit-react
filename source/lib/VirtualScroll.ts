@@ -41,12 +41,12 @@ export class VirtualScroll extends State {
   readyCells: Area = Area.ZERO
   targetGrid: Area = Area.ZERO
   sizing = new Sizing()
-  progressing = Monitor.create('scrolling', 20)
+  progressing = Monitor.create('scrolling', 35)
 
   constructor(sizeX: number, sizeY: number) {
     super()
     this.allCells = area(0, 0, sizeX, sizeY)
-    Cache.of(this.onScroll).setup({monitor: this.progressing})
+    Cache.of(this.onThumbChange).setup({monitor: this.progressing})
   }
 
   @action
@@ -149,14 +149,14 @@ export class VirtualScroll extends State {
   // Events
 
   @action
-  onScroll(): void {
+  onThumbChange(): void {
     const c = this.component
     if (c) {
       const t = this.thumb
       // console.log(`onscroll: ${c.scrollTop}`)
       if (Math.abs(t.y - c.scrollTop) > 1/devicePixelRatio ||
         Math.abs(t.x - c.scrollLeft) > 1/devicePixelRatio)
-        this.handleThumbMove(c.scrollLeft, c.scrollTop, false)
+        this.applyThumbPos(c.scrollLeft, c.scrollTop, false)
     }
   }
 
@@ -166,12 +166,32 @@ export class VirtualScroll extends State {
     const tg = this.targetGrid
     if (!tg.envelops(cells))
       this.targetGrid = tg.moveCenterTo(cells.center, this.allCells).round()
-    this.handleThumbMove(this.thumb.x, this.thumb.y, true)
+    this.applyThumbPos(this.thumb.x, this.thumb.y, true)
   }
 
-  // Actions & Triggers
+  // Triggers
 
-  protected handleThumbMove(left: number, top: number, ready: boolean): void {
+  @trigger
+  protected pulseRebase(): void {
+    if (!this.progressing.busy)
+      passive(() => this.applyThumbPos(this.thumb.x, this.thumb.y, true))
+  }
+
+  @trigger
+  protected pulseSync(): void {
+    const c = this.component
+    if (c) {
+      const thumb = this.thumb
+      if (Math.abs(thumb.x - c.scrollLeft) > 0.1)
+        c.scrollLeft = thumb.x
+      if (Math.abs(thumb.y - c.scrollTop) > 0.1)
+        c.scrollTop = thumb.y
+    }
+  }
+
+  // Internal
+
+  protected applyThumbPos(left: number, top: number, ready: boolean): void {
     // console.log(`\napply: ${this.thumb.y}->${top}, h=${this.component ? this.component.scrollHeight : '?'}`)
     const s2a = this.surfaceToAllFactor
     const scrollPixelStep = this.viewportToSurfaceFactor
@@ -241,24 +261,5 @@ export class VirtualScroll extends State {
     }
     // if (vp !== result) console.log(`${jump ? 'jump' : 'shift'}: thumb=${thumb}, viewport=${vp}->${result}`)
     return p
-  }
-
-  @trigger
-  protected syncThumbWithDevice(): void {
-    const c = this.component
-    if (c) {
-      const thumb = this.thumb
-      if (Math.abs(thumb.x - c.scrollLeft) > 0.1)
-        c.scrollLeft = thumb.x
-      if (Math.abs(thumb.y - c.scrollTop) > 0.1)
-        c.scrollTop = thumb.y
-    }
-  }
-
-  @trigger
-  protected rebaseIfNeeded(): void {
-    if (!this.progressing.busy) {
-      passive(() => this.handleThumbMove(this.thumb.x, this.thumb.y, true))
-    }
   }
 }
