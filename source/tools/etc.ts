@@ -12,3 +12,9 @@ export function place(x1: number, y1: number, x2?: number, y2?: number): React.C
     y2 = y1
   return { gridColumn: `${x1} / span ${x2 - x1 + 1}`, gridRow: `${y1} / span ${y2 - y1 + 1}` }
 }
+
+export function animationFrame(): Promise<number> {
+  return new Promise(function (resolve: any) {
+    requestAnimationFrame(resolve.bind(null, (time: number) => resolve(time)))
+  })
+}
