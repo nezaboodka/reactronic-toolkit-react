@@ -3,8 +3,6 @@
 // Copyright (C) 2019 Yury Chetyrko <ychetyrko@gmail.com>
 // License: https://raw.githubusercontent.com/nezaboodka/reactronic/master/LICENSE
 
-import { moveBy } from './etc'
-
 export class XY {
   readonly x: number
   readonly y: number
@@ -139,6 +137,16 @@ export class Area extends XY {
   toString(): string {
     return `${num(this.x, -15)}, ${num(this.y, -15)} (w: ${num(this.size.x, -15)}, h: ${num(this.size.y, -15)})`
   }
+}
+
+export function moveBy(pos: number, size: number,
+  delta: number, minPos: number, maxSize: number): number {
+  const below = pos + delta - minPos
+  const above = minPos + maxSize - (pos + delta + size)
+  pos = below < 0 ? minPos : pos += delta
+  if (above < 0)
+    pos += above
+  return pos
 }
 
 export function xy(x: number, y: number): XY {
