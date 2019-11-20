@@ -49,7 +49,7 @@ export function ScrollBox(p: {
     }
     return (
       <div ref={ref} className={p.className} style={p.style}
-        onScroll={e => p.scroll.onThumbChange()}>
+        onScroll={e => p.scroll.onScroll()}>
         <div style={surfaceStyle}>
           <div className={p.fragmentClassName} style={fragmentStyle}>
             {p.children}

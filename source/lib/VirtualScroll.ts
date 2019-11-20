@@ -46,7 +46,7 @@ export class VirtualScroll extends State {
   constructor(sizeX: number, sizeY: number) {
     super()
     this.allCells = area(0, 0, sizeX, sizeY)
-    Cache.of(this.onThumbChange).setup({monitor: this.progressing})
+    Cache.of(this.onScroll).setup({monitor: this.progressing})
   }
 
   @action
@@ -149,13 +149,13 @@ export class VirtualScroll extends State {
   // Events
 
   @action
-  onThumbChange(): void {
+  onScroll(): void {
     const c = this.component
     if (c) {
-      const t = this.thumb
       // console.log(`onscroll: ${c.scrollTop}`)
-      if (Math.abs(t.y - c.scrollTop) > 1/devicePixelRatio ||
-        Math.abs(t.x - c.scrollLeft) > 1/devicePixelRatio)
+      const t = this.thumb
+      const dpr = 1/devicePixelRatio
+      if (Math.abs(t.y - c.scrollTop) > dpr || Math.abs(t.x - c.scrollLeft) > dpr)
         this.applyThumbPos(c.scrollLeft, c.scrollTop, false)
     }
   }
@@ -171,13 +171,13 @@ export class VirtualScroll extends State {
   // Triggers
 
   @trigger
-  protected pulseRebase(): void {
+  protected adjustSurface(): void {
     if (!this.progressing.busy)
       passive(() => this.applyThumbPos(this.thumb.x, this.thumb.y, true))
   }
 
   @trigger
-  protected pulseSync(): void {
+  protected syncThumbs(): void {
     const c = this.component
     if (c) {
       const thumb = this.thumb
@@ -199,10 +199,10 @@ export class VirtualScroll extends State {
     let surface = this.surface
     let thumb = this.thumb.moveTo(xy(left, top), surface.atZero())
 
-    const x = VirtualScroll.getNewScrollPos(vp.x, vp.size.x,
+    const x = VirtualScroll.getTargetPos(vp.x, vp.size.x,
       surface.x, surface.size.x, thumb.x, stamp.x,
       scrollPixelStep.x, s2a.x, ready)
-    const y = VirtualScroll.getNewScrollPos(vp.y, vp.size.y,
+    const y = VirtualScroll.getTargetPos(vp.y, vp.size.y,
       surface.y, surface.size.y, thumb.y, stamp.y,
       scrollPixelStep.y, s2a.y, ready)
 
@@ -218,7 +218,7 @@ export class VirtualScroll extends State {
     this.stamp = xy(x.stamp, y.stamp)
   }
 
-  private static getNewScrollPos(existingViewport: number, viewportSize: number,
+  private static getTargetPos(existingViewport: number, viewportSize: number,
     surface: number, surfaceSize: number, thumb: number, stamp: number,
     scrollbarPixelSize: number, surfaceToAllRatio: number, ready: boolean): ScrollPos {
     const now = Date.now()
