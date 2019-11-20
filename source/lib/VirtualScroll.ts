@@ -3,7 +3,7 @@
 // Copyright (C) 2019 Yury Chetyrko <ychetyrko@gmail.com>
 // License: https://raw.githubusercontent.com/nezaboodka/reactronic/master/LICENSE
 
-import { action, Cache, Monitor, nonreactive, State, trigger } from 'reactronic'
+import { action, Cache, Monitor, passive, State, trigger } from 'reactronic'
 
 import { Area, area, XY, xy } from './Area'
 
@@ -259,7 +259,7 @@ export class VirtualScroll extends State {
   @trigger
   protected rebaseIfNeeded(): void {
     if (!this.progressing.busy) {
-      nonreactive(() => this.apply(this.thumb.x, this.thumb.y, true))
+      passive(() => this.apply(this.thumb.x, this.thumb.y, true))
     }
   }
 }
