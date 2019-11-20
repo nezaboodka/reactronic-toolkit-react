@@ -35,8 +35,7 @@ export class VirtualScroll extends State {
   surface: Area = Area.ZERO
   thumb: Area = Area.ZERO
   viewport: Area = Area.ZERO
-  prev: XY = xy(0, 0)
-  stamp: XY = xy(0, 0)
+  jumping: XY = xy(0, 0)
   bufferSize: XY = xy(1.0, 1.0)
   readyCells: Area = Area.ZERO
   targetGrid: Area = Area.ZERO
@@ -194,16 +193,16 @@ export class VirtualScroll extends State {
     // console.log(`\napply: ${this.thumb.y}->${top}, h=${this.component ? this.component.scrollHeight : '?'}`)
     const s2a = this.surfaceToAllFactor
     const scrollPixelStep = this.viewportToSurfaceFactor
-    const stamp = this.stamp
+    const jumping = this.jumping
     let vp = this.viewport
     let surface = this.surface
     let thumb = this.thumb.moveTo(xy(left, top), surface.atZero())
 
     const x = VirtualScroll.getTargetPos(vp.x, vp.size.x,
-      surface.x, surface.size.x, thumb.x, stamp.x,
+      surface.x, surface.size.x, thumb.x, jumping.x,
       scrollPixelStep.x, s2a.x, ready)
     const y = VirtualScroll.getTargetPos(vp.y, vp.size.y,
-      surface.y, surface.size.y, thumb.y, stamp.y,
+      surface.y, surface.size.y, thumb.y, jumping.y,
       scrollPixelStep.y, s2a.y, ready)
 
     vp = vp.moveTo(xy(x.viewport, y.viewport), this.all)
@@ -215,7 +214,7 @@ export class VirtualScroll extends State {
       this.surface = surface
     if (!thumb.equalTo(this.thumb))
       this.thumb = thumb
-    this.stamp = xy(x.stamp, y.stamp)
+    this.jumping = xy(x.stamp, y.stamp)
   }
 
   private static getTargetPos(existingViewport: number, viewportSize: number,
