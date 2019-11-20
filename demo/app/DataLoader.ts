@@ -15,7 +15,7 @@ export class DataLoader extends State {
 
   @trigger @reentrance(Reentrance.CancelPrevious)
   async load(): Promise<void> {
-    await sleep(50)
+    await sleep(0)
     const vs = this.scroll
     const buffer = vs.bufferCells
     if (!buffer.equalTo(vs.readyCells)) {

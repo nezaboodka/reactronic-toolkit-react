@@ -166,7 +166,6 @@ export class VirtualScroll extends State {
     const tg = this.targetGrid
     if (!tg.envelops(cells))
       this.targetGrid = tg.moveCenterTo(cells.center, this.allCells).round()
-    this.applyThumbPos(this.thumb.x, this.thumb.y, true)
   }
 
   // Triggers
