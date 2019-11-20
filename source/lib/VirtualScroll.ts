@@ -3,7 +3,7 @@
 // Copyright (C) 2019 Yury Chetyrko <ychetyrko@gmail.com>
 // License: https://raw.githubusercontent.com/nezaboodka/reactronic/master/LICENSE
 
-import { action, State, trigger } from 'reactronic'
+import { action, Cache, Monitor, nonreactive, State, trigger } from 'reactronic'
 
 import { Area, area, XY, xy } from './Area'
 
@@ -41,10 +41,12 @@ export class VirtualScroll extends State {
   readyCells: Area = Area.ZERO
   targetGrid: Area = Area.ZERO
   sizing = new Sizing()
+  progressing = Monitor.create('scrolling', 20)
 
   constructor(sizeX: number, sizeY: number) {
     super()
     this.allCells = area(0, 0, sizeX, sizeY)
+    Cache.of(this.onScroll).setup({monitor: this.progressing})
   }
 
   @action
@@ -146,6 +148,7 @@ export class VirtualScroll extends State {
 
   // Events
 
+  @action
   onScroll(): void {
     const c = this.component
     if (c) {
@@ -153,7 +156,7 @@ export class VirtualScroll extends State {
       console.log(`onscroll: ${c.scrollTop}`)
       if (Math.abs(t.y - c.scrollTop) > 1/devicePixelRatio ||
         Math.abs(t.x - c.scrollLeft) > 1/devicePixelRatio)
-        this.scrollTo(c.scrollLeft, c.scrollTop, false)
+        this.apply(c.scrollLeft, c.scrollTop, false)
     }
   }
 
@@ -164,13 +167,12 @@ export class VirtualScroll extends State {
     if (!tg.envelops(cells))
       this.targetGrid = tg.moveCenterTo(cells.center, this.allCells).round()
 
-    this.scrollTo(this.thumb.x, this.thumb.y, true) // temp
+    this.apply(this.thumb.x, this.thumb.y, true) // temp
   }
 
   // Actions & Triggers
 
-  @action
-  protected scrollTo(left: number, top: number, ready: boolean): void {
+  protected apply(left: number, top: number, ready: boolean): void {
     // console.log(`\nscrollTo: ${this.thumb.y}->${top}, h=${this.component ? this.component.scrollHeight : '?'}`)
     const s2a = this.surfaceToAllFactor
     const scrollPixelStep = this.viewportToSurfaceFactor
@@ -251,6 +253,13 @@ export class VirtualScroll extends State {
         c.scrollLeft = thumb.x
       if (Math.abs(thumb.y - c.scrollTop) > 0.1)
         c.scrollTop = thumb.y
+    }
+  }
+
+  @trigger
+  protected rebaseIfNeeded(): void {
+    if (!this.progressing.busy) {
+      nonreactive(() => this.apply(this.thumb.x, this.thumb.y, true))
     }
   }
 }
