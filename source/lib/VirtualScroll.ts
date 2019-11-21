@@ -273,7 +273,8 @@ export class VirtualScroll extends State {
           p.surface = 0
         }
         else if (s2 >= allSize - surfaceSize) {
-          // p.thumb = optimal - (surface - (allSize - surfaceSize))
+          console.log(`above: ${optimal + (allSize - surfaceSize) - s2}`)
+          // p.thumb = optimal + (allSize - surfaceSize) - s2
           p.surface = allSize - surfaceSize
         }
         else {
