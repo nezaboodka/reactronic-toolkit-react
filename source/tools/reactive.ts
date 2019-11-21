@@ -4,7 +4,7 @@
 // License: https://raw.githubusercontent.com/nezaboodka/reactronic/master/LICENSE
 
 import * as React from 'react'
-import { Action, Cache, cached, external, State, stateless, Tools as RT, Trace, trigger } from 'reactronic'
+import { Action, Cache, cached, isolated, State, stateless, Tools as RT, Trace, trigger } from 'reactronic'
 
 export function reactive(render: (counter: number) => JSX.Element, trace?: Partial<Trace>, action?: Action): JSX.Element {
   const [state, refresh] = React.useState<ReactState<JSX.Element>>(
@@ -42,13 +42,13 @@ class Rx<V> extends State {
   @trigger
   pulse(): void {
     if (Cache.of(this.render).invalid)
-      external(this.refresh, {rx: this, counter: this.counter + 1})
+      isolated(this.refresh, {rx: this, counter: this.counter + 1})
   }
 
   @stateless counter: number = 0
   @stateless refresh: (next: ReactState<V>) => void = nop
   @stateless readonly unmount = (): (() => void) => {
-    return (): void => { external(Cache.unmount, this) }
+    return (): void => { isolated(Cache.unmount, this) }
   }
 }
 
