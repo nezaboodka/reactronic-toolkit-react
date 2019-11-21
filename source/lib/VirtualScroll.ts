@@ -153,7 +153,7 @@ export class VirtualScroll extends State {
     if (c) {
       // console.log(`onscroll: ${c.scrollTop}`)
       const t = this.thumb
-      const dpr = 1/devicePixelRatio
+      const dpr = 0.75/devicePixelRatio
       const left = c.scrollLeft
       const top = c.scrollTop
       if (Math.abs(t.y - top) > dpr || Math.abs(t.x - left) > dpr)
