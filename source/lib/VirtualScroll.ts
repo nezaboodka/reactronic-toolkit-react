@@ -279,7 +279,7 @@ export class VirtualScroll extends State {
           p.surface = s2
         }
         if (thumb !== p.thumb)
-          console.log(`rebase: vp(${p.viewport}..${p.viewport + viewportSize}) = sf(${p.surface}) + th(${p.thumb})    // was: ${surface} + ${thumb}    // error ${p.viewport - p.surface - p.thumb}`)
+          console.log(`\nrebase: vp(${p.viewport}..${p.viewport + viewportSize}) = sf(${p.surface}) + th(${p.thumb})    // was: ${surface} + ${thumb}    // error ${p.viewport - p.surface - p.thumb}\n`)
       }
       else if (existingViewport !== p.viewport)
         console.log(`pan: vp(${p.viewport}..${p.viewport + viewportSize}) = sf(${p.surface}) + th(${p.thumb})    // error ${p.viewport - p.surface - p.thumb}`)
