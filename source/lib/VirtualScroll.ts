@@ -259,32 +259,32 @@ export class VirtualScroll extends State {
         p.viewport = allSize - viewportSize
       p.surface = p.viewport - thumb
       p.stamp = now
-      console.log(`jump: thumb=${p.thumb}, viewport=${p.viewport}, surface=${p.surface}`)
+      console.log(`jump: vp(${p.viewport}..${p.viewport + viewportSize}) = sf(${p.surface}) + th(${p.thumb})    // ${p.viewport - p.surface - p.thumb}`)
     }
     else {
       const precise = p.viewport / thumbToAllRatio
       const fraction = 2 * (surfaceSize/2 - precise) / surfaceSize
       const optimal = precise + 4/5 * scrollbarPixelSize * fraction
-      surface = p.viewport - optimal
+      const s2 = p.viewport - optimal
       if (thumb <= 0 || thumb >= surfaceSize - viewportSize ||
         (ready && Math.abs(optimal - thumb) > 1/3 * scrollbarPixelSize)) {
-        if (surface < 0) {
-          p.thumb = optimal + surface
+        if (s2 < 0) {
+          p.thumb = optimal + s2
           p.surface = 0
         }
-        else if (surface >= allSize - surfaceSize) {
+        else if (s2 >= allSize - surfaceSize) {
           // p.thumb = optimal - (surface - (allSize - surfaceSize))
           p.surface = allSize - surfaceSize
         }
         else {
           p.thumb = optimal
-          p.surface = surface
+          p.surface = s2
         }
         if (thumb !== p.thumb)
-          console.log(`rebase: thumb=${thumb}->${p.thumb}, viewport=${p.viewport}, surface=${p.surface}`)
+          console.log(`rebase: vp(${p.viewport}..${p.viewport + viewportSize}) = sf(${p.surface}) + th(${p.thumb})    // was: ${surface} + ${thumb}    // error ${p.viewport - p.surface - p.thumb}`)
       }
       else if (existingViewport !== p.viewport)
-        console.log(`pan: thumb=${p.thumb}, viewport=${p.viewport}, surface=${p.surface}`)
+        console.log(`pan: vp(${p.viewport}..${p.viewport + viewportSize}) = sf(${p.surface}) + th(${p.thumb})    // error ${p.viewport - p.surface - p.thumb}`)
     }
     // if (vp !== result) console.log(`${jump ? 'jump' : 'shift'}: thumb=${thumb}, viewport=${vp}->${result}`)
     return p
