@@ -62,6 +62,6 @@
     "build": "eslint **/*.ts **/*.tsx && tsc",
     "fix": "eslint --fix **/*.ts **/*.tsx",
     "pack": "eslint **/*.ts **/*.tsx && tsc --sourceMap false --removeComments true",
-    "demo": "parcel ./demo/index.html --out-dir build/demo --cache-dir build/cache"
+    "demo": "parcel ./demo/index.html --out-dir build/demo --cache-dir build/demo.cache"
   }
 }
