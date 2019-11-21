@@ -27,7 +27,7 @@ export type IComponent = {
   scrollTop: number
 }
 
-type ScrollPos = { viewport: number, surface: number, thumb: number, stamp: number }
+type ScrollPos = { viewport: number, surface: number, thumb: number, jumping: number }
 
 export class VirtualScroll extends State {
   allCells: Area
@@ -241,14 +241,14 @@ export class VirtualScroll extends State {
       this.surface = surface
     if (!thumb.equalTo(this.thumb))
       this.thumb = thumb
-    this.jumping = xy(x.stamp, y.stamp)
+    this.jumping = xy(x.jumping, y.jumping)
   }
 
   private static getTargetPos(existingViewport: number, viewportSize: number,
     surface: number, surfaceSize: number, allSize: number, thumb: number, jumping: number,
     scrollbarPixelSize: number, thumbToAllRatio: number, ready: boolean): ScrollPos {
     const now = Date.now()
-    const p: ScrollPos = { viewport: surface + thumb, surface, thumb, stamp: 0 }
+    const p: ScrollPos = { viewport: surface + thumb, surface, thumb, jumping: 0 }
     const diff = Math.abs(p.viewport - existingViewport)
     if (diff > 3 * viewportSize || now - jumping < SMOOTH_SCROLL_DEBOUNCE) { // jump
       const fraction = 2 * (surfaceSize/2 - thumb) / surfaceSize
@@ -258,7 +258,7 @@ export class VirtualScroll extends State {
       else if (p.viewport > allSize - viewportSize)
         p.viewport = allSize - viewportSize
       p.surface = p.viewport - thumb
-      p.stamp = now
+      p.jumping = now
       console.log(`jump: vp(${p.viewport}..${p.viewport + viewportSize}) = sf(${p.surface}) + th(${p.thumb})    // ${p.viewport - p.surface - p.thumb}`)
     }
     else {
