@@ -1,6 +1,6 @@
 {
   "name": "reactronic-toolkit-react",
-  "version": "0.19.67",
+  "version": "0.19.68",
   "description": "Reactronic Toolkit for React",
   "main": "build/dist/source/reactronic-toolkit-react.js",
   "types": "build/dist/source/reactronic-toolkit-react.d.ts",
