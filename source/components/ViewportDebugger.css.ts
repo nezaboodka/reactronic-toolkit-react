@@ -5,7 +5,7 @@
 
 import { css } from 'emotion'
 
-import { restyle } from '.reactronic-toolkit-react'
+import { restyle } from '#reactronic-toolkit-react'
 
 export const style = restyle(() => {
   return {

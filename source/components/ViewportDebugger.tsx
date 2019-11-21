@@ -5,7 +5,7 @@
 
 import * as React from 'react'
 
-import { num, place, reactive, VirtualScroll } from '.reactronic-toolkit-react'
+import { num, place, reactive, VirtualScroll } from '#reactronic-toolkit-react'
 
 import { AreaRect } from './AreaRect'
 import { style } from './ViewportDebugger.css'

@@ -7,7 +7,7 @@ import { cx } from 'emotion'
 import * as React from 'react'
 import { TraceLevel } from 'reactronic'
 
-import { Area, num, place, reactive } from '.reactronic-toolkit-react'
+import { Area, num, place, reactive } from '#reactronic-toolkit-react'
 
 import { style } from './AreaRect.css'
 
