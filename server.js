@@ -40,6 +40,7 @@ const server = new WebpackDevServer(compiler, {
   // display no info to console (only warnings and errors)
   noInfo: false,
   publicPath: config.output.publicPath,
+  contentBase: 'demo',
   stats: {
     // With console colors
     colors: true,
