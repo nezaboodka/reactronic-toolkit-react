@@ -5,7 +5,7 @@
 
 import { State } from 'reactronic'
 
-import { VirtualScroll } from '#reactronic-toolkit-react'
+import { VirtualScroll } from '~/../source/reactronic-toolkit-react'
 import { DataLoader } from '~/app/DataLoader'
 
 export class Application extends State {

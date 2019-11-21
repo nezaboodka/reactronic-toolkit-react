@@ -5,7 +5,7 @@
 
 import * as React from 'react'
 
-import { place, reactive, ScrollBox, ViewportDebugger } from '#reactronic-toolkit-react'
+import { place, reactive, ScrollBox, ViewportDebugger } from '~/../source/reactronic-toolkit-react'
 import { Application } from '~/app/Application'
 import { GridFragment } from '~/view/GridFragment'
 

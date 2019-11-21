@@ -2,8 +2,8 @@
   "name": "reactronic-toolkit-react",
   "version": "0.19.67",
   "description": "Reactronic Toolkit for React",
-  "main": "build/dist/source/index.js",
-  "types": "build/dist/source/index.d.ts",
+  "main": "build/dist/source/reactronic-toolkit-react.js",
+  "types": "build/dist/source/reactronic-toolkit-react.d.ts",
   "files": [
     "build/dist/source/**/*"
   ],
@@ -61,11 +61,13 @@
     "css-loader": "3.2.0",
     "file-loader": "4.2.0",
     "react-hot-loader": "4.12.18",
-    "source-map-loader": "0.2.4"
+    "source-map-loader": "0.2.4",
+    "parcel-bundler": "1.12.4"
   },
   "scripts": {
     "build": "eslint **/*.ts **/*.tsx && tsc",
     "fix": "eslint --fix **/*.ts **/*.tsx",
-    "pack": "eslint **/*.ts **/*.tsx && tsc --sourceMap false --removeComments true"
+    "pack": "eslint **/*.ts **/*.tsx && tsc --sourceMap false --removeComments true",
+    "parcel": "parcel ./demo/index.html ./demo/index.tsx --out-dir build/demo --cache-dir build/cache"
   }
 }

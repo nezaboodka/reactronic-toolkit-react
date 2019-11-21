@@ -5,7 +5,7 @@
 
 import { Reentrance, reentrance, sleep, State, trigger } from 'reactronic'
 
-import { VirtualScroll } from '#reactronic-toolkit-react'
+import { VirtualScroll } from '~/../source/reactronic-toolkit-react'
 
 export class DataLoader extends State {
   constructor(
