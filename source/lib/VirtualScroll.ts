@@ -269,12 +269,9 @@ export class VirtualScroll extends State {
       if (thumb <= 0 || thumb >= surfaceSize - viewportSize ||
         (ready && Math.abs(optimal - thumb) > 1/3 * scrollbarPixelSize)) {
         if (s2 < 0) {
-          p.thumb = optimal + s2
           p.surface = 0
         }
-        else if (s2 >= allSize - surfaceSize) {
-          console.log(`above: ${optimal + (allSize - surfaceSize) - s2}`)
-          // p.thumb = optimal + (allSize - surfaceSize) - s2
+        else if (s2 + surfaceSize > allSize) {
           p.surface = allSize - surfaceSize
         }
         else {
