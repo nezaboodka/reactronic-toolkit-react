@@ -154,8 +154,10 @@ export class VirtualScroll extends State {
       // console.log(`onscroll: ${c.scrollTop}`)
       const t = this.thumb
       const dpr = 1/devicePixelRatio
-      if (Math.abs(t.y - c.scrollTop) > dpr || Math.abs(t.x - c.scrollLeft) > dpr)
-        this.applyThumbPos(c.scrollLeft, c.scrollTop, false)
+      const left = c.scrollLeft
+      const top = c.scrollTop
+      if (Math.abs(t.y - top) > dpr || Math.abs(t.x - left) > dpr)
+        this.applyThumbPos(left, top, false)
     }
   }
 
