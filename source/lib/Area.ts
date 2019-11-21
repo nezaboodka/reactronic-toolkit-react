@@ -33,16 +33,16 @@ export class Area extends XY {
     return this.moveBy(xy(pos.x - this.x, pos.y - this.y), bounds)
   }
 
-  moveCenterTo(pos: XY, bounds: Area): Area {
-    const c = this.center
-    return this.moveBy(xy(pos.x - c.x, pos.y - c.y), bounds)
-  }
-
   moveBy(delta: XY, bounds: Area): Area {
     // return this.moveTo(xy(this.x + delta.x, this.y + delta.y), bounds)
     const x = inner(this.x + delta.x, this.size.x, bounds.x, bounds.size.x)
     const y = inner(this.y + delta.y, this.size.y, bounds.y, bounds.size.y)
     return area(x, y, this.size.x, this.size.y)
+  }
+
+  moveCenterTo(pos: XY, bounds: Area): Area {
+    const c = this.center
+    return this.moveBy(xy(pos.x - c.x, pos.y - c.y), bounds)
   }
 
   resize(size: XY): Area {
