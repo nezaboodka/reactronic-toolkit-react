@@ -28,7 +28,7 @@
           "reveal": "always",
           "focus": true,
           "panel": "shared"
-      },
+      }
     },
     {
       "label": "Fix Rules  -  eslint",
@@ -55,6 +55,6 @@
         "focus": true,
         "panel": "shared"
       }
-    },
+    }
   ]
 }
