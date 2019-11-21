@@ -25,12 +25,12 @@ export class Area extends XY {
     this.size = xy(w, h)
   }
 
-  moveTo(pos: XY, bounds: Area): Area {
-    return this.moveBy(xy(pos.x - this.x, pos.y - this.y), bounds)
-  }
-
   atZero(): Area {
     return this.moveTo(Area.ZERO, Area.INFINITY)
+  }
+
+  moveTo(pos: XY, bounds: Area): Area {
+    return this.moveBy(xy(pos.x - this.x, pos.y - this.y), bounds)
   }
 
   moveCenterTo(pos: XY, bounds: Area): Area {
@@ -40,8 +40,8 @@ export class Area extends XY {
 
   moveBy(delta: XY, bounds: Area): Area {
     // return this.moveTo(xy(this.x + delta.x, this.y + delta.y), bounds)
-    const x = moveBy(this.x, this.size.x, delta.x, bounds.x, bounds.size.x)
-    const y = moveBy(this.y, this.size.y, delta.y, bounds.y, bounds.size.y)
+    const x = inner(this.x + delta.x, this.size.x, bounds.x, bounds.size.x)
+    const y = inner(this.y + delta.y, this.size.y, bounds.y, bounds.size.y)
     return area(x, y, this.size.x, this.size.y)
   }
 
@@ -137,13 +137,13 @@ export class Area extends XY {
   }
 }
 
-export function moveBy(pos: number, size: number,
-  delta: number, minPos: number, maxSize: number): number {
-  const below = pos + delta - minPos
-  const above = minPos + maxSize - (pos + delta + size)
-  pos = below < 0 ? minPos : pos += delta
-  if (above < 0)
-    pos += above
+export function inner(pos: number, size: number, minPos: number, maxSize: number): number {
+  const below = pos - minPos
+  const above = (pos + size) - (minPos + maxSize)
+  if (below < 0)
+    pos = minPos
+  if (above > 0)
+    pos -= above
   return pos
 }
 

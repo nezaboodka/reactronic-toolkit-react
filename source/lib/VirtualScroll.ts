@@ -236,7 +236,7 @@ export class VirtualScroll extends State {
     else {
       const precise = p.viewport / surfaceToAllRatio
       const fraction = 2 * (surfaceSize/2 - precise) / surfaceSize
-      const optimal = Math.ceil(precise + 4/5 * scrollbarPixelSize * fraction)
+      const optimal = precise + 4/5 * scrollbarPixelSize * fraction
       surface = p.viewport - optimal
       if (thumb <= 0 || thumb >= surfaceSize - viewportSize ||
         (ready && Math.abs(optimal - thumb) > 1/3 * scrollbarPixelSize)) {
