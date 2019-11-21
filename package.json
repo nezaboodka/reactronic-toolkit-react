@@ -44,30 +44,24 @@
     "eslint-plugin-simple-import-sort": "4.0.0",
     "@typescript-eslint/parser": "2.7.0",
     "@typescript-eslint/eslint-plugin": "2.7.0",
-    "webpack": "4.41.2",
-    "webpack-cli": "3.3.10",
-    "webpack-config": "7.5.0",
-    "webpack-dev-server": "3.9.0",
-    "html-webpack-plugin": "3.2.0",
-    "awesome-typescript-loader": "5.2.1",
-    "eslint-loader": "3.0.2",
-    "braces": "3.0.2",
-    "babel-cli": "6.26.0",
-    "babel-core": "6.26.3",
-    "babel-loader": "7.1.5",
-    "babel-plugin-external-helpers": "6.22.0",
-    "babel-polyfill": "6.26.0",
-    "babel-preset-env": "1.7.0",
-    "css-loader": "3.2.0",
-    "file-loader": "4.2.0",
-    "react-hot-loader": "4.12.18",
-    "source-map-loader": "0.2.4",
     "parcel-bundler": "1.12.4"
+  },
+  "browserslist": {
+    "production": [
+      "last 1 chrome version",
+      "last 1 firefox version",
+      "last 1 safari version"
+    ],
+    "development": [
+      "last 1 chrome version",
+      "last 1 firefox version",
+      "last 1 safari version"
+    ]
   },
   "scripts": {
     "build": "eslint **/*.ts **/*.tsx && tsc",
     "fix": "eslint --fix **/*.ts **/*.tsx",
     "pack": "eslint **/*.ts **/*.tsx && tsc --sourceMap false --removeComments true",
-    "parcel": "parcel ./demo/index.html ./demo/index.tsx --out-dir build/demo --cache-dir build/cache"
+    "demo": "parcel ./demo/index.html --out-dir build/demo --cache-dir build/cache"
   }
 }

@@ -5,37 +5,15 @@
   "version": "0.2.0",
   "configurations": [
     {
-      "name": "Debug",
-      "type": "node",
-      "request": "launch",
-      "protocol": "inspector",
-      "sourceMaps": true,
-      "cwd": "${workspaceRoot}",
-      "args": ["${relativeFile}"],
-      "runtimeArgs": ["--nolazy", "-r", "ts-node/register"],
-      "skipFiles": [
-        "${workspaceFolder}/node_modules/**/*.js",
-        "<node_internals>/**/*.js"
-      ]
-    },
-    {
-      "name": "server",
-      "type": "node",
-      "request": "launch",
-      "program": "${workspaceRoot}/server.js",
-      "sourceMaps": true,
-      "skipFiles": [
-        "${workspaceFolder}/node_modules/**/*.js",
-        "<node_internals>/**/*.js"
-      ]
-    },
-    {
       "name": "chrome",
       "type": "chrome",
       "request": "launch",
-      "url": "http://localhost:3334",
+      "url": "http://localhost:1234",
       "sourceMaps": true,
       "webRoot": "${workspaceRoot}",
+      "sourceMapPathOverrides": {
+        "*": "${webRoot}/demo*"
+      },
       "skipFiles": [
         "${workspaceFolder}/node_modules/**/*.js",
         "<node_internals>/**/*.js"
