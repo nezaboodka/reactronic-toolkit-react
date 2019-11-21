@@ -5,7 +5,7 @@
 
 import { action, Cache, Monitor, passive, State, trigger } from 'reactronic'
 
-import { Area, area, XY, xy } from './Area'
+import { Area, area, num, XY, xy } from './Area'
 
 const SURFACE_SIZE_LIMIT: Area = area(0, 0, 1000123, 1000123)
 const TARGET_GRID_SIZE_LIMIT: Area = area(0, 0, 899, 899)
@@ -250,7 +250,8 @@ export class VirtualScroll extends State {
     const now = Date.now()
     const p: ScrollPos = { viewport: surface + thumb, surface, thumb, jumping: 0 }
     const diff = Math.abs(p.viewport - existingViewport)
-    if (diff > 3 * viewportSize || now - jumping < SMOOTH_SCROLL_DEBOUNCE) { // jump
+    const jump = diff > 3 * viewportSize || now - jumping < SMOOTH_SCROLL_DEBOUNCE
+    if (jump) { // jump
       const fraction = 2 * (surfaceSize/2 - thumb) / surfaceSize
       p.viewport = (thumb - 4/5 * scrollbarPixelSize * fraction) * thumbToAllRatio
       if (p.viewport < 0)
@@ -259,7 +260,6 @@ export class VirtualScroll extends State {
         p.viewport = allSize - viewportSize
       p.surface = p.viewport - thumb
       p.jumping = now
-      console.log(`jump: vp(${p.viewport}..${p.viewport + viewportSize}) = sf(${p.surface}) + th(${p.thumb})    // ${p.viewport - p.surface - p.thumb}`)
     }
     else {
       const precise = p.viewport / thumbToAllRatio
@@ -278,12 +278,16 @@ export class VirtualScroll extends State {
           p.thumb = optimal
           p.surface = s2
         }
-        if (thumb !== p.thumb)
-          console.log(`\nrebase: vp(${p.viewport}..${p.viewport + viewportSize}) = sf(${p.surface}) + th(${p.thumb})    // was: ${surface} + ${thumb}    // error ${p.viewport - p.surface - p.thumb}\n`)
       }
-      else if (existingViewport !== p.viewport)
-        console.log(`pan: vp(${p.viewport}..${p.viewport + viewportSize}) = sf(${p.surface}) + th(${p.thumb})    // error ${p.viewport - p.surface - p.thumb}`)
     }
+    if (jump)
+      console.log(`jump(${ready}): vp(${num(p.viewport, 3)}..${num(p.viewport + viewportSize, 3)}) = sf(${num(p.surface, 3)}) + th(${num(p.thumb, 3)})    // ${num(p.viewport - p.surface - p.thumb, 3)}`)
+    else if (thumb !== p.thumb)
+      console.log(`rebase(${ready}): vp(${num(p.viewport, 3)}..${num(p.viewport + viewportSize, 3)}) = sf(${num(p.surface, 3)}) + th(${num(p.thumb, 3)})    // was: ${num(surface, 3)} + ${num(thumb, 3)}    // error ${num(p.viewport - p.surface - p.thumb, 3)}`)
+    else if (existingViewport !== p.viewport)
+      console.log(`pan(${ready}):  vp(${num(p.viewport, 3)}..${num(p.viewport + viewportSize, 3)}) = sf(${num(p.surface, 3)}) + th(${num(p.thumb, 3)})    // error ${num(p.viewport - p.surface - p.thumb, 3)}`)
+    if(ready)
+      console.log('=== READY ===\n\n')
     // if (vp !== result) console.log(`${jump ? 'jump' : 'shift'}: thumb=${thumb}, viewport=${vp}->${result}`)
     return p
   }
