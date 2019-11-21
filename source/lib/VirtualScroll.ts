@@ -7,8 +7,9 @@ import { action, Cache, Monitor, passive, State, trigger } from 'reactronic'
 
 import { Area, area, XY, xy } from './Area'
 
-export const SURFACE_SIZE_LIMIT: Area = area(0, 0, 1000123, 1000123)
-export const TARGET_GRID_SIZE_LIMIT: Area = area(0, 0, 899, 899)
+const SURFACE_SIZE_LIMIT: Area = area(0, 0, 1000123, 1000123)
+const TARGET_GRID_SIZE_LIMIT: Area = area(0, 0, 899, 899)
+const SMOOTH_SCROLL_DEBOUNCE = 35 // ms
 
 export type Guide = { index: number, till: number }
 
@@ -40,7 +41,7 @@ export class VirtualScroll extends State {
   readyCells: Area = Area.ZERO
   targetGrid: Area = Area.ZERO
   sizing = new Sizing()
-  progressing = Monitor.create('scrolling', 35)
+  progressing = Monitor.create('scrolling', SMOOTH_SCROLL_DEBOUNCE)
 
   constructor(sizeX: number, sizeY: number) {
     super()
@@ -72,23 +73,43 @@ export class VirtualScroll extends State {
 
   get pixelToCellFactor(): XY {
     const r = this.ppc
-    return xy(1 / r.x, 1 / r.y)
+    return xy(1/r.x, 1/r.y)
   }
 
   get viewportToSurfaceFactor(): XY {
     const surface = this.surface
     const vp = this.viewport
+    // return xy(
+    //   surface.size.x / (vp.size.x - 1),
+    //   surface.size.y / (vp.size.y - 1))
     return xy(
-      surface.size.x / (vp.size.x - 1),
-      surface.size.y / (vp.size.y - 1))
+      surface.size.x / vp.size.x,
+      surface.size.y / vp.size.y)
   }
 
   get surfaceToViewportFactor(): XY {
     const vp2s = this.viewportToSurfaceFactor
-    return xy(1 / vp2s.x, 1 / vp2s.y)
+    return xy(1/vp2s.x, 1/vp2s.y)
   }
 
   get surfaceToAllFactor(): XY {
+    const all = this.all
+    const surface = this.surface
+    // const vp = this.viewport
+    // return xy(
+    //   all.size.x / (surface.size.x - vp.size.x),
+    //   all.size.y / (surface.size.y - vp.size.y))
+    return xy(
+      all.size.x / surface.size.x,
+      all.size.y / surface.size.y)
+  }
+
+  get allToSurfaceFactor(): XY {
+    const s2a = this.surfaceToAllFactor
+    return xy(1/s2a.x, 1/s2a.y)
+  }
+
+  get thumbToAllFactor(): XY {
     const all = this.all
     const surface = this.surface
     const vp = this.viewport
@@ -97,22 +118,25 @@ export class VirtualScroll extends State {
       all.size.y / (surface.size.y - vp.size.y))
   }
 
-  get allToSurfaceFactor(): XY {
-    const s2a = this.surfaceToAllFactor
-    return xy(1 / s2a.x, 1 / s2a.y)
+  get allToThumbFactor(): XY {
+    const a2t = this.allToThumbFactor
+    return xy(1/a2t.x, 1/a2t.y)
   }
 
   get viewportToAllFactor(): XY {
     const all = this.all
     const vp = this.viewport
+    // return xy(
+    //   all.size.x / (vp.size.x - 1),
+    //   all.size.y / (vp.size.y - 1))
     return xy(
-      all.size.x / (vp.size.x - 1),
-      all.size.y / (vp.size.y - 1))
+      all.size.x / vp.size.x,
+      all.size.y / vp.size.y)
   }
 
   get allToViewportFactor(): XY {
     const vp2a = this.viewportToAllFactor
-    return xy(1 / vp2a.x, 1 / vp2a.y)
+    return xy(1/vp2a.x, 1/vp2a.y)
   }
 
   // Areas (pixels)
@@ -193,19 +217,20 @@ export class VirtualScroll extends State {
 
   protected applyThumbPos(left: number, top: number, ready: boolean): void {
     // console.log(`\napply: ${this.thumb.y}->${top}, h=${this.component ? this.component.scrollHeight : '?'}`)
-    const s2a = this.surfaceToAllFactor
+    const t2a = this.thumbToAllFactor
     const scrollPixelStep = this.viewportToSurfaceFactor
     const jumping = this.jumping
+    const all = this.all.size
     let vp = this.viewport
     let surface = this.surface
     let thumb = this.thumb.moveTo(xy(left, top), surface.atZero())
 
     const x = VirtualScroll.getTargetPos(vp.x, vp.size.x,
-      surface.x, surface.size.x, thumb.x, jumping.x,
-      scrollPixelStep.x, s2a.x, ready)
+      surface.x, surface.size.x, all.x, thumb.x, jumping.x,
+      scrollPixelStep.x, t2a.x, ready)
     const y = VirtualScroll.getTargetPos(vp.y, vp.size.y,
-      surface.y, surface.size.y, thumb.y, jumping.y,
-      scrollPixelStep.y, s2a.y, ready)
+      surface.y, surface.size.y, all.y, thumb.y, jumping.y,
+      scrollPixelStep.y, t2a.y, ready)
 
     vp = vp.moveTo(xy(x.viewport, y.viewport), this.all)
     surface = surface.moveTo(xy(x.surface, y.surface), this.all)
@@ -220,29 +245,25 @@ export class VirtualScroll extends State {
   }
 
   private static getTargetPos(existingViewport: number, viewportSize: number,
-    surface: number, surfaceSize: number, thumb: number, stamp: number,
-    scrollbarPixelSize: number, surfaceToAllRatio: number, ready: boolean): ScrollPos {
+    surface: number, surfaceSize: number, allSize: number, thumb: number, jumping: number,
+    scrollbarPixelSize: number, thumbToAllRatio: number, ready: boolean): ScrollPos {
     const now = Date.now()
     const p: ScrollPos = { viewport: surface + thumb, surface, thumb, stamp: 0 }
     const diff = Math.abs(p.viewport - existingViewport)
-    const jump = diff > 3 * viewportSize || now - stamp < 20 // ms
-    if (jump) {
+    if (diff > 3 * viewportSize || now - jumping < SMOOTH_SCROLL_DEBOUNCE) { // jump
       const fraction = 2 * (surfaceSize/2 - thumb) / surfaceSize
-      p.viewport = (thumb - 4/5 * scrollbarPixelSize * fraction) * surfaceToAllRatio
+      p.viewport = (thumb - 4/5 * scrollbarPixelSize * fraction) * thumbToAllRatio
       if (p.viewport < 0)
-        p.viewport = thumb * surfaceToAllRatio
-      else if (p.viewport + viewportSize >= surfaceSize * surfaceToAllRatio)
-        p.viewport = thumb * surfaceToAllRatio
+        p.viewport = thumb * thumbToAllRatio
+      else if (p.viewport > allSize - viewportSize)
+        p.viewport = allSize - viewportSize
       p.surface = p.viewport - thumb
       p.stamp = now
       console.log(`jump: thumb=${p.thumb}, viewport=${p.viewport}, surface=${p.surface}`)
     }
     else {
-      const precise = p.viewport / surfaceToAllRatio
+      const precise = p.viewport / thumbToAllRatio
       const fraction = 2 * (surfaceSize/2 - precise) / surfaceSize
-      if (fraction < 0) {
-        console.log('(!)')
-      }
       const optimal = precise + 4/5 * scrollbarPixelSize * fraction
       surface = p.viewport - optimal
       if (thumb <= 0 || thumb >= surfaceSize - viewportSize ||
@@ -251,9 +272,9 @@ export class VirtualScroll extends State {
           p.thumb = optimal + surface
           p.surface = 0
         }
-        else if (surface >= (surfaceSize - 1) * surfaceToAllRatio) {
-          p.thumb = optimal - (((surfaceSize - 1) * surfaceToAllRatio) - surface)
-          p.surface = surfaceSize * surfaceToAllRatio - surfaceSize
+        else if (surface >= allSize - surfaceSize) {
+          // p.thumb = optimal - (surface - (allSize - surfaceSize))
+          p.surface = allSize - surfaceSize
         }
         else {
           p.thumb = optimal
