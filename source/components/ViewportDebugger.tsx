@@ -5,8 +5,10 @@
 
 import * as React from 'react'
 
-import { num, place, reactive, VirtualScroll } from '~/../source/reactronic-toolkit-react'
-
+import { num } from '../lib/Area'
+import { VirtualScroll } from '../lib/VirtualScroll'
+import { place } from '../tools/etc'
+import { reactive } from '../tools/reactive'
 import { AreaRect } from './AreaRect'
 import { style } from './ViewportDebugger.css'
 
