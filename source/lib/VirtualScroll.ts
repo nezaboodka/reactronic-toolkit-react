@@ -225,19 +225,24 @@ export class VirtualScroll extends State {
     const now = Date.now()
     const p: ScrollPos = { viewport: surface + thumb, surface, thumb, stamp: 0 }
     const diff = Math.abs(p.viewport - existingViewport)
-    const long = diff > 3 * viewportSize || now - stamp < 20 // ms
-    if (long) {
+    const jump = diff > 3 * viewportSize || now - stamp < 20 // ms
+    if (jump) {
       const fraction = 2 * (surfaceSize/2 - thumb) / surfaceSize
       p.viewport = (thumb - 4/5 * scrollbarPixelSize * fraction) * surfaceToAllRatio
-      if (p.viewport < 0 || p.viewport + viewportSize >= surfaceSize * surfaceToAllRatio)
+      if (p.viewport < 0)
+        p.viewport = thumb * surfaceToAllRatio
+      else if (p.viewport + viewportSize >= surfaceSize * surfaceToAllRatio)
         p.viewport = thumb * surfaceToAllRatio
       p.surface = p.viewport - thumb
       p.stamp = now
-      console.log(`long: thumb=${p.thumb}, viewport=${p.viewport}, surface=${p.surface}`)
+      console.log(`jump: thumb=${p.thumb}, viewport=${p.viewport}, surface=${p.surface}`)
     }
     else {
       const precise = p.viewport / surfaceToAllRatio
       const fraction = 2 * (surfaceSize/2 - precise) / surfaceSize
+      if (fraction < 0) {
+        console.log('(!)')
+      }
       const optimal = precise + 4/5 * scrollbarPixelSize * fraction
       surface = p.viewport - optimal
       if (thumb <= 0 || thumb >= surfaceSize - viewportSize ||
@@ -246,18 +251,19 @@ export class VirtualScroll extends State {
           p.thumb = optimal + surface
           p.surface = 0
         }
-        // else if (surface >= surfaceSize * surfaceToAllRatio - surfaceSize) {
-        //   p.thumb = optimal - ((surfaceSize * surfaceToAllRatio - surfaceSize) - surface)
-        //   p.surface = surfaceSize * surfaceToAllRatio - surfaceSize
-        // }
+        else if (surface >= (surfaceSize - 1) * surfaceToAllRatio) {
+          p.thumb = optimal - (((surfaceSize - 1) * surfaceToAllRatio) - surface)
+          p.surface = surfaceSize * surfaceToAllRatio - surfaceSize
+        }
         else {
           p.thumb = optimal
           p.surface = surface
         }
-        console.log(`rebase: thumb=${thumb}->${p.thumb}, viewport=${p.viewport}, surface=${p.surface}, jump=${stamp}`)
+        if (thumb !== p.thumb)
+          console.log(`rebase: thumb=${thumb}->${p.thumb}, viewport=${p.viewport}, surface=${p.surface}`)
       }
       else if (existingViewport !== p.viewport)
-        console.log(`short: thumb=${p.thumb}, viewport=${p.viewport}, surface=${p.surface}`)
+        console.log(`pan: thumb=${p.thumb}, viewport=${p.viewport}, surface=${p.surface}`)
     }
     // if (vp !== result) console.log(`${jump ? 'jump' : 'shift'}: thumb=${thumb}, viewport=${vp}->${result}`)
     return p

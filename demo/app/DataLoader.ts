@@ -4,7 +4,8 @@
 // License: https://raw.githubusercontent.com/nezaboodka/reactronic/master/LICENSE
 
 import { Reentrance, reentrance, sleep, State, trigger } from 'reactronic'
-import { VirtualScroll } from 'reactronic-toolkit-react'
+
+import { VirtualScroll } from '.reactronic-toolkit-react'
 
 export class DataLoader extends State {
   constructor(

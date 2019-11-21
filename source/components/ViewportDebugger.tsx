@@ -4,7 +4,8 @@
 // License: https://raw.githubusercontent.com/nezaboodka/reactronic/master/LICENSE
 
 import * as React from 'react'
-import { num, place, reactive, VirtualScroll } from 'reactronic-toolkit-react'
+
+import { num, place, reactive, VirtualScroll } from '.reactronic-toolkit-react'
 
 import { AreaRect } from './AreaRect'
 import { style } from './ViewportDebugger.css'

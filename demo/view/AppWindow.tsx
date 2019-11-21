@@ -4,10 +4,10 @@
 // License: https://raw.githubusercontent.com/nezaboodka/reactronic/master/LICENSE
 
 import * as React from 'react'
-import { place, reactive, ScrollBox, ViewportDebugger } from 'reactronic-toolkit-react'
 
-import { Application } from '/app/Application'
-import { GridFragment } from '/view/GridFragment'
+import { place, reactive, ScrollBox, ViewportDebugger } from '.reactronic-toolkit-react'
+import { Application } from '~/app/Application'
+import { GridFragment } from '~/view/GridFragment'
 
 import { style } from './AppWindow.css'
 

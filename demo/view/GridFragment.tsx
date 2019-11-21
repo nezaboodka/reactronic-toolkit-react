@@ -5,9 +5,9 @@
 
 import { cx } from 'emotion'
 import * as React from 'react'
-import { reactive, xy } from 'reactronic-toolkit-react'
 
-import { DataLoader } from '/app/DataLoader'
+import { reactive, xy } from '.reactronic-toolkit-react'
+import { DataLoader } from '~/app/DataLoader'
 
 import { style } from './GridFragment.css'
 
