@@ -10,7 +10,7 @@ import { VirtualScroll } from '../lib/VirtualScroll'
 import { place } from '../tools/etc'
 import { reactive } from '../tools/reactive'
 import { AreaRect } from './AreaRect'
-import { style } from './ViewportDebugger.css'
+import { style } from './ScrollDebugger.css'
 
 export function ViewportDebugger(p: {scroll: VirtualScroll}): JSX.Element {
   return reactive(counter => {

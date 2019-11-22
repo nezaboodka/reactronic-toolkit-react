@@ -14,4 +14,4 @@ export * from './tools/etc'
 
 export * from './components/RComponent'
 export * from './components/ScrollBox'
-export * from './components/ViewportDebugger'
+export * from './components/ScrollDebugger'
