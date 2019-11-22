@@ -40,9 +40,9 @@ export class VirtualGrid extends State {
   readyCells: Area = Area.ZERO
   targetGrid: Area = Area.ZERO
   sizing = new Sizing()
-  debounce = Monitor.create('debounce', SMOOTH_SCROLL_DEBOUNCE)
   interaction: number = 0
   jumping: XY = xy(0, 0)
+  debounce = Monitor.create('debounce', SMOOTH_SCROLL_DEBOUNCE)
 
   constructor(sizeX: number, sizeY: number) {
     super()
