@@ -54,7 +54,7 @@ export class VirtualGrid extends State {
     Cache.of(this.scroll).setup({monitor: this.debounce})
   }
 
-  // Areas (pixels)
+  // Areas
 
   get allArea(): Area {
     return this.allCells.scaleBy(this.ppc)
@@ -67,8 +67,6 @@ export class VirtualGrid extends State {
   get readyArea(): Area {
     return this.readyCells.scaleBy(this.ppc)
   }
-
-  // Areas (cells)
 
   get surfaceCells(): Area {
     return this.surfaceArea.scaleBy(this.pixelToCellRatio)
@@ -95,10 +93,16 @@ export class VirtualGrid extends State {
     this.targetGrid = this.allCells.truncateBy(TARGET_GRID_SIZE_LIMIT)
     if (component !== this.component) {
       if (this.component) {
-        // unsubscribe
+        // this.component.removeEventListener('scroll', ...)
+        // this.component.removeEventListener('wheel', ...)
+        // this.component.removeEventListener('pointerdown', ...)
+        // this.component.removeEventListener('scroll', ...)
       }
       if (component) {
-        // subscribe
+        // component.addEventListener('scroll', e => this.scroll(e.currentTarget.scrollLeft, e.currentTarget.scrollTop))
+        // component.addEventListener('wheel', e => this.interact())
+        // component.addEventListener('pointerdown', e => this.interact())
+        // component.addEventListener('keydown', e => this.interact(e.key))
       }
       this.component = component
     }
