@@ -80,9 +80,6 @@ export class VirtualGrid extends State {
   get viewportToSurfaceFactor(): XY {
     const surface = this.surface
     const vp = this.viewport
-    // return xy(
-    //   surface.size.x / (vp.size.x - 1),
-    //   surface.size.y / (vp.size.y - 1))
     return xy(
       surface.size.x / vp.size.x,
       surface.size.y / vp.size.y)
@@ -96,10 +93,6 @@ export class VirtualGrid extends State {
   get surfaceToAllFactor(): XY {
     const all = this.all
     const surface = this.surface
-    // const vp = this.viewport
-    // return xy(
-    //   all.size.x / (surface.size.x - vp.size.x),
-    //   all.size.y / (surface.size.y - vp.size.y))
     return xy(
       all.size.x / surface.size.x,
       all.size.y / surface.size.y)
@@ -127,9 +120,6 @@ export class VirtualGrid extends State {
   get viewportToAllFactor(): XY {
     const all = this.all
     const vp = this.viewport
-    // return xy(
-    //   all.size.x / (vp.size.x - 1),
-    //   all.size.y / (vp.size.y - 1))
     return xy(
       all.size.x / vp.size.x,
       all.size.y / vp.size.y)
