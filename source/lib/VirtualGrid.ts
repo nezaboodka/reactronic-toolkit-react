@@ -109,7 +109,7 @@ export class VirtualGrid extends State {
   }
 
   @action
-  interact(key?: string): void {
+  impulse(key?: string): void {
     const i = ++this.interaction
     if (key === 'Home' || key === 'End')
       this.jumping = xy(-i, -i)

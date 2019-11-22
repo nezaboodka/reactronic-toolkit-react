@@ -52,9 +52,9 @@ export function ScrollBox(p: {
       <div className={p.className} style={p.style}
         ref={ref} tabIndex={1}
         onScroll={e => p.grid.scroll(e.currentTarget.scrollLeft, e.currentTarget.scrollTop)}
-        onWheel={e => p.grid.interact()}
-        onPointerDown={e => p.grid.interact()}
-        onKeyDown={e => p.grid.interact(e.key)}>
+        onWheel={e => p.grid.impulse()}
+        onPointerDown={e => p.grid.impulse()}
+        onKeyDown={e => p.grid.impulse(e.key)}>
         <div style={surfaceStyle}>
           <div className={p.fragmentClassName} style={fragmentStyle}>
             {p.children}
