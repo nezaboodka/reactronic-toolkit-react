@@ -175,7 +175,7 @@ export class VirtualGrid extends State {
   }
 
   @action
-  setReadyCells(cells: Area): void {
+  ready(cells: Area): void {
     // console.log(`\nready: ${cells.y}..${cells.till.y}`)
     this.readyCells = cells
     const tg = this.targetGrid

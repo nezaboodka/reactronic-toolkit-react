@@ -25,7 +25,7 @@ export class DataLoader extends State {
         for (let x = buffer.x; x <= till.x; x++)
           data.push(`${y}:${x}`)
       this.data = data
-      g.setReadyCells(buffer)
+      g.ready(buffer)
     }
     await sleep(30)
   }
