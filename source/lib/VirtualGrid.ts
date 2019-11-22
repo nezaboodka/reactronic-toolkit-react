@@ -6,11 +6,36 @@
 import { action, Cache, Monitor, nonreactive, State, trigger } from 'reactronic'
 
 import { Area, area, num, XY, xy } from './Area'
-import * as G from './VirtualGrid.defs'
+
+export const SURFACE_SIZE_LIMIT: Area = area(0, 0, 1000123, 1000123)
+export const TARGET_GRID_SIZE_LIMIT: Area = area(0, 0, 899, 899)
+export const SMOOTH_SCROLL_DEBOUNCE = 35 // ms
+
+export type IComponent = undefined | null | EventTarget & {
+  scrollLeft: number
+  scrollTop: number
+}
+
+export interface Pos {
+  viewport: number
+  surface: number
+  thumb: number
+  jumping: number
+}
+
+export interface Guide {
+  index: number
+  till: number
+}
+
+export class Sizing {
+  customCellWidth: Guide[] = []
+  customCellHeight: Guide[] = []
+}
 
 export class VirtualGrid extends State {
   allCells: Area
-  component: G.IComponent = undefined
+  component: IComponent = undefined
   ppc: XY = xy(1, 1) // pixels per cell
   thumb: Area = Area.ZERO
   surfaceArea: Area = Area.ZERO
@@ -18,10 +43,10 @@ export class VirtualGrid extends State {
   bufferSize: XY = xy(1.0, 1.0)
   readyCells: Area = Area.ZERO
   targetGrid: Area = Area.ZERO
-  sizing = new G.Sizing()
+  sizing = new Sizing()
   interaction: number = 0
   jumping: XY = xy(0, 0)
-  debounce = Monitor.create('debounce', G.SMOOTH_SCROLL_DEBOUNCE)
+  debounce = Monitor.create('debounce', SMOOTH_SCROLL_DEBOUNCE)
 
   constructor(columns: number, rows: number) {
     super()
@@ -62,12 +87,12 @@ export class VirtualGrid extends State {
   // Actions
 
   @action
-  mount(x: number, y: number, resolution: number, component: G.IComponent): void {
+  mount(x: number, y: number, resolution: number, component: IComponent): void {
     this.ppc = xy(resolution * 8, resolution)
     this.thumb = new Area(0, 0, x, y)
-    this.surfaceArea = this.allArea.truncateBy(G.SURFACE_SIZE_LIMIT)
+    this.surfaceArea = this.allArea.truncateBy(SURFACE_SIZE_LIMIT)
     this.viewportArea = new Area(0, 0, x, y)
-    this.targetGrid = this.allCells.truncateBy(G.TARGET_GRID_SIZE_LIMIT)
+    this.targetGrid = this.allCells.truncateBy(TARGET_GRID_SIZE_LIMIT)
     if (component !== this.component) {
       if (this.component) {
         // unsubscribe
@@ -219,9 +244,9 @@ export class VirtualGrid extends State {
 
   private static getNewPos(ready: boolean, interaction: number, jumping: number,
     viewport: number, viewportSize: number, surface: number, surfaceSize: number,
-    allSize: number, thumb: number, thumbToAllRatio: number, scrollbarPixelSize: number): G.Pos {
+    allSize: number, thumb: number, thumbToAllRatio: number, scrollbarPixelSize: number): Pos {
 
-    const p: G.Pos = { viewport: surface + thumb, surface, thumb, jumping }
+    const p: Pos = { viewport: surface + thumb, surface, thumb, jumping }
     const jump = interaction === jumping ||
       (interaction === -jumping && (thumb === 0 || thumb + viewportSize >= surfaceSize)) ||
       Math.abs(p.viewport - viewport) > 3 * viewportSize
