@@ -16,7 +16,6 @@ export class DataLoader extends State {
 
   @trigger @reentrance(Reentrance.CancelPrevious)
   async load(): Promise<void> {
-    await sleep(0)
     const g = this.grid
     const buffer = g.bufferCells
     if (!buffer.equalTo(g.readyCells)) {
@@ -28,5 +27,6 @@ export class DataLoader extends State {
       this.data = data
       g.setReadyCells(buffer)
     }
+    await sleep(30)
   }
 }

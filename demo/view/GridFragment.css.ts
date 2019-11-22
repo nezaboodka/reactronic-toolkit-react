@@ -27,7 +27,7 @@ export const style = restyle(() => {
         0% { color: transparent; }
       }
     `,
-    scale: css`
+    rollout: css`
       label: scale;
       animation: scale 0.2s ease-out;
       @keyframes scale {

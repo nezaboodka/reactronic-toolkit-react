@@ -48,7 +48,7 @@ function GridCell(p: {hint: string, row: number, col: number, text: string, styl
     gridColumn: p.col + 1,
   }
   return (
-    <div title={`${p.hint}`} className={cx(css.cell)} style={place}>
+    <div title={`${p.hint}`} className={cx(css.cell, css.rollout)} style={place}>
       {p.text}
     </div>
   )
