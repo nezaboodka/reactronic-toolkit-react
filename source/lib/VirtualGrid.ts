@@ -9,7 +9,7 @@ import { Area, area, num, XY, xy } from './Area'
 
 const SURFACE_SIZE_LIMIT: Area = area(0, 0, 1000123, 1000123)
 const TARGET_GRID_SIZE_LIMIT: Area = area(0, 0, 899, 899)
-const SMOOTH_SCROLL_DEBOUNCE = 25 // ms
+const SMOOTH_SCROLL_DEBOUNCE = 35 // ms
 
 export type Guide = { index: number, till: number }
 
@@ -243,9 +243,10 @@ export class VirtualGrid extends State {
   private static getTargetPos(ready: boolean, interaction: number, jumping: number,
     viewport: number, viewportSize: number, surface: number, surfaceSize: number,
     allSize: number, thumb: number, thumbToAllRatio: number, scrollbarPixelSize: number): Position {
+
     const p: Position = { viewport: surface + thumb, surface, thumb, jumping }
-    const diff = Math.abs(p.viewport - viewport)
-    const jump = diff > 3 * viewportSize || interaction === jumping
+    const jump = interaction === jumping ||
+      Math.abs(p.viewport - viewport) > 3 * viewportSize
     if (jump) {
       const fraction = 2 * (surfaceSize/2 - thumb) / surfaceSize
       p.viewport = (thumb - 4/5 * scrollbarPixelSize * fraction) * thumbToAllRatio
@@ -259,7 +260,7 @@ export class VirtualGrid extends State {
     else {
       const precise = p.viewport / thumbToAllRatio
       const fraction = 2 * (surfaceSize/2 - precise) / surfaceSize
-      const optimal = Math.ceil((precise + 4/5 * scrollbarPixelSize * fraction) * devicePixelRatio) / devicePixelRatio
+      const optimal = Math.ceil(precise + 4/5 * scrollbarPixelSize * fraction)
       const s2 = p.viewport - optimal
       if (thumb <= 0 || thumb + viewportSize >= surfaceSize ||
         (ready && Math.abs(optimal - thumb) > 1/3 * scrollbarPixelSize)) {
@@ -275,6 +276,7 @@ export class VirtualGrid extends State {
         }
       }
     }
+
     const pos = `th(${num(p.thumb, 2)})  +  sf(${num(p.surface, 2)})  =  vp(${num(p.viewport, 2)} :: ${num(p.viewport + viewportSize, 2)})    // error ${num(p.viewport - p.surface - p.thumb, 2)}`
     if (jump)
       console.log(`jump:   ${pos}`)
@@ -284,6 +286,7 @@ export class VirtualGrid extends State {
       console.log(`pan:    ${pos}`)
     if (ready && (thumb !== p.thumb || viewport !== p.viewport))
       console.log('ready')
+
     return p
   }
 }
