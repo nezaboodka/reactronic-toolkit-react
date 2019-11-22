@@ -25,7 +25,7 @@ export function GridFragment(p: {loader: DataLoader}): JSX.Element {
     }
     return (
       <React.Fragment>
-        {data.map((cell, i) => {
+        {fragment.overlaps(g.viewportCells) && data.map((cell, i) => {
           const y = Math.floor(i / fragment.size.x)
           const x = i % fragment.size.x
           const r = zero.y + y

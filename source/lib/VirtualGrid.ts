@@ -40,7 +40,7 @@ export class VirtualGrid extends State {
   thumb: Area = Area.ZERO
   surfaceArea: Area = Area.ZERO
   viewportArea: Area = Area.ZERO
-  bufferSize: XY = xy(1.0, 1.5)
+  bufferSize: XY = xy(1.0, 1.4)
   readyCells: Area = Area.ZERO
   targetGrid: Area = Area.ZERO
   sizing = new Sizing()
