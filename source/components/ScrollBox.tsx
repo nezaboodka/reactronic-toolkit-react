@@ -20,10 +20,10 @@ export function ScrollBox(p: {
     if (e) {
       const fs = window.getComputedStyle(e).fontSize
       const resolution = parseFloat(fs.substr(0, fs.length - 2))
-      p.grid.reset(e.clientWidth, e.clientHeight, resolution, e)
+      p.grid.mount(e.clientWidth, e.clientHeight, resolution, e)
     }
     else
-      p.grid.reset(0, 0, 1, undefined)
+      p.grid.mount(0, 0, 1, undefined)
   }, [])
 
   return reactive(() => {

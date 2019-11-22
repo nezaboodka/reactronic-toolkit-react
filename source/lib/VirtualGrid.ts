@@ -46,84 +46,6 @@ export class VirtualGrid extends State {
     Cache.of(this.scroll).setup({monitor: this.debounce})
   }
 
-  @action
-  reset(x: number, y: number, resolution: number, component: IComponent): void {
-    this.ppc = xy(resolution * 8, resolution)
-    this.thumb = new Area(0, 0, x, y)
-    this.surfaceArea = this.allArea.truncateBy(SURFACE_SIZE_LIMIT)
-    this.viewportArea = new Area(0, 0, x, y)
-    this.targetGrid = this.allCells.truncateBy(TARGET_GRID_SIZE_LIMIT)
-    if (component !== this.component) {
-      if (this.component) {
-        // unsubscribe
-      }
-      if (component) {
-        // subscribe
-      }
-      this.component = component
-    }
-  }
-
-  // Ratios
-
-  get pixelToCellRatio(): XY {
-    const ppc = this.ppc
-    return xy(1/ppc.x, 1/ppc.y)
-  }
-
-  get viewportToSurfaceRatio(): XY {
-    const sf = this.surfaceArea
-    const vp = this.viewportArea
-    return xy(
-      sf.size.x / vp.size.x,
-      sf.size.y / vp.size.y)
-  }
-
-  get surfaceToViewportRatio(): XY {
-    const vp2sf = this.viewportToSurfaceRatio
-    return xy(1/vp2sf.x, 1/vp2sf.y)
-  }
-
-  get surfaceToAllRatio(): XY {
-    const all = this.allArea
-    const sf = this.surfaceArea
-    return xy(
-      all.size.x / sf.size.x,
-      all.size.y / sf.size.y)
-  }
-
-  get allToSurfaceRatio(): XY {
-    const sf2all = this.surfaceToAllRatio
-    return xy(1/sf2all.x, 1/sf2all.y)
-  }
-
-  get thumbToAllRatio(): XY {
-    const all = this.allArea
-    const sf = this.surfaceArea
-    const vp = this.viewportArea
-    return xy(
-      all.size.x / (sf.size.x - vp.size.x),
-      all.size.y / (sf.size.y - vp.size.y))
-  }
-
-  get allToThumbRatio(): XY {
-    const all2th = this.allToThumbRatio
-    return xy(1/all2th.x, 1/all2th.y)
-  }
-
-  get viewportToAllRatio(): XY {
-    const all = this.allArea
-    const vp = this.viewportArea
-    return xy(
-      all.size.x / vp.size.x,
-      all.size.y / vp.size.y)
-  }
-
-  get allToViewportRatio(): XY {
-    const vp2all = this.viewportToAllRatio
-    return xy(1/vp2all.x, 1/vp2all.y)
-  }
-
   // Areas (pixels)
 
   get allArea(): Area {
@@ -157,6 +79,24 @@ export class VirtualGrid extends State {
   // Actions
 
   @action
+  mount(x: number, y: number, resolution: number, component: IComponent): void {
+    this.ppc = xy(resolution * 8, resolution)
+    this.thumb = new Area(0, 0, x, y)
+    this.surfaceArea = this.allArea.truncateBy(SURFACE_SIZE_LIMIT)
+    this.viewportArea = new Area(0, 0, x, y)
+    this.targetGrid = this.allCells.truncateBy(TARGET_GRID_SIZE_LIMIT)
+    if (component !== this.component) {
+      if (this.component) {
+        // unsubscribe
+      }
+      if (component) {
+        // subscribe
+      }
+      this.component = component
+    }
+  }
+
+  @action
   interact(key?: string): void {
     const i = ++this.interaction
     if (key === 'Home' || key === 'End')
@@ -187,6 +127,66 @@ export class VirtualGrid extends State {
       this.targetGrid = tg.moveCenterTo(cells.center, this.allCells).round()
   }
 
+  // Ratios
+
+  protected get pixelToCellRatio(): XY {
+    const ppc = this.ppc
+    return xy(1/ppc.x, 1/ppc.y)
+  }
+
+  get viewportToSurfaceRatio(): XY {
+    const sf = this.surfaceArea
+    const vp = this.viewportArea
+    return xy(
+      sf.size.x / vp.size.x,
+      sf.size.y / vp.size.y)
+  }
+
+  get surfaceToViewportRatio(): XY {
+    const vp2sf = this.viewportToSurfaceRatio
+    return xy(1/vp2sf.x, 1/vp2sf.y)
+  }
+
+  protected get surfaceToAllRatio(): XY {
+    const all = this.allArea
+    const sf = this.surfaceArea
+    return xy(
+      all.size.x / sf.size.x,
+      all.size.y / sf.size.y)
+  }
+
+  get allToSurfaceRatio(): XY {
+    const sf2all = this.surfaceToAllRatio
+    return xy(1/sf2all.x, 1/sf2all.y)
+  }
+
+  protected get thumbToAllRatio(): XY {
+    const all = this.allArea
+    const sf = this.surfaceArea
+    const vp = this.viewportArea
+    return xy(
+      all.size.x / (sf.size.x - vp.size.x),
+      all.size.y / (sf.size.y - vp.size.y))
+  }
+
+  protected get allToThumbRatio(): XY {
+    const all2th = this.allToThumbRatio
+    return xy(1/all2th.x, 1/all2th.y)
+  }
+
+  get viewportToAllRatio(): XY {
+    const all = this.allArea
+    const vp = this.viewportArea
+    return xy(
+      all.size.x / vp.size.x,
+      all.size.y / vp.size.y)
+  }
+
+  protected get allToViewportRatio(): XY {
+    const vp2all = this.viewportToAllRatio
+    return xy(1/vp2all.x, 1/vp2all.y)
+  }
+
   // Triggers
 
   @trigger
@@ -209,7 +209,7 @@ export class VirtualGrid extends State {
 
   // Internal
 
-  protected applyThumbPos(left: number, top: number, ready: boolean): void {
+  private applyThumbPos(left: number, top: number, ready: boolean): void {
     // console.log(`\napply: ${this.thumb.y}->${top}, h=${this.component ? this.component.scrollHeight : '?'}`)
     const all = this.allArea
     let vp = this.viewportArea
