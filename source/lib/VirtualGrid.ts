@@ -6,28 +6,11 @@
 import { action, Cache, Monitor, nonreactive, State, trigger } from 'reactronic'
 
 import { Area, area, num, XY, xy } from './Area'
-
-const SURFACE_SIZE_LIMIT: Area = area(0, 0, 1000123, 1000123)
-const TARGET_GRID_SIZE_LIMIT: Area = area(0, 0, 899, 899)
-const SMOOTH_SCROLL_DEBOUNCE = 35 // ms
-
-export type Guide = { index: number, till: number }
-
-export class Sizing {
-  customCellWidth: Guide[] = [] // in pixels?
-  customCellHeight: Guide[] = [] // in pixels?
-}
-
-export type IComponent = undefined | null | EventTarget & {
-  scrollLeft: number
-  scrollTop: number
-}
-
-type Position = { viewport: number, surface: number, thumb: number, jumping: number }
+import * as G from './VirtualGrid.defs'
 
 export class VirtualGrid extends State {
   allCells: Area
-  component: IComponent = undefined
+  component: G.IComponent = undefined
   ppc: XY = xy(1, 1) // pixels per cell
   thumb: Area = Area.ZERO
   surfaceArea: Area = Area.ZERO
@@ -35,10 +18,10 @@ export class VirtualGrid extends State {
   bufferSize: XY = xy(1.0, 1.0)
   readyCells: Area = Area.ZERO
   targetGrid: Area = Area.ZERO
-  sizing = new Sizing()
+  sizing = new G.Sizing()
   interaction: number = 0
   jumping: XY = xy(0, 0)
-  debounce = Monitor.create('debounce', SMOOTH_SCROLL_DEBOUNCE)
+  debounce = Monitor.create('debounce', G.SMOOTH_SCROLL_DEBOUNCE)
 
   constructor(columns: number, rows: number) {
     super()
@@ -79,12 +62,12 @@ export class VirtualGrid extends State {
   // Actions
 
   @action
-  mount(x: number, y: number, resolution: number, component: IComponent): void {
+  mount(x: number, y: number, resolution: number, component: G.IComponent): void {
     this.ppc = xy(resolution * 8, resolution)
     this.thumb = new Area(0, 0, x, y)
-    this.surfaceArea = this.allArea.truncateBy(SURFACE_SIZE_LIMIT)
+    this.surfaceArea = this.allArea.truncateBy(G.SURFACE_SIZE_LIMIT)
     this.viewportArea = new Area(0, 0, x, y)
-    this.targetGrid = this.allCells.truncateBy(TARGET_GRID_SIZE_LIMIT)
+    this.targetGrid = this.allCells.truncateBy(G.TARGET_GRID_SIZE_LIMIT)
     if (component !== this.component) {
       if (this.component) {
         // unsubscribe
@@ -123,6 +106,26 @@ export class VirtualGrid extends State {
     const tg = this.targetGrid
     if (!tg.envelops(cells))
       this.targetGrid = tg.moveCenterTo(cells.center, this.allCells).round()
+  }
+
+  // Triggers
+
+  @trigger
+  protected rebaseSurface(): void {
+    if (this.component && !this.debounce.busy)
+      nonreactive(() => this.applyThumbPos(this.thumb.x, this.thumb.y, true))
+  }
+
+  @trigger
+  protected reflectThumb(): void {
+    const e = this.component
+    if (e) {
+      const thumb = this.thumb
+      if (Math.abs(thumb.x - e.scrollLeft) > 0.1)
+        e.scrollLeft = thumb.x
+      if (Math.abs(thumb.y - e.scrollTop) > 0.1)
+        e.scrollTop = thumb.y
+    }
   }
 
   // Ratios
@@ -185,26 +188,6 @@ export class VirtualGrid extends State {
     return xy(1/vp2all.x, 1/vp2all.y)
   }
 
-  // Triggers
-
-  @trigger
-  protected rebaseSurface(): void {
-    if (this.component && !this.debounce.busy)
-      nonreactive(() => this.applyThumbPos(this.thumb.x, this.thumb.y, true))
-  }
-
-  @trigger
-  protected reflectThumb(): void {
-    const e = this.component
-    if (e) {
-      const thumb = this.thumb
-      if (Math.abs(thumb.x - e.scrollLeft) > 0.1)
-        e.scrollLeft = thumb.x
-      if (Math.abs(thumb.y - e.scrollTop) > 0.1)
-        e.scrollTop = thumb.y
-    }
-  }
-
   // Internal
 
   private applyThumbPos(left: number, top: number, ready: boolean): void {
@@ -236,9 +219,9 @@ export class VirtualGrid extends State {
 
   private static getNewPos(ready: boolean, interaction: number, jumping: number,
     viewport: number, viewportSize: number, surface: number, surfaceSize: number,
-    allSize: number, thumb: number, thumbToAllRatio: number, scrollbarPixelSize: number): Position {
+    allSize: number, thumb: number, thumbToAllRatio: number, scrollbarPixelSize: number): G.Pos {
 
-    const p: Position = { viewport: surface + thumb, surface, thumb, jumping }
+    const p: G.Pos = { viewport: surface + thumb, surface, thumb, jumping }
     const jump = interaction === jumping ||
       (interaction === -jumping && (thumb === 0 || thumb + viewportSize >= surfaceSize)) ||
       Math.abs(p.viewport - viewport) > 3 * viewportSize
