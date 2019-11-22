@@ -27,24 +27,24 @@ export function ScrollBox(p: {
   }, [])
 
   return reactive(() => {
-    const surface = p.grid.surface
-    const sw = `${surface.size.x}px`
-    const sh = `${surface.size.y}px`
+    const sf = p.grid.surfaceArea
+    const sfw = `${sf.size.x}px`
+    const sfh = `${sf.size.y}px`
     const surfaceStyle: React.CSSProperties = {
       position: 'relative',
       overflow: 'hidden',
       boxSizing: 'border-box',
-      width: sw, minWidth: sw, maxWidth: sw,
-      height: sh, minHeight: sh, maxHeight: sh,
+      width: sfw, minWidth: sfw, maxWidth: sfw,
+      height: sfh, minHeight: sfh, maxHeight: sfh,
     }
-    const ready = p.grid.ready
+    const ready = p.grid.readyArea
     const rw = `${ready.size.x}px`
     const rh = `${ready.size.y}px`
     const fragmentStyle: React.CSSProperties = {
       ...p.fragmentStyle,
       position: 'absolute',
-      left: `${ready.x - surface.x}px`,
-      top: `${ready.y - surface.y}px`,
+      left: `${ready.x - sf.x}px`,
+      top: `${ready.y - sf.y}px`,
       width: rw, minWidth: rw, maxWidth: rw,
       height: rh, minHeight: rh, maxHeight: rh,
     }
