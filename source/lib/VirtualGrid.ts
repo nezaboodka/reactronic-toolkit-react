@@ -165,7 +165,7 @@ export class VirtualGrid extends State {
   @action
   interact(): void {
     this.interaction++
-    // console.log(`\n\n=== Interaction ${this.interaction} ===`)
+    console.log(`\n\n=== Interaction ${this.interaction} ===`)
   }
 
   @action
@@ -200,7 +200,7 @@ export class VirtualGrid extends State {
   }
 
   @trigger
-  protected reflectThumbPos(): void {
+  protected reflectThumb(): void {
     const c = this.component
     if (c) {
       const thumb = this.thumb
@@ -259,7 +259,7 @@ export class VirtualGrid extends State {
     else {
       const precise = p.viewport / thumbToAllRatio
       const fraction = 2 * (surfaceSize/2 - precise) / surfaceSize
-      const optimal = precise + 4/5 * scrollbarPixelSize * fraction
+      const optimal = Math.ceil((precise + 4/5 * scrollbarPixelSize * fraction) * devicePixelRatio) / devicePixelRatio
       const s2 = p.viewport - optimal
       if (thumb <= 0 || thumb + viewportSize >= surfaceSize ||
         (ready && Math.abs(optimal - thumb) > 1/3 * scrollbarPixelSize)) {
@@ -275,15 +275,15 @@ export class VirtualGrid extends State {
         }
       }
     }
-    // const pos = `th(${num(p.thumb, 3)})  +  sf(${num(p.surface, 3)})  =  vp(${num(p.viewport, 3)}..${num(p.viewport + viewportSize, 3)})    // error ${num(p.viewport - p.surface - p.thumb, 3)}`
-    // if (jump)
-    //   console.log(`jump:   ${pos}`)
-    // else if (thumb !== p.thumb)
-    //   console.log(`rebase: ${pos}    // was: th(${num(thumb, 3)})  +  sf(${num(surface, 3)})`)
-    // else if (viewport !== p.viewport)
-    //   console.log(`pan:    ${pos}`)
-    // if (ready && (thumb !== p.thumb || viewport !== p.viewport))
-    //   console.log('ready')
+    const pos = `th(${num(p.thumb, 2)})  +  sf(${num(p.surface, 2)})  =  vp(${num(p.viewport, 2)} :: ${num(p.viewport + viewportSize, 2)})    // error ${num(p.viewport - p.surface - p.thumb, 2)}`
+    if (jump)
+      console.log(`jump:   ${pos}`)
+    else if (thumb !== p.thumb)
+      console.log(`rebase: ${pos}    // was: th(${num(thumb, 2)})  +  sf(${num(surface, 2)})`)
+    else if (viewport !== p.viewport)
+      console.log(`pan:    ${pos}`)
+    if (ready && (thumb !== p.thumb || viewport !== p.viewport))
+      console.log('ready')
     return p
   }
 }
