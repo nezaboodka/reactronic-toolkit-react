@@ -221,11 +221,11 @@ export class VirtualGrid extends State {
     let thumb = this.thumb.moveTo(xy(left, top), surface.atZero())
 
     const x = VirtualGrid.getTargetPos(ready, this.interaction, this.jumping.x,
-      vp.x, vp.size.x, surface.x, surface.size.x, all.size.x,
-      thumb.x, this.thumbToAllFactor.x, this.viewportToSurfaceFactor.x)
+      vp.x, vp.size.x, surface.x, surface.size.x, all.size.x, thumb.x,
+      this.thumbToAllFactor.x, this.viewportToSurfaceFactor.x)
     const y = VirtualGrid.getTargetPos(ready, this.interaction, this.jumping.y,
-      vp.y, vp.size.y, surface.y, surface.size.y, all.size.y,
-      thumb.y, this.thumbToAllFactor.y, this.viewportToSurfaceFactor.y,)
+      vp.y, vp.size.y, surface.y, surface.size.y, all.size.y, thumb.y,
+      this.thumbToAllFactor.y, this.viewportToSurfaceFactor.y,)
 
     vp = vp.moveTo(xy(x.viewport, y.viewport), all)
     surface = surface.moveTo(xy(x.surface, y.surface), all)
