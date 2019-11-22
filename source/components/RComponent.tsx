@@ -15,7 +15,7 @@ export class RComponent<P> extends React.Component<P> {
   @trigger
   pulse(): void {
     if (this.shouldComponentUpdate())
-      isolated(() => this.setState({}))
+      isolated(RComponent.refresh, this)
   }
 
   shouldComponentUpdate(): boolean {
@@ -28,5 +28,9 @@ export class RComponent<P> extends React.Component<P> {
 
   componentWillUnmount(): void {
     isolated(Cache.unmount, this)
+  }
+
+  static refresh<P>(self: RComponent<P>): void {
+    self.setState({})
   }
 }
