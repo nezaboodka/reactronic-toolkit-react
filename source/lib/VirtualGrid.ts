@@ -27,9 +27,9 @@ export type IComponent = {
   scrollTop: number
 }
 
-type ScrollPos = { viewport: number, surface: number, thumb: number, jumping: number }
+type Position = { viewport: number, surface: number, thumb: number, jumping: number }
 
-export class VirtualScroll extends State {
+export class VirtualGrid extends State {
   allCells: Area
   component: IComponent | null | undefined = undefined
   ppc: XY = xy(1, 1) // pixels per cell
@@ -47,7 +47,7 @@ export class VirtualScroll extends State {
   constructor(sizeX: number, sizeY: number) {
     super()
     this.allCells = area(0, 0, sizeX, sizeY)
-    Cache.of(this.onScroll).setup({monitor: this.progressing})
+    Cache.of(this.scroll).setup({monitor: this.progressing})
   }
 
   @action
@@ -173,13 +173,13 @@ export class VirtualScroll extends State {
   // Actions
 
   @action
-  onInteract(): void {
+  interact(): void {
     this.interaction++
     // console.log(`\n\n=== Interaction ${this.interaction} ===`)
   }
 
   @action
-  onScroll(): void {
+  scroll(): void {
     const c = this.component
     if (c) {
       // console.log(`onscroll: ${c.scrollTop}`)
@@ -230,10 +230,10 @@ export class VirtualScroll extends State {
     let surface = this.surface
     let thumb = this.thumb.moveTo(xy(left, top), surface.atZero())
 
-    const x = VirtualScroll.getTargetPos(ready, this.interaction, this.jumping.x,
+    const x = VirtualGrid.getTargetPos(ready, this.interaction, this.jumping.x,
       vp.x, vp.size.x, surface.x, surface.size.x, all.size.x,
       thumb.x, this.thumbToAllFactor.x, this.viewportToSurfaceFactor.x)
-    const y = VirtualScroll.getTargetPos(ready, this.interaction, this.jumping.y,
+    const y = VirtualGrid.getTargetPos(ready, this.interaction, this.jumping.y,
       vp.y, vp.size.y, surface.y, surface.size.y, all.size.y,
       thumb.y, this.thumbToAllFactor.y, this.viewportToSurfaceFactor.y,)
 
@@ -251,8 +251,8 @@ export class VirtualScroll extends State {
 
   private static getTargetPos(ready: boolean, interaction: number, jumping: number,
     viewport: number, viewportSize: number, surface: number, surfaceSize: number,
-    allSize: number, thumb: number, thumbToAllRatio: number, scrollbarPixelSize: number): ScrollPos {
-    const p: ScrollPos = { viewport: surface + thumb, surface, thumb, jumping }
+    allSize: number, thumb: number, thumbToAllRatio: number, scrollbarPixelSize: number): Position {
+    const p: Position = { viewport: surface + thumb, surface, thumb, jumping }
     const diff = Math.abs(p.viewport - viewport)
     const jump = diff > 3 * viewportSize || interaction === jumping
     if (jump) {

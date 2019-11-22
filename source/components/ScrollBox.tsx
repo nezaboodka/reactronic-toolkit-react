@@ -5,11 +5,11 @@
 
 import * as React from 'react'
 
-import { VirtualScroll } from '../lib/VirtualScroll'
+import { VirtualGrid } from '../lib/VirtualGrid'
 import { reactive } from '../tools/reactive'
 
 export function ScrollBox(p: {
-  scroll: VirtualScroll,
+  grid: VirtualGrid,
   children: JSX.Element,
   className?: string,
   style?: React.CSSProperties,
@@ -22,11 +22,11 @@ export function ScrollBox(p: {
       const fs = window.getComputedStyle(element).fontSize
       resolution = parseFloat(fs.substr(0, fs.length - 2))
     }
-    p.scroll.setComponent(element, resolution)
+    p.grid.setComponent(element, resolution)
   }, [])
 
   return reactive(() => {
-    const surface = p.scroll.surface
+    const surface = p.grid.surface
     const sw = `${surface.size.x}px`
     const sh = `${surface.size.y}px`
     const surfaceStyle: React.CSSProperties = {
@@ -36,7 +36,7 @@ export function ScrollBox(p: {
       width: sw, minWidth: sw, maxWidth: sw,
       height: sh, minHeight: sh, maxHeight: sh,
     }
-    const ready = p.scroll.ready
+    const ready = p.grid.ready
     const rw = `${ready.size.x}px`
     const rh = `${ready.size.y}px`
     const fragmentStyle: React.CSSProperties = {
@@ -49,10 +49,10 @@ export function ScrollBox(p: {
     }
     return (
       <div ref={ref} className={p.className} style={p.style}
-        onScroll={e => p.scroll.onScroll()}
-        onWheel={e => p.scroll.onInteract()}
-        onPointerDown={e => p.scroll.onInteract()}
-        onKeyDown={e => p.scroll.onInteract()}>
+        onScroll={e => p.grid.scroll()}
+        onWheel={e => p.grid.interact()}
+        onPointerDown={e => p.grid.interact()}
+        onKeyDown={e => p.grid.interact()}>
         <div style={surfaceStyle}>
           <div className={p.fragmentClassName} style={fragmentStyle}>
             {p.children}

@@ -5,7 +5,7 @@
 
 export * from './lib/Area'
 export * from './lib/GroupEvents'
-export * from './lib/VirtualScroll'
+export * from './lib/VirtualGrid'
 export * from './lib/UserInput'
 
 export * from './tools/reactive'

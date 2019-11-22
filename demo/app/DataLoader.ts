@@ -5,11 +5,11 @@
 
 import { Reentrance, reentrance, sleep, State, trigger } from 'reactronic'
 
-import { VirtualScroll } from '~/../source/reactronic-toolkit-react'
+import { VirtualGrid } from '~/../source/reactronic-toolkit-react'
 
 export class DataLoader extends State {
   constructor(
-    readonly scroll: VirtualScroll,
+    readonly grid: VirtualGrid,
     public data: string[] = []) {
     super()
   }
@@ -17,16 +17,16 @@ export class DataLoader extends State {
   @trigger @reentrance(Reentrance.CancelPrevious)
   async load(): Promise<void> {
     await sleep(0)
-    const vs = this.scroll
-    const buffer = vs.bufferCells
-    if (!buffer.equalTo(vs.readyCells)) {
+    const g = this.grid
+    const buffer = g.bufferCells
+    if (!buffer.equalTo(g.readyCells)) {
       const data: string[] = []
       const till = buffer.till
       for (let y = buffer.y; y <= till.y; y++)
         for (let x = buffer.x; x <= till.x; x++)
           data.push(`${y}:${x}`)
       this.data = data
-      vs.setReadyCells(buffer)
+      g.setReadyCells(buffer)
     }
   }
 }
