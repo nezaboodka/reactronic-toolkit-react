@@ -38,10 +38,10 @@ export function AppWindow(p: {app: Application}): JSX.Element {
             disabled={!c}>▼ 1K px</button>
           <button onClick={e => c ? c.scrollTop -= 1072 : {}}
             disabled={!c}>▲ 1K px</button>
-          <button onClick={e => c ? c.scrollTop = c.scrollHeight - c.clientHeight - 1 : {}}
+          <button onClick={e => c ? c.scrollTop = g.surface.size.y - g.viewport.size.x - 1 : {}}
             disabled={!c}>▼ End</button>
-          <button onClick={e => c ? alert(`${c.scrollTop}, ${c.scrollHeight}, ${g.surface.size.y}`) : {}}
-            disabled={!c}>▲ Begin</button>
+          {/* <button onClick={e => c ? alert(`${c.scrollTop}, ${c.scrollHeight}, ${g.surface.size.y}`) : {}}
+            disabled={!c}>▲ Begin</button> */}
         </div>
         <div className={css.debugger} style={place(10, 3, 10, 5)}>
           <ScrollDebugger grid={g}/>

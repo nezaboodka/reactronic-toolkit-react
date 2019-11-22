@@ -18,11 +18,7 @@ export class Sizing {
   customCellHeight: Guide[] = [] // in pixels?
 }
 
-export type IComponent = {
-  readonly clientWidth: number
-  readonly clientHeight: number
-  readonly scrollWidth: number
-  readonly scrollHeight: number
+export type IComponent = undefined | null | EventTarget & {
   scrollLeft: number
   scrollTop: number
 }
@@ -31,7 +27,7 @@ type Position = { viewport: number, surface: number, thumb: number, jumping: num
 
 export class VirtualGrid extends State {
   allCells: Area
-  component: IComponent | null | undefined = undefined
+  component: IComponent = undefined
   ppc: XY = xy(1, 1) // pixels per cell
   surface: Area = Area.ZERO
   thumb: Area = Area.ZERO
@@ -51,24 +47,29 @@ export class VirtualGrid extends State {
   }
 
   @action
-  setComponent(component: IComponent | null, fontSize: number): void {
-    if (component) {
-      this.component = component
-      this.ppc = xy(fontSize * 8, fontSize)
-      this.surface = this.all.truncateBy(SURFACE_SIZE_LIMIT)
-      this.thumb = new Area(0, 0, component.clientWidth, component.clientHeight)
-      this.viewport = new Area(0, 0, component.clientWidth, component.clientHeight)
-      this.targetGrid = this.allCells.truncateBy(TARGET_GRID_SIZE_LIMIT)
-    }
-    else {
-      this.targetGrid = Area.ZERO
-      this.viewport = Area.ZERO
-      this.thumb = Area.ZERO
-      this.surface = Area.ZERO
-      this.ppc = xy(1, 1)
-      this.component = undefined
-    }
+  reset(x: number, y: number, resolution: number, component: IComponent): void {
+    this.component = component
+    this.ppc = xy(resolution * 8, resolution)
+    this.surface = this.all.truncateBy(SURFACE_SIZE_LIMIT)
+    this.thumb = new Area(0, 0, x, y)
+    this.viewport = new Area(0, 0, x, y)
+    this.targetGrid = this.allCells.truncateBy(TARGET_GRID_SIZE_LIMIT)
   }
+
+  // @action
+  // setComponent(component: IComponent | null, fontSize: number): void {
+  //   const existing = this.events
+  //   if (component !== existing) {
+  //     if (component) {
+  //       this.reset(component.clientWidth, component.clientHeight, fontSize, component)
+  //       this.events = component
+  //     }
+  //     else {
+  //       this.events = undefined
+  //       this.reset(0, 0, 1, undefined)
+  //     }
+  //   }
+  // }
 
   // Factors
 
@@ -169,16 +170,14 @@ export class VirtualGrid extends State {
   }
 
   @action
-  scroll(): void {
+  scroll(x: number, y: number): void {
     const c = this.component
     if (c) {
       // console.log(`onscroll: ${c.scrollTop}`)
       const t = this.thumb
       const dpr = 0.75/devicePixelRatio
-      const left = c.scrollLeft
-      const top = c.scrollTop
-      if (Math.abs(t.y - top) > dpr || Math.abs(t.x - left) > dpr)
-        this.applyThumbPos(left, top, false)
+      if (Math.abs(t.y - y) > dpr || Math.abs(t.x - x) > dpr)
+        this.applyThumbPos(x, y, false)
     }
   }
 
@@ -201,13 +200,13 @@ export class VirtualGrid extends State {
 
   @trigger
   protected reflectThumb(): void {
-    const c = this.component
-    if (c) {
+    const e = this.component
+    if (e) {
       const thumb = this.thumb
-      if (Math.abs(thumb.x - c.scrollLeft) > 0.1)
-        c.scrollLeft = thumb.x
-      if (Math.abs(thumb.y - c.scrollTop) > 0.1)
-        c.scrollTop = thumb.y
+      if (Math.abs(thumb.x - e.scrollLeft) > 0.1)
+        e.scrollLeft = thumb.x
+      if (Math.abs(thumb.y - e.scrollTop) > 0.1)
+        e.scrollTop = thumb.y
     }
   }
 

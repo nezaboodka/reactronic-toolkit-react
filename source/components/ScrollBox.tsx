@@ -16,13 +16,13 @@ export function ScrollBox(p: {
   fragmentClassName?: string,
   fragmentStyle?: React.CSSProperties}): JSX.Element {
 
-  const ref = React.useCallback(element => {
+  const ref = React.useCallback((e: HTMLDivElement) => {
     let resolution = 1
-    if (element) {
-      const fs = window.getComputedStyle(element).fontSize
+    if (e) {
+      const fs = window.getComputedStyle(e).fontSize
       resolution = parseFloat(fs.substr(0, fs.length - 2))
     }
-    p.grid.setComponent(element, resolution)
+    p.grid.reset(e.clientWidth, e.clientHeight, resolution, e)
   }, [])
 
   return reactive(() => {
@@ -49,7 +49,7 @@ export function ScrollBox(p: {
     }
     return (
       <div ref={ref} className={p.className} style={p.style}
-        onScroll={e => p.grid.scroll()}
+        onScroll={e => p.grid.scroll(e.currentTarget.scrollLeft, e.currentTarget.scrollTop)}
         onWheel={e => p.grid.interact()}
         onPointerDown={e => p.grid.interact()}
         onKeyDown={e => p.grid.interact()}>
