@@ -48,6 +48,7 @@
       "type": "shell",
       "command": "npm run webpack-start",
       "problemMatcher": ["$tsc", "$eslint-stylish"],
+      "isBackground": true,
       "group": "build",
       "presentation": {
         "echo": true,
