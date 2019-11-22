@@ -175,7 +175,7 @@ export class VirtualScroll extends State {
   @action
   onInteract(): void {
     this.interaction++
-    console.log(`\n\n=== Interaction ${this.interaction} ===`)
+    // console.log(`\n\n=== Interaction ${this.interaction} ===`)
   }
 
   @action
@@ -284,15 +284,15 @@ export class VirtualScroll extends State {
         }
       }
     }
-    const pos = `th(${num(p.thumb, 3)})  +  sf(${num(p.surface, 3)})  =  vp(${num(p.viewport, 3)}..${num(p.viewport + viewportSize, 3)})    // error ${num(p.viewport - p.surface - p.thumb, 3)}`
-    if (jump)
-      console.log(`jump:   ${pos}`)
-    else if (thumb !== p.thumb)
-      console.log(`rebase: ${pos}    // was: th(${num(thumb, 3)})  +  sf(${num(surface, 3)})`)
-    else if (viewport !== p.viewport)
-      console.log(`pan:    ${pos}`)
-    if (ready && (thumb !== p.thumb || viewport !== p.viewport))
-      console.log('ready')
+    // const pos = `th(${num(p.thumb, 3)})  +  sf(${num(p.surface, 3)})  =  vp(${num(p.viewport, 3)}..${num(p.viewport + viewportSize, 3)})    // error ${num(p.viewport - p.surface - p.thumb, 3)}`
+    // if (jump)
+    //   console.log(`jump:   ${pos}`)
+    // else if (thumb !== p.thumb)
+    //   console.log(`rebase: ${pos}    // was: th(${num(thumb, 3)})  +  sf(${num(surface, 3)})`)
+    // else if (viewport !== p.viewport)
+    //   console.log(`pan:    ${pos}`)
+    // if (ready && (thumb !== p.thumb || viewport !== p.viewport))
+    //   console.log('ready')
     return p
   }
 }
