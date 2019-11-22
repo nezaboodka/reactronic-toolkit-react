@@ -40,14 +40,14 @@ export class VirtualGrid extends State {
   readyCells: Area = Area.ZERO
   targetGrid: Area = Area.ZERO
   sizing = new Sizing()
-  progressing = Monitor.create('scrolling', SMOOTH_SCROLL_DEBOUNCE)
+  debounce = Monitor.create('debounce', SMOOTH_SCROLL_DEBOUNCE)
   interaction: number = 0
   jumping: XY = xy(0, 0)
 
   constructor(sizeX: number, sizeY: number) {
     super()
     this.allCells = area(0, 0, sizeX, sizeY)
-    Cache.of(this.scroll).setup({monitor: this.progressing})
+    Cache.of(this.scroll).setup({monitor: this.debounce})
   }
 
   @action
@@ -205,7 +205,7 @@ export class VirtualGrid extends State {
 
   @trigger
   protected adjustSurface(): void {
-    if (this.component && !this.progressing.busy)
+    if (this.component && !this.debounce.busy)
       passive(() => this.applyThumbPos(this.thumb.x, this.thumb.y, true))
   }
 
