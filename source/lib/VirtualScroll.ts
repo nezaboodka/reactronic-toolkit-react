@@ -205,7 +205,7 @@ export class VirtualScroll extends State {
 
   @trigger
   protected adjustSurface(): void {
-    if (!this.progressing.busy)
+    if (this.component && !this.progressing.busy)
       passive(() => this.applyThumbPos(this.thumb.x, this.thumb.y, true))
   }
 
