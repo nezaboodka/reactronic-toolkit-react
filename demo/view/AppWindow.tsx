@@ -5,7 +5,7 @@
 
 import * as React from 'react'
 
-import { place, reactive, ScrollBox, ViewportDebugger } from '~/../source/reactronic-toolkit-react'
+import { place, reactive, ScrollBox, ScrollDebugger } from '~/../source/reactronic-toolkit-react'
 import { Application } from '~/app/Application'
 import { GridFragment } from '~/view/GridFragment'
 
@@ -44,7 +44,7 @@ export function AppWindow(p: {app: Application}): JSX.Element {
             disabled={!c}>▲ Begin</button>
         </div>
         <div className={css.debugger} style={place(10, 3, 10, 5)}>
-          <ViewportDebugger grid={g}/>
+          <ScrollDebugger grid={g}/>
         </div>
       </div>
     )

@@ -12,7 +12,7 @@ import { reactive } from '../tools/reactive'
 import { AreaRect } from './AreaRect'
 import { style } from './ScrollDebugger.css'
 
-export function ViewportDebugger(p: {grid: VirtualGrid}): JSX.Element {
+export function ScrollDebugger(p: {grid: VirtualGrid}): JSX.Element {
   return reactive(counter => {
     const css = style.classes
     const g = p.grid
