@@ -157,22 +157,24 @@ export class VirtualGrid extends State {
   // Actions
 
   @action
-  interact(homeOrEnd: boolean): void {
+  interact(key?: string): void {
     const i = ++this.interaction
-    if (homeOrEnd)
+    if (key === 'Home' || key === 'End')
       this.jumping = xy(-i, -i)
     console.log(`\n\n=== Interaction ${this.interaction} ===`)
   }
 
   @action
-  scroll(x: number, y: number): void {
+  scroll(): void {
     const c = this.component
     if (c) {
       // console.log(`onscroll: ${c.scrollTop}`)
       const t = this.thumb
       const dpr = 0.75/devicePixelRatio
-      if (Math.abs(t.y - y) > dpr || Math.abs(t.x - x) > dpr)
-        this.applyThumbPos(x, y, false)
+      const top = c.scrollTop
+      const left = c.scrollLeft
+      if (Math.abs(t.y - top) > dpr || Math.abs(t.x - left) > dpr)
+        this.applyThumbPos(left, top, false)
     }
   }
 
