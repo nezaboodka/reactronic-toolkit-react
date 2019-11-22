@@ -40,7 +40,7 @@ export class VirtualGrid extends State {
   thumb: Area = Area.ZERO
   surfaceArea: Area = Area.ZERO
   viewportArea: Area = Area.ZERO
-  bufferSize: XY = xy(1.0, 1.0)
+  bufferSize: XY = xy(1.0, 1.5)
   readyCells: Area = Area.ZERO
   targetGrid: Area = Area.ZERO
   sizing = new Sizing()
@@ -86,7 +86,7 @@ export class VirtualGrid extends State {
 
   @action
   mount(x: number, y: number, resolution: number, component: IComponent): void {
-    this.ppc = xy(resolution * 8, resolution)
+    this.ppc = xy(resolution * 4, resolution)
     this.thumb = new Area(0, 0, x, y)
     this.surfaceArea = this.allArea.truncateBy(SURFACE_SIZE_LIMIT)
     this.viewportArea = new Area(0, 0, x, y)

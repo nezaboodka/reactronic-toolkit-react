@@ -27,6 +27,6 @@ export class DataLoader extends State {
       this.data = data
       g.ready(buffer)
     }
-    await sleep(30)
+    await sleep(50)
   }
 }

@@ -12,7 +12,8 @@ import { DataLoader } from '~/app/DataLoader'
 import { style } from './GridFragment.css'
 
 export function GridFragment(p: {loader: DataLoader}): JSX.Element {
-  return reactive(() => {
+  // const start = performance.now()
+  const result = reactive(() => {
     const data = p.loader.data
     const g = p.loader.grid
     const tg = g.targetGrid
@@ -38,6 +39,8 @@ export function GridFragment(p: {loader: DataLoader}): JSX.Element {
       </React.Fragment>
     )
   })
+  // console.log(`Render in ${performance.now() - start}`)
+  return result
 }
 
 function GridCell(p: {hint: string, row: number, col: number, text: string, style?: React.CSSProperties}): JSX.Element {
