@@ -3,7 +3,7 @@
 // Copyright (C) 2019 Yury Chetyrko <ychetyrko@gmail.com>
 // License: https://raw.githubusercontent.com/nezaboodka/reactronic/master/LICENSE
 
-import { action, Cache, Monitor, passive, State, trigger } from 'reactronic'
+import { action, Cache, Monitor, nonreactive, State, trigger } from 'reactronic'
 
 import { Area, area, num, XY, xy } from './Area'
 
@@ -196,7 +196,7 @@ export class VirtualGrid extends State {
   @trigger
   protected rebaseSurface(): void {
     if (this.component && !this.debounce.busy)
-      passive(() => this.applyThumbPos(this.thumb.x, this.thumb.y, true))
+      nonreactive(() => this.applyThumbPos(this.thumb.x, this.thumb.y, true))
   }
 
   @trigger
