@@ -36,12 +36,13 @@ export class VirtualScroll extends State {
   surface: Area = Area.ZERO
   thumb: Area = Area.ZERO
   viewport: Area = Area.ZERO
-  jumping: XY = xy(0, 0)
   bufferSize: XY = xy(1.0, 1.0)
   readyCells: Area = Area.ZERO
   targetGrid: Area = Area.ZERO
   sizing = new Sizing()
   progressing = Monitor.create('scrolling', SMOOTH_SCROLL_DEBOUNCE)
+  interaction: number = 0
+  jumping: XY = xy(0, 0)
 
   constructor(sizeX: number, sizeY: number) {
     super()
@@ -172,6 +173,12 @@ export class VirtualScroll extends State {
   // Events
 
   @action
+  onInteract(): void {
+    this.interaction++
+    console.log(`\n\n=== Interaction ${this.interaction} ===`)
+  }
+
+  @action
   onScroll(): void {
     const c = this.component
     if (c) {
@@ -202,7 +209,7 @@ export class VirtualScroll extends State {
   }
 
   @trigger
-  protected syncThumbs(): void {
+  protected reflectThumbPos(): void {
     const c = this.component
     if (c) {
       const thumb = this.thumb
@@ -217,6 +224,7 @@ export class VirtualScroll extends State {
 
   protected applyThumbPos(left: number, top: number, ready: boolean): void {
     // console.log(`\napply: ${this.thumb.y}->${top}, h=${this.component ? this.component.scrollHeight : '?'}`)
+    const i = this.interaction
     const t2a = this.thumbToAllFactor
     const scrollPixelStep = this.viewportToSurfaceFactor
     const jumping = this.jumping
@@ -225,10 +233,10 @@ export class VirtualScroll extends State {
     let surface = this.surface
     let thumb = this.thumb.moveTo(xy(left, top), surface.atZero())
 
-    const x = VirtualScroll.getTargetPos(vp.x, vp.size.x,
+    const x = VirtualScroll.getTargetPos(i, vp.x, vp.size.x,
       surface.x, surface.size.x, all.x, thumb.x, jumping.x,
       scrollPixelStep.x, t2a.x, ready)
-    const y = VirtualScroll.getTargetPos(vp.y, vp.size.y,
+    const y = VirtualScroll.getTargetPos(i, vp.y, vp.size.y,
       surface.y, surface.size.y, all.y, thumb.y, jumping.y,
       scrollPixelStep.y, t2a.y, ready)
 
@@ -244,13 +252,12 @@ export class VirtualScroll extends State {
     this.jumping = xy(x.jumping, y.jumping)
   }
 
-  private static getTargetPos(existingViewport: number, viewportSize: number,
+  private static getTargetPos(interaction: number, viewport: number, viewportSize: number,
     surface: number, surfaceSize: number, allSize: number, thumb: number, jumping: number,
     scrollbarPixelSize: number, thumbToAllRatio: number, ready: boolean): ScrollPos {
-    const now = Date.now()
     const p: ScrollPos = { viewport: surface + thumb, surface, thumb, jumping: 0 }
-    const diff = Math.abs(p.viewport - existingViewport)
-    const jump = diff > 3 * viewportSize || now - jumping < SMOOTH_SCROLL_DEBOUNCE
+    const diff = Math.abs(p.viewport - viewport)
+    const jump = diff > 3 * viewportSize || jumping === interaction
     if (jump) { // jump
       const fraction = 2 * (surfaceSize/2 - thumb) / surfaceSize
       p.viewport = (thumb - 4/5 * scrollbarPixelSize * fraction) * thumbToAllRatio
@@ -259,7 +266,7 @@ export class VirtualScroll extends State {
       else if (p.viewport > allSize - viewportSize)
         p.viewport = allSize - viewportSize
       p.surface = p.viewport - thumb
-      p.jumping = now
+      p.jumping = interaction
     }
     else {
       const precise = p.viewport / thumbToAllRatio
@@ -284,9 +291,9 @@ export class VirtualScroll extends State {
       console.log(`jump(${ready}): vp(${num(p.viewport, 3)}..${num(p.viewport + viewportSize, 3)}) = sf(${num(p.surface, 3)}) + th(${num(p.thumb, 3)})    // ${num(p.viewport - p.surface - p.thumb, 3)}`)
     else if (thumb !== p.thumb)
       console.log(`rebase(${ready}): vp(${num(p.viewport, 3)}..${num(p.viewport + viewportSize, 3)}) = sf(${num(p.surface, 3)}) + th(${num(p.thumb, 3)})    // was: ${num(surface, 3)} + ${num(thumb, 3)}    // error ${num(p.viewport - p.surface - p.thumb, 3)}`)
-    else if (existingViewport !== p.viewport)
+    else if (viewport !== p.viewport)
       console.log(`pan(${ready}):  vp(${num(p.viewport, 3)}..${num(p.viewport + viewportSize, 3)}) = sf(${num(p.surface, 3)}) + th(${num(p.thumb, 3)})    // error ${num(p.viewport - p.surface - p.thumb, 3)}`)
-    if(ready)
+    if (ready && (thumb !== p.thumb || viewport !== p.viewport))
       console.log('=== READY ===\n\n')
     // if (vp !== result) console.log(`${jump ? 'jump' : 'shift'}: thumb=${thumb}, viewport=${vp}->${result}`)
     return p

@@ -49,7 +49,10 @@ export function ScrollBox(p: {
     }
     return (
       <div ref={ref} className={p.className} style={p.style}
-        onScroll={e => p.scroll.onScroll()}>
+        onScroll={e => p.scroll.onScroll()}
+        onWheel={e => p.scroll.onInteract()}
+        onPointerDown={e => p.scroll.onInteract()}
+        onKeyDown={e => p.scroll.onInteract()}>
         <div style={surfaceStyle}>
           <div className={p.fragmentClassName} style={fragmentStyle}>
             {p.children}
