@@ -29,7 +29,7 @@ export const style = restyle(() => {
     `,
     rollout: css`
       label: scale;
-      animation: scale 0.2s ease-out;
+      animation: scale 0.1s ease-out;
       @keyframes scale {
         0% { transform: scaleY(0); transform-origin: 0 center; }
       }

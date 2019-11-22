@@ -48,37 +48,30 @@ export class VirtualGrid extends State {
 
   @action
   reset(x: number, y: number, resolution: number, component: IComponent): void {
-    this.component = component
     this.ppc = xy(resolution * 8, resolution)
     this.surface = this.all.truncateBy(SURFACE_SIZE_LIMIT)
     this.thumb = new Area(0, 0, x, y)
     this.viewport = new Area(0, 0, x, y)
     this.targetGrid = this.allCells.truncateBy(TARGET_GRID_SIZE_LIMIT)
+    if (component !== this.component) {
+      if (this.component) {
+        // unsubscribe
+      }
+      if (component) {
+        // subscribe
+      }
+      this.component = component
+    }
   }
 
-  // @action
-  // setComponent(component: IComponent | null, fontSize: number): void {
-  //   const existing = this.events
-  //   if (component !== existing) {
-  //     if (component) {
-  //       this.reset(component.clientWidth, component.clientHeight, fontSize, component)
-  //       this.events = component
-  //     }
-  //     else {
-  //       this.events = undefined
-  //       this.reset(0, 0, 1, undefined)
-  //     }
-  //   }
-  // }
+  // Ratios
 
-  // Factors
-
-  get pixelToCellFactor(): XY {
+  get pixelToCellRatio(): XY {
     const r = this.ppc
     return xy(1/r.x, 1/r.y)
   }
 
-  get viewportToSurfaceFactor(): XY {
+  get viewportToSurfaceRatio(): XY {
     const surface = this.surface
     const vp = this.viewport
     return xy(
@@ -86,12 +79,12 @@ export class VirtualGrid extends State {
       surface.size.y / vp.size.y)
   }
 
-  get surfaceToViewportFactor(): XY {
-    const vp2s = this.viewportToSurfaceFactor
+  get surfaceToViewportRatio(): XY {
+    const vp2s = this.viewportToSurfaceRatio
     return xy(1/vp2s.x, 1/vp2s.y)
   }
 
-  get surfaceToAllFactor(): XY {
+  get surfaceToAllRatio(): XY {
     const all = this.all
     const surface = this.surface
     return xy(
@@ -99,12 +92,12 @@ export class VirtualGrid extends State {
       all.size.y / surface.size.y)
   }
 
-  get allToSurfaceFactor(): XY {
-    const s2a = this.surfaceToAllFactor
+  get allToSurfaceRatio(): XY {
+    const s2a = this.surfaceToAllRatio
     return xy(1/s2a.x, 1/s2a.y)
   }
 
-  get thumbToAllFactor(): XY {
+  get thumbToAllRatio(): XY {
     const all = this.all
     const surface = this.surface
     const vp = this.viewport
@@ -113,12 +106,12 @@ export class VirtualGrid extends State {
       all.size.y / (surface.size.y - vp.size.y))
   }
 
-  get allToThumbFactor(): XY {
-    const a2t = this.allToThumbFactor
+  get allToThumbRatio(): XY {
+    const a2t = this.allToThumbRatio
     return xy(1/a2t.x, 1/a2t.y)
   }
 
-  get viewportToAllFactor(): XY {
+  get viewportToAllRatio(): XY {
     const all = this.all
     const vp = this.viewport
     return xy(
@@ -126,8 +119,8 @@ export class VirtualGrid extends State {
       all.size.y / vp.size.y)
   }
 
-  get allToViewportFactor(): XY {
-    const vp2a = this.viewportToAllFactor
+  get allToViewportRatio(): XY {
+    const vp2a = this.viewportToAllRatio
     return xy(1/vp2a.x, 1/vp2a.y)
   }
 
@@ -148,7 +141,7 @@ export class VirtualGrid extends State {
   // Areas (cells)
 
   get surfaceCells(): Area {
-    return this.surface.scaleBy(this.pixelToCellFactor)
+    return this.surface.scaleBy(this.pixelToCellRatio)
   }
 
   get bufferCells(): Area {
@@ -158,7 +151,7 @@ export class VirtualGrid extends State {
   }
 
   get viewportCells(): Area {
-    return this.viewport.scaleBy(this.pixelToCellFactor)
+    return this.viewport.scaleBy(this.pixelToCellRatio)
   }
 
   // Actions
@@ -221,10 +214,10 @@ export class VirtualGrid extends State {
 
     const x = VirtualGrid.getNewPos(ready, this.interaction, this.jumping.x,
       vp.x, vp.size.x, sf.x, sf.size.x, all.size.x, th.x,
-      this.thumbToAllFactor.x, this.viewportToSurfaceFactor.x)
+      this.thumbToAllRatio.x, this.viewportToSurfaceRatio.x)
     const y = VirtualGrid.getNewPos(ready, this.interaction, this.jumping.y,
       vp.y, vp.size.y, sf.y, sf.size.y, all.size.y, th.y,
-      this.thumbToAllFactor.y, this.viewportToSurfaceFactor.y,)
+      this.thumbToAllRatio.y, this.viewportToSurfaceRatio.y,)
 
     vp = vp.moveTo(xy(x.viewport, y.viewport), all)
     sf = sf.moveTo(xy(x.surface, y.surface), all)

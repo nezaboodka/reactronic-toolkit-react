@@ -16,13 +16,14 @@ export function ScrollBox(p: {
   fragmentClassName?: string,
   fragmentStyle?: React.CSSProperties}): JSX.Element {
 
-  const ref = React.useCallback((e: HTMLDivElement) => {
-    let resolution = 1
+  const ref = React.useCallback((e: HTMLDivElement | null) => {
     if (e) {
       const fs = window.getComputedStyle(e).fontSize
-      resolution = parseFloat(fs.substr(0, fs.length - 2))
+      const resolution = parseFloat(fs.substr(0, fs.length - 2))
+      p.grid.reset(e.clientWidth, e.clientHeight, resolution, e)
     }
-    p.grid.reset(e.clientWidth, e.clientHeight, resolution, e)
+    else
+      p.grid.reset(0, 0, 1, undefined)
   }, [])
 
   return reactive(() => {

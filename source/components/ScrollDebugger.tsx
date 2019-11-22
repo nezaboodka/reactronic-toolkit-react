@@ -39,16 +39,16 @@ export function ScrollDebugger(p: {grid: VirtualGrid}): JSX.Element {
               Thumb: {num(g.thumb.y, 1)} of {num(g.surface.size.y, 1)} canvas pixels,
             </div>
             <div>
-              Thumb Pixel = {num(g.thumb.scaleBy(g.surfaceToViewportFactor).y, 3)}
+              Thumb Pixel = {num(g.thumb.scaleBy(g.surfaceToViewportRatio).y, 3)}
             </div>
             <div>
-              Viewport-to-Canvas = {num(g.viewport.scaleBy(g.allToSurfaceFactor).y, 15)}
+              Viewport-to-Canvas = {num(g.viewport.scaleBy(g.allToSurfaceRatio).y, 15)}
             </div>
             <div>Pixels per cell: {g.ppc.y} (font size)</div>
             <div>{num(g.all.size.y / g.surface.size.y, 1)} <i>all data pixels in a single surface pixel out of</i> {num(g.surface.size.y)}</div>
-            <div>{num(g.viewportToSurfaceFactor.y, 1)} <i>surface pixels in a single viewport pixel out of</i> {num(g.viewport.size.y)}</div>
-            <div>{num(g.viewportToAllFactor.y, 1)} <i>all data pixels in a single viewport pixel out of</i> {num(g.viewport.size.y)}</div>
-            <div>{num(g.viewportToAllFactor.y / g.ppc.y, -3)} <i>cells in a single viewport pixel out of</i> {num(g.viewport.size.y)}</div>
+            <div>{num(g.viewportToSurfaceRatio.y, 1)} <i>surface pixels in a single viewport pixel out of</i> {num(g.viewport.size.y)}</div>
+            <div>{num(g.viewportToAllRatio.y, 1)} <i>all data pixels in a single viewport pixel out of</i> {num(g.viewport.size.y)}</div>
+            <div>{num(g.viewportToAllRatio.y / g.ppc.y, -3)} <i>cells in a single viewport pixel out of</i> {num(g.viewport.size.y)}</div>
             <br/>
           </div>
         </AreaRect>
