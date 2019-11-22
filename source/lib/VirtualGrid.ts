@@ -220,10 +220,10 @@ export class VirtualGrid extends State {
     let sf = this.surface
     let th = this.thumb.moveTo(xy(left, top), sf.atZero())
 
-    const x = VirtualGrid.getTargetPos(ready, this.interaction, this.jumping.x,
+    const x = VirtualGrid.getNewPos(ready, this.interaction, this.jumping.x,
       vp.x, vp.size.x, sf.x, sf.size.x, all.size.x, th.x,
       this.thumbToAllFactor.x, this.viewportToSurfaceFactor.x)
-    const y = VirtualGrid.getTargetPos(ready, this.interaction, this.jumping.y,
+    const y = VirtualGrid.getNewPos(ready, this.interaction, this.jumping.y,
       vp.y, vp.size.y, sf.y, sf.size.y, all.size.y, th.y,
       this.thumbToAllFactor.y, this.viewportToSurfaceFactor.y,)
 
@@ -240,7 +240,7 @@ export class VirtualGrid extends State {
     this.jumping = xy(x.jumping, y.jumping)
   }
 
-  private static getTargetPos(ready: boolean, interaction: number, jumping: number,
+  private static getNewPos(ready: boolean, interaction: number, jumping: number,
     viewport: number, viewportSize: number, surface: number, surfaceSize: number,
     allSize: number, thumb: number, thumbToAllRatio: number, scrollbarPixelSize: number): Position {
 
