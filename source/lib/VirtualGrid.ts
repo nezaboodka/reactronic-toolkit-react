@@ -86,7 +86,7 @@ export class VirtualGrid extends State {
 
   @action
   mount(x: number, y: number, resolution: number, component: IComponent): void {
-    this.ppc = xy(resolution * 4, resolution)
+    this.ppc = xy(resolution * 1, resolution)
     this.thumb = new Area(0, 0, x, y)
     this.surfaceArea = this.allArea.truncateBy(SURFACE_SIZE_LIMIT)
     this.viewportArea = new Area(0, 0, x, y)
