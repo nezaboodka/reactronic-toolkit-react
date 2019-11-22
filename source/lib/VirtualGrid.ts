@@ -217,25 +217,26 @@ export class VirtualGrid extends State {
     // console.log(`\napply: ${this.thumb.y}->${top}, h=${this.component ? this.component.scrollHeight : '?'}`)
     const all = this.all
     let vp = this.viewport
-    let surface = this.surface
-    let thumb = this.thumb.moveTo(xy(left, top), surface.atZero())
+    let sf = this.surface
+    let th = this.thumb.moveTo(xy(left, top), sf.atZero())
 
     const x = VirtualGrid.getTargetPos(ready, this.interaction, this.jumping.x,
-      vp.x, vp.size.x, surface.x, surface.size.x, all.size.x, thumb.x,
+      vp.x, vp.size.x, sf.x, sf.size.x, all.size.x, th.x,
       this.thumbToAllFactor.x, this.viewportToSurfaceFactor.x)
     const y = VirtualGrid.getTargetPos(ready, this.interaction, this.jumping.y,
-      vp.y, vp.size.y, surface.y, surface.size.y, all.size.y, thumb.y,
+      vp.y, vp.size.y, sf.y, sf.size.y, all.size.y, th.y,
       this.thumbToAllFactor.y, this.viewportToSurfaceFactor.y,)
 
     vp = vp.moveTo(xy(x.viewport, y.viewport), all)
-    surface = surface.moveTo(xy(x.surface, y.surface), all)
-    thumb = thumb.moveTo(xy(x.thumb, y.thumb), surface.atZero())
+    sf = sf.moveTo(xy(x.surface, y.surface), all)
+    th = th.moveTo(xy(x.thumb, y.thumb), sf.atZero())
+
     if (!vp.equalTo(this.viewport))
       this.viewport = vp
-    if (!surface.equalTo(this.surface))
-      this.surface = surface
-    if (!thumb.equalTo(this.thumb))
-      this.thumb = thumb
+    if (!sf.equalTo(this.surface))
+      this.surface = sf
+    if (!th.equalTo(this.thumb))
+      this.thumb = th
     this.jumping = xy(x.jumping, y.jumping)
   }
 
