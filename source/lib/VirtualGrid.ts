@@ -204,7 +204,7 @@ export class VirtualGrid extends State {
   // Triggers
 
   @trigger
-  protected adjustSurface(): void {
+  protected rebaseSurface(): void {
     if (this.component && !this.debounce.busy)
       passive(() => this.applyThumbPos(this.thumb.x, this.thumb.y, true))
   }
