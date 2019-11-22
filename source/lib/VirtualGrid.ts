@@ -105,16 +105,14 @@ export class VirtualGrid extends State {
   }
 
   @action
-  scroll(): void {
+  scroll(x: number, y: number): void {
     const c = this.component
     if (c) {
       // console.log(`onscroll: ${c.scrollTop}`)
       const t = this.thumb
       const dpr = 0.75/devicePixelRatio
-      const top = c.scrollTop
-      const left = c.scrollLeft
-      if (Math.abs(t.y - top) > dpr || Math.abs(t.x - left) > dpr)
-        this.applyThumbPos(left, top, false)
+      if (Math.abs(t.y - y) > dpr || Math.abs(t.x - x) > dpr)
+        this.applyThumbPos(x, y, false)
     }
   }
 

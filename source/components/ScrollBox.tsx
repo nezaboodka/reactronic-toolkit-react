@@ -51,7 +51,7 @@ export function ScrollBox(p: {
     return (
       <div className={p.className} style={p.style}
         ref={ref} tabIndex={1}
-        onScroll={e => p.grid.scroll()}
+        onScroll={e => p.grid.scroll(e.currentTarget.scrollLeft, e.currentTarget.scrollTop)}
         onWheel={e => p.grid.interact()}
         onPointerDown={e => p.grid.interact()}
         onKeyDown={e => p.grid.interact(e.key)}>
