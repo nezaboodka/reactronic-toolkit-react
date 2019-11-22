@@ -113,7 +113,7 @@ export class VirtualGrid extends State {
     const i = ++this.interaction
     if (key === 'Home' || key === 'End')
       this.jumping = xy(-i, -i)
-    console.log(`\n\n=== Interaction ${this.interaction} ===`)
+    // console.log(`\n\n=== Interaction ${this.interaction} ===`)
   }
 
   @action
@@ -284,15 +284,15 @@ export class VirtualGrid extends State {
       }
     }
 
-    const pos = `th(${num(p.thumb, 2)})  +  sf(${num(p.surface, 2)})  =  vp(${num(p.viewport, 2)} :: ${num(p.viewport + viewportSize, 2)})    // error ${num(p.viewport - p.surface - p.thumb, 2)}`
-    if (jump)
-      console.log(`jump:   ${pos}`)
-    else if (thumb !== p.thumb)
-      console.log(`rebase: ${pos}    // was: th(${num(thumb, 2)})  +  sf(${num(surface, 2)})`)
-    else if (viewport !== p.viewport)
-      console.log(`pan:    ${pos}`)
-    if (ready && (thumb !== p.thumb || viewport !== p.viewport))
-      console.log('ready')
+    // const pos = `th(${num(p.thumb, 2)})  +  sf(${num(p.surface, 2)})  =  vp(${num(p.viewport, 2)} :: ${num(p.viewport + viewportSize, 2)})    // error ${num(p.viewport - p.surface - p.thumb, 2)}`
+    // if (jump)
+    //   console.log(`jump:   ${pos}`)
+    // else if (thumb !== p.thumb)
+    //   console.log(`rebase: ${pos}    // was: th(${num(thumb, 2)})  +  sf(${num(surface, 2)})`)
+    // else if (viewport !== p.viewport)
+    //   console.log(`pan:    ${pos}`)
+    // if (ready && (thumb !== p.thumb || viewport !== p.viewport))
+    //   console.log('ready')
 
     return p
   }
