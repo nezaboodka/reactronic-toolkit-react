@@ -5,6 +5,7 @@
 
 import * as React from 'react'
 
+import { XY } from '../lib/Area'
 import { VirtualGrid } from '../lib/VirtualGrid'
 import { reactive } from '../tools/reactive'
 
@@ -28,26 +29,8 @@ export function ScrollBox(p: {
 
   return reactive(() => {
     const sf = p.grid.surfaceArea
-    const sfw = `${sf.size.x}px`
-    const sfh = `${sf.size.y}px`
-    const surfaceStyle: React.CSSProperties = {
-      position: 'relative',
-      overflow: 'hidden',
-      boxSizing: 'border-box',
-      width: sfw, minWidth: sfw, maxWidth: sfw,
-      height: sfh, minHeight: sfh, maxHeight: sfh,
-    }
-    const ready = p.grid.readyArea
-    const rw = `${ready.size.x}px`
-    const rh = `${ready.size.y}px`
-    const fragmentStyle: React.CSSProperties = {
-      ...p.fragmentStyle,
-      position: 'absolute',
-      left: `${ready.x - sf.x}px`,
-      top: `${ready.y - sf.y}px`,
-      width: rw, minWidth: rw, maxWidth: rw,
-      height: rh, minHeight: rh, maxHeight: rh,
-    }
+    const ra = p.grid.readyArea.relativeTo(sf)
+    const style = { ...p.fragmentStyle, ...place(ra.size, ra) }
     return (
       <div className={p.className} style={p.style}
         ref={ref} tabIndex={1}
@@ -55,12 +38,29 @@ export function ScrollBox(p: {
         onWheel={e => p.grid.impulse()}
         onPointerDown={e => p.grid.impulse()}
         onKeyDown={e => p.grid.impulse(e.key)}>
-        <div style={surfaceStyle}>
-          <div className={p.fragmentClassName} style={fragmentStyle}>
+        <div style={place(sf.size)}>
+          <div className={p.fragmentClassName} style={style}>
             {p.children}
           </div>
         </div>
       </div>
     )
   })
+}
+
+function place(size: XY, pos?: XY): React.CSSProperties {
+  const p: React.CSSProperties = {}
+  p.width = p.minWidth = p.maxWidth = `${size.x}px`
+  p.height = p.minHeight = p.maxHeight = `${size.y}px`
+  if (pos) {
+    p.position = 'absolute'
+    p.left = `${pos.x}px`
+    p.top = `${pos.y}px`
+  }
+  else {
+    p.position = 'relative'
+    p.overflow = 'hidden'
+    p.boxSizing = 'border-box'
+  }
+  return p
 }

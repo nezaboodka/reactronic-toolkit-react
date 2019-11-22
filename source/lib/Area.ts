@@ -44,6 +44,10 @@ export class Area extends XY {
     return this.moveBy(xy(pos.x - c.x, pos.y - c.y), bounds)
   }
 
+  relativeTo(origin: XY): Area {
+    return area(this.x - origin.x, this.y - origin.y, this.size.x, this.size.y)
+  }
+
   resize(size: XY): Area {
     return area(this.x, this.y, size.x, size.y)
   }
