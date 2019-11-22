@@ -9,7 +9,7 @@ import { Area, area, num, XY, xy } from './Area'
 
 const SURFACE_SIZE_LIMIT: Area = area(0, 0, 1000123, 1000123)
 const TARGET_GRID_SIZE_LIMIT: Area = area(0, 0, 899, 899)
-const SMOOTH_SCROLL_DEBOUNCE = 35 // ms
+const SMOOTH_SCROLL_DEBOUNCE = 25 // ms
 
 export type Guide = { index: number, till: number }
 
