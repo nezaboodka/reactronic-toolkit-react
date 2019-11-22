@@ -160,7 +160,7 @@ export class VirtualGrid extends State {
   interact(homeOrEnd: boolean): void {
     const i = ++this.interaction
     if (homeOrEnd)
-      this.jumping = xy(i, i)
+      this.jumping = xy(-i, -i)
     console.log(`\n\n=== Interaction ${this.interaction} ===`)
   }
 
@@ -240,6 +240,7 @@ export class VirtualGrid extends State {
 
     const p: Position = { viewport: surface + thumb, surface, thumb, jumping }
     const jump = interaction === jumping ||
+      (interaction === -jumping && (thumb === 0 || thumb + viewportSize >= surfaceSize)) ||
       Math.abs(p.viewport - viewport) > 3 * viewportSize
     if (jump) {
       const fraction = 2 * (surfaceSize/2 - thumb) / surfaceSize
