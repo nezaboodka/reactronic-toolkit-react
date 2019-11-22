@@ -49,11 +49,11 @@ export function ScrollBox(p: {
       height: rh, minHeight: rh, maxHeight: rh,
     }
     return (
-      <div ref={ref} className={p.className} style={p.style}
+      <div ref={ref} className={p.className} style={p.style} tabIndex={1}
         onScroll={e => p.grid.scroll(e.currentTarget.scrollLeft, e.currentTarget.scrollTop)}
-        onWheel={e => p.grid.interact()}
-        onPointerDown={e => p.grid.interact()}
-        onKeyDown={e => p.grid.interact()}>
+        onWheel={e => p.grid.interact(false)}
+        onPointerDown={e => p.grid.interact(false)}
+        onKeyDown={e => p.grid.interact(e.key === 'Home' || e.key === 'End')}>
         <div style={surfaceStyle}>
           <div className={p.fragmentClassName} style={fragmentStyle}>
             {p.children}

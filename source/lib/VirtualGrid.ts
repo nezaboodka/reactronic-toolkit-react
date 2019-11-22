@@ -157,8 +157,10 @@ export class VirtualGrid extends State {
   // Actions
 
   @action
-  interact(): void {
-    this.interaction++
+  interact(homeOrEnd: boolean): void {
+    const i = ++this.interaction
+    if (homeOrEnd)
+      this.jumping = xy(i, i)
     console.log(`\n\n=== Interaction ${this.interaction} ===`)
   }
 
