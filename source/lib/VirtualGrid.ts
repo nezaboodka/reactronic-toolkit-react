@@ -40,9 +40,9 @@ export class VirtualGrid extends State {
   jumping: XY = xy(0, 0)
   debounce = Monitor.create('debounce', SMOOTH_SCROLL_DEBOUNCE)
 
-  constructor(sizeX: number, sizeY: number) {
+  constructor(columns: number, rows: number) {
     super()
-    this.allCells = area(0, 0, sizeX, sizeY)
+    this.allCells = area(0, 0, columns, rows)
     Cache.of(this.scroll).setup({monitor: this.debounce})
   }
 
