@@ -20,8 +20,8 @@ export function GridFragment(p: {loader: GridFragmentLoader}): JSX.Element {
     const fragment = g.readyCells
     const zero = xy(fragment.x - tg.x, fragment.y - tg.y)
     const dim: React.CSSProperties = {
-      width: `${g.ppc.x}px`,
-      height: `${g.ppc.y}px`,
+      width: `${g.ppcX}px`,
+      height: `${g.ppcY}px`,
     }
     console.log(`cycle: ${cycle}`)
     return (

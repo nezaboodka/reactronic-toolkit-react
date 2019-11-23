@@ -17,7 +17,6 @@ export function AppWindow(p: {app: Application}): JSX.Element {
     const css = style.classes
     const g = p.app.grid
     const c = g.component
-    const ppc = g.ppc
     const loader = p.app.loader
     return (
       <div className={css.main}>
@@ -27,13 +26,13 @@ export function AppWindow(p: {app: Application}): JSX.Element {
           <GridFragment key={loader.jump} loader={loader}/>
         </ScrollBox>
         <div className={css.toolbar} style={place(10, 2, 10, 2)}>
-          <button onClick={e => c ? c.scrollTop += ppc.y : {}}
+          <button onClick={e => c ? c.scrollTop += g.ppcY : {}}
             disabled={!c}>▼</button>
-          <button onClick={e => c ? c.scrollTop -= ppc.y : {}}
+          <button onClick={e => c ? c.scrollTop -= g.ppcY : {}}
             disabled={!c}>▲</button>
-          <button onClick={e => c ? c.scrollLeft += ppc.x : {}}
+          <button onClick={e => c ? c.scrollLeft += g.ppcX : {}}
             disabled={!c}>►</button>
-          <button onClick={e => c ? c.scrollLeft -= ppc.x : {}}
+          <button onClick={e => c ? c.scrollLeft -= g.ppcX : {}}
             disabled={!c}>◄</button>
           <button onClick={e => c ? c.scrollTop += 1072 : {}}
             disabled={!c}>▼ 1K px</button>

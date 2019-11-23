@@ -47,11 +47,11 @@ export function ScrollDebugger(p: {grid: VirtualGrid}): JSX.Element {
             <div>
               Viewport-to-Canvas = {num(g.viewportSizeY * g.allToSurfaceRatio.y, 15)}
             </div>
-            <div>Pixels per cell: {g.ppc.y} (font size)</div>
+            <div>Pixels per cell: {g.ppcY} (font size)</div>
             <div>{num(g.allArea.size.y / sf.size.y, 1)} <i>all data pixels in a single surface pixel out of</i> {num(sf.size.y)}</div>
             <div>{num(g.viewportToSurfaceRatio.y, 1)} <i>surface pixels in a single viewport pixel out of</i> {num(g.viewportSizeY)}</div>
             <div>{num(g.viewportToAllRatio.y, 1)} <i>all data pixels in a single viewport pixel out of</i> {num(g.viewportSizeY)}</div>
-            <div>{num(g.viewportToAllRatio.y / g.ppc.y, -3)} <i>cells in a single viewport pixel out of</i> {num(g.viewportSizeY)}</div>
+            <div>{num(g.viewportToAllRatio.y / g.ppcY, -3)} <i>cells in a single viewport pixel out of</i> {num(g.viewportSizeY)}</div>
             <br/>
           </div>
         </AreaRect>

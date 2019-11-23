@@ -36,7 +36,8 @@ export class Sizing {
 export class VirtualGrid extends State {
   allCells: Area
   component: IComponent = undefined
-  ppc: XY = xy(1, 1) // pixels per cell
+  ppcX: number = 1 // pixels per cell
+  ppcY: number = 1 // pixels per cell
   thumbX: number = 0
   thumbY: number = 0
   surfaceX: number = 0
@@ -102,7 +103,8 @@ export class VirtualGrid extends State {
 
   @action
   mount(width: number, height: number, resolution: number, component: IComponent): void {
-    this.ppc = xy(resolution * 8, resolution)
+    this.ppcX = resolution * 8
+    this.ppcY = resolution
     this.thumbX = 0
     this.thumbY = 0
     this.surfaceSizeX = Math.min(this.allArea.size.x, SURFACE_SIZE_LIMIT)
@@ -177,6 +179,10 @@ export class VirtualGrid extends State {
   }
 
   // Ratios
+
+  protected get ppc(): XY {
+    return xy(this.ppcX, this.ppcY)
+  }
 
   protected get pixelToCellRatio(): XY {
     const ppc = this.ppc
