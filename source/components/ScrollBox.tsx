@@ -61,7 +61,7 @@ function ScrollBoxGridFragment(p: {
         </div>
       </div>
     )
-  })
+  }, ScrollBoxGridFragment.name)
 }
 
 function place(size: XY, pos?: XY): React.CSSProperties {

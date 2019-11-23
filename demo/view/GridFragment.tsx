@@ -26,22 +26,22 @@ export function GridFragment(p: {loader: DataLoader}): JSX.Element {
     return (
       <React.Fragment>
         {data.map((cell, i) => {
-          const y = Math.floor(i / fragment.size.x)
-          const x = i % fragment.size.x
-          const r = zero.y + y
-          const c = zero.x + x
-          const key = `R${r}C${c}:Y${fragment.y + y}X${fragment.x + x}`
+          const y = Math.floor(i / fragment.size.x) + fragment.y
+          const x = i % fragment.size.x + fragment.x
+          const r = zero.y + y - fragment.y
+          const c = zero.x + x - fragment.x
+          const key = `R${r}C${c}:Y${y}X${x}`
           return (
             // <GridCell key={key} hint={key} style={dim}
             //   row={r} col={c} text={cell}/>
-            <div title={`${key}`} className={cx(css.cell, css.rollout)} style={{...dim, gridRow: r + 1, gridColumn: c + 1}}>
+            <div key={key} title={`${key}`} className={cx(css.cell, css.rollout)} style={{...dim, gridRow: r + 1, gridColumn: c + 1}}>
               {cell}
             </div>
           )
         })}
       </React.Fragment>
     )
-  })
+  }, `<${GridFragment.name}>`)
 }
 
 function GridCell(p: {hint: string, row: number, col: number, text: string, style?: React.CSSProperties}): JSX.Element {

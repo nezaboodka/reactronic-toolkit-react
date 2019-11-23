@@ -6,9 +6,9 @@
 import * as React from 'react'
 import { Action, Cache, cached, isolated, State, stateless, Tools as RT, Trace, trigger } from 'reactronic'
 
-export function reactive(render: (cycle: number) => JSX.Element, trace?: Partial<Trace>, action?: Action): JSX.Element {
+export function reactive(render: (cycle: number) => JSX.Element, name?: string, trace?: Partial<Trace>, action?: Action): JSX.Element {
   const [state, refresh] = React.useState<ReactState<JSX.Element>>(
-    !trace ? createReactState : () => createReactState(trace))
+    (!name && !trace) ? createReactState : () => createReactState(name, trace))
   const rx = state.rx
   rx.cycle = state.cycle
   rx.refresh = refresh // just in case React will change refresh on each rendering
@@ -63,8 +63,8 @@ class Rx<V> extends State {
   }
 }
 
-function createReactState<V>(trace?: Partial<Trace>): ReactState<V> {
-  const hint = RT.isTraceOn ? getComponentName() : '<rx>'
+function createReactState<V>(name?: string, trace?: Partial<Trace>): ReactState<V> {
+  const hint = name || (RT.isTraceOn ? getComponentName() : '<rx>')
   const rx = Action.runAs<Rx<V>>(hint, false, trace, undefined, Rx.create, hint, trace)
   return {rx, cycle: 0}
 }
