@@ -12,9 +12,9 @@ import { DataLoader } from '~/app/DataLoader'
 import { style } from './GridFragment.css'
 
 export function GridFragment(p: {loader: DataLoader}): JSX.Element {
-  // const start = performance.now()
-  const result = reactive(() => {
-    const data = p.loader.data
+  return reactive(() => {
+    const start = performance.now()
+    const data = p.loader.shown
     const g = p.loader.grid
     const tg = g.targetGrid
     const fragment = g.readyCells
@@ -23,9 +23,9 @@ export function GridFragment(p: {loader: DataLoader}): JSX.Element {
       width: `${g.ppc.x}px`,
       height: `${g.ppc.y}px`,
     }
-    return (
+    const result = (
       <React.Fragment>
-        {fragment.overlaps(g.viewportCells) && data.map((cell, i) => {
+        {data.map((cell, i) => {
           const y = Math.floor(i / fragment.size.x)
           const x = i % fragment.size.x
           const r = zero.y + y
@@ -38,9 +38,10 @@ export function GridFragment(p: {loader: DataLoader}): JSX.Element {
         })}
       </React.Fragment>
     )
+    console.log(`Render ${p.loader.shown.length} items of ${p.loader.jump} jump in ${performance.now() - start}`)
+    console.log(`  rWhy: ${window.rWhy}`)
+    return result
   })
-  // console.log(`Render in ${performance.now() - start}`)
-  return result
 }
 
 function GridCell(p: {hint: string, row: number, col: number, text: string, style?: React.CSSProperties}): JSX.Element {

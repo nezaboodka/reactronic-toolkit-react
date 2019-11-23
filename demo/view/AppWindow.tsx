@@ -23,7 +23,7 @@ export function AppWindow(p: {app: Application}): JSX.Element {
         <ScrollBox grid={g}
           className={css.scroll} style={place(2, 2, 9, 9)}
           fragmentClassName={css.grid}>
-          <GridFragment loader={loader}/>
+          <GridFragment key={loader.jump} loader={loader}/>
         </ScrollBox>
         <div className={css.toolbar} style={place(10, 2, 10, 2)}>
           <button onClick={e => c ? c.scrollTop += ppc.y : {}}

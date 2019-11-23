@@ -13,25 +13,25 @@ import { AreaRect } from './AreaRect'
 import { style } from './ScrollDebugger.css'
 
 export function ScrollDebugger(p: {grid: VirtualGrid}): JSX.Element {
-  return reactive(counter => {
+  return reactive(cycle => {
     const css = style.classes
     const g = p.grid
     return (
       <div className={css.main}>
-        <AreaRect hint={'All'} area={g.allCells} px={g.allArea} key={`all-${counter}`}
+        <AreaRect hint={'All'} area={g.allCells} px={g.allArea} key={`all-${cycle}`}
           className={css.all} style={place(1, 1, 10, 9)}>
-          <AreaRect hint={'Surface'} area={g.surfaceCells} px={g.surfaceArea} inner={g.readyArea} key={`surface-${counter}`}
+          <AreaRect hint={'Surface'} area={g.surfaceCells} px={g.surfaceArea} inner={g.readyArea} key={`surface-${cycle}`}
             className={css.surface} style={place(2, 2, 9, 9)}>
-            <AreaRect hint={'Rendered'} area={g.readyCells} px={g.readyArea} key={`ready-${counter}`}
+            <AreaRect hint={'Rendered'} area={g.readyCells} px={g.readyArea} key={`ready-${cycle}`}
               className={css.buffer} style={place(2, 2, 9, 9)}>
-              <AreaRect hint={'Viewport'} area={g.viewportCells} px={g.viewportArea} key={`viewport-${counter}`}
+              <AreaRect hint={'Viewport'} area={g.viewportCells} px={g.viewportArea} key={`viewport-${cycle}`}
                 className={css.viewport} style={place(3, 3, 8, 8)}>
                 <div style={{height: '1em'}}></div>
               </AreaRect>
             </AreaRect>
           </AreaRect>
         </AreaRect>
-        <AreaRect hint={'Surface'} area={g.surfaceCells} px={g.surfaceArea} key={`canvas-${counter}`}
+        <AreaRect hint={'Surface'} area={g.surfaceCells} px={g.surfaceArea} key={`canvas-${cycle}`}
           className={css.surface} style={place(1, 10, 10, 10)}>
           <div>
             <br/>

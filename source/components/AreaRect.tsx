@@ -20,7 +20,7 @@ export function AreaRect(p: {
   className?: string,
   style?: React.CSSProperties,
   children?: JSX.Element}): JSX.Element {
-  return reactive(counter => {
+  return reactive(cycle => {
     const css = style.classes
     return (
       <div className={cx(css.area, p.className)} style={p.style}>

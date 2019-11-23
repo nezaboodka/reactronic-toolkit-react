@@ -6,11 +6,11 @@
 import * as React from 'react'
 import { Action, Cache, cached, isolated, State, stateless, Tools as RT, Trace, trigger } from 'reactronic'
 
-export function reactive(render: (counter: number) => JSX.Element, trace?: Partial<Trace>, action?: Action): JSX.Element {
+export function reactive(render: (cycle: number) => JSX.Element, trace?: Partial<Trace>, action?: Action): JSX.Element {
   const [state, refresh] = React.useState<ReactState<JSX.Element>>(
     !trace ? createReactState : () => createReactState(trace))
   const rx = state.rx
-  rx.counter = state.counter
+  rx.cycle = state.cycle
   rx.refresh = refresh // just in case React will change refresh on each rendering
   React.useEffect(rx.unmount, [])
   return rx.render(render, action)
@@ -31,42 +31,47 @@ export function reactive(render: (counter: number) => JSX.Element, trace?: Parti
 
 // Internal
 
-type ReactState<V> = { rx: Rx<V>, counter: number }
+type ReactState<V> = { rx: Rx<V>, cycle: number }
 
 class Rx<V> extends State {
   @cached
-  render(render: (counter: number) => V, action?: Action): V {
-    return action ? action.inspect(() => render(this.counter)) : render(this.counter)
+  render(render: (cycle: number) => V, action?: Action): V {
+    return action ? action.inspect(() => render(this.cycle)) : render(this.cycle)
   }
 
   @trigger
-  pulse(): void {
-    if (Cache.of(this.render).invalid)
-      isolated(this.refresh, {rx: this, counter: this.counter + 1})
+  protected pulse(): void {
+    if (Cache.of(this.render).invalid) {
+      // const start = performance.now()
+      isolated(this.refresh, {rx: this, cycle: this.cycle + 1})
+      // const ms = performance.now() - start
+      // if (ms > 4)
+      //   console.log(`${ms.toFixed(2)}ms: ${window.rWhy}`)
+    }
   }
 
-  @stateless counter: number = 0
+  @stateless cycle: number = 0
   @stateless refresh: (next: ReactState<V>) => void = nop
   @stateless readonly unmount = (): (() => void) => {
     return (): void => { isolated(Cache.unmount, this) }
+  }
+
+  static create<V>(hint: string | undefined, trace: Trace | undefined): Rx<V> {
+    const rx = new Rx<V>()
+    if (hint)
+      RT.setTraceHint(rx, hint)
+    if (trace) {
+      Cache.of(rx.render).setup({trace})
+      Cache.of(rx.pulse).setup({trace})
+    }
+    return rx
   }
 }
 
 function createReactState<V>(trace?: Partial<Trace>): ReactState<V> {
   const hint = RT.isTraceOn ? getComponentName() : '<rx>'
-  const rx = Action.runAs<Rx<V>>(hint, false, trace, undefined, createRx, hint, trace)
-  return {rx, counter: 0}
-}
-
-function createRx<V>(hint: string | undefined, trace: Trace | undefined): Rx<V> {
-  const rx = new Rx<V>()
-  if (hint)
-    RT.setTraceHint(rx, hint)
-  if (trace) {
-    Cache.of(rx.render).setup({trace})
-    Cache.of(rx.pulse).setup({trace})
-  }
-  return rx
+  const rx = Action.runAs<Rx<V>>(hint, false, trace, undefined, Rx.create, hint, trace)
+  return {rx, cycle: 0}
 }
 
 function nop(...args: any[]): void {

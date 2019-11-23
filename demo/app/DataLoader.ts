@@ -10,7 +10,9 @@ import { VirtualGrid } from '~/../source/reactronic-toolkit-react'
 export class DataLoader extends State {
   constructor(
     readonly grid: VirtualGrid,
-    public data: string[] = []) {
+    private loaded: string[] = [],
+    public shown: string[] = [],
+    public jump: number = 0) {
     super()
   }
 
@@ -24,9 +26,16 @@ export class DataLoader extends State {
       for (let y = buffer.y; y <= till.y; y++)
         for (let x = buffer.x; x <= till.x; x++)
           data.push(`${y}:${x}`)
-      this.data = data
+      this.loaded = data
       g.ready(buffer)
     }
     await sleep(50)
+  }
+
+  @trigger apply(): void {
+    if (this.grid.readyCells.overlaps(this.grid.viewportCells)) {
+      this.shown = this.loaded
+      this.jump++
+    }
   }
 }

@@ -17,9 +17,6 @@ export const style = restyle(() => {
       bottom: 0;
       right: 0;
       overflow: hidden;
-      font-family: Calibri, Tahoma, Arial, monospace;
-      font-size: calc(16px + (24 - 16) * (100vw - 640px) / (1920 - 640));
-      font-weight: 200;
       display: grid;
       grid-template-columns: repeat(4, auto) 1fr 1fr repeat(4, auto);
       grid-template-rows: repeat(4, auto) 1fr 1fr repeat(4, auto);
