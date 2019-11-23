@@ -12,7 +12,7 @@ import { GridFragmentLoader } from '~/app/GridFragmentLoader'
 import { style } from './GridFragment.css'
 
 export function GridFragment(p: {loader: GridFragmentLoader}): JSX.Element {
-  return reactive(() => {
+  return reactive(cycle => {
     const css = style.classes
     const data = p.loader.shown
     const g = p.loader.grid
@@ -23,6 +23,7 @@ export function GridFragment(p: {loader: GridFragmentLoader}): JSX.Element {
       width: `${g.ppc.x}px`,
       height: `${g.ppc.y}px`,
     }
+    console.log(`cycle: ${cycle}`)
     return (
       <React.Fragment>
         {data.map((cell, i) => {

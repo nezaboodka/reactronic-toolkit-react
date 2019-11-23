@@ -27,7 +27,7 @@ export function ScrollBox(p: {
       p.grid.mount(0, 0, 1, undefined)
   }, [])
 
-  return reactive(cycle => {
+  return reactive(() => {
     return (
       <div className={p.className} style={p.style}
         ref={ref} tabIndex={1}
@@ -36,21 +36,21 @@ export function ScrollBox(p: {
         onPointerDown={e => p.grid.impulse()}
         onKeyDown={e => p.grid.impulse(e.key)}>
         {/* <div style={{position: 'absolute', left: '3em', top:'3em', color: 'yellow', backgroundColor: 'rgba(0, 0, 0, 0.75)', zIndex: 100}}>cycle: {cycle}<br/>{window.rWhy}</div> */}
-        <ScrollBoxGridFragment grid={p.grid}
+        <ScrollBoxSurface grid={p.grid}
           className={p.fragmentClassName} style={p.fragmentStyle}>
           {p.children}
-        </ScrollBoxGridFragment>
+        </ScrollBoxSurface>
       </div>
     )
   })
 }
 
-function ScrollBoxGridFragment(p: {
+function ScrollBoxSurface(p: {
   grid: VirtualGrid,
   children: JSX.Element,
   className?: string,
   style?: React.CSSProperties}): JSX.Element {
-  return reactive(() => {
+  return reactive(cycle => {
     const sf = p.grid.surfaceArea
     const ra = p.grid.readyArea.relativeTo(sf)
     const style = { ...p.style, ...place(ra.size, ra) }
@@ -61,7 +61,7 @@ function ScrollBoxGridFragment(p: {
         </div>
       </div>
     )
-  }, ScrollBoxGridFragment.name)
+  }, ScrollBoxSurface.name)
 }
 
 function place(size: XY, pos?: XY): React.CSSProperties {
