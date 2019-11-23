@@ -4,6 +4,7 @@
 // License: https://raw.githubusercontent.com/nezaboodka/reactronic/master/LICENSE
 
 import * as React from 'react'
+import { TraceLevel } from 'reactronic'
 
 import { num } from '../lib/Area'
 import { VirtualGrid } from '../lib/VirtualGrid'
@@ -54,5 +55,5 @@ export function ScrollDebugger(p: {grid: VirtualGrid}): JSX.Element {
         </AreaRect>
       </div>
     )
-  })
+  }, undefined, TraceLevel.Suppress)
 }
