@@ -41,13 +41,8 @@ class Rx<V> extends State {
 
   @trigger
   protected pulse(): void {
-    if (Cache.of(this.render).invalid) {
-      // const start = performance.now()
+    if (Cache.of(this.render).invalid)
       isolated(this.refresh, {rx: this, cycle: this.cycle + 1})
-      // const ms = performance.now() - start
-      // if (ms > 4)
-      //   console.log(`${ms.toFixed(2)}ms: ${window.rWhy}`)
-    }
   }
 
   @stateless cycle: number = 0

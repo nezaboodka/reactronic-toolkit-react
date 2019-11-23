@@ -13,7 +13,7 @@ import { style } from './GridFragment.css'
 
 export function GridFragment(p: {loader: DataLoader}): JSX.Element {
   return reactive(() => {
-    const start = performance.now()
+    const css = style.classes
     const data = p.loader.shown
     const g = p.loader.grid
     const tg = g.targetGrid
@@ -23,7 +23,7 @@ export function GridFragment(p: {loader: DataLoader}): JSX.Element {
       width: `${g.ppc.x}px`,
       height: `${g.ppc.y}px`,
     }
-    const result = (
+    return (
       <React.Fragment>
         {data.map((cell, i) => {
           const y = Math.floor(i / fragment.size.x)
@@ -32,15 +32,15 @@ export function GridFragment(p: {loader: DataLoader}): JSX.Element {
           const c = zero.x + x
           const key = `R${r}C${c}:Y${fragment.y + y}X${fragment.x + x}`
           return (
-            <GridCell key={key} hint={key} style={dim}
-              row={r} col={c} text={cell}/>
+            // <GridCell key={key} hint={key} style={dim}
+            //   row={r} col={c} text={cell}/>
+            <div title={`${key}`} className={cx(css.cell, css.rollout)} style={{...dim, gridRow: r + 1, gridColumn: c + 1}}>
+              {cell}
+            </div>
           )
         })}
       </React.Fragment>
     )
-    console.log(`Render ${p.loader.shown.length} items of ${p.loader.jump} jump in ${performance.now() - start}`)
-    console.log(`  rWhy: ${window.rWhy}`)
-    return result
   })
 }
 
