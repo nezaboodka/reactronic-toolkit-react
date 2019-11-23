@@ -40,7 +40,7 @@ export class VirtualGrid extends State {
   thumb: Area = Area.ZERO
   surfaceArea: Area = Area.ZERO
   viewportArea: Area = Area.ZERO
-  bufferSize: XY = xy(1.0, 1.4)
+  bufferingRatio: XY = xy(1.0, 1.4)
   readyCells: Area = Area.ZERO
   targetGrid: Area = Area.ZERO
   sizing = new Sizing()
@@ -74,7 +74,7 @@ export class VirtualGrid extends State {
 
   get bufferCells(): Area {
     const vpc = this.viewportCells
-    const buf = vpc.zoomAt(vpc.center, this.bufferSize)
+    const buf = vpc.zoomAt(vpc.center, this.bufferingRatio)
     return buf.roundToOuter().truncateBy(this.allCells)
   }
 
