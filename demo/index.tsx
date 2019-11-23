@@ -12,7 +12,7 @@ import { AppMain } from '~/view/AppMain'
 
 RT.setTrace(TraceLevel.Warnings)
 RT.repetitiveReadWarningThreshold = 0 // disabled
-RT.performanceWarningThreshold = 1
+RT.performanceWarningThreshold = 5
 
 const app = Action.run('app', () => new Application())
 const root = document.getElementById('root')
