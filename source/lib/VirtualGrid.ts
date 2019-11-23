@@ -7,7 +7,7 @@ import { action, Cache, Monitor, nonreactive, State, trigger } from 'reactronic'
 
 import { Area, area, num, XY, xy } from './Area'
 
-export const SURFACE_SIZE_LIMIT: Area = area(0, 0, 1000123, 1000123)
+export const SURFACE_SIZE_LIMIT: number = 1000123 // pixels
 export const TARGET_GRID_SIZE_LIMIT: Area = area(0, 0, 899, 899)
 export const SMOOTH_SCROLL_DEBOUNCE = 35 // ms
 
@@ -39,8 +39,14 @@ export class VirtualGrid extends State {
   ppc: XY = xy(1, 1) // pixels per cell
   thumbX: number = 0
   thumbY: number = 0
-  surfaceArea: Area = Area.ZERO
-  viewportArea: Area = Area.ZERO
+  surfaceX: number = 0
+  surfaceY: number = 0
+  surfaceSizeX: number = 0
+  surfaceSizeY: number = 0
+  viewportX: number = 0
+  viewportY: number = 0
+  viewportSizeX: number = 0
+  viewportSizeY: number = 0
   bufferingRatio: XY = xy(1.0, 1.4)
   readyCells: Area = Area.ZERO
   targetGrid: Area = Area.ZERO
@@ -70,6 +76,10 @@ export class VirtualGrid extends State {
     return this.readyCells.scaleBy(this.ppc)
   }
 
+  get surfaceArea(): Area {
+    return area(this.surfaceX, this.surfaceY, this.surfaceSizeX, this.surfaceSizeY)
+  }
+
   get surfaceCells(): Area {
     return this.surfaceArea.scaleBy(this.pixelToCellRatio)
   }
@@ -80,6 +90,10 @@ export class VirtualGrid extends State {
     return buf.roundToOuter().truncateBy(this.allCells)
   }
 
+  get viewportArea(): Area {
+    return area(this.viewportX, this.viewportY, this.viewportSizeX, this.viewportSizeY)
+  }
+
   get viewportCells(): Area {
     return this.viewportArea.scaleBy(this.pixelToCellRatio)
   }
@@ -87,12 +101,14 @@ export class VirtualGrid extends State {
   // Actions
 
   @action
-  mount(x: number, y: number, resolution: number, component: IComponent): void {
+  mount(width: number, height: number, resolution: number, component: IComponent): void {
     this.ppc = xy(resolution * 8, resolution)
     this.thumbX = 0
     this.thumbY = 0
-    this.surfaceArea = this.allArea.truncateBy(SURFACE_SIZE_LIMIT)
-    this.viewportArea = new Area(0, 0, x, y)
+    this.surfaceSizeX = Math.min(this.allArea.size.x, SURFACE_SIZE_LIMIT)
+    this.surfaceSizeY = Math.min(this.allArea.size.y, SURFACE_SIZE_LIMIT)
+    this.viewportSizeX = width
+    this.viewportSizeY = height
     this.targetGrid = this.allCells.truncateBy(TARGET_GRID_SIZE_LIMIT)
     if (component !== this.component) {
       if (this.component) {
@@ -168,11 +184,9 @@ export class VirtualGrid extends State {
   }
 
   get viewportToSurfaceRatio(): XY {
-    const sf = this.surfaceArea
-    const vp = this.viewportArea
     return xy(
-      sf.size.x / vp.size.x,
-      sf.size.y / vp.size.y)
+      this.surfaceSizeX / this.viewportSizeX,
+      this.surfaceSizeY / this.viewportSizeY)
   }
 
   get surfaceToViewportRatio(): XY {
@@ -182,10 +196,9 @@ export class VirtualGrid extends State {
 
   protected get surfaceToAllRatio(): XY {
     const all = this.allArea
-    const sf = this.surfaceArea
     return xy(
-      all.size.x / sf.size.x,
-      all.size.y / sf.size.y)
+      all.size.x / this.surfaceSizeX,
+      all.size.y / this.surfaceSizeY)
   }
 
   get allToSurfaceRatio(): XY {
@@ -195,11 +208,9 @@ export class VirtualGrid extends State {
 
   protected get thumbToAllRatio(): XY {
     const all = this.allArea
-    const sf = this.surfaceArea
-    const vp = this.viewportArea
     return xy(
-      all.size.x / (sf.size.x - vp.size.x),
-      all.size.y / (sf.size.y - vp.size.y))
+      all.size.x / (this.surfaceSizeX - this.viewportSizeX),
+      all.size.y / (this.surfaceSizeY - this.viewportSizeY))
   }
 
   protected get allToThumbRatio(): XY {
@@ -209,10 +220,9 @@ export class VirtualGrid extends State {
 
   get viewportToAllRatio(): XY {
     const all = this.allArea
-    const vp = this.viewportArea
     return xy(
-      all.size.x / vp.size.x,
-      all.size.y / vp.size.y)
+      all.size.x / this.viewportSizeX,
+      all.size.y / this.viewportSizeY)
   }
 
   protected get allToViewportRatio(): XY {
@@ -225,23 +235,18 @@ export class VirtualGrid extends State {
   private applyThumbPos(left: number, top: number, ready: boolean): void {
     // console.log(`\napply: ${this.thumb.y}->${top}, h=${this.component ? this.component.scrollHeight : '?'}`)
     const all = this.allArea
-    let vp = this.viewportArea
-    let sf = this.surfaceArea
 
     const x = VirtualGrid.getNewPos(ready, this.interaction, this.jumpingX,
-      vp.x, vp.size.x, sf.x, sf.size.x, all.size.x, left,
+      this.viewportX, this.viewportSizeX, this.surfaceX, this.surfaceSizeX, all.size.x, left,
       this.thumbToAllRatio.x, this.viewportToSurfaceRatio.x)
     const y = VirtualGrid.getNewPos(ready, this.interaction, this.jumpingY,
-      vp.y, vp.size.y, sf.y, sf.size.y, all.size.y, top,
+      this.viewportY, this.viewportSizeY, this.surfaceY, this.surfaceSizeY, all.size.y, top,
       this.thumbToAllRatio.y, this.viewportToSurfaceRatio.y,)
 
-    vp = vp.moveTo(xy(x.viewport, y.viewport), all)
-    sf = sf.moveTo(xy(x.surface, y.surface), all)
-
-    if (!vp.equalTo(this.viewportArea))
-      this.viewportArea = vp
-    if (!sf.equalTo(this.surfaceArea))
-      this.surfaceArea = sf
+    this.viewportX = x.viewport
+    this.viewportY = y.viewport
+    this.surfaceX = x.surface
+    this.surfaceY = y.surface
     this.thumbX = x.thumb
     this.thumbY = y.thumb
     this.jumpingX = x.jumping

@@ -39,7 +39,7 @@ export function AppWindow(p: {app: Application}): JSX.Element {
             disabled={!c}>▼ 1K px</button>
           <button onClick={e => c ? c.scrollTop -= 1072 : {}}
             disabled={!c}>▲ 1K px</button>
-          <button onClick={e => c ? c.scrollTop = g.surfaceArea.size.y - g.viewportArea.size.x - 1 : {}}
+          <button onClick={e => c ? c.scrollTop = g.surfaceSizeY - g.viewportSizeY - 1 : {}}
             disabled={!c}>▼ End</button>
           {/* <button onClick={e => c ? alert(`${c.scrollTop}, ${c.scrollHeight}, ${g.surface.size.y}`) : {}}
             disabled={!c}>▲ Begin</button> */}

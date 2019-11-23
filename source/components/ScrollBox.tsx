@@ -5,7 +5,7 @@
 
 import * as React from 'react'
 
-import { XY } from '../lib/Area'
+import { XY, xy } from '../lib/Area'
 import { VirtualGrid } from '../lib/VirtualGrid'
 import { reactive } from '../tools/reactive'
 
@@ -51,11 +51,12 @@ function ScrollBoxSurface(p: {
   className?: string,
   style?: React.CSSProperties}): JSX.Element {
   return reactive(cycle => {
-    const sf = p.grid.surfaceArea
-    const ra = p.grid.readyArea.relativeTo(sf)
+    //const sf = p.grid.surfaceArea
+    const vg = p.grid
+    const ra = vg.readyArea.relativeTo(xy(vg.surfaceX, vg.surfaceY))
     const style = { ...p.style, ...place(ra.size, ra) }
     return (
-      <div style={place(sf.size)}>
+      <div style={place(xy(p.grid.surfaceSizeX, p.grid.surfaceSizeY))}>
         <div className={p.className} style={style}>
           {p.children}
         </div>
