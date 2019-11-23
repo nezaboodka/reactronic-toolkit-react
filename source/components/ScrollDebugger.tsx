@@ -37,10 +37,10 @@ export function ScrollDebugger(p: {grid: VirtualGrid}): JSX.Element {
           <div>
             <br/>
             <div>
-              Thumb: {num(g.thumb.y, 1)} of {num(g.surfaceArea.size.y, 1)} canvas pixels,
+              Thumb: {num(g.thumbY, 1)} of {num(g.surfaceArea.size.y, 1)} canvas pixels,
             </div>
             <div>
-              Thumb Pixel = {num(g.thumb.scaleBy(g.surfaceToViewportRatio).y, 3)}
+              Thumb Pixel = {num(g.thumbY * g.surfaceToViewportRatio.y, 3)}
             </div>
             <div>
               Viewport-to-Canvas = {num(g.viewportArea.scaleBy(g.allToSurfaceRatio).y, 15)}

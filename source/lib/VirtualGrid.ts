@@ -37,7 +37,8 @@ export class VirtualGrid extends State {
   allCells: Area
   component: IComponent = undefined
   ppc: XY = xy(1, 1) // pixels per cell
-  thumb: Area = Area.ZERO
+  thumbX: number = 0
+  thumbY: number = 0
   surfaceArea: Area = Area.ZERO
   viewportArea: Area = Area.ZERO
   bufferingRatio: XY = xy(1.0, 1.4)
@@ -45,7 +46,8 @@ export class VirtualGrid extends State {
   targetGrid: Area = Area.ZERO
   sizing = new Sizing()
   interaction: number = 0
-  jumping: XY = xy(0, 0)
+  jumpingX: number = 0
+  jumpingY: number = 0
   debounce = Monitor.create('debounce', SMOOTH_SCROLL_DEBOUNCE)
 
   constructor(columns: number, rows: number) {
@@ -86,8 +88,9 @@ export class VirtualGrid extends State {
 
   @action
   mount(x: number, y: number, resolution: number, component: IComponent): void {
-    this.ppc = xy(resolution * 1, resolution)
-    this.thumb = new Area(0, 0, x, y)
+    this.ppc = xy(resolution * 8, resolution)
+    this.thumbX = 0
+    this.thumbY = 0
     this.surfaceArea = this.allArea.truncateBy(SURFACE_SIZE_LIMIT)
     this.viewportArea = new Area(0, 0, x, y)
     this.targetGrid = this.allCells.truncateBy(TARGET_GRID_SIZE_LIMIT)
@@ -112,7 +115,7 @@ export class VirtualGrid extends State {
   impulse(key?: string): void {
     const i = ++this.interaction
     if (key === 'Home' || key === 'End')
-      this.jumping = xy(-i, -i)
+      this.jumpingX = this.jumpingY = -i
     // console.log(`\n\n=== Interaction ${this.interaction} ===`)
   }
 
@@ -121,9 +124,8 @@ export class VirtualGrid extends State {
     const c = this.component
     if (c) {
       // console.log(`onscroll: ${c.scrollTop}`)
-      const t = this.thumb
       const dpr = 0.75/devicePixelRatio
-      if (Math.abs(t.y - y) > dpr || Math.abs(t.x - x) > dpr)
+      if (Math.abs(this.thumbY - y) > dpr || Math.abs(this.thumbX - x) > dpr)
         this.applyThumbPos(x, y, false)
     }
   }
@@ -142,18 +144,19 @@ export class VirtualGrid extends State {
   @trigger
   protected rebaseSurface(): void {
     if (this.component && !this.debounce.busy)
-      nonreactive(() => this.applyThumbPos(this.thumb.x, this.thumb.y, true))
+      nonreactive(() => this.applyThumbPos(this.thumbX, this.thumbY, true))
   }
 
   @trigger
   protected reflectThumb(): void {
     const e = this.component
     if (e) {
-      const thumb = this.thumb
-      if (Math.abs(thumb.x - e.scrollLeft) > 0.1)
-        e.scrollLeft = thumb.x
-      if (Math.abs(thumb.y - e.scrollTop) > 0.1)
-        e.scrollTop = thumb.y
+      const x = this.thumbX
+      const y = this.thumbY
+      if (Math.abs(x - e.scrollLeft) > 0.1)
+        e.scrollLeft = x
+      if (Math.abs(y - e.scrollTop) > 0.1)
+        e.scrollTop = y
     }
   }
 
@@ -224,26 +227,25 @@ export class VirtualGrid extends State {
     const all = this.allArea
     let vp = this.viewportArea
     let sf = this.surfaceArea
-    let th = this.thumb.moveTo(xy(left, top), sf.atZero())
 
-    const x = VirtualGrid.getNewPos(ready, this.interaction, this.jumping.x,
-      vp.x, vp.size.x, sf.x, sf.size.x, all.size.x, th.x,
+    const x = VirtualGrid.getNewPos(ready, this.interaction, this.jumpingX,
+      vp.x, vp.size.x, sf.x, sf.size.x, all.size.x, left,
       this.thumbToAllRatio.x, this.viewportToSurfaceRatio.x)
-    const y = VirtualGrid.getNewPos(ready, this.interaction, this.jumping.y,
-      vp.y, vp.size.y, sf.y, sf.size.y, all.size.y, th.y,
+    const y = VirtualGrid.getNewPos(ready, this.interaction, this.jumpingY,
+      vp.y, vp.size.y, sf.y, sf.size.y, all.size.y, top,
       this.thumbToAllRatio.y, this.viewportToSurfaceRatio.y,)
 
     vp = vp.moveTo(xy(x.viewport, y.viewport), all)
     sf = sf.moveTo(xy(x.surface, y.surface), all)
-    th = th.moveTo(xy(x.thumb, y.thumb), sf.atZero())
 
     if (!vp.equalTo(this.viewportArea))
       this.viewportArea = vp
     if (!sf.equalTo(this.surfaceArea))
       this.surfaceArea = sf
-    if (!th.equalTo(this.thumb))
-      this.thumb = th
-    this.jumping = xy(x.jumping, y.jumping)
+    this.thumbX = x.thumb
+    this.thumbY = y.thumb
+    this.jumpingX = x.jumping
+    this.jumpingY = y.jumping
   }
 
   private static getNewPos(ready: boolean, interaction: number, jumping: number,
