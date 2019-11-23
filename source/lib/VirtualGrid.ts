@@ -37,7 +37,7 @@ export class VirtualGrid extends State {
   allCells: Area
   component: IComponent = undefined
   ppcX: number = 1 // pixels per cell
-  ppcY: number = 1 // pixels per cell
+  ppcY: number = 1
   thumbX: number = 0
   thumbY: number = 0
   surfaceX: number = 0
