@@ -7,11 +7,11 @@ import { cx } from 'emotion'
 import * as React from 'react'
 
 import { reactive, xy } from '~/../source/reactronic-toolkit-react'
-import { DataLoader } from '~/app/DataLoader'
+import { GridFragmentLoader } from '~/app/GridFragmentLoader'
 
 import { style } from './GridFragment.css'
 
-export function GridFragment(p: {loader: DataLoader}): JSX.Element {
+export function GridFragment(p: {loader: GridFragmentLoader}): JSX.Element {
   return reactive(() => {
     const css = style.classes
     const data = p.loader.shown

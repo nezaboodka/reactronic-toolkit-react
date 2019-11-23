@@ -7,7 +7,7 @@ import { Reentrance, reentrance, sleep, State, trigger } from 'reactronic'
 
 import { VirtualGrid } from '~/../source/reactronic-toolkit-react'
 
-export class DataLoader extends State {
+export class GridFragmentLoader extends State {
   constructor(
     readonly grid: VirtualGrid,
     private loaded: string[] = [],

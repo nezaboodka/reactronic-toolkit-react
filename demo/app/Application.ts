@@ -6,9 +6,9 @@
 import { State } from 'reactronic'
 
 import { VirtualGrid } from '~/../source/reactronic-toolkit-react'
-import { DataLoader } from '~/app/DataLoader'
+import { GridFragmentLoader } from '~/app/GridFragmentLoader'
 
 export class Application extends State {
   readonly grid = new VirtualGrid(10000, 1_000_000_000_000) // 1bn
-  readonly loader = new DataLoader(this.grid)
+  readonly loader = new GridFragmentLoader(this.grid)
 }
