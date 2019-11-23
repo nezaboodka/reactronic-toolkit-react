@@ -34,21 +34,21 @@ export class Sizing {
 }
 
 export class VirtualGrid extends State {
+  bufferingRatio: XY = xy(1.0, 1.4)
   allCells: Area
   component: IComponent = undefined
   ppcX: number = 1 // pixels per cell
   ppcY: number = 1
-  thumbX: number = 0
+  thumbX: number = 0 // thumb
   thumbY: number = 0
-  surfaceX: number = 0
+  surfaceX: number = 0 // surface
   surfaceY: number = 0
   surfaceSizeX: number = 0
   surfaceSizeY: number = 0
-  viewportX: number = 0
+  viewportX: number = 0 // viewport
   viewportY: number = 0
   viewportSizeX: number = 0
   viewportSizeY: number = 0
-  bufferingRatio: XY = xy(1.0, 1.4)
   readyCells: Area = Area.ZERO
   targetGrid: Area = Area.ZERO
   sizing = new Sizing()
