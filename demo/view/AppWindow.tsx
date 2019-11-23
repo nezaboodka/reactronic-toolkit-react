@@ -4,6 +4,7 @@
 // License: https://raw.githubusercontent.com/nezaboodka/reactronic/master/LICENSE
 
 import * as React from 'react'
+import { TraceLevel } from 'reactronic'
 
 import { place, reactive, ScrollBox, ScrollDebugger } from '~/../source/reactronic-toolkit-react'
 import { Application } from '~/app/Application'
@@ -48,5 +49,5 @@ export function AppWindow(p: {app: Application}): JSX.Element {
         </div>
       </div>
     )
-  })
+  }, undefined, TraceLevel.Suppress)
 }
