@@ -5,14 +5,14 @@
 
 import * as React from 'react'
 import * as ReactDOM from 'react-dom'
-import { Action, Tools as RT, TraceLevel } from 'reactronic'
+import { Action, Reactronic as R, TraceLevel } from 'reactronic'
 
 import { Application } from '~/app/Application'
 import { AppMain } from '~/view/AppMain'
 
-RT.setTrace(TraceLevel.Warnings)
-RT.repetitiveReadWarningThreshold = 0 // disabled
-RT.performanceWarningThreshold = 0
+R.setTrace(TraceLevel.Warnings)
+R.repetitiveReadWarningThreshold = 0 // disabled
+R.performanceWarningThreshold = 0
 
 const app = Action.run('app', () => new Application())
 const root = document.getElementById('root')

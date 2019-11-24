@@ -4,7 +4,7 @@
 // License: https://raw.githubusercontent.com/nezaboodka/reactronic/master/LICENSE
 
 import * as React from 'react'
-import { Action, Cache, cached, isolated, State, stateless, Tools as RT, Trace, trigger } from 'reactronic'
+import { Action, Cache, cached, isolated, Reactronic as R, State, stateless, Trace, trigger } from 'reactronic'
 
 export function reactive(render: (cycle: number) => JSX.Element, name?: string, trace?: Partial<Trace>, action?: Action): JSX.Element {
   const [state, refresh] = React.useState<ReactState<JSX.Element>>(
@@ -54,7 +54,7 @@ class Rx<V> extends State {
   static create<V>(hint: string | undefined, trace: Trace | undefined): Rx<V> {
     const rx = new Rx<V>()
     if (hint)
-      RT.setTraceHint(rx, hint)
+      R.setTraceHint(rx, hint)
     if (trace) {
       Cache.of(rx.render).setup({trace})
       Cache.of(rx.pulse).setup({trace})
@@ -64,7 +64,7 @@ class Rx<V> extends State {
 }
 
 function createReactState<V>(name?: string, trace?: Partial<Trace>): ReactState<V> {
-  const hint = name || (RT.isTraceOn ? getComponentName() : '<rx>')
+  const hint = name || (R.isTraceOn ? getComponentName() : '<rx>')
   const rx = Action.runAs<Rx<V>>(hint, false, trace, undefined, Rx.create, hint, trace)
   return {rx, cycle: 0}
 }
