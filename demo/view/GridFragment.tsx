@@ -33,11 +33,11 @@ export function GridFragment(p: {loader: GridFragmentLoader}): JSX.Element {
           const c = zero.x + x - fragment.x
           const key = `R${r}C${c}:Y${y}X${x}`
           return (
-            // <GridCell key={key} hint={key} style={dim}
-            //   row={r} col={c} text={cell}/>
-            <div key={key} title={`${key}`} className={cx(css.cell, css.rollout)} style={{...dim, gridRow: r + 1, gridColumn: c + 1}}>
-              {cell}
-            </div>
+            <GridCell key={key} hint={key} style={dim}
+              row={r} col={c} text={cell}/>
+            // <div key={key} title={`${key}`} className={cx(css.cell, css.rollout)} style={{...dim, gridRow: r + 1, gridColumn: c + 1}}>
+            //   {cell}
+            // </div>
           )
         })}
       </React.Fragment>
