@@ -34,7 +34,7 @@ export class GridFragmentLoader extends State {
 
   @trigger apply(): void {
     if (this.grid.readyCells.overlaps(this.grid.viewportCells)) {
-      this.shown = this.loaded
+      this.shown = this.loaded.slice()
       this.jump++
     }
   }

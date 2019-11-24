@@ -5,6 +5,7 @@
 
 import { cx } from 'emotion'
 import * as React from 'react'
+import { TraceLevel } from 'reactronic'
 
 import { reactive, xy } from '~/../source/reactronic-toolkit-react'
 import { GridFragmentLoader } from '~/app/GridFragmentLoader'
@@ -23,7 +24,7 @@ export function GridFragment(p: {loader: GridFragmentLoader}): JSX.Element {
       width: `${g.ppcX}px`,
       height: `${g.ppcY}px`,
     }
-    console.log(`cycle: ${cycle}`)
+    console.log(`cycle: ${cycle} - ${window.rWhy}`)
     return (
       <React.Fragment>
         {data.map((cell, i) => {
@@ -33,7 +34,7 @@ export function GridFragment(p: {loader: GridFragmentLoader}): JSX.Element {
           const c = zero.x + x - fragment.x
           const key = `R${r}C${c}:Y${y}X${x}`
           return (
-            <GridCell key={key} hint={key} style={dim}
+            <GridCell key={key} hint={`${key} - ${cell}`} style={dim}
               row={r} col={c} text={cell}/>
             // <div key={key} title={`${key}`} className={cx(css.cell, css.rollout)} style={{...dim, gridRow: r + 1, gridColumn: c + 1}}>
             //   {cell}
