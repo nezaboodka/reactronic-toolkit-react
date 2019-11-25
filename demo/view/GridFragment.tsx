@@ -24,7 +24,7 @@ export function GridFragment(p: {loader: GridFragmentLoader}): JSX.Element {
       width: `${g.ppcX}px`,
       height: `${g.ppcY}px`,
     }
-    console.log(`cycle: ${cycle} - ${window.rWhy}`)
+    console.log(`remake: ${p.loader.remake}, cycle: ${cycle} - ${window.rWhy}`)
     return (
       <React.Fragment>
         {data.map((cell, i) => {

@@ -12,7 +12,7 @@ export class GridFragmentLoader extends State {
     readonly grid: VirtualGrid,
     private loaded: string[] = [],
     public shown: string[] = [],
-    public jump: number = 0) {
+    public remake: number = 0) {
     super()
   }
 
@@ -33,9 +33,8 @@ export class GridFragmentLoader extends State {
   }
 
   @trigger apply(): void {
-    if (this.grid.readyCells.overlaps(this.grid.viewportCells)) {
-      this.shown = this.loaded.slice()
-      this.jump++
-    }
+    this.shown = this.loaded.slice()
+    if (!this.grid.readyCells.overlaps(this.grid.viewportCells))
+      this.remake++
   }
 }
