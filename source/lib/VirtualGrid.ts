@@ -34,7 +34,7 @@ export class Sizing {
 }
 
 export class VirtualGrid extends State {
-  bufferingRatio: XY = xy(1.0, 1.4)
+  bufferingRatio: XY = xy(1.0, 2.0)
   allCells: Area
   component: IComponent = undefined
   ppcX: number = 1 // pixels per cell
@@ -50,7 +50,7 @@ export class VirtualGrid extends State {
   viewportSizeX: number = 0
   viewportSizeY: number = 0
   readyCells: Area = Area.ZERO
-  readyRemake: number = 0
+  renovation: number = 0
   targetGrid: Area = Area.ZERO
   sizing = new Sizing()
   interaction: number = 0
@@ -117,7 +117,7 @@ export class VirtualGrid extends State {
     this.viewportSizeX = width
     this.viewportSizeY = height
     this.readyCells = Area.ZERO
-    this.readyRemake = 0
+    this.renovation = 0
     this.targetGrid = this.allCells.truncateBy(TARGET_GRID_SIZE_LIMIT)
     this.sizing  = new Sizing()
     this.interaction = 0
@@ -187,11 +187,6 @@ export class VirtualGrid extends State {
       if (Math.abs(y - e.scrollTop) > 0.1)
         e.scrollTop = y
     }
-  }
-
-  @action
-  remake(): void {
-    this.readyRemake++
   }
 
   // Ratios

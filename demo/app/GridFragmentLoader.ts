@@ -37,7 +37,7 @@ export class GridFragmentLoader extends State {
     if (this.grid.readyCells.overlaps(this.grid.viewportCells) &&
       !this.shownCells.equalTo(this.grid.readyCells)) {
       if (!this.shownCells.overlaps(this.grid.readyCells))
-        this.grid.remake()
+        this.grid.renovation++
       this.shown = this.loaded.slice()
       this.shownCells = this.grid.readyCells
     }
