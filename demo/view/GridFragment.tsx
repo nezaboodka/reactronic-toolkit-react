@@ -17,20 +17,20 @@ export function GridFragment(p: {
   className?: string}): JSX.Element {
   return reactive(cycle => {
     const css = style.classes
-    const vg = p.loader.grid
-    const ra = p.loader.shownCells.scaleBy(vg.ppc).relativeTo(vg.surfaceArea)
-    const fragment = p.loader.shownCells
-    const data = p.loader.shown
-    const tg = p.loader.grid.placeholder
-    const zero = xy(fragment.x - tg.x, fragment.y - tg.y)
+    const g = p.loader.grid
+    const area = p.loader.shownCells.scaleBy(g.ppc).relativeTo(g.surfaceArea)
+    const cells = p.loader.shownCells
+    const data = p.loader.shownData
+    const ph = p.loader.grid.placeholder
+    const zero = xy(cells.x - ph.x, cells.y - ph.y)
     const html = data.map((cell, i) => {
-      const y = Math.floor(i / fragment.size.x) + fragment.y
-      const x = i % fragment.size.x + fragment.x
-      const r = zero.y + y - fragment.y
-      const c = zero.x + x - fragment.x
+      const y = Math.floor(i / cells.size.x) + cells.y
+      const x = i % cells.size.x + cells.x
+      const r = zero.y + y - cells.y
+      const c = zero.x + x - cells.x
       const key = `R${r}C${c}:Y${y}X${x}`
       return `
-        <div title="${key}" class="${cx(css.cell)}" style="width: ${vg.ppcX}px; height: ${vg.ppcY}px; grid-row: ${r + 1}; grid-column: ${c + 1};">
+        <div title="${key}" class="${cx(css.cell)}" style="width: ${g.ppcX}px; height: ${g.ppcY}px; grid-row: ${r + 1}; grid-column: ${c + 1};">
           ${cell}
         </div>
       `
@@ -38,7 +38,7 @@ export function GridFragment(p: {
     // console.log(`fragment: ${fragment.x} x ${fragment.y} (${fragment.size.x} x ${fragment.size.y}), remake: ${p.loader.grid.readyRemake}, cycle: ${cycle} - ${window.rWhy}`)
     return (
       <div className={cx(p.className)}
-        style={place(ra.size.x, ra.size.y, ra.x, ra.y)}
+        style={place(area.size.x, area.size.y, area.x, area.y)}
         dangerouslySetInnerHTML={{__html: html}}>
         {/* {data.map((cell, i) => {
           const y = Math.floor(i / fragment.size.x) + fragment.y

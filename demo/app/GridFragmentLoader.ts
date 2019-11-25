@@ -10,8 +10,8 @@ import { Area, VirtualGrid } from '~/../source/reactronic-toolkit-react'
 export class GridFragmentLoader extends State {
   constructor(
     readonly grid: VirtualGrid,
-    private loaded: string[] = [],
-    public shown: string[] = [],
+    private loadedData: string[] = [],
+    public shownData: string[] = [],
     public shownCells: Area = Area.ZERO) {
     super()
   }
@@ -26,7 +26,7 @@ export class GridFragmentLoader extends State {
       for (let y = buffer.y; y <= till.y; y++)
         for (let x = buffer.x; x <= till.x; x++)
           data.push(`${y}:${x}`)
-      this.loaded = data
+      this.loadedData = data
       g.ready(buffer)
     }
     await sleep(50)
@@ -38,7 +38,7 @@ export class GridFragmentLoader extends State {
       !this.shownCells.equalTo(this.grid.readyCells)) {
       if (!this.shownCells.overlaps(this.grid.readyCells))
         this.grid.renovation++
-      this.shown = this.loaded.slice()
+      this.shownData = this.loadedData.slice()
       this.shownCells = this.grid.readyCells
     }
   }

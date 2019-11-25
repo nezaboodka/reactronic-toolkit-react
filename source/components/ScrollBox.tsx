@@ -38,17 +38,17 @@ export function ScrollBox(p: {
         onKeyDown={e => p.grid.impulse(e.key)}>
         <div style={{position: 'absolute', left: '3em', top:'3em', color: 'yellow', backgroundColor: 'rgba(0, 0, 0, 0.75)', zIndex: 100}}>scroll box: cycle {cycle}<br/>{window.rWhy}</div>
         <div style={place(p.grid.surfaceSizeX, p.grid.surfaceSizeY)}>
-          <ScrollBoxTargetGrid key={p.grid.renovation} grid={p.grid}
+          <ScrollBoxSpot key={p.grid.renovation} grid={p.grid}
             className={p.fragmentClassName} style={p.fragmentStyle}>
             {p.children}
-          </ScrollBoxTargetGrid>
+          </ScrollBoxSpot>
         </div>
       </div>
     )
   })
 }
 
-function ScrollBoxTargetGrid(p: {
+function ScrollBoxSpot(p: {
   grid: VirtualGrid,
   children: JSX.Element,
   className?: string,
@@ -63,7 +63,7 @@ function ScrollBoxTargetGrid(p: {
         {p.children}
       </React.Fragment>
     )
-  }, ScrollBoxTargetGrid.name)
+  }, ScrollBoxSpot.name)
 }
 
 function place(sizeX: number, sizeY: number, posX?: number, posY?: number): React.CSSProperties {
