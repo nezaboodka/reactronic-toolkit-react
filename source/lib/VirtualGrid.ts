@@ -191,7 +191,7 @@ export class VirtualGrid extends State {
 
   // Ratios
 
-  protected get ppc(): XY {
+  get ppc(): XY {
     return xy(this.ppcX, this.ppcY)
   }
 
