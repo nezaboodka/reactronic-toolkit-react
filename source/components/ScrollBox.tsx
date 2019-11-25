@@ -35,7 +35,7 @@ export function ScrollBox(p: {
         onWheel={e => p.grid.impulse()}
         onPointerDown={e => p.grid.impulse()}
         onKeyDown={e => p.grid.impulse(e.key)}>
-        <div style={{position: 'absolute', left: '3em', top:'3em', color: 'yellow', backgroundColor: 'rgba(0, 0, 0, 0.75)', zIndex: 100}}>scroll box: cycle {cycle}<br/>{window.rWhy}</div>
+        {/* <div style={{position: 'absolute', left: '3em', top:'3em', color: 'yellow', backgroundColor: 'rgba(0, 0, 0, 0.75)', zIndex: 100}}>scroll box: cycle {cycle}<br/>{window.rWhy}</div> */}
         <div style={place(p.grid.surfaceSizeX, p.grid.surfaceSizeY)}>
           <ScrollBoxTargetGrid key={p.grid.renovation} grid={p.grid}
             className={p.fragmentClassName} style={p.fragmentStyle}>
@@ -59,7 +59,7 @@ function ScrollBoxTargetGrid(p: {
     const style = { ...p.style, ...place(ra.size.x, ra.size.y, ra.x, ra.y) }
     return (
       <div className={p.className} style={style}>
-        <div style={{position: 'fixed', left: '4em', top:'6em', color: 'lightgreen', backgroundColor: 'rgba(0, 0, 0, 0.75)', zIndex: 100}}>target grid: remake {p.grid.renovation}, cycle {cycle}<br/>{window.rWhy}</div>
+        {/* <div style={{position: 'fixed', left: '4em', top:'6em', color: 'lightgreen', backgroundColor: 'rgba(0, 0, 0, 0.75)', zIndex: 100}}>target grid: remake {p.grid.renovation}, cycle {cycle}<br/>{window.rWhy}</div> */}
         {p.children}
       </div>
     )
