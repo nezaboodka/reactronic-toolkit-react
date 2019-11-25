@@ -17,7 +17,7 @@ export function GridFragment(p: {loader: GridFragmentLoader}): JSX.Element {
     const css = style.classes
     const fragment = p.loader.shownCells
     const data = p.loader.shown
-    const tg = p.loader.grid.targetGrid
+    const tg = p.loader.grid.placeholder
     const zero = xy(fragment.x - tg.x, fragment.y - tg.y)
     const dim: React.CSSProperties = {
       width: `${p.loader.grid.ppcX}px`,
@@ -33,11 +33,11 @@ export function GridFragment(p: {loader: GridFragmentLoader}): JSX.Element {
           const c = zero.x + x - fragment.x
           const key = `R${r}C${c}:Y${y}X${x}`
           return (
-            <GridCell key={key} hint={`${key} - ${cell}`} style={dim}
-              row={r} col={c} text={cell}/>
-            // <div key={key} title={`${key}`} className={cx(css.cell)} style={{...dim, gridRow: r + 1, gridColumn: c + 1}}>
-            //   {cell}
-            // </div>
+            // <GridCell key={key} hint={`${key} - ${cell}`} style={dim}
+            //   row={r} col={c} text={cell}/>
+            <div className={cx(css.cell)} style={{...dim, gridRow: r + 1, gridColumn: c + 1}}>
+              {cell}
+            </div>
           )
         })}
       </React.Fragment>

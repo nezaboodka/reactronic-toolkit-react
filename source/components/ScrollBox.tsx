@@ -3,9 +3,10 @@
 // Copyright (C) 2019 Yury Chetyrko <ychetyrko@gmail.com>
 // License: https://raw.githubusercontent.com/nezaboodka/reactronic/master/LICENSE
 
+import { cx } from 'emotion'
 import * as React from 'react'
 
-import { XY, xy } from '../lib/Area'
+import { xy } from '../lib/Area'
 import { VirtualGrid } from '../lib/VirtualGrid'
 import { reactive } from '../tools/reactive'
 
@@ -28,6 +29,10 @@ export function ScrollBox(p: {
   }, [])
 
   return reactive(cycle => {
+    // if (p.grid.component) {
+    //   const e: HTMLDivElement = p.grid.component as HTMLDivElement
+    //   console.log(`${cycle}: ${e.querySelector('div.scroll-box-surface')?.querySelector('div.scroll-box-target-grid')}`)
+    // }
     return (
       <div className={p.className} style={p.style}
         ref={ref} tabIndex={1}
@@ -36,7 +41,7 @@ export function ScrollBox(p: {
         onPointerDown={e => p.grid.impulse()}
         onKeyDown={e => p.grid.impulse(e.key)}>
         {/* <div style={{position: 'absolute', left: '3em', top:'3em', color: 'yellow', backgroundColor: 'rgba(0, 0, 0, 0.75)', zIndex: 100}}>scroll box: cycle {cycle}<br/>{window.rWhy}</div> */}
-        <div style={place(p.grid.surfaceSizeX, p.grid.surfaceSizeY)}>
+        <div className="scroll-box-surface" style={place(p.grid.surfaceSizeX, p.grid.surfaceSizeY)}>
           <ScrollBoxTargetGrid key={p.grid.renovation} grid={p.grid}
             className={p.fragmentClassName} style={p.fragmentStyle}>
             {p.children}
@@ -58,7 +63,7 @@ function ScrollBoxTargetGrid(p: {
     const ra = vg.readyArea.relativeTo(xy(vg.surfaceX, vg.surfaceY))
     const style = { ...p.style, ...place(ra.size.x, ra.size.y, ra.x, ra.y) }
     return (
-      <div className={p.className} style={style}>
+      <div className={cx('scroll-box-target-grid', p.className)} style={style}>
         {/* <div style={{position: 'fixed', left: '4em', top:'6em', color: 'lightgreen', backgroundColor: 'rgba(0, 0, 0, 0.75)', zIndex: 100}}>target grid: remake {p.grid.renovation}, cycle {cycle}<br/>{window.rWhy}</div> */}
         {p.children}
       </div>

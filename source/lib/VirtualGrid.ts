@@ -8,7 +8,7 @@ import { action, Cache, Monitor, nonreactive, State, trigger } from 'reactronic'
 import { Area, area, num, XY, xy } from './Area'
 
 export const SURFACE_SIZE_LIMIT: number = 1000123 // pixels
-export const TARGET_GRID_SIZE_LIMIT: Area = area(0, 0, 899, 899)
+export const PLACEHOLDER_SIZE_LIMIT: Area = area(0, 0, 899, 899)
 export const SMOOTH_SCROLL_DEBOUNCE = 35 // ms
 
 export type IComponent = undefined | null | EventTarget & {
@@ -51,7 +51,7 @@ export class VirtualGrid extends State {
   viewportSizeY: number = 0
   readyCells: Area = Area.ZERO
   renovation: number = 0
-  targetGrid: Area = Area.ZERO
+  placeholder: Area = Area.ZERO
   sizing = new Sizing()
   interaction: number = 0
   jumpingX: number = 0
@@ -104,7 +104,7 @@ export class VirtualGrid extends State {
 
   @action
   mount(width: number, height: number, resolution: number, component: IComponent): void {
-    this.ppcX = resolution * 4
+    this.ppcX = resolution * 1
     this.ppcY = resolution
     this.thumbX = 0
     this.thumbY = 0
@@ -118,7 +118,7 @@ export class VirtualGrid extends State {
     this.viewportSizeY = height
     this.readyCells = Area.ZERO
     this.renovation = 0
-    this.targetGrid = this.allCells.truncateBy(TARGET_GRID_SIZE_LIMIT)
+    this.placeholder = this.allCells.truncateBy(PLACEHOLDER_SIZE_LIMIT)
     this.sizing  = new Sizing()
     this.interaction = 0
     this.jumpingX = 0
@@ -163,9 +163,9 @@ export class VirtualGrid extends State {
   ready(cells: Area): void {
     // console.log(`\nready: ${cells.y}..${cells.till.y}`)
     this.readyCells = cells
-    const tg = this.targetGrid
-    if (!tg.envelops(cells))
-      this.targetGrid = tg.moveCenterTo(cells.center, this.allCells).round()
+    const p = this.placeholder
+    if (!p.envelops(cells))
+      this.placeholder = p.moveCenterTo(cells.center, this.allCells).round()
   }
 
   // Triggers
