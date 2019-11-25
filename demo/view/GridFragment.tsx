@@ -15,16 +15,15 @@ import { style } from './GridFragment.css'
 export function GridFragment(p: {loader: GridFragmentLoader}): JSX.Element {
   return reactive(cycle => {
     const css = style.classes
+    const fragment = p.loader.shownCells
     const data = p.loader.shown
-    const g = p.loader.grid
-    const tg = g.targetGrid
-    const fragment = g.readyCells
+    const tg = p.loader.grid.targetGrid
     const zero = xy(fragment.x - tg.x, fragment.y - tg.y)
     const dim: React.CSSProperties = {
-      width: `${g.ppcX}px`,
-      height: `${g.ppcY}px`,
+      width: `${p.loader.grid.ppcX}px`,
+      height: `${p.loader.grid.ppcY}px`,
     }
-    console.log(`remake: ${p.loader.remake}, cycle: ${cycle} - ${window.rWhy}`)
+    console.log(`fragment: ${fragment.x} x ${fragment.y} (${fragment.size.x} x ${fragment.size.y}), remake: ${p.loader.grid.readyRemake}, cycle: ${cycle} - ${window.rWhy}`)
     return (
       <React.Fragment>
         {data.map((cell, i) => {
@@ -34,11 +33,11 @@ export function GridFragment(p: {loader: GridFragmentLoader}): JSX.Element {
           const c = zero.x + x - fragment.x
           const key = `R${r}C${c}:Y${y}X${x}`
           return (
-            <GridCell key={key} hint={`${key} - ${cell}`} style={dim}
-              row={r} col={c} text={cell}/>
-            // <div key={key} title={`${key}`} className={cx(css.cell, css.rollout)} style={{...dim, gridRow: r + 1, gridColumn: c + 1}}>
-            //   {cell}
-            // </div>
+            // <GridCell key={key} hint={`${key} - ${cell}`} style={dim}
+            //   row={r} col={c} text={cell}/>
+            <div key={key} title={`${key}`} className={cx(css.cell, css.rollout)} style={{...dim, gridRow: r + 1, gridColumn: c + 1}}>
+              {cell}
+            </div>
           )
         })}
       </React.Fragment>

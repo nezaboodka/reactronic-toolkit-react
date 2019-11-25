@@ -113,8 +113,11 @@ export class Area extends XY {
   }
 
   equalTo(a: Area): boolean {
-    return this !== a && this.x === a.x && this.y === a.y &&
-      this.size.x === a.size.x && this.size.y === a.size.y
+    return this === a || (
+      this.x === a.x &&
+      this.y === a.y &&
+      this.size.x === a.size.x &&
+      this.size.y === a.size.y)
   }
 
   overlaps(a: Area): boolean {

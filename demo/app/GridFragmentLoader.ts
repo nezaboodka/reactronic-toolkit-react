@@ -5,14 +5,14 @@
 
 import { Reentrance, reentrance, sleep, State, trigger } from 'reactronic'
 
-import { VirtualGrid } from '~/../source/reactronic-toolkit-react'
+import { Area, VirtualGrid } from '~/../source/reactronic-toolkit-react'
 
 export class GridFragmentLoader extends State {
   constructor(
     readonly grid: VirtualGrid,
     private loaded: string[] = [],
     public shown: string[] = [],
-    public remake: number = 0) {
+    public shownCells: Area = Area.ZERO) {
     super()
   }
 
@@ -32,9 +32,14 @@ export class GridFragmentLoader extends State {
     await sleep(50)
   }
 
-  @trigger apply(): void {
-    this.shown = this.loaded.slice()
-    if (!this.grid.readyCells.overlaps(this.grid.viewportCells))
-      this.remake++
+  @trigger
+  show(): void {
+    if (this.grid.readyCells.overlaps(this.grid.viewportCells) &&
+      !this.shownCells.equalTo(this.grid.readyCells)) {
+      if (!this.shownCells.overlaps(this.grid.readyCells))
+        this.grid.remake()
+      this.shown = this.loaded.slice()
+      this.shownCells = this.grid.readyCells
+    }
   }
 }

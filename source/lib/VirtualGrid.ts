@@ -50,6 +50,7 @@ export class VirtualGrid extends State {
   viewportSizeX: number = 0
   viewportSizeY: number = 0
   readyCells: Area = Area.ZERO
+  readyRemake: number = 0
   targetGrid: Area = Area.ZERO
   sizing = new Sizing()
   interaction: number = 0
@@ -103,15 +104,25 @@ export class VirtualGrid extends State {
 
   @action
   mount(width: number, height: number, resolution: number, component: IComponent): void {
-    this.ppcX = resolution * 1
+    this.ppcX = resolution * 6
     this.ppcY = resolution
     this.thumbX = 0
     this.thumbY = 0
+    this.surfaceX = 0
+    this.surfaceY = 0
     this.surfaceSizeX = Math.min(this.allArea.size.x, SURFACE_SIZE_LIMIT)
     this.surfaceSizeY = Math.min(this.allArea.size.y, SURFACE_SIZE_LIMIT)
+    this.viewportX = 0
+    this.viewportY = 0
     this.viewportSizeX = width
     this.viewportSizeY = height
+    this.readyCells = Area.ZERO
+    this.readyRemake = 0
     this.targetGrid = this.allCells.truncateBy(TARGET_GRID_SIZE_LIMIT)
+    this.sizing  = new Sizing()
+    this.interaction = 0
+    this.jumpingX = 0
+    this.jumpingY = 0
     if (component !== this.component) {
       if (this.component) {
         // this.component.removeEventListener('scroll', ...)
@@ -176,6 +187,11 @@ export class VirtualGrid extends State {
       if (Math.abs(y - e.scrollTop) > 0.1)
         e.scrollTop = y
     }
+  }
+
+  @action
+  remake(): void {
+    this.readyRemake++
   }
 
   // Ratios
