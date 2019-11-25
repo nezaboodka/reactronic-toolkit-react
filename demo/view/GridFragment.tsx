@@ -12,20 +12,34 @@ import { GridFragmentLoader } from '~/app/GridFragmentLoader'
 
 import { style } from './GridFragment.css'
 
-export function GridFragment(p: {loader: GridFragmentLoader}): JSX.Element {
+export function GridFragment(p: {
+  loader: GridFragmentLoader,
+  className?: string}): JSX.Element {
   return reactive(cycle => {
     const css = style.classes
+    const vg = p.loader.grid
+    const ra = vg.readyArea.relativeTo(xy(vg.surfaceX, vg.surfaceY))
     const fragment = p.loader.shownCells
     const data = p.loader.shown
     const tg = p.loader.grid.placeholder
     const zero = xy(fragment.x - tg.x, fragment.y - tg.y)
-    const dim: React.CSSProperties = {
-      width: `${p.loader.grid.ppcX}px`,
-      height: `${p.loader.grid.ppcY}px`,
-    }
+    // const html = data.map((cell, i) => {
+    //   const y = Math.floor(i / fragment.size.x) + fragment.y
+    //   const x = i % fragment.size.x + fragment.x
+    //   const r = zero.y + y - fragment.y
+    //   const c = zero.x + x - fragment.x
+    //   const key = `R${r}C${c}:Y${y}X${x}`
+    //   return `
+    //     <div class="${cx(css.cell)}" style="width: ${vg.ppcX}px; height: ${vg.ppcY}px; grid-row: ${r + 1}; grid-column: ${c + 1};">
+    //       ${cell}
+    //     </div>
+    //   `
+    // }).join('\n\n')
     // console.log(`fragment: ${fragment.x} x ${fragment.y} (${fragment.size.x} x ${fragment.size.y}), remake: ${p.loader.grid.readyRemake}, cycle: ${cycle} - ${window.rWhy}`)
     return (
-      <React.Fragment>
+      <div className={cx(p.className)}
+        style={place(ra.size.x, ra.size.y, ra.x, ra.y)}
+        /*dangerouslySetInnerHTML={{__html: html}}*/>
         {data.map((cell, i) => {
           const y = Math.floor(i / fragment.size.x) + fragment.y
           const x = i % fragment.size.x + fragment.x
@@ -35,12 +49,17 @@ export function GridFragment(p: {loader: GridFragmentLoader}): JSX.Element {
           return (
             // <GridCell key={key} hint={`${key} - ${cell}`} style={dim}
             //   row={r} col={c} text={cell}/>
-            <div className={cx(css.cell)} style={{...dim, gridRow: r + 1, gridColumn: c + 1}}>
+            <div className={cx(css.cell)}
+              style={{
+                width: `${vg.ppcX}px`,
+                height: `${vg.ppcY}px`,
+                gridRow: r + 1,
+                gridColumn: c + 1}}>
               {cell}
             </div>
           )
         })}
-      </React.Fragment>
+      </div>
     )
   }, `<${GridFragment.name}>`)
 }
@@ -57,4 +76,21 @@ function GridCell(p: {hint: string, row: number, col: number, text: string, styl
       {p.text}
     </div>
   )
+}
+
+function place(sizeX: number, sizeY: number, posX?: number, posY?: number): React.CSSProperties {
+  const p: React.CSSProperties = {}
+  p.width = p.minWidth = p.maxWidth = `${sizeX}px`
+  p.height = p.minHeight = p.maxHeight = `${sizeY}px`
+  if (posX !== undefined && posY !== undefined) {
+    p.position = 'absolute'
+    p.left = `${posX}px`
+    p.top = `${posY}px`
+  }
+  else {
+    p.position = 'relative'
+    p.overflow = 'hidden'
+    p.boxSizing = 'border-box'
+  }
+  return p
 }

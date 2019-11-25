@@ -29,10 +29,6 @@ export function ScrollBox(p: {
   }, [])
 
   return reactive(cycle => {
-    // if (p.grid.component) {
-    //   const e: HTMLDivElement = p.grid.component as HTMLDivElement
-    //   console.log(`${cycle}: ${e.querySelector('div.scroll-box-surface')?.querySelector('div.scroll-box-target-grid')}`)
-    // }
     return (
       <div className={p.className} style={p.style}
         ref={ref} tabIndex={1}
@@ -40,8 +36,8 @@ export function ScrollBox(p: {
         onWheel={e => p.grid.impulse()}
         onPointerDown={e => p.grid.impulse()}
         onKeyDown={e => p.grid.impulse(e.key)}>
-        {/* <div style={{position: 'absolute', left: '3em', top:'3em', color: 'yellow', backgroundColor: 'rgba(0, 0, 0, 0.75)', zIndex: 100}}>scroll box: cycle {cycle}<br/>{window.rWhy}</div> */}
-        <div className="scroll-box-surface" style={place(p.grid.surfaceSizeX, p.grid.surfaceSizeY)}>
+        <div style={{position: 'absolute', left: '3em', top:'3em', color: 'yellow', backgroundColor: 'rgba(0, 0, 0, 0.75)', zIndex: 100}}>scroll box: cycle {cycle}<br/>{window.rWhy}</div>
+        <div style={place(p.grid.surfaceSizeX, p.grid.surfaceSizeY)}>
           <ScrollBoxTargetGrid key={p.grid.renovation} grid={p.grid}
             className={p.fragmentClassName} style={p.fragmentStyle}>
             {p.children}
@@ -57,16 +53,15 @@ function ScrollBoxTargetGrid(p: {
   children: JSX.Element,
   className?: string,
   style?: React.CSSProperties}): JSX.Element {
+
   return reactive(cycle => {
-    //const sf = p.grid.surfaceArea
-    const vg = p.grid
-    const ra = vg.readyArea.relativeTo(xy(vg.surfaceX, vg.surfaceY))
-    const style = { ...p.style, ...place(ra.size.x, ra.size.y, ra.x, ra.y) }
     return (
-      <div className={cx('scroll-box-target-grid', p.className)} style={style}>
-        {/* <div style={{position: 'fixed', left: '4em', top:'6em', color: 'lightgreen', backgroundColor: 'rgba(0, 0, 0, 0.75)', zIndex: 100}}>target grid: remake {p.grid.renovation}, cycle {cycle}<br/>{window.rWhy}</div> */}
+      <React.Fragment>
+        <div style={{position: 'fixed', left: '4em', top:'6em', color: 'lightgreen', backgroundColor: 'rgba(0, 0, 0, 0.75)', zIndex: 100}}>
+          target grid: remake {p.grid.renovation}, cycle {cycle}<br/>{window.rWhy}
+        </div>
         {p.children}
-      </div>
+      </React.Fragment>
     )
   }, ScrollBoxTargetGrid.name)
 }
