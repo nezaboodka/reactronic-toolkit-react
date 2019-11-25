@@ -53,7 +53,7 @@ export class VirtualGrid extends State {
   renovation: number = 0
   placeholder: Area = Area.ZERO
   sizing = new Sizing()
-  interaction: number = 0
+  interaction: number = 1
   jumpingX: number = 0
   jumpingY: number = 0
   debounce = Monitor.create('debounce', SMOOTH_SCROLL_DEBOUNCE)
@@ -120,7 +120,7 @@ export class VirtualGrid extends State {
     this.renovation = 0
     this.placeholder = this.allCells.truncateBy(PLACEHOLDER_SIZE_LIMIT)
     this.sizing  = new Sizing()
-    this.interaction = 0
+    this.interaction = 1
     this.jumpingX = 0
     this.jumpingY = 0
     if (component !== this.component) {

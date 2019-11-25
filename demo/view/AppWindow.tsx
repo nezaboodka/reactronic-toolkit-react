@@ -32,7 +32,7 @@ export function AppWindow(p: {app: Application}): JSX.Element {
             disabled={!c}>►</button>
           <button onClick={e => c ? c.scrollLeft -= g.ppcX : {}}
             disabled={!c}>◄</button>
-          <button onClick={e => c ? c.scrollTop += 5*g.viewportSizeY : {}}
+          <button onClick={e => c ? c.scrollTop += 2.5*g.viewportSizeY : {}}
             disabled={!c}>▼ 1K px</button>
           <button onClick={e => c ? c.scrollTop -= 1072 : {}}
             disabled={!c}>▲ 1K px</button>
