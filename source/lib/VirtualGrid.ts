@@ -104,7 +104,7 @@ export class VirtualGrid extends State {
 
   @action
   mount(width: number, height: number, resolution: number, component: IComponent): void {
-    this.ppcX = resolution * 6
+    this.ppcX = resolution * 4
     this.ppcY = resolution
     this.thumbX = 0
     this.thumbY = 0
