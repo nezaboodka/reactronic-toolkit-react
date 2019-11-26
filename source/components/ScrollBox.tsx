@@ -54,13 +54,6 @@ function ScrollBoxSpot(p: {
   style?: React.CSSProperties}): JSX.Element {
 
   return reactive(cycle => {
-    return (
-      <React.Fragment>
-        <div style={{position: 'fixed', left: '4em', top:'6em', color: 'lightgreen', backgroundColor: 'rgba(0, 0, 0, 0.75)', zIndex: 100}}>
-          target grid: remake {p.grid.renovation}, cycle {cycle}<br/>{window.rWhy}
-        </div>
-        {p.children}
-      </React.Fragment>
-    )
+    return p.children
   }, ScrollBoxSpot.name)
 }

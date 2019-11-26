@@ -121,12 +121,12 @@ export class Area extends XY {
   }
 
   overlaps(a: Area): boolean {
-    return (
-      a.y >= this.y && a.y < this.y + this.size.y &&
-      a.x >= this.x && a.x < this.x + this.size.x) ||
-      (
-        a.y + a.size.y > this.y && a.y + a.size.y < this.y + this.size.y &&
-        a.x + a.size.x > this.x && a.x + a.size.x < this.x + this.size.x)
+    return ((
+      (a.y >= this.y && a.y < this.y + this.size.y) ||
+      (a.y + a.size.y >= this.y && a.y + a.size.y < this.y + this.size.y)) &&
+      ((a.x >= this.x && a.x < this.x + this.size.x) ||
+      (a.x + a.size.x >= this.x && a.x + a.size.x < this.x + this.size.x))
+    )
   }
 
   envelops(a: Area): boolean {
