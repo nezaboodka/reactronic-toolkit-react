@@ -50,9 +50,9 @@ export class VirtualGrid extends State {
   viewportSizeX: number = 0
   viewportSizeY: number = 0
   readyCells: Area = Area.ZERO
-  renovation: number = 0
   placeholder: Area = Area.ZERO
   sizing = new Sizing()
+  renovation: number = 0
   interaction: number = 1
   jumpingX: number = 0
   jumpingY: number = 0
@@ -117,9 +117,9 @@ export class VirtualGrid extends State {
     this.viewportSizeX = width
     this.viewportSizeY = height
     this.readyCells = Area.ZERO
-    this.renovation = 0
     this.placeholder = this.allCells.truncateBy(PLACEHOLDER_SIZE_LIMIT)
     this.sizing  = new Sizing()
+    this.renovation = 0
     this.interaction = 1
     this.jumpingX = 0
     this.jumpingY = 0
