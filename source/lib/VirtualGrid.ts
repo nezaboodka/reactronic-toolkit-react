@@ -9,7 +9,7 @@ import { Area, area, num, XY, xy } from './Area'
 
 export const SURFACE_SIZE_LIMIT: number = 1000123 // pixels
 export const PLACEHOLDER_SIZE_LIMIT: Area = area(0, 0, 899, 899)
-export const SMOOTH_SCROLL_DEBOUNCE = 35 // ms
+export const SMOOTH_SCROLL_DEBOUNCE = 40 // ms
 
 export type IComponent = undefined | null | EventTarget & {
   scrollLeft: number
@@ -104,7 +104,7 @@ export class VirtualGrid extends State {
 
   @action
   mount(width: number, height: number, resolution: number, component: IComponent): void {
-    this.ppcX = resolution * 2
+    this.ppcX = resolution * 1
     this.ppcY = resolution
     this.thumbX = 0
     this.thumbY = 0
