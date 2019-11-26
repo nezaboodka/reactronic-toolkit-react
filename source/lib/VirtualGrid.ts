@@ -8,7 +8,7 @@ import { action, Cache, Monitor, nonreactive, State, trigger } from 'reactronic'
 import { Area, area, XY, xy } from './Area'
 
 export const SURFACE_SIZE_LIMIT: number = 1000123 // pixels
-export const CONTAINER_GRID_SIZE_LIMIT: Area = area(0, 0, 899, 899)
+export const SPOT_GRID_SIZE_LIMIT: Area = area(0, 0, 899, 899)
 export const SMOOTH_SCROLL_DEBOUNCE = 40 // ms
 
 export type IComponent = undefined | null | EventTarget & {
@@ -50,8 +50,8 @@ export class VirtualGrid extends State {
   viewportSizeX: number = 0
   viewportSizeY: number = 0
   readyCells: Area = Area.ZERO
-  container: Area = Area.ZERO
-  containerId: number = 0
+  spot: Area = Area.ZERO
+  spotId: number = 0
   sizing = new Sizing()
   interaction: number = 1
   jumpingX: number = 0
@@ -117,8 +117,8 @@ export class VirtualGrid extends State {
     this.viewportSizeX = width
     this.viewportSizeY = height
     this.readyCells = Area.ZERO
-    this.container = this.allCells.truncateBy(CONTAINER_GRID_SIZE_LIMIT)
-    this.containerId = 0
+    this.spot = this.allCells.truncateBy(SPOT_GRID_SIZE_LIMIT)
+    this.spotId = 0
     this.sizing  = new Sizing()
     this.interaction = 1
     this.jumpingX = 0
@@ -163,9 +163,9 @@ export class VirtualGrid extends State {
   ready(cells: Area): void {
     // console.log(`\nready: ${cells.y}..${cells.till.y}`)
     this.readyCells = cells
-    const c = this.container
-    if (!c.envelops(cells))
-      this.container = c.moveCenterTo(cells.center, this.allCells).round()
+    const spot = this.spot
+    if (!spot.envelops(cells))
+      this.spot = spot.moveCenterTo(cells.center, this.allCells).round()
   }
 
   // Triggers

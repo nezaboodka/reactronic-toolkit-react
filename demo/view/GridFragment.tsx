@@ -16,14 +16,14 @@ export function GridFragment(p: {
   className?: string}): JSX.Element {
   return reactive(cycle => {
     const css = style.classes
-    const g = p.loader.grid
+    const grid = p.loader.grid
     const area = p.loader.shownArea
     // console.log(`fragment: ${fragment.x} x ${fragment.y} (${fragment.size.x} x ${fragment.size.y}), remake: ${p.loader.grid.readyRemake}, cycle: ${cycle} - ${window.rWhy}`)
     return (
       <div className={cx(p.className)}
         style={spot(area.size.x, area.size.y, area.x, area.y)}>
         <div style={{position: 'fixed', left: '4em', top:'6em', color: 'lightgreen', backgroundColor: 'rgba(0, 0, 0, 0.75)', zIndex: 100}}>
-          container: id {g.containerId}, cycle {cycle}<br/>{window.rWhy}
+          container: id {grid.spotId}, cycle {cycle}<br/>{window.rWhy}
         </div>
         {p.loader.jsx(cx(css.cell, css.blink1))}
       </div>

@@ -26,9 +26,9 @@ export class GridFragmentLoader extends State {
   jsx(cls?: string): JSX.Element[] {
     const cells = this.shownCells
     const data = this.shownData
-    const g = this.grid
-    const gc = g.container
-    const zero = xy(cells.x - gc.x, cells.y - gc.y)
+    const grid = this.grid
+    const spot = grid.spot
+    const zero = xy(cells.x - spot.x, cells.y - spot.y)
     return data.map((cell, i) => {
       const y = Math.floor(i / cells.size.x) + cells.y
       const x = i % cells.size.x + cells.x
@@ -41,8 +41,8 @@ export class GridFragmentLoader extends State {
         //   row={r} col={c} text={cell}/>
         <div key={key} title={key} className={cls}
           style={{
-            width: `${g.ppcX}px`,
-            height: `${g.ppcY}px`,
+            width: `${grid.ppcX}px`,
+            height: `${grid.ppcY}px`,
             gridRow: r + 1,
             gridColumn: c + 1}}>
           {cell}
@@ -53,11 +53,11 @@ export class GridFragmentLoader extends State {
 
   @cached
   html(cls?: string): string {
-    const g = this.grid
+    const grid = this.grid
     const cells = this.shownCells
     const data = this.shownData
-    const gc = this.grid.container
-    const zero = xy(cells.x - gc.x, cells.y - gc.y)
+    const spot = this.grid.spot
+    const zero = xy(cells.x - spot.x, cells.y - spot.y)
     return data.map((cell, i) => {
       const y = Math.floor(i / cells.size.x) + cells.y
       const x = i % cells.size.x + cells.x
@@ -65,7 +65,7 @@ export class GridFragmentLoader extends State {
       const c = zero.x + x - cells.x
       const key = `R${r}C${c}:Y${y}X${x}`
       return `
-        <div title="${key}" class="${cls}" style="width: ${g.ppcX}px; height: ${g.ppcY}px; grid-row: ${r + 1}; grid-column: ${c + 1};">
+        <div title="${key}" class="${cls}" style="width: ${grid.ppcX}px; height: ${grid.ppcY}px; grid-row: ${r + 1}; grid-column: ${c + 1};">
           ${cell}
         </div>
       `
@@ -93,7 +93,7 @@ export class GridFragmentLoader extends State {
     if (this.grid.readyCells.overlaps(this.grid.viewportCells) &&
       !this.shownCells.equalTo(this.grid.readyCells)) {
       if (!this.shownCells.overlaps(this.grid.readyCells))
-        this.grid.containerId++
+        this.grid.spotId++
       this.shownData = this.loadedData.slice()
       this.shownCells = this.grid.readyCells
     }
