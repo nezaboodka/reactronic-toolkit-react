@@ -19,6 +19,7 @@ export const style = restyle(() => {
       border-bottom: 0.5px dashed #8DFFA6;
       border-right: 0.5px dashed #8DFFA6;
       padding: 0 0.25em;
+      font-size: 50%;
     `,
     fade: css`
       label: fade;
