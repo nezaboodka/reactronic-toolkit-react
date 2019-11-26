@@ -9,7 +9,7 @@ export function restyle<T>(generate: () => T): ReactiveStyle<T> {
   return Action.run('restyle', () => new ReactiveStyle<T>(generate))
 }
 
-export class ReactiveStyle<T> {
+class ReactiveStyle<T> {
   constructor(private readonly restyler: () => T) {
   }
 
