@@ -37,7 +37,7 @@ export function ScrollBox(p: {
         onKeyDown={e => p.grid.impulse(e.key)}>
         <div style={{position: 'absolute', left: '3em', top:'3em', color: 'yellow', backgroundColor: 'rgba(0, 0, 0, 0.75)', zIndex: 100}}>scroll box: cycle {cycle}<br/>{window.rWhy}</div>
         <div style={spot(p.grid.surfaceSizeX, p.grid.surfaceSizeY)}>
-          <ScrollBoxSpot key={p.grid.renovation} grid={p.grid}
+          <ScrollBoxSpot key={p.grid.containerId} grid={p.grid}
             className={p.fragmentClassName} style={p.fragmentStyle}>
             {p.children}
           </ScrollBoxSpot>

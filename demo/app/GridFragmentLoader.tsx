@@ -27,8 +27,8 @@ export class GridFragmentLoader extends State {
     const cells = this.shownCells
     const data = this.shownData
     const g = this.grid
-    const ph = g.placeholder
-    const zero = xy(cells.x - ph.x, cells.y - ph.y)
+    const gc = g.container
+    const zero = xy(cells.x - gc.x, cells.y - gc.y)
     return data.map((cell, i) => {
       const y = Math.floor(i / cells.size.x) + cells.y
       const x = i % cells.size.x + cells.x
@@ -56,8 +56,8 @@ export class GridFragmentLoader extends State {
     const g = this.grid
     const cells = this.shownCells
     const data = this.shownData
-    const ph = this.grid.placeholder
-    const zero = xy(cells.x - ph.x, cells.y - ph.y)
+    const gc = this.grid.container
+    const zero = xy(cells.x - gc.x, cells.y - gc.y)
     return data.map((cell, i) => {
       const y = Math.floor(i / cells.size.x) + cells.y
       const x = i % cells.size.x + cells.x
@@ -93,7 +93,7 @@ export class GridFragmentLoader extends State {
     if (this.grid.readyCells.overlaps(this.grid.viewportCells) &&
       !this.shownCells.equalTo(this.grid.readyCells)) {
       if (!this.shownCells.overlaps(this.grid.readyCells))
-        this.grid.renovation++
+        this.grid.containerId++
       this.shownData = this.loadedData.slice()
       this.shownCells = this.grid.readyCells
     }
