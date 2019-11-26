@@ -18,7 +18,7 @@ export function GridFragment(p: {
   return reactive(cycle => {
     const css = style.classes
     const g = p.loader.grid
-    const area = p.loader.area
+    const area = p.loader.shownArea
     // console.log(`fragment: ${fragment.x} x ${fragment.y} (${fragment.size.x} x ${fragment.size.y}), remake: ${p.loader.grid.readyRemake}, cycle: ${cycle} - ${window.rWhy}`)
     return (
       <div className={cx(p.className)}

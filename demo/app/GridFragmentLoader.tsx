@@ -17,23 +17,7 @@ export class GridFragmentLoader extends State {
     super()
   }
 
-  @trigger @reentrance(Reentrance.CancelPrevious)
-  async load(): Promise<void> {
-    const g = this.grid
-    const buffer = g.bufferCells
-    if (!buffer.equalTo(g.readyCells)) {
-      const data: string[] = []
-      const till = buffer.till
-      for (let y = buffer.y; y <= till.y; y++)
-        for (let x = buffer.x; x <= till.x; x++)
-          data.push(`${y}:${x}`)
-      this.loadedData = data
-      g.ready(buffer)
-    }
-    await sleep(50)
-  }
-
-  get area(): Area {
+  get shownArea(): Area {
     const g = this.grid
     return this.shownCells.scaleBy(g.ppc).relativeTo(g.surfaceArea)
   }
@@ -86,6 +70,22 @@ export class GridFragmentLoader extends State {
         </div>
       `
     }).join('\n\n')
+  }
+
+  @trigger @reentrance(Reentrance.CancelPrevious)
+  protected async load(): Promise<void> {
+    const g = this.grid
+    const buffer = g.bufferCells
+    if (!buffer.equalTo(g.readyCells)) {
+      const data: string[] = []
+      const till = buffer.till
+      for (let y = buffer.y; y <= till.y; y++)
+        for (let x = buffer.x; x <= till.x; x++)
+          data.push(`${y}:${x}`)
+      this.loadedData = data
+      g.ready(buffer)
+    }
+    await sleep(50)
   }
 
   @trigger
