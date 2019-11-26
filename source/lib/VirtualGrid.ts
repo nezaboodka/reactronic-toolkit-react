@@ -5,7 +5,7 @@
 
 import { action, Cache, Monitor, nonreactive, State, trigger } from 'reactronic'
 
-import { Area, area, num, XY, xy } from './Area'
+import { Area, area, XY, xy } from './Area'
 
 export const SURFACE_SIZE_LIMIT: number = 1000123 // pixels
 export const PLACEHOLDER_SIZE_LIMIT: Area = area(0, 0, 899, 899)
