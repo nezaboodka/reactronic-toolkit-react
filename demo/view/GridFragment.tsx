@@ -7,7 +7,7 @@ import { cx } from 'emotion'
 import * as React from 'react'
 import { cached } from 'reactronic'
 
-import { reactive, xy } from '~/../source/reactronic-toolkit-react'
+import { reactive, spot, xy } from '~/../source/reactronic-toolkit-react'
 import { GridFragmentLoader } from '~/app/GridFragmentLoader'
 
 import { style } from './GridFragment.css'
@@ -26,7 +26,7 @@ export function GridFragment(p: {
     // console.log(`fragment: ${fragment.x} x ${fragment.y} (${fragment.size.x} x ${fragment.size.y}), remake: ${p.loader.grid.readyRemake}, cycle: ${cycle} - ${window.rWhy}`)
     return (
       <div className={cx(p.className)}
-        style={place(area.size.x, area.size.y, area.x, area.y)}>
+        style={spot(area.size.x, area.size.y, area.x, area.y)}>
         {data.map((cell, i) => {
           const y = Math.floor(i / cells.size.x) + cells.y
           const x = i % cells.size.x + cells.x
@@ -64,21 +64,4 @@ function GridCell(p: {hint: string, row: number, col: number, text: string, styl
       {p.text}
     </div>
   )
-}
-
-function place(sizeX: number, sizeY: number, posX?: number, posY?: number): React.CSSProperties {
-  const p: React.CSSProperties = {}
-  p.width = p.minWidth = p.maxWidth = `${sizeX}px`
-  p.height = p.minHeight = p.maxHeight = `${sizeY}px`
-  if (posX !== undefined && posY !== undefined) {
-    p.position = 'absolute'
-    p.left = `${posX}px`
-    p.top = `${posY}px`
-  }
-  else {
-    p.position = 'relative'
-    p.overflow = 'hidden'
-    p.boxSizing = 'border-box'
-  }
-  return p
 }

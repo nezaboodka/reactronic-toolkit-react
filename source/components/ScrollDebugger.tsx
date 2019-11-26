@@ -8,7 +8,7 @@ import { TraceLevel } from 'reactronic'
 
 import { area, num } from '../lib/Area'
 import { VirtualGrid } from '../lib/VirtualGrid'
-import { place } from '../tools/etc'
+import { region } from '../tools/etc'
 import { reactive } from '../tools/reactive'
 import { AreaRect } from './AreaRect'
 import { style } from './ScrollDebugger.css'
@@ -22,20 +22,20 @@ export function ScrollDebugger(p: {grid: VirtualGrid}): JSX.Element {
     return (
       <div className={css.main}>
         <AreaRect hint={'All'} area={g.allCells} px={g.allArea} key={`all-${cycle}`}
-          className={css.all} style={place(1, 1, 10, 9)}>
+          className={css.all} style={region(1, 1, 10, 9)}>
           <AreaRect hint={'Surface'} area={g.surfaceCells} px={sf} inner={g.readyArea} key={`surface-${cycle}`}
-            className={css.surface} style={place(2, 2, 9, 9)}>
+            className={css.surface} style={region(2, 2, 9, 9)}>
             <AreaRect hint={'Rendered'} area={g.readyCells} px={g.readyArea} key={`ready-${cycle}`}
-              className={css.buffer} style={place(2, 2, 9, 9)}>
+              className={css.buffer} style={region(2, 2, 9, 9)}>
               <AreaRect hint={'Viewport'} area={g.viewportCells} px={vp} key={`viewport-${cycle}`}
-                className={css.viewport} style={place(3, 3, 8, 8)}>
+                className={css.viewport} style={region(3, 3, 8, 8)}>
                 <div style={{height: '1em'}}></div>
               </AreaRect>
             </AreaRect>
           </AreaRect>
         </AreaRect>
         <AreaRect hint={'Surface'} area={g.surfaceCells} px={sf} key={`canvas-${cycle}`}
-          className={css.surface} style={place(1, 10, 10, 10)}>
+          className={css.surface} style={region(1, 10, 10, 10)}>
           <div>
             <br/>
             <div>

@@ -3,11 +3,10 @@
 // Copyright (C) 2019 Yury Chetyrko <ychetyrko@gmail.com>
 // License: https://raw.githubusercontent.com/nezaboodka/reactronic/master/LICENSE
 
-import { cx } from 'emotion'
 import * as React from 'react'
 
-import { xy } from '../lib/Area'
 import { VirtualGrid } from '../lib/VirtualGrid'
+import { spot } from '../tools/etc'
 import { reactive } from '../tools/reactive'
 
 export function ScrollBox(p: {
@@ -37,7 +36,7 @@ export function ScrollBox(p: {
         onPointerDown={e => p.grid.impulse()}
         onKeyDown={e => p.grid.impulse(e.key)}>
         <div style={{position: 'absolute', left: '3em', top:'3em', color: 'yellow', backgroundColor: 'rgba(0, 0, 0, 0.75)', zIndex: 100}}>scroll box: cycle {cycle}<br/>{window.rWhy}</div>
-        <div style={place(p.grid.surfaceSizeX, p.grid.surfaceSizeY)}>
+        <div style={spot(p.grid.surfaceSizeX, p.grid.surfaceSizeY)}>
           <ScrollBoxSpot key={p.grid.renovation} grid={p.grid}
             className={p.fragmentClassName} style={p.fragmentStyle}>
             {p.children}
@@ -64,21 +63,4 @@ function ScrollBoxSpot(p: {
       </React.Fragment>
     )
   }, ScrollBoxSpot.name)
-}
-
-function place(sizeX: number, sizeY: number, posX?: number, posY?: number): React.CSSProperties {
-  const p: React.CSSProperties = {}
-  p.width = p.minWidth = p.maxWidth = `${sizeX}px`
-  p.height = p.minHeight = p.maxHeight = `${sizeY}px`
-  if (posX !== undefined && posY !== undefined) {
-    p.position = 'absolute'
-    p.left = `${posX}px`
-    p.top = `${posY}px`
-  }
-  else {
-    p.position = 'relative'
-    p.overflow = 'hidden'
-    p.boxSizing = 'border-box'
-  }
-  return p
 }
