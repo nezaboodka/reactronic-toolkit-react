@@ -3,6 +3,7 @@
 // Copyright (C) 2019 Yury Chetyrko <ychetyrko@gmail.com>
 // License: https://raw.githubusercontent.com/nezaboodka/reactronic/master/LICENSE
 
+import * as React from 'react'
 import { cached, Reentrance, reentrance, sleep, State, trigger } from 'reactronic'
 
 import { Area, VirtualGrid, xy } from '~/../source/reactronic-toolkit-react'
@@ -35,6 +36,35 @@ export class GridFragmentLoader extends State {
   get area(): Area {
     const g = this.grid
     return this.shownCells.scaleBy(g.ppc).relativeTo(g.surfaceArea)
+  }
+
+  @cached
+  jsx(cls?: string): JSX.Element[] {
+    const cells = this.shownCells
+    const data = this.shownData
+    const g = this.grid
+    const ph = g.placeholder
+    const zero = xy(cells.x - ph.x, cells.y - ph.y)
+    return data.map((cell, i) => {
+      const y = Math.floor(i / cells.size.x) + cells.y
+      const x = i % cells.size.x + cells.x
+      const r = zero.y + y - cells.y
+      const c = zero.x + x - cells.x
+      const key = `R${r}C${c}:Y${y}X${x}`
+      return (
+        // <GridCell key={key} hint={`${key} - ${cell}`}
+        //   style={{width: `${g.ppcX}px`, height: `${g.ppcY}px`}}
+        //   row={r} col={c} text={cell}/>
+        <div key={key} title={key} className={cls}
+          style={{
+            width: `${g.ppcX}px`,
+            height: `${g.ppcY}px`,
+            gridRow: r + 1,
+            gridColumn: c + 1}}>
+          {cell}
+        </div>
+      )
+    })
   }
 
   @cached

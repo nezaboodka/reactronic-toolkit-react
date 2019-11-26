@@ -19,10 +19,6 @@ export function GridFragment(p: {
     const css = style.classes
     const g = p.loader.grid
     const area = p.loader.area
-    const cells = p.loader.shownCells
-    const data = p.loader.shownData
-    const ph = p.loader.grid.placeholder
-    const zero = xy(cells.x - ph.x, cells.y - ph.y)
     // console.log(`fragment: ${fragment.x} x ${fragment.y} (${fragment.size.x} x ${fragment.size.y}), remake: ${p.loader.grid.readyRemake}, cycle: ${cycle} - ${window.rWhy}`)
     return (
       <div className={cx(p.className)}
@@ -30,26 +26,7 @@ export function GridFragment(p: {
         <div style={{position: 'fixed', left: '4em', top:'6em', color: 'lightgreen', backgroundColor: 'rgba(0, 0, 0, 0.75)', zIndex: 100}}>
           placeholder: renovation {g.renovation}, cycle {cycle}<br/>{window.rWhy}
         </div>
-        {data.map((cell, i) => {
-          const y = Math.floor(i / cells.size.x) + cells.y
-          const x = i % cells.size.x + cells.x
-          const r = zero.y + y - cells.y
-          const c = zero.x + x - cells.x
-          const key = `R${r}C${c}:Y${y}X${x}`
-          return (
-            // <GridCell key={key} hint={`${key} - ${cell}`}
-            //   style={{width: `${g.ppcX}px`, height: `${g.ppcY}px`}}
-            //   row={r} col={c} text={cell}/>
-            <div key={key} title={key} className={cx(css.cell, css.blink1)}
-              style={{
-                width: `${g.ppcX}px`,
-                height: `${g.ppcY}px`,
-                gridRow: r + 1,
-                gridColumn: c + 1}}>
-              {cell}
-            </div>
-          )
-        })}
+        {p.loader.jsx(cx(css.cell, css.blink1))}
       </div>
     )
   }, `<${GridFragment.name}>`)
