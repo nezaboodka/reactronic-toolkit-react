@@ -5,9 +5,8 @@
 
 import { cx } from 'emotion'
 import * as React from 'react'
-import { cached } from 'reactronic'
 
-import { reactive, spot, xy } from '~/../source/reactronic-toolkit-react'
+import { reactive, spot } from '~/../source/reactronic-toolkit-react'
 import { GridFragmentLoader } from '~/app/GridFragmentLoader'
 
 import { style } from './GridFragment.css'
