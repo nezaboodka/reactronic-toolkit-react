@@ -16,8 +16,8 @@ export const style = restyle(() => {
       label: cell;
       overflow: hidden;
       box-sizing: border-box;
-      border-bottom: 0.5px dashed lime;
-      border-right: 0.5px dashed lime;
+      border-bottom: 0.5px dashed #8DFFA6;
+      border-right: 0.5px dashed #8DFFA6;
       padding: 0 0.25em;
     `,
     fade: css`
