@@ -23,7 +23,7 @@ export function GridFragment(p: {
       <div className={cx(p.className)}
         style={spot(area.size.x, area.size.y, area.x, area.y)}>
         <div style={{position: 'fixed', left: '4em', top:'6em', color: 'lightgreen', backgroundColor: 'rgba(0, 0, 0, 0.75)', zIndex: 100}}>
-          container: id {grid.spotId}, cycle {cycle}<br/>{window.rWhy}
+          spot {grid.spotId}, cycle {cycle}<br/>{window.rWhy}
         </div>
         {p.loader.jsx(cx(css.cell, css.blink1))}
       </div>
