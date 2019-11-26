@@ -56,12 +56,12 @@ export class VirtualGrid extends State {
   interaction: number = 1
   jumpingX: number = 0
   jumpingY: number = 0
-  debounce = Monitor.create('debounce', SMOOTH_SCROLL_DEBOUNCE)
+  scrolling = Monitor.create('scrolling', SMOOTH_SCROLL_DEBOUNCE)
 
   constructor(columns: number, rows: number) {
     super()
     this.allCells = area(0, 0, columns, rows)
-    Cache.of(this.scroll).setup({monitor: this.debounce})
+    Cache.of(this.scroll).setup({monitor: this.scrolling})
   }
 
   // Areas
@@ -172,7 +172,7 @@ export class VirtualGrid extends State {
 
   @trigger
   protected rebaseSurface(): void {
-    if (this.component && !this.debounce.busy)
+    if (this.component && !this.scrolling.isActive)
       nonreactive(() => this.applyThumbPos(this.thumbX, this.thumbY, true))
   }
 
