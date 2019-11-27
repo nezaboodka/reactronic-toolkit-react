@@ -54,5 +54,5 @@ function ScrollBoxSpot(p: {
   style?: React.CSSProperties}): JSX.Element {
   return reactive(cycle => {
     return p.children
-  }, ScrollBoxSpot.name)
+  }, {hint: ScrollBoxSpot.name})
 }

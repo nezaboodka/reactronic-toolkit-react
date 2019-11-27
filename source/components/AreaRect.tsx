@@ -48,5 +48,5 @@ export function AreaRect(p: {
         <div className={css.center} style={region(5, 5, 6, 6)}>{p.children}</div>
       </div>
     )
-  }, undefined, TraceLevel.Suppress)
+  }, {trace: TraceLevel.Suppress})
 }

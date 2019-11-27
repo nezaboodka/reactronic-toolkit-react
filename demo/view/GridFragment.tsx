@@ -18,7 +18,7 @@ export function GridFragment(p: {
     const css = style.classes
     const grid = p.loader.grid
     const area = p.loader.shownArea
-    // console.log(`id: ${grid.spotId}, cycle=${cycle}, why: ${window.rWhy}`)
+    console.log(`id: ${grid.spotId}, cycle=${cycle}, why: ${window.rWhy}`)
     return (
       <div className={cx(p.className)}
         style={spot(area.size.x, area.size.y, area.x, area.y)}>
@@ -28,7 +28,7 @@ export function GridFragment(p: {
         {p.loader.jsx(cx(css.cell, cycle === 0 ? css.blink2 : css.blink1))}
       </div>
     )
-  }, `<${GridFragment.name}>`)
+  }, {hint: `<${GridFragment.name}>`, priority: -1})
 }
 
 function GridCell(p: {hint: string, row: number, col: number, text: string, style?: React.CSSProperties}): JSX.Element {

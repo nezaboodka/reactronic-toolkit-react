@@ -57,5 +57,5 @@ export function ScrollDebugger(p: {grid: VirtualGrid}): JSX.Element {
         </AreaRect>
       </div>
     )
-  }, undefined, TraceLevel.Suppress)
+  }, {trace: TraceLevel.Suppress})
 }

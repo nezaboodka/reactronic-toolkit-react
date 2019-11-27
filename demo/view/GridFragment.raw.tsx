@@ -24,5 +24,5 @@ export function GridFragment(p: {
         dangerouslySetInnerHTML={{__html: html}}>
       </div>
     )
-  }, `<${GridFragment.name}>`)
+  }, {hint: `<${GridFragment.name}>`})
 }

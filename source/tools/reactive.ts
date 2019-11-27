@@ -6,14 +6,21 @@
 import * as React from 'react'
 import { Action, Cache, cached, isolated, Reactronic as R, State, stateless, Trace, trigger } from 'reactronic'
 
-export function reactive(render: (cycle: number) => JSX.Element, name?: string, trace?: Partial<Trace>, action?: Action): JSX.Element {
+export type ReactiveOptions = {
+  hint: string,
+  trace: Partial<Trace>,
+  priority: number,
+  action: Action
+}
+
+export function reactive(render: (cycle: number) => JSX.Element, options?: Partial<ReactiveOptions>): JSX.Element {
   const [state, refresh] = React.useState<ReactState<JSX.Element>>(
-    (!name && !trace) ? createReactState : () => createReactState(name, trace))
+    !options ? createReactState : () => createReactState(options.hint, options.trace, options.priority))
   const rx = state.rx
   rx.cycle = state.cycle
   rx.refresh = refresh // just in case React will change refresh on each rendering
   React.useEffect(rx.unmount, [])
-  return rx.render(render, action)
+  return rx.render(render, options ? options.action : undefined)
 }
 
 // export function reactiveJs<E>(run: (element: E) => void, trace?: Partial<Trace>, action?: Action): (element: E) => void {
@@ -51,21 +58,21 @@ class Rx<V> extends State {
     return (): void => { isolated(Cache.unmount, this) }
   }
 
-  static create<V>(hint: string | undefined, trace: Trace | undefined): Rx<V> {
+  static create<V>(hint?: string, trace?: Trace, priority?: number): Rx<V> {
     const rx = new Rx<V>()
     if (hint)
       R.setTraceHint(rx, hint)
     if (trace) {
       Cache.of(rx.render).setup({trace})
-      Cache.of(rx.pulse).setup({trace})
+      Cache.of(rx.pulse).setup({trace, priority})
     }
     return rx
   }
 }
 
-function createReactState<V>(name?: string, trace?: Partial<Trace>): ReactState<V> {
-  const hint = name || (R.isTraceOn ? getComponentName() : '<rx>')
-  const rx = Action.runAs<Rx<V>>(hint, false, trace, undefined, Rx.create, hint, trace)
+function createReactState<V>(hint?: string, trace?: Partial<Trace>, priority?: number): ReactState<V> {
+  const h = hint || (R.isTraceOn ? getComponentName() : '<rx>')
+  const rx = Action.runAs<Rx<V>>(h, false, trace, undefined, Rx.create, h, trace, priority)
   return {rx, cycle: 0}
 }
 
