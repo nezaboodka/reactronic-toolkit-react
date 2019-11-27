@@ -52,7 +52,6 @@ function ScrollBoxSpot(p: {
   children: JSX.Element,
   className?: string,
   style?: React.CSSProperties}): JSX.Element {
-
   return reactive(cycle => {
     return p.children
   }, ScrollBoxSpot.name)
