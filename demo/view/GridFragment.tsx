@@ -28,7 +28,7 @@ export function GridFragment(p: {
         {p.loader.jsx(cx(css.cell, cycle === 0 ? css.blink2 : css.blink1))}
       </div>
     )
-  }, {hint: `<${GridFragment.name}>`, priority: -1})
+  }, {hint: `<${GridFragment.name}>`, priority: 9})
 }
 
 function GridCell(p: {hint: string, row: number, col: number, text: string, style?: React.CSSProperties}): JSX.Element {
