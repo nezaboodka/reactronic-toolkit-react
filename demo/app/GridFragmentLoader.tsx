@@ -24,6 +24,7 @@ export class GridFragmentLoader extends State {
 
   @cached
   jsx(cls?: string): JSX.Element[] {
+    // console.log(`cls: ${cls}`)
     const cells = this.shownCells
     const data = this.shownData
     const grid = this.grid

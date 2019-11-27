@@ -18,14 +18,14 @@ export function GridFragment(p: {
     const css = style.classes
     const grid = p.loader.grid
     const area = p.loader.shownArea
-    // console.log(`fragment: ${fragment.x} x ${fragment.y} (${fragment.size.x} x ${fragment.size.y}), remake: ${p.loader.grid.readyRemake}, cycle: ${cycle} - ${window.rWhy}`)
+    // console.log(`id: ${grid.spotId}, cycle=${cycle}, why: ${window.rWhy}`)
     return (
       <div className={cx(p.className)}
         style={spot(area.size.x, area.size.y, area.x, area.y)}>
-        <div style={{position: 'fixed', left: '4em', top:'6em', color: 'lightgreen', backgroundColor: 'rgba(0, 0, 0, 0.75)', zIndex: 100}}>
+        <div style={{position: 'fixed', left: '4em', top:'6em', color: cycle === 0 ? 'white' : 'lightgreen', backgroundColor: 'rgba(0, 0, 0, 0.75)', zIndex: 100}}>
           spot {grid.spotId}, cycle {cycle}<br/>{window.rWhy}
         </div>
-        {p.loader.jsx(cx(css.cell, css.blink1))}
+        {p.loader.jsx(cx(css.cell, cycle === 0 ? css.blink2 : css.blink1))}
       </div>
     )
   }, `<${GridFragment.name}>`)

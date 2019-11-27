@@ -34,7 +34,7 @@ export class Sizing {
 }
 
 export class VirtualGrid extends State {
-  bufferingRatio: XY = xy(1.0, 2.0)
+  bufferingRatio: XY = xy(1.0, 1.7)
   allCells: Area
   component: IComponent = undefined
   ppcX: number = 1 // pixels per cell
@@ -164,8 +164,10 @@ export class VirtualGrid extends State {
     // console.log(`\nready: ${cells.y}..${cells.till.y}`)
     this.readyCells = cells
     const spot = this.spot
-    if (!spot.envelops(cells))
+    if (!spot.envelops(cells)) {
       this.spot = spot.moveCenterTo(cells.center, this.allCells).round()
+      this.spotId++
+    }
   }
 
   // Triggers

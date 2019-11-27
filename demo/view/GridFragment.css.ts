@@ -41,20 +41,12 @@ export const style = restyle(() => {
       @keyframes blink1a {
         1% { background-color: violet; }
       }
-      @keyframes blink1b {
-        0% { transform: scaleY(0); transform-origin: 0; }
-        100% { transform: scaleY(1); transform-origin: 0; }
-      }
     `,
     blink2: css`
       label: blink2;
-      animation: blink2a 1s ease;
+      animation: blink2a 2s ease;
       @keyframes blink2a {
-        1% { background-color: violet; }
-      }
-      @keyframes blink2b {
-        0% { transform: scaleY(0); transform-origin: 0; }
-        100% { transform: scaleY(1); transform-origin: 0; }
+        1% { background-color: yellow; }
       }
     `,
   }
