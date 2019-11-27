@@ -88,7 +88,7 @@ export class GridFragmentLoader extends State {
       this.loadedData = data
       g.ready(buffer)
     }
-    await sleep(50)
+    await sleep(30)
   }
 
   @trigger

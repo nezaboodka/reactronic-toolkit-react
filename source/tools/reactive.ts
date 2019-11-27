@@ -66,6 +66,8 @@ class Rx<V> extends State {
       Cache.of(rx.render).setup({trace})
       Cache.of(rx.pulse).setup({trace, priority})
     }
+    else if (priority !== undefined)
+      Cache.of(rx.pulse).setup({priority})
     return rx
   }
 }
