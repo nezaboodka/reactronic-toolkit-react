@@ -18,7 +18,7 @@ export function GridFragment(p: {
     const css = style.classes
     const grid = p.loader.grid
     const area = p.loader.shownArea
-    console.log(`id: ${grid.spotId}, cycle=${cycle}, why: ${window.rWhy}`)
+    // console.log(`id: ${grid.spotId}, cycle=${cycle}, why: ${window.rWhy}`)
     return (
       <div className={cx(p.className)}
         style={spot(area.size.x, area.size.y, area.x, area.y)}>
