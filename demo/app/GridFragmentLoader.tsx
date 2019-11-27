@@ -9,12 +9,14 @@ import { cached, Reentrance, reentrance, sleep, State, trigger } from 'reactroni
 import { Area, VirtualGrid, xy } from '~/../source/reactronic-toolkit-react'
 
 export class GridFragmentLoader extends State {
-  constructor(
-    readonly grid: VirtualGrid,
-    private loadedData: string[] = [],
-    public shownData: string[] = [],
-    public shownCells: Area = Area.ZERO) {
+  readonly grid: VirtualGrid
+  private loadedData: string[] = []
+  shownData: string[] = []
+  shownCells: Area = Area.ZERO
+
+  constructor(grid: VirtualGrid) {
     super()
+    this.grid = grid
   }
 
   get shownArea(): Area {
