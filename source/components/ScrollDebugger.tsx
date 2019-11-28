@@ -23,9 +23,9 @@ export function ScrollDebugger(p: {grid: VirtualGrid}): JSX.Element {
       <div className={css.main}>
         <AreaRect hint={'All'} area={g.allCells} px={g.allArea} key={`all-${cycle}`}
           className={css.all} style={region(1, 1, 10, 9)}>
-          <AreaRect hint={'Surface'} area={g.surfaceCells} px={sf} inner={g.readyArea} key={`surface-${cycle}`}
+          <AreaRect hint={'Surface'} area={g.surfaceCells} px={sf} inner={g.loadedArea} key={`surface-${cycle}`}
             className={css.surface} style={region(2, 2, 9, 9)}>
-            <AreaRect hint={'Rendered'} area={g.readyCells} px={g.readyArea} key={`ready-${cycle}`}
+            <AreaRect hint={'Loaded'} area={g.loadedCells} px={g.loadedArea} key={`ready-${cycle}`}
               className={css.buffer} style={region(2, 2, 9, 9)}>
               <AreaRect hint={'Viewport'} area={g.viewportCells} px={vp} key={`viewport-${cycle}`}
                 className={css.viewport} style={region(3, 3, 8, 8)}>

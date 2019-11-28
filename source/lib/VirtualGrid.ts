@@ -49,7 +49,8 @@ export class VirtualGrid extends State {
   viewportY: number = 0
   viewportSizeX: number = 0
   viewportSizeY: number = 0
-  readyCells: Area = Area.ZERO
+  loadedCells: Area = Area.ZERO
+  shownCells: Area = Area.ZERO
   spot: Area = Area.ZERO
   spotId: number = 0
   sizing = new Sizing()
@@ -74,8 +75,8 @@ export class VirtualGrid extends State {
     return this.bufferCells.scaleBy(this.ppc)
   }
 
-  get readyArea(): Area {
-    return this.readyCells.scaleBy(this.ppc)
+  get loadedArea(): Area {
+    return this.loadedCells.scaleBy(this.ppc)
   }
 
   get surfaceArea(): Area {
@@ -116,7 +117,8 @@ export class VirtualGrid extends State {
     this.viewportY = 0
     this.viewportSizeX = width
     this.viewportSizeY = height
-    this.readyCells = Area.ZERO
+    this.loadedCells = Area.ZERO
+    this.shownCells = Area.ZERO
     this.spot = this.allCells.truncateBy(SPOT_GRID_SIZE_LIMIT)
     this.spotId = 0
     this.sizing  = new Sizing()
@@ -160,9 +162,9 @@ export class VirtualGrid extends State {
   }
 
   @action
-  ready(cells: Area): void {
+  loaded(cells: Area): void {
     // console.log(`\nready: ${cells.y}..${cells.till.y}`)
-    this.readyCells = cells
+    this.loadedCells = cells
     const spot = this.spot
     if (!spot.envelops(cells)) {
       this.spot = spot.moveCenterTo(cells.center, this.allCells).round()
