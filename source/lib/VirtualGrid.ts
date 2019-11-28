@@ -39,13 +39,13 @@ export class VirtualGrid extends State {
   component: IComponent = undefined
   ppcX: number = 1 // pixels per cell
   ppcY: number = 1
-  thumbX: number = 0 // thumb
+  thumbX: number = 0
   thumbY: number = 0
-  surfaceX: number = 0 // surface
+  surfaceX: number = 0
   surfaceY: number = 0
   surfaceSizeX: number = 0
   surfaceSizeY: number = 0
-  viewportX: number = 0 // viewport
+  viewportX: number = 0
   viewportY: number = 0
   viewportSizeX: number = 0
   viewportSizeY: number = 0
