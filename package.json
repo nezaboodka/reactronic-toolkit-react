@@ -62,7 +62,8 @@
     "css-loader": "3.2.0",
     "file-loader": "4.2.0",
     "react-hot-loader": "4.12.18",
-    "source-map-loader": "0.2.4"
+    "source-map-loader": "0.2.4",
+    "cross-env": "6.0.3"
   },
   "browserslist": {
     "production": [
@@ -80,7 +81,8 @@
     "build": "eslint **/*.ts **/*.tsx && tsc",
     "fix": "eslint --fix **/*.ts **/*.tsx",
     "pack": "eslint **/*.ts **/*.tsx && tsc --sourceMap false --removeComments true",
-    "webpack-start": "node server.js",
+    "webpack-start": "cross-env NODE_ENV=development node server.js",
+    "webpack-start-prod": "cross-env NODE_ENV=production node server.js",
     "webpack-build": "webpack build",
     "parcel-start": "parcel ./demo/index.html --out-dir build/demo --cache-dir build/demo.cache",
     "parcel-build": "parcel build ./demo/index.html --out-dir build/demo-publish --cache-dir build/demo.cache"

@@ -4,7 +4,7 @@ const HtmlWebpackPlugin = require('html-webpack-plugin')
 
 module.exports = {
   devtool: 'source-map', // enable sourcemaps for debugging webpack output
-  mode: 'development', // 'production' | 'development' | 'none'
+  mode: process.env.NODE_ENV || 'development',
   entry: {
     vendors: ['react', 'react-dom'],
     app: [path.resolve(__dirname, 'demo', 'index.tsx')],
