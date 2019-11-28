@@ -19,9 +19,34 @@ export class GridFragmentLoader extends State {
     this.grid = grid
   }
 
-  get shownArea(): Area {
+  get readyArea(): Area {
     const g = this.grid
     return this.shownCells.scaleBy(g.ppc).relativeTo(g.surfaceArea)
+  }
+
+  @trigger @reentrance(Reentrance.CancelPrevious)
+  protected async load(): Promise<void> {
+    const g = this.grid
+    const buffer = g.bufferCells
+    if (!buffer.equalTo(g.loadedCells)) {
+      const data: string[] = []
+      const till = buffer.till
+      for (let y = buffer.y; y <= till.y; y++)
+        for (let x = buffer.x; x <= till.x; x++)
+          data.push(`${y}:${x}`)
+      this.loadedData = data
+      g.loaded(buffer)
+    }
+    await sleep(50)
+  }
+
+  @trigger
+  protected show(): void {
+    const loaded = this.grid.loadedCells
+    if (loaded.equalTo(this.grid.readyCells)) {
+      this.shownData = this.loadedData.slice() // clone
+      this.shownCells = loaded
+    }
   }
 
   @cached
@@ -73,29 +98,5 @@ export class GridFragmentLoader extends State {
         </div>
       `
     }).join('\n\n')
-  }
-
-  @trigger @reentrance(Reentrance.CancelPrevious)
-  protected async load(): Promise<void> {
-    const g = this.grid
-    const buffer = g.bufferCells
-    if (!buffer.equalTo(g.loadedCells)) {
-      const data: string[] = []
-      const till = buffer.till
-      for (let y = buffer.y; y <= till.y; y++)
-        for (let x = buffer.x; x <= till.x; x++)
-          data.push(`${y}:${x}`)
-      this.loadedData = data
-      g.loaded(buffer)
-    }
-    await sleep(50)
-  }
-
-  @trigger
-  protected show(): void {
-    if (this.grid.loadedCells.equalTo(this.grid.readyCells)) {
-      this.shownData = this.loadedData.slice()
-      this.shownCells = this.grid.loadedCells
-    }
   }
 }

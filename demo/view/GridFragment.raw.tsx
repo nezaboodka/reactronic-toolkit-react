@@ -16,7 +16,7 @@ export function GridFragment(p: {
   className?: string}): JSX.Element {
   return reactive(cycle => {
     const css = style.classes
-    const area = p.loader.shownArea
+    const area = p.loader.readyArea
     const html = p.loader.html(cx(css.cell, css.blink1))
     return (
       <div className={cx(p.className)}
