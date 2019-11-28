@@ -150,11 +150,15 @@ export class VirtualGrid extends State {
     // console.log(`\n\n=== Interaction ${this.interaction} ===`)
   }
 
+  // prevScroll: number = performance.now()
+
   @action
   scroll(x: number, y: number): void {
     const c = this.component
     if (c) {
-      // console.log(`onscroll: ${c.scrollTop}`)
+      // const now = performance.now()
+      // console.log(`onscroll: ${c.scrollTop} (prev was ${now - this.prevScroll} ms ago)`)
+      // this.prevScroll = now
       const dpr = 0.75/devicePixelRatio
       if (Math.abs(this.thumbY - y) > dpr || Math.abs(this.thumbX - x) > dpr)
         this.applyThumbPos(x, y, false)
