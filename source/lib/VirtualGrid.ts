@@ -50,7 +50,7 @@ export class VirtualGrid extends State {
   viewportSizeX: number = 0
   viewportSizeY: number = 0
   loadedCells: Area = Area.ZERO
-  shownCells: Area = Area.ZERO
+  readyCells: Area = Area.ZERO
   spot: Area = Area.ZERO
   spotId: number = 0
   sizing = new Sizing()
@@ -118,7 +118,7 @@ export class VirtualGrid extends State {
     this.viewportSizeX = width
     this.viewportSizeY = height
     this.loadedCells = Area.ZERO
-    this.shownCells = Area.ZERO
+    this.readyCells = Area.ZERO
     this.spot = this.allCells.truncateBy(SPOT_GRID_SIZE_LIMIT)
     this.spotId = 0
     this.sizing  = new Sizing()
@@ -190,6 +190,17 @@ export class VirtualGrid extends State {
         e.scrollLeft = x
       if (Math.abs(y - e.scrollTop) > 0.1)
         e.scrollTop = y
+    }
+  }
+
+  @trigger
+  protected applyReadyCells(): void {
+    const ready = this.readyCells
+    const loaded = this.loadedCells
+    if (!ready.equalTo(loaded) && loaded.overlaps(this.viewportCells)) {
+      if (!ready.overlaps(loaded))
+        this.spotId++
+      this.readyCells = loaded
     }
   }
 

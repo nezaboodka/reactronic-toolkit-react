@@ -93,10 +93,7 @@ export class GridFragmentLoader extends State {
 
   @trigger
   protected show(): void {
-    if (this.grid.loadedCells.overlaps(this.grid.viewportCells) &&
-      !this.shownCells.equalTo(this.grid.loadedCells)) {
-      if (!this.shownCells.overlaps(this.grid.loadedCells))
-        this.grid.spotId++
+    if (this.grid.loadedCells.equalTo(this.grid.readyCells)) {
       this.shownData = this.loadedData.slice()
       this.shownCells = this.grid.loadedCells
     }
