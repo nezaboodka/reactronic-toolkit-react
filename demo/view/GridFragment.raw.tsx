@@ -17,7 +17,7 @@ export function GridFragment(p: {
   return reactive(cycle => {
     const css = style.classes
     const area = p.loader.readyArea
-    const html = p.loader.html(cx(css.cell, css.blink1))
+    const html = p.loader.html(cx(css.cell, css.rollout))
     return (
       <div className={cx(p.className)}
         style={spot(area.size.x, area.size.y, area.x, area.y)}

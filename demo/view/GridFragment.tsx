@@ -25,7 +25,8 @@ export function GridFragment(p: {
         <div style={{position: 'fixed', left: '4em', top:'6em', color: cycle === 0 ? 'white' : 'lightgreen', backgroundColor: 'rgba(0, 0, 0, 0.75)', zIndex: 100}}>
           spot {grid.spotId}, cycle {cycle}<br/>{window.rWhy}
         </div>
-        {p.loader.jsx(cx(css.cell, cycle === 0 ? css.blink2 : css.blink1))}
+        {/* {p.loader.jsx(cx(css.cell, cycle === 0 ? css.blink2 : css.rollout))} */}
+        {p.loader.jsx(cx(css.cell, css.rollout))}
       </div>
     )
   }, {hint: `<${GridFragment.name}>`, priority: 9})
@@ -39,7 +40,7 @@ function GridCell(p: {hint: string, row: number, col: number, text: string, styl
     gridColumn: p.col + 1,
   }
   return (
-    <div title={`${p.hint}`} className={cx(css.cell, css.blink1)} style={place}>
+    <div title={`${p.hint}`} className={cx(css.cell, css.rollout)} style={place}>
       {p.text}
     </div>
   )
