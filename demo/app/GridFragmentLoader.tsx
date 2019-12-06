@@ -4,11 +4,11 @@
 // License: https://raw.githubusercontent.com/nezaboodka/reactronic/master/LICENSE
 
 import * as React from 'react'
-import { cached, Reentrance, reentrance, sleep, State, trigger } from 'reactronic'
+import { cached, Reentrance, reentrance, sleep, Stateful, trigger } from 'reactronic'
 
 import { Area, VirtualGrid, xy } from '~/../source/reactronic-toolkit-react'
 
-export class GridFragmentLoader extends State {
+export class GridFragmentLoader extends Stateful {
   readonly grid: VirtualGrid
   private loadedData: string[] = []
   shownData: string[] = []

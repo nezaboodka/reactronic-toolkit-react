@@ -3,12 +3,12 @@
 // Copyright (C) 2019 Yury Chetyrko <ychetyrko@gmail.com>
 // License: https://raw.githubusercontent.com/nezaboodka/reactronic/master/LICENSE
 
-import { State } from 'reactronic'
+import { Stateful } from 'reactronic'
 
 import { VirtualGrid } from '~/../source/reactronic-toolkit-react'
 import { GridFragmentLoader } from '~/app/GridFragmentLoader'
 
-export class Application extends State {
+export class Application extends Stateful {
   readonly grid = new VirtualGrid(10000, 1_000_000_000_000) // 1bn
   readonly loader = new GridFragmentLoader(this.grid)
 }

@@ -3,7 +3,7 @@
 // Copyright (C) 2019 Yury Chetyrko <ychetyrko@gmail.com>
 // License: https://raw.githubusercontent.com/nezaboodka/reactronic/master/LICENSE
 
-import { action, Cache, Monitor, nonreactive, State, trigger } from 'reactronic'
+import { action, Cache, Monitor, nonreactive, Stateful, trigger } from 'reactronic'
 
 import { Area, area, XY, xy } from './Area'
 
@@ -33,7 +33,7 @@ export class Sizing {
   customCellHeight: Guide[] = []
 }
 
-export class VirtualGrid extends State {
+export class VirtualGrid extends Stateful {
   bufferingRatio: XY = xy(1.0, 1.7)
   allCells: Area
   component: IComponent = undefined

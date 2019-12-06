@@ -3,7 +3,7 @@
 // Copyright (C) 2019 Yury Chetyrko <ychetyrko@gmail.com>
 // License: https://raw.githubusercontent.com/nezaboodka/reactronic/master/LICENSE
 
-import { action, State } from 'reactronic'
+import { action, Stateful } from 'reactronic'
 
 export enum KeyboardModifiers {
   None = 0,
@@ -33,7 +33,7 @@ export enum UserOperation {
   Drop = 6,
 }
 
-export class UserInput extends State {
+export class UserInput extends Stateful {
   // Configuration
   draggingThreshold: number
   element?: HTMLElement | null

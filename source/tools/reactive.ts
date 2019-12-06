@@ -4,7 +4,7 @@
 // License: https://raw.githubusercontent.com/nezaboodka/reactronic/master/LICENSE
 
 import * as React from 'react'
-import { Action, Cache, cached, isolated, Reactronic as R, State, stateless, Trace, trigger } from 'reactronic'
+import { Action, Cache, cached, isolated, Reactronic as R, Stateful, stateless, Trace, trigger } from 'reactronic'
 
 export type ReactiveOptions = {
   hint: string,
@@ -40,7 +40,7 @@ export function reactive(render: (cycle: number) => JSX.Element, options?: Parti
 
 type ReactState<V> = { rx: Rx<V>, cycle: number }
 
-class Rx<V> extends State {
+class Rx<V> extends Stateful {
   @cached
   render(render: (cycle: number) => V, action?: Action): V {
     return action ? action.inspect(() => render(this.cycle)) : render(this.cycle)
