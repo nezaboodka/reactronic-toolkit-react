@@ -54,5 +54,8 @@ export const style = restyle(() => {
       max-width: 38vw;
       justify-self: center;
     `,
+    action: css`
+      label: action;
+    `,
   }
 })
