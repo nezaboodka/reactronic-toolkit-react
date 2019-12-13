@@ -10,7 +10,7 @@ module.exports = {
     'quotes': ['error', 'single'],
     'semi': ['error', 'never'],
     'prefer-const': 'error',
-    'comma-dangle': ['error', 'always-multiline'],
+    // 'comma-dangle': ['error', 'always-multiline'],
     'no-trailing-spaces': 'error',
     'no-unexpected-multiline': 'error',
     'object-shorthand': ['error', 'always'],
