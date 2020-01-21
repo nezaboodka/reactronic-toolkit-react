@@ -1,57 +1,64 @@
 // The below copyright notice and the license permission notice
 // shall be included in all copies or substantial portions.
-// Copyright (C) 2019 Yury Chetyrko <ychetyrko@gmail.com>
+// Copyright (C) 2019-2020 Yury Chetyrko <ychetyrko@gmail.com>
 // License: https://raw.githubusercontent.com/nezaboodka/reactronic/master/LICENSE
 
 // API
 
-type View<M = void, T = void> = Render<M, T> & LifeCycle<M, T>
+type Render<Model, Element = HTMLElement> = (model: Model, element: Element, cycle: number) => void
+// type Instance<Model, Element> = { kind: Render<Model, Element>, key: string | number, model: Model, element: Element }
 
-type Render<M, T> = (model: M, cycle: number, target: T) => void
+interface Lifecycle<Model, Element = HTMLElement> {
+  create?(model: Model, outer: HTMLElement): Element
+  dispose?(model: Model, element: Element): void
+  finalize?(model: Model, element: Element, cascade: boolean): void
+  children?(model: Model, element: Element): Array<Render<any, any>>
+}
 
-interface LifeCycle<M, T> {
-  mount?(model: M): T
-  children?(model: M, target: T): Array<View<any, any>>
-  unmount?(model: M, target: T): void
+export function lifecycle<Model, Element = HTMLElement>(render: Render<Model, Element>): Lifecycle<Model, Element> {
+  return render as Lifecycle<Model, Element>
 }
 
 // Example
 
-export function div(m: { className?: string, innerHTML?: string }, cycle: number, t: HTMLDivElement): void {
-  t.className = m.className || ''
-  t.innerHTML = m.innerHTML || ''
+export type DivProps = { className?: string, innerHTML?: string}
+
+export function div(props: DivProps, e: HTMLDivElement): void {
+  e.className = props.className || ''
+  e.innerHTML = props.innerHTML || ''
 }
 
-div.mount = function (m: { className?: string, innerHTML?: string }): HTMLDivElement {
-  return document.createElement('div')
+lifecycle(div).create = function(props: DivProps, outer: HTMLElement): HTMLDivElement {
+  return outer.appendChild(document.createElement('div'))
 }
 
-div.unmount = function (m: string, t: HTMLDivElement): void {
-  t.parentElement?.removeChild(t)
+lifecycle(div).finalize = function(props: DivProps, e: HTMLDivElement): void {
+  e.parentElement?.removeChild(e)
 }
 
 // Example
 
-const example: View<string, Console> = function(m: string, cycle: number, target: Console): void {
-  target.log(`render ${m}.${cycle}`)
+export function example(m: string, c: Console, cycle: number): void {
+  c.log(`render ${m}.${cycle}`)
 }
 
-example.mount = function (m: string): Console {
+lifecycle(example).create = function(m: string): Console {
   const target = console
   target.log(`mount ${m} @ ${this}`)
   return target
 }
 
-example.unmount = function(m: string, target: Console): void {
-  target.log(`unmount ${m} @ ${this}`)
+lifecycle(example).finalize = function(m: string, v: Console): void {
+  v.log(`unmount ${m} @ ${this}`)
 }
 
 export function z(): void {
   const model = 'rx1'
-  const target = example.mount ? example.mount(model) : console
-  example(model, 0, target)
-  if (example.unmount)
-    example.unmount(model, target)
+  const c = lifecycle(example)
+  const view = c.create ? c.create(model, document.createElement('dev')) : console
+  example(model, view, 0)
+  if (c.finalize)
+    c.finalize(model, view, false)
 }
 
 // import { VirtualGrid } from '~/../source/reactronic-toolkit-react'

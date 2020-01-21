@@ -47,9 +47,11 @@
     "devtool",
     "disp",
     "enqueues",
+    "factoryof",
     "forin",
     "gmail",
     "lcovonly",
+    "lifecycle",
     "monospace",
     "multiline",
     "nezaboodka",
@@ -67,6 +69,7 @@
     "sidebyside",
     "typeless",
     "unmount",
+    "viewof",
     "woff",
     "ychetyrko"
   ]
