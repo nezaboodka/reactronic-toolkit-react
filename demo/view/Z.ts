@@ -5,21 +5,25 @@
 
 // API
 
-type Render<Model, Element = HTMLElement> = (model: Model, element: Element, cycle: number) => void
+type Render<Model, Element> = (model: Model, element: Element, cycle: number) => void
 // type Instance<Model, Element> = { kind: Render<Model, Element>, key: string | number, model: Model, element: Element }
 
-interface Lifecycle<Model, Element = HTMLElement> {
+interface Lifecycle<Model, Element> {
   create?(model: Model, outer: HTMLElement): Element
   dispose?(model: Model, element: Element): void
   finalize?(model: Model, element: Element, cascade: boolean): void
   children?(model: Model, element: Element): Array<Render<any, any>>
 }
 
-export function lifecycle<Model, Element = HTMLElement>(render: Render<Model, Element>): Lifecycle<Model, Element> {
+export function lifecycle<Model, Element>(render: Render<Model, Element>): Lifecycle<Model, Element> {
   return render as Lifecycle<Model, Element>
 }
 
-// Example
+export function rx<Model, Element>(type: Render<Model, Element>, m: Model): void {
+  //
+}
+
+// Example - div
 
 export type DivProps = { className?: string, innerHTML?: string}
 
@@ -35,6 +39,14 @@ lifecycle(div).create = function(props: DivProps, outer: HTMLElement): HTMLDivEl
 lifecycle(div).finalize = function(props: DivProps, e: HTMLDivElement): void {
   e.parentElement?.removeChild(e)
 }
+
+// Example - Icon
+
+// export type IconProps = { className?: string }
+
+// export function Icon(props: IconProps, e: HTMLDivElement): void {
+//   return rx(div, { className: 'hello' }, () => [])
+// }
 
 // Example
 
