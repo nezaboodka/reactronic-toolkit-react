@@ -5,74 +5,53 @@
 
 // API
 
-type Render<Model, Element> = (model: Model, element: Element, cycle: number) => void
-// type Instance<Model, Element> = { kind: Render<Model, Element>, key: string | number, model: Model, element: Element }
+export type Render<Model, View> = (m: Model, v: View, cycle: number) => void
+export type RxChildren = Array<Rx<any, any>>
 
-interface Hooks<Model, Element> {
-  create?(model: Model, outer: HTMLElement): Element
-  remove?(model: Model, element: Element): void
-  // finalize?(model: Model, element: Element, cascade: boolean): void
-  children?(model: Model, element: Element): Array<Render<any, any>>
+export interface Rx<Model, View> {
+  type: string
+  key?: string | number
+  model: Model
+  view?: View
+  render: Render<Model, View>
+  mount?(rx: Rx<Model, View>, outer: HTMLElement): void
+  unmount?(rx: Rx<Model, View>, outer: HTMLElement): void
+  children?(): RxChildren
 }
 
-export function hooksof<Model, Element>(render: Render<Model, Element>): Hooks<Model, Element> {
-  return render as Hooks<Model, Element>
-}
+// // Example - Button
 
-export function rx<Model, Element>(type: Render<Model, Element>, m: Model): void {
-  //
-}
-
-// Example - div
-
-export type DivProps = { className?: string, innerHTML?: string}
-
-export function div(props: DivProps, e: HTMLDivElement): void {
-  e.className = props.className || ''
-  e.innerHTML = props.innerHTML || ''
-}
-
-hooksof(div).create = function(props: DivProps, outer: HTMLElement): HTMLDivElement {
-  return outer.appendChild(document.createElement('div'))
-}
-
-hooksof(div).remove = function(props: DivProps, e: HTMLDivElement): void {
-  e.parentElement?.removeChild(e)
-}
-
-// Example - Icon
-
-// export type IconProps = { className?: string }
-
-// export function Icon(props: IconProps, e: HTMLDivElement): void {
-//   return rx(div, { className: 'hello' }, () => [
+// export function Button(m: { key?: string, className?: string }, e: HTMLDivElement): void {
+//   div({ className: 'button' }, () => [
+//     div({ className: 'icon' }),
+//     div({ className: 'text' }),
 //   ])
 // }
 
-// Example
+// // Example
 
-export function example(m: string, c: Console, cycle: number): void {
-  c.log(`render ${m}.${cycle}`)
-}
+// export function example(m: string, c: Console, cycle: number): void {
+//   c.log(`render ${m}.${cycle}`)
+// }
 
-hooksof(example).create = function(m: string): Console {
-  const target = console
-  target.log(`create ${m} @ ${this}`)
-  return target
-}
+// hooksof(example).create = function(m: string, outer: HTMLElement): Console {
+//   const target = console
+//   target.log(`create ${m} @ ${this}`)
+//   return target
+// }
 
-hooksof(example).remove = function(m: string, v: Console): void {
-  v.log(`remove ${m} @ ${this}`)
-}
+// hooksof(example).remove = function(m: string, e: Console, outer: HTMLElement): void {
+//   e.log(`remove ${m} @ ${this}`)
+// }
 
-export function z(): void {
-  const model = 'rx1'
-  const h = hooksof(example)
-  const view = h.create ? h.create(model, document.createElement('dev')) : console
-  example(model, view, 0)
-  if (h.remove)
-    h.remove(model, view)
-}
+// export function z(): void {
+//   const model = 'rx1'
+//   const h = hooksof(example)
+//   const element = h.create ? h.create(model, document.body) : console
+//   example(model, element, 0)
+//   if (h.remove)
+//     h.remove(model, element, document.body)
+// }
 
 // import { VirtualGrid } from '~/../source/reactronic-toolkit-react'
 // import { Application } from '~/app/Application'
