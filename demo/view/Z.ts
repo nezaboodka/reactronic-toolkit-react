@@ -42,13 +42,12 @@ hooksof(div).remove = function(props: DivProps, e: HTMLDivElement): void {
 
 // Example - Icon
 
-export type IconProps = { className?: string }
+// export type IconProps = { className?: string }
 
-export function Icon(props: IconProps, e: HTMLDivElement): void {
-  return rx(div, { className: 'hello' }, () => [
-    
-  ])
-}
+// export function Icon(props: IconProps, e: HTMLDivElement): void {
+//   return rx(div, { className: 'hello' }, () => [
+//   ])
+// }
 
 // Example
 
@@ -58,21 +57,21 @@ export function example(m: string, c: Console, cycle: number): void {
 
 hooksof(example).create = function(m: string): Console {
   const target = console
-  target.log(`mount ${m} @ ${this}`)
+  target.log(`create ${m} @ ${this}`)
   return target
 }
 
-hooksof(example).finalize = function(m: string, v: Console): void {
-  v.log(`unmount ${m} @ ${this}`)
+hooksof(example).remove = function(m: string, v: Console): void {
+  v.log(`remove ${m} @ ${this}`)
 }
 
 export function z(): void {
   const model = 'rx1'
-  const c = hooksof(example)
-  const view = c.create ? c.create(model, document.createElement('dev')) : console
+  const h = hooksof(example)
+  const view = h.create ? h.create(model, document.createElement('dev')) : console
   example(model, view, 0)
-  if (c.finalize)
-    c.finalize(model, view, false)
+  if (h.remove)
+    h.remove(model, view)
 }
 
 // import { VirtualGrid } from '~/../source/reactronic-toolkit-react'
