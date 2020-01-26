@@ -8,15 +8,15 @@
 type Render<Model, Element> = (model: Model, element: Element, cycle: number) => void
 // type Instance<Model, Element> = { kind: Render<Model, Element>, key: string | number, model: Model, element: Element }
 
-interface Lifecycle<Model, Element> {
+interface Hooks<Model, Element> {
   create?(model: Model, outer: HTMLElement): Element
-  dispose?(model: Model, element: Element): void
-  finalize?(model: Model, element: Element, cascade: boolean): void
+  remove?(model: Model, element: Element): void
+  // finalize?(model: Model, element: Element, cascade: boolean): void
   children?(model: Model, element: Element): Array<Render<any, any>>
 }
 
-export function lifecycle<Model, Element>(render: Render<Model, Element>): Lifecycle<Model, Element> {
-  return render as Lifecycle<Model, Element>
+export function hooksof<Model, Element>(render: Render<Model, Element>): Hooks<Model, Element> {
+  return render as Hooks<Model, Element>
 }
 
 export function rx<Model, Element>(type: Render<Model, Element>, m: Model): void {
@@ -32,21 +32,23 @@ export function div(props: DivProps, e: HTMLDivElement): void {
   e.innerHTML = props.innerHTML || ''
 }
 
-lifecycle(div).create = function(props: DivProps, outer: HTMLElement): HTMLDivElement {
+hooksof(div).create = function(props: DivProps, outer: HTMLElement): HTMLDivElement {
   return outer.appendChild(document.createElement('div'))
 }
 
-lifecycle(div).finalize = function(props: DivProps, e: HTMLDivElement): void {
+hooksof(div).remove = function(props: DivProps, e: HTMLDivElement): void {
   e.parentElement?.removeChild(e)
 }
 
 // Example - Icon
 
-// export type IconProps = { className?: string }
+export type IconProps = { className?: string }
 
-// export function Icon(props: IconProps, e: HTMLDivElement): void {
-//   return rx(div, { className: 'hello' }, () => [])
-// }
+export function Icon(props: IconProps, e: HTMLDivElement): void {
+  return rx(div, { className: 'hello' }, () => [
+    
+  ])
+}
 
 // Example
 
@@ -54,19 +56,19 @@ export function example(m: string, c: Console, cycle: number): void {
   c.log(`render ${m}.${cycle}`)
 }
 
-lifecycle(example).create = function(m: string): Console {
+hooksof(example).create = function(m: string): Console {
   const target = console
   target.log(`mount ${m} @ ${this}`)
   return target
 }
 
-lifecycle(example).finalize = function(m: string, v: Console): void {
+hooksof(example).finalize = function(m: string, v: Console): void {
   v.log(`unmount ${m} @ ${this}`)
 }
 
 export function z(): void {
   const model = 'rx1'
-  const c = lifecycle(example)
+  const c = hooksof(example)
   const view = c.create ? c.create(model, document.createElement('dev')) : console
   example(model, view, 0)
   if (c.finalize)
