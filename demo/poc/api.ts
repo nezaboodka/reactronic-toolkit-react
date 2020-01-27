@@ -5,22 +5,22 @@
 
 // API
 
+export type Render<Model = unknown, View = unknown> =
+  (v: View, m: Model, cycle: number) => Array<Node> | string | void
+
 export interface Node<Model = any, View = any> {
   key?: string | number
   type: NodeType<Model, View>
   model: Model
   view: View
-  children?: Children
+  render: Render<Model, View>
 }
 
 export interface NodeType<Model = any, View = any> {
   name: string
-  update(m: Model, v: View, cycle: number): void
   mount?(node: Node<Model, View>, outer: HTMLElement): void
   unmount?(node: Node<Model, View>, outer: HTMLElement): void
 }
-
-export type Children = () => Array<Node> | string
 
 // // Example - Button
 
