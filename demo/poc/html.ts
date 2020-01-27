@@ -3,7 +3,7 @@
 // Copyright (C) 2019-2020 Yury Chetyrko <ychetyrko@gmail.com>
 // License: https://raw.githubusercontent.com/nezaboodka/reactronic/master/LICENSE
 
-import { Render, Rx, RxChildren } from './api'
+import { Children, Node, NodeType } from './api'
 
 export interface DivModel {
   className?: string
@@ -11,36 +11,39 @@ export interface DivModel {
   innerHTML?: string
 }
 
-export function div(model: DivModel, children?: () => RxChildren): Rx<DivModel, HTMLDivElement> {
-  return html(div.name, model, children)
+export function div(m: DivModel | string, children?: Children): Node<DivModel | string, HTMLDivElement> {
+  return html<HTMLDivElement>(tag.div, m, children)
 }
 
-export function span(model: DivModel, children?: () => RxChildren): Rx<DivModel, HTMLSpanElement> {
-  return html(span.name, model, children)
+export function span(m: DivModel | string, children?: Children): Node<DivModel | string, HTMLSpanElement> {
+  return html<HTMLSpanElement>(tag.span, m, children)
 }
 
-export function i(model: DivModel, children?: () => RxChildren): Rx<DivModel, HTMLSpanElement> {
-  return html(i.name, model, children)
+export function i(m: DivModel | string, children?: Children): Node<DivModel | string, HTMLSpanElement> {
+  return html<HTMLSpanElement>(tag.i, m, children)
+}
+
+const tag = {
+  div: { name: 'div', update, mount, unmount },
+  span: { name: 'span', update, mount, unmount },
+  i: { name: 'i', update, mount, unmount },
 }
 
 // Internal
 
-function html<View extends HTMLElement>(tag: string, model: unknown, children?: () => RxChildren): Rx<any, View> {
-  return { type: tag, key: undefined, model, view: undefined, render, children, mount, unmount }
+function html<View extends HTMLElement>(type: NodeType<unknown, View>, model: unknown, children?: Children): Node<any, View> {
+  return { type, key: undefined, model, view: document.body as View, children }
 }
 
-function render(m: unknown, v: HTMLElement): void {
+function update(m: unknown, v: HTMLElement): void {
   // v.className = m.className || ''
   // v.innerHTML = m.innerHTML || ''
 }
 
-function mount<View extends HTMLElement>(rx: Rx<unknown, View>, outer: HTMLElement): void {
-  rx.view = outer.appendChild(document.createElement(rx.type)) as View
+function mount<View extends HTMLElement>(rx: Node<unknown, View>, outer: HTMLElement): void {
+  rx.view = outer.appendChild(document.createElement(rx.type.name)) as View
 }
 
-function unmount<View extends HTMLElement>(rx: Rx<unknown, View>, outer: HTMLElement): void {
-  if (rx.view) {
-    outer.removeChild(rx.view)
-    rx.view = undefined
-  }
+function unmount<View extends HTMLElement>(rx: Node<unknown, View>, outer: HTMLElement): void {
+  outer.removeChild(rx.view)
 }
