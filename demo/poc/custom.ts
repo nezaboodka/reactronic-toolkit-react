@@ -11,16 +11,14 @@ export interface FancyButtonModel {
   style?: any
 }
 
-export function FancyButton(model: FancyButtonModel): Node<FancyButtonModel, HTMLDivElement> {
+export function FancyButton(model: FancyButtonModel): Node<void, HTMLDivElement> {
   // return { type, key: undefined, model, view: undefined, children }
   return render(
     div(x => {
       x.className = 'fancy-button'
       div(x => {
         x.className = 'fancy-button-icon'
-        i(x => {
-          x.className = 'la las-times'
-        })
+        i(x => x.className = 'la las-times')
       })
       div(x => {
         x.className = 'fancy-button-text'
@@ -30,6 +28,6 @@ export function FancyButton(model: FancyButtonModel): Node<FancyButtonModel, HTM
   )
 }
 
-function render(node: any): any {
+export function render(node: any): any {
   //
 }
