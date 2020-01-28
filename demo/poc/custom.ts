@@ -4,7 +4,7 @@
 // License: https://raw.githubusercontent.com/nezaboodka/reactronic/master/LICENSE
 
 import { Node } from './api'
-import { div, i, text } from './html'
+import { div, i, t } from './html'
 
 export interface FancyButtonModel {
   className?: string
@@ -16,13 +16,15 @@ export function FancyButton(model: FancyButtonModel): Node<void, HTMLDivElement>
   return render(
     div(x => {
       x.className = 'fancy-button'
+
       div(x => {
         x.className = 'fancy-button-icon'
         i(x => x.className = 'la las-times')
       })
+
       div(x => {
         x.className = 'fancy-button-text'
-        text('press here')
+        t('press here')
       })
     })
   )
