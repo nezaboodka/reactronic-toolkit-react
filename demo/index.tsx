@@ -9,9 +9,9 @@ import { Action, Reactronic as R, TraceLevel } from 'reactronic'
 
 import { Application } from '~/app/Application'
 import { AppMain } from '~/view/AppMain'
-import { z } from '~/view/Z'
+// import { z } from '~/view/Z'
 
-z()
+// z()
 
 R.setTrace(TraceLevel.Warnings)
 R.repetitiveReadWarningThreshold = 0 // disabled
