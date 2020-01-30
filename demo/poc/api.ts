@@ -5,21 +5,32 @@
 
 // API
 
-export type Render<Model = unknown, View = unknown> =
-  (v: View, m: Model, cycle: number) => Array<Node> | string | void
-
-export interface Node<Model = any, View = any> {
-  key?: string | number
-  type: NodeType<Model, View>
-  model: Model
-  view: View
-  render: Render<Model, View>
+export function reactive<T = void>(k: Key,
+  render: Render<T>, rtti?: Rtti<T>): void {
+  const node = { rtti, k, render }
+  console.log(node)
 }
 
-export interface NodeType<Model = any, View = any> {
+export function flush(): void {
+  throw new Error('not implemented')
+}
+
+export type Key = string | number | undefined | null | void
+export type Render<T = void> = (element: T, cycle: number) => void
+export type Hook<T = void> = (node: Node<T>) => void
+
+export interface Node<T = void> {
+  rtti?: Rtti<T>
+  key?: string | number
+  element?: T
+  render: Render<T>
+}
+
+export interface Rtti<T = void> {
   name: string
-  mount?(node: Node<Model, View>, outer: HTMLElement): void
-  unmount?(node: Node<Model, View>, outer: HTMLElement): void
+  render?: Render<T>
+  mount?: Hook<T>
+  unmount?: Hook<T>
 }
 
 // // Example - Button

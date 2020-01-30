@@ -3,40 +3,49 @@
 // Copyright (C) 2019-2020 Yury Chetyrko <ychetyrko@gmail.com>
 // License: https://raw.githubusercontent.com/nezaboodka/reactronic/master/LICENSE
 
-import { Node, NodeType, Render } from './api'
+import { Key, Node, reactive, Render, Rtti } from './api'
 
-export function div(render: Render<void, HTMLDivElement>, key?: string | number): Node<void, HTMLDivElement> {
-  return html<HTMLDivElement>(tag.div, render, key)
+export function div(render: Render<HTMLDivElement>, k?: Key): void {
+  reactiveHtmlNode<HTMLDivElement>(k, HtmlRtti.div, render)
 }
 
-export function span(render: Render<void, HTMLSpanElement>, key?: string | number): Node<void, HTMLSpanElement> {
-  return html<HTMLSpanElement>(tag.span, render, key)
+export function span(render: Render<HTMLSpanElement>, k?: Key): void {
+  reactiveHtmlNode<HTMLSpanElement>(k, HtmlRtti.span, render)
 }
 
-export function i(render: Render<void, HTMLSpanElement>, key?: string | number): Node<void, HTMLSpanElement> {
-  return html<HTMLSpanElement>(tag.i, render, key)
+export function i(render: Render<HTMLSpanElement>, k?: Key): void {
+  reactiveHtmlNode<HTMLSpanElement>(k, HtmlRtti.i, render)
 }
 
-export function t(value: string): Node<void, string> {
-  return value as any
+export function t(value: string): void {
+  throw new Error('not implemented')
 }
 
-const tag = {
-  div: { name: 'div', mount, unmount },
-  span: { name: 'span', mount, unmount },
-  i: { name: 'i', mount, unmount },
+const HtmlRtti = {
+  div: { name: 'div', renderHtmlNode, mount, unmount },
+  span: { name: 'span', renderHtmlNode, mount, unmount },
+  i: { name: 'i', renderHtmlNode, mount, unmount },
 }
 
 // Internal
 
-function html<View extends HTMLElement>(type: NodeType<void, View>, render: Render<void, View>, key?: string | number): Node<any, View> {
-  return { type, key, model: undefined, view: document.body as View, render }
+const outer = document.body
+
+function reactiveHtmlNode<T extends HTMLElement>(k: Key,
+  rtti: Rtti<T>, render: Render<T>, ): void {
+  reactive(k, render, rtti)
 }
 
-function mount<View extends HTMLElement>(rx: Node<void, View>, outer: HTMLElement): void {
-  rx.view = outer.appendChild(document.createElement(rx.type.name)) as View
+function renderHtmlNode<T extends HTMLElement>(node: Node<T>): void {
+  //
 }
 
-function unmount<View extends HTMLElement>(rx: Node<void, View>, outer: HTMLElement): void {
-  outer.removeChild(rx.view)
+function mount<T extends HTMLElement>(node: Node<T>): void {
+  // eslint-disable-next-line @typescript-eslint/no-non-null-assertion
+  node.element = outer.appendChild(document.createElement(node.rtti!.name)) as T
+}
+
+function unmount<T extends HTMLElement>(node: Node<T>): void {
+  // eslint-disable-next-line @typescript-eslint/no-non-null-assertion
+  outer.removeChild(node.element!)
 }
