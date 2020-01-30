@@ -9,17 +9,17 @@ import { div, i, t } from './html'
 export function Toolbar(className: string, k?: Key): void {
   div(e => {
     e.className = className
-    FancyButton(0, 'las la-menu', 'Menu')
+    ToolbarButton('las la-menu', 'Menu')
     div(e => e.style.flexGrow = '1')
-    FancyButton(0, 'las la-cog', 'Settings')
-    FancyButton(0, 'las la-times', 'Close')
+    ToolbarButton('las la-cog', 'Settings')
+    ToolbarButton('las la-times', 'Close')
   }, k)
 }
 
-export function FancyButton(k: Key, icon: string, text: string): void {
+export function ToolbarButton(icon: string, text: string, k?: Key): void {
   reactive(k, () => {
-    let textElem: HTMLDivElement
 
+    let measure: HTMLDivElement
     div(e => {
       e.className = 'fancy-button'
 
@@ -29,13 +29,13 @@ export function FancyButton(k: Key, icon: string, text: string): void {
       })
 
       div(e => {
-        textElem = e
         e.className = 'fancy-button-text'
         t(text)
+        measure = e
       })
     })
 
     flush() // eslint-disable-next-line @typescript-eslint/no-non-null-assertion
-    console.log(textElem!.clientWidth)
+    console.log(measure!.clientWidth)
   })
 }
