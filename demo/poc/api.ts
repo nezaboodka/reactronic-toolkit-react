@@ -5,9 +5,20 @@
 
 // API
 
-export function reactive<T = void>(render: Render<T>, k?: Key, rtti?: Rtti<T>): void {
-  const node = { rtti, k, render }
-  console.log(node)
+export function reactive<T = void>(render: Render<T>, key?: Key, rtti?: Rtti<T>): void {
+  element(render, key, rtti)
+}
+
+export function element<E = void>(render: Render<E>, key?: Key, rtti?: Rtti<E>): void {
+  const ref: Ref<any> = { rtti, key, render }
+  buffer.children.push(ref)
+  // const outer = buffer
+  // try {
+  //   console.log(e)
+  // }
+  // finally {
+  //   buffer = outer
+  // }
 }
 
 export function flush(): void {
@@ -15,22 +26,30 @@ export function flush(): void {
 }
 
 export type Key = string | number | undefined | null | void
-export type Render<T = void> = (element: T, cycle: number) => void
-export type Hook<T = void> = (node: Node<T>) => void
+export type Render<E = void> = (element: E, cycle: number) => void
 
-export interface Node<T = void> {
-  rtti?: Rtti<T>
-  key?: string | number
-  element?: T
-  render: Render<T>
+export interface Ref<E = void> {
+  rtti?: Rtti<E>
+  key?: Key
+  element?: E
+  render: Render<E>
 }
 
-export interface Rtti<T = void> {
+export interface Rtti<E = void> {
   name: string
-  render?: Render<T>
-  mount?: Hook<T>
-  unmount?: Hook<T>
+  acquire?(ref: Ref<E>): void
+  mount?(ref: Ref<E>): E
+  unmount?(ref: Ref<E>): undefined
 }
+
+// Internal
+
+class Buffer {
+  self: Ref<unknown> = { render: () => { /* */ }}
+  children: Array<Ref<unknown>> = []
+}
+
+const buffer: Buffer = new Buffer()
 
 // // Example - Button
 

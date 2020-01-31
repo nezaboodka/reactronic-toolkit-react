@@ -3,18 +3,18 @@
 // Copyright (C) 2019-2020 Yury Chetyrko <ychetyrko@gmail.com>
 // License: https://raw.githubusercontent.com/nezaboodka/reactronic/master/LICENSE
 
-import { Key, Node, reactive, Render, Rtti } from './api'
+import { element, Key, Ref, Render, Rtti } from './api'
 
-export function div(render: Render<HTMLDivElement>, k?: Key): void {
-  reactiveHtml<HTMLDivElement>(render, k, HtmlRtti.div)
+export function div(r: Render<HTMLDivElement>, k?: Key): void {
+  htmlElem<HTMLDivElement>(r, k, HtmlRtti.div)
 }
 
-export function span(render: Render<HTMLSpanElement>, k?: Key): void {
-  reactiveHtml<HTMLSpanElement>(render, k, HtmlRtti.span)
+export function span(r: Render<HTMLSpanElement>, k?: Key): void {
+  htmlElem<HTMLSpanElement>(r, k, HtmlRtti.span)
 }
 
-export function i(render: Render<HTMLSpanElement>, k?: Key): void {
-  reactiveHtml<HTMLSpanElement>(render, k, HtmlRtti.i)
+export function i(r: Render<HTMLSpanElement>, k?: Key): void {
+  htmlElem<HTMLSpanElement>(r, k, HtmlRtti.i)
 }
 
 export function t(value: string): void {
@@ -22,30 +22,31 @@ export function t(value: string): void {
 }
 
 const HtmlRtti = {
-  div: { name: 'div', renderHtmlNode, mount, unmount },
-  span: { name: 'span', renderHtmlNode, mount, unmount },
-  i: { name: 'i', renderHtmlNode, mount, unmount },
+  div: { name: 'div', acquire, mount, unmount },
+  span: { name: 'span', acquire, mount, unmount },
+  i: { name: 'i', acquire, mount, unmount },
 }
 
 // Internal
 
-const outer = document.body
-
-function reactiveHtml<T extends HTMLElement>(render: Render<T>,
-  k: Key, rtti: Rtti<T>, ): void {
-  reactive(render, k, rtti)
+function htmlElem<E extends HTMLElement>(render: Render<E>, k: Key, rtti: Rtti<E>): void {
+  element(render, k, rtti)
 }
 
-function renderHtmlNode<T extends HTMLElement>(node: Node<T>): void {
-  //
+function acquire<E extends HTMLElement>(ref: Ref<E>): void {
+  let e = ref.element
+  if (!e) // eslint-disable-next-line @typescript-eslint/no-non-null-assertion
+    e = ref.element = ref.rtti?.mount!(ref)
+  ref.render(e, 0)
 }
 
-function mount<T extends HTMLElement>(node: Node<T>): void {
+function mount<E extends HTMLElement>(ref: Ref<E>): E {
   // eslint-disable-next-line @typescript-eslint/no-non-null-assertion
-  node.element = outer.appendChild(document.createElement(node.rtti!.name)) as T
+  return document.body.appendChild(document.createElement(ref.rtti!.name)) as E
 }
 
-function unmount<T extends HTMLElement>(node: Node<T>): void {
+function unmount<E extends HTMLElement>(ref: Ref<E>): undefined {
   // eslint-disable-next-line @typescript-eslint/no-non-null-assertion
-  outer.removeChild(node.element!)
+  document.body.removeChild(ref.element!)
+  return undefined
 }
