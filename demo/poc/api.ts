@@ -7,11 +7,6 @@
 
 export function reactive<T = void>(render: Render<T>, key?: Key, rtti?: Rtti<T>): void {
   element(render, key, rtti)
-}
-
-export function element<E = void>(render: Render<E>, key?: Key, rtti?: Rtti<E>): void {
-  const ref: Ref<any> = { rtti, key, render }
-  buffer.children.push(ref)
   // const outer = buffer
   // try {
   //   console.log(e)
@@ -19,6 +14,11 @@ export function element<E = void>(render: Render<E>, key?: Key, rtti?: Rtti<E>):
   // finally {
   //   buffer = outer
   // }
+}
+
+export function element<E = void>(render: Render<E>, key?: Key, rtti?: Rtti<E>): void {
+  const ref: Ref<any> = { rtti, key, render }
+  buffer.children.push(ref)
 }
 
 export function flush(): void {
