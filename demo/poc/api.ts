@@ -5,8 +5,7 @@
 
 // API
 
-export function reactive<T = void>(k: Key,
-  render: Render<T>, rtti?: Rtti<T>): void {
+export function reactive<T = void>(render: Render<T>, k?: Key, rtti?: Rtti<T>): void {
   const node = { rtti, k, render }
   console.log(node)
 }

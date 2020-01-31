@@ -17,7 +17,7 @@ export function Toolbar(className: string, k?: Key): void {
 }
 
 export function ToolbarButton(icon: string, text: string, k?: Key): void {
-  reactive(k, () => {
+  reactive(() => {
 
     let measure: HTMLDivElement
     div(e => {
@@ -33,7 +33,7 @@ export function ToolbarButton(icon: string, text: string, k?: Key): void {
         t(text)
         measure = e
       })
-    })
+    }, k)
 
     flush() // eslint-disable-next-line @typescript-eslint/no-non-null-assertion
     console.log(measure!.clientWidth)
