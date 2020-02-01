@@ -15,7 +15,8 @@ import { AppMain } from '~/view/AppMain'
 
 R.setTrace(TraceLevel.Warnings)
 R.repetitiveReadWarningThreshold = 0 // disabled
-R.performanceWarningThreshold = 0
+R.mainThreadBlockingWarningThreshold = 15
+R.asyncActionDurationWarningThreshold = 150
 
 const app = Action.run('app', () => new Application())
 const root = document.getElementById('root')
