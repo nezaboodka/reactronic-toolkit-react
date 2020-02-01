@@ -17,8 +17,13 @@ export function reactive<T = void>(render: Render<T>, key?: Key, rtti?: Rtti<T>)
 }
 
 export function element<E = void>(render: Render<E>, key?: Key, rtti?: Rtti<E>): void {
-  const ref: Ref<any> = { rtti, key, render }
-  buffer.children.push(ref)
+  // const ref: Ref<any> = { rtti, key, render }
+  // if (!buffer) {
+  //   buffer = new Buffer()
+  //   render()
+  // }
+  // else
+  //   buffer.children.push(ref)
 }
 
 export function flush(): void {
@@ -49,7 +54,16 @@ class Buffer {
   children: Array<Ref<unknown>> = []
 }
 
-const buffer: Buffer = new Buffer()
+let buffer: Buffer | undefined = new Buffer()
+
+function build(ref: Ref<unknown>): void {
+  buffer = new Buffer()
+  ref.render(ref.element, 0)
+  for (const x of buffer.children) {
+    //
+  }
+  buffer = undefined
+}
 
 // // Example - Button
 
