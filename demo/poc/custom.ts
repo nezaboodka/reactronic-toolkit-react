@@ -3,11 +3,11 @@
 // Copyright (C) 2019-2020 Yury Chetyrko <ychetyrko@gmail.com>
 // License: https://raw.githubusercontent.com/nezaboodka/reactronic/master/LICENSE
 
-import { flush, Key, reactive } from './api'
+import { flush, reactive } from './api'
 import { div, i, t } from './html'
 
-export function Toolbar(key: Key, className: string): void {
-  div(key, e => {
+export function Toolbar(id: string, className: string): void {
+  div(id, e => {
     e.className = className
     ToolbarButton('menu', 'las la-menu', 'Menu')
     div('spring', e => e.style.flexGrow = '1')
@@ -16,11 +16,11 @@ export function Toolbar(key: Key, className: string): void {
   })
 }
 
-export function ToolbarButton(key: Key, icon: string, text: string): void {
-  reactive(key, () => {
+export function ToolbarButton(id: string, icon: string, text?: string): void {
+  reactive(id, () => {
 
     let measure: HTMLDivElement
-    div(key, e => {
+    div(id, e => {
       e.className = 'fancy-button'
 
       div('icon', e => {
@@ -30,7 +30,7 @@ export function ToolbarButton(key: Key, icon: string, text: string): void {
 
       div('text', e => {
         e.className = 'fancy-button-text'
-        t(text)
+        t(text || id)
         measure = e
       })
     })

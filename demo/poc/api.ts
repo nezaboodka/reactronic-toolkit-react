@@ -5,8 +5,8 @@
 
 // API
 
-export function reactive<T = void>(key: Key, render: Render<T>, rtti?: Rtti<T>): void {
-  element(key, render, rtti)
+export function reactive<T = void>(id: string, render: Render<T>, rtti?: Rtti<T>): void {
+  element(id, render, rtti)
   // const outer = buffer
   // try {
   //   console.log(e)
@@ -16,8 +16,8 @@ export function reactive<T = void>(key: Key, render: Render<T>, rtti?: Rtti<T>):
   // }
 }
 
-export function element<E = void>(key: Key, render: Render<E>, rtti?: Rtti<E>): void {
-  // const ref: Ref<any> = { rtti, key, render }
+export function element<E = void>(id: string, render: Render<E>, rtti?: Rtti<E>): void {
+  // const slot: Slot<any> = { rtti, id, render }
   // if (!buffer) {
   //   buffer = new Buffer()
   //   render()
@@ -30,21 +30,20 @@ export function flush(): void {
   throw new Error('not implemented')
 }
 
-export type Key = string | number
 export type Render<E = void> = (element: E, cycle: number) => void
 
 export interface Slot<E = void> {
   rtti?: Rtti<E>
-  key?: Key
+  id?: string
   element?: E
   render: Render<E>
 }
 
 export interface Rtti<E = void> {
   name: string
-  acquire?(ref: Slot<E>): void
-  mount?(ref: Slot<E>): E
-  unmount?(ref: Slot<E>): undefined
+  acquire?(slot: Slot<E>): void
+  mount?(slot: Slot<E>): E
+  unmount?(slot: Slot<E>): undefined
 }
 
 // Internal
@@ -56,9 +55,9 @@ class Buffer {
 
 let buffer: Buffer | undefined = new Buffer()
 
-function build(ref: Slot<unknown>): void {
+function build(slot: Slot<unknown>): void {
   buffer = new Buffer()
-  ref.render(ref.element, 0)
+  slot.render(slot.element, 0)
   for (const x of buffer.children) {
     //
   }

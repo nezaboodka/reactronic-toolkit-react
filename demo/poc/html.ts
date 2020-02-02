@@ -3,18 +3,18 @@
 // Copyright (C) 2019-2020 Yury Chetyrko <ychetyrko@gmail.com>
 // License: https://raw.githubusercontent.com/nezaboodka/reactronic/master/LICENSE
 
-import { element, Key, Render, Rtti, Slot } from './api'
+import { element, Render, Rtti, Slot } from './api'
 
-export function div(key: Key, render: Render<HTMLDivElement>): void {
-  htmlElem<HTMLDivElement>(key, render, HtmlRtti.div)
+export function div(id: string, render: Render<HTMLDivElement>): void {
+  htmlElem<HTMLDivElement>(id, render, HtmlRtti.div)
 }
 
-export function span(key: Key, render: Render<HTMLSpanElement>): void {
-  htmlElem<HTMLSpanElement>(key, render, HtmlRtti.span)
+export function span(id: string, render: Render<HTMLSpanElement>): void {
+  htmlElem<HTMLSpanElement>(id, render, HtmlRtti.span)
 }
 
-export function i(key: Key, render: Render<HTMLSpanElement>): void {
-  htmlElem<HTMLSpanElement>(key, render, HtmlRtti.i)
+export function i(id: string, render: Render<HTMLSpanElement>): void {
+  htmlElem<HTMLSpanElement>(id, render, HtmlRtti.i)
 }
 
 export function t(value: string): void {
@@ -29,8 +29,8 @@ const HtmlRtti = {
 
 // Internal
 
-function htmlElem<E extends HTMLElement>(key: Key, render: Render<E>, rtti: Rtti<E>): void {
-  element(key, render, rtti)
+function htmlElem<E extends HTMLElement>(id: string, render: Render<E>, rtti: Rtti<E>): void {
+  element(id, render, rtti)
 }
 
 function acquire<E extends HTMLElement>(slot: Slot<E>): void {
