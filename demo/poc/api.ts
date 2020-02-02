@@ -33,7 +33,7 @@ export function flush(): void {
 export type Key = string | number
 export type Render<E = void> = (element: E, cycle: number) => void
 
-export interface Ref<E = void> {
+export interface Slot<E = void> {
   rtti?: Rtti<E>
   key?: Key
   element?: E
@@ -42,21 +42,21 @@ export interface Ref<E = void> {
 
 export interface Rtti<E = void> {
   name: string
-  acquire?(ref: Ref<E>): void
-  mount?(ref: Ref<E>): E
-  unmount?(ref: Ref<E>): undefined
+  acquire?(ref: Slot<E>): void
+  mount?(ref: Slot<E>): E
+  unmount?(ref: Slot<E>): undefined
 }
 
 // Internal
 
 class Buffer {
-  self: Ref<unknown> = { render: () => { /* */ }}
-  children: Array<Ref<unknown>> = []
+  self: Slot<unknown> = { render: () => { /* */ }}
+  children: Array<Slot<unknown>> = []
 }
 
 let buffer: Buffer | undefined = new Buffer()
 
-function build(ref: Ref<unknown>): void {
+function build(ref: Slot<unknown>): void {
   buffer = new Buffer()
   ref.render(ref.element, 0)
   for (const x of buffer.children) {

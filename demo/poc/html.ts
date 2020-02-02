@@ -3,7 +3,7 @@
 // Copyright (C) 2019-2020 Yury Chetyrko <ychetyrko@gmail.com>
 // License: https://raw.githubusercontent.com/nezaboodka/reactronic/master/LICENSE
 
-import { element, Key, Ref, Render, Rtti } from './api'
+import { element, Key, Render, Rtti, Slot } from './api'
 
 export function div(key: Key, render: Render<HTMLDivElement>): void {
   htmlElem<HTMLDivElement>(key, render, HtmlRtti.div)
@@ -33,20 +33,20 @@ function htmlElem<E extends HTMLElement>(key: Key, render: Render<E>, rtti: Rtti
   element(key, render, rtti)
 }
 
-function acquire<E extends HTMLElement>(ref: Ref<E>): void {
-  let e = ref.element
+function acquire<E extends HTMLElement>(slot: Slot<E>): void {
+  let e = slot.element
   if (!e) // eslint-disable-next-line @typescript-eslint/no-non-null-assertion
-    e = ref.element = ref.rtti?.mount!(ref)
-  ref.render(e, 0)
+    e = slot.element = slot.rtti?.mount!(slot)
+  slot.render(e, 0)
 }
 
-function mount<E extends HTMLElement>(ref: Ref<E>): E {
+function mount<E extends HTMLElement>(slot: Slot<E>): E {
   // eslint-disable-next-line @typescript-eslint/no-non-null-assertion
-  return document.body.appendChild(document.createElement(ref.rtti!.name)) as E
+  return document.body.appendChild(document.createElement(slot.rtti!.name)) as E
 }
 
-function unmount<E extends HTMLElement>(ref: Ref<E>): undefined {
+function unmount<E extends HTMLElement>(slot: Slot<E>): undefined {
   // eslint-disable-next-line @typescript-eslint/no-non-null-assertion
-  document.body.removeChild(ref.element!)
+  document.body.removeChild(slot.element!)
   return undefined
 }
