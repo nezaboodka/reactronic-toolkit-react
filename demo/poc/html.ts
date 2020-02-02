@@ -3,7 +3,7 @@
 // Copyright (C) 2019-2020 Yury Chetyrko <ychetyrko@gmail.com>
 // License: https://raw.githubusercontent.com/nezaboodka/reactronic/master/LICENSE
 
-import { Elem, element, Render, Rtti } from './api'
+import { element, ElementToken, ElementType, Render } from './api'
 
 export function div(id: string, render: Render<HTMLDivElement>): void {
   html(id, render, Html.div)
@@ -29,24 +29,24 @@ const Html = {
 
 // Internal
 
-function html<E extends HTMLElement>(id: string, render: Render<E>, rtti: Rtti<E>): void {
-  element(id, render, rtti)
+function html<E extends HTMLElement>(id: string, render: Render<E>, type: ElementType<E>): void {
+  element(id, render, type)
 }
 
-function acquire<E extends HTMLElement>(elem: Elem<E>): void {
-  let e = elem.mounted
-  if (!e) // eslint-disable-next-line @typescript-eslint/no-non-null-assertion
-    e = elem.mounted = elem.rtti?.mount!(elem)
-  elem.render(e, 0)
+function acquire<E extends HTMLElement>(et: ElementToken<E>): void {
+  let mounted = et.mounted
+  if (!mounted) // eslint-disable-next-line @typescript-eslint/no-non-null-assertion
+    mounted = et.mounted = et.type?.mount!(et)
+  et.render(mounted, 0)
 }
 
-function mount<E extends HTMLElement>(elem: Elem<E>): E {
+function mount<E extends HTMLElement>(et: ElementToken<E>): E {
   // eslint-disable-next-line @typescript-eslint/no-non-null-assertion
-  return document.body.appendChild(document.createElement(elem.rtti!.hint)) as E
+  return document.body.appendChild(document.createElement(et.type!.hint)) as E
 }
 
-function unmount<E extends HTMLElement>(elem: Elem<E>): undefined {
+function unmount<E extends HTMLElement>(et: ElementToken<E>): undefined {
   // eslint-disable-next-line @typescript-eslint/no-non-null-assertion
-  document.body.removeChild(elem.mounted!)
+  document.body.removeChild(et.mounted!)
   return undefined
 }
