@@ -22,9 +22,9 @@ export function t(value: string): void {
 }
 
 const HtmlRtti = {
-  div: { name: 'div', acquire, mount, unmount },
-  span: { name: 'span', acquire, mount, unmount },
-  i: { name: 'i', acquire, mount, unmount },
+  div: { hint: 'div', acquire, mount, unmount },
+  span: { hint: 'span', acquire, mount, unmount },
+  i: { hint: 'i', acquire, mount, unmount },
 }
 
 // Internal
@@ -42,7 +42,7 @@ function acquire<E extends HTMLElement>(slot: Slot<E>): void {
 
 function mount<E extends HTMLElement>(slot: Slot<E>): E {
   // eslint-disable-next-line @typescript-eslint/no-non-null-assertion
-  return document.body.appendChild(document.createElement(slot.rtti!.name)) as E
+  return document.body.appendChild(document.createElement(slot.rtti!.hint)) as E
 }
 
 function unmount<E extends HTMLElement>(slot: Slot<E>): undefined {

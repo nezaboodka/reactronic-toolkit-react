@@ -40,7 +40,7 @@ export interface Slot<E = void> {
 }
 
 export interface Rtti<E = void> {
-  name: string
+  hint: string
   acquire?(slot: Slot<E>): void
   mount?(slot: Slot<E>): E
   unmount?(slot: Slot<E>): undefined
