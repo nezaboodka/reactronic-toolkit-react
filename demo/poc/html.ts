@@ -6,22 +6,22 @@
 import { Elem, element, Render, Rtti } from './api'
 
 export function div(id: string, render: Render<HTMLDivElement>): void {
-  htmlElem<HTMLDivElement>(id, render, HtmlRtti.div)
+  html(id, render, Html.div)
 }
 
 export function span(id: string, render: Render<HTMLSpanElement>): void {
-  htmlElem<HTMLSpanElement>(id, render, HtmlRtti.span)
+  html(id, render, Html.span)
 }
 
 export function i(id: string, render: Render<HTMLSpanElement>): void {
-  htmlElem<HTMLSpanElement>(id, render, HtmlRtti.i)
+  html(id, render, Html.i)
 }
 
 export function t(value: string): void {
   throw new Error('not implemented')
 }
 
-const HtmlRtti = {
+const Html = {
   div: { hint: 'div', acquire, mount, unmount },
   span: { hint: 'span', acquire, mount, unmount },
   i: { hint: 'i', acquire, mount, unmount },
@@ -29,7 +29,7 @@ const HtmlRtti = {
 
 // Internal
 
-function htmlElem<E extends HTMLElement>(id: string, render: Render<E>, rtti: Rtti<E>): void {
+function html<E extends HTMLElement>(id: string, render: Render<E>, rtti: Rtti<E>): void {
   element(id, render, rtti)
 }
 
