@@ -27,10 +27,16 @@ export function element<E = void>(id: string, render: Render<E>, rtti?: Rtti<E>)
 }
 
 export function flush(): void {
-  throw new Error('not implemented')
+  const c = current // shorthand
+  if (c) {
+    for (let i = c.flushed; i < c.children.length; i++) {
+      // acquire/mount/render
+    }
+    c.flushed = c.children.length
+  }
 }
 
-export type Render<E = void> = (element: E, cycle: number) => void
+export type Render<E = void> = (elem: E, cycle: number) => void
 
 export interface Elem<E = void> {
   rtti?: Rtti<E>
@@ -53,6 +59,7 @@ class Node {
   parent?: Elem<unknown> = undefined
   self: Elem<unknown> = { render: () => { /* */ }}
   children: Array<Elem<unknown>> = []
+  flushed: number = 0
 }
 
 let current: Node | undefined = undefined
