@@ -3,7 +3,7 @@
 // Copyright (C) 2019-2020 Yury Chetyrko <ychetyrko@gmail.com>
 // License: https://raw.githubusercontent.com/nezaboodka/reactronic/master/LICENSE
 
-import { element, Render, Rtti, Slot } from './api'
+import { Elem, element, Render, Rtti } from './api'
 
 export function div(id: string, render: Render<HTMLDivElement>): void {
   htmlElem<HTMLDivElement>(id, render, HtmlRtti.div)
@@ -33,20 +33,20 @@ function htmlElem<E extends HTMLElement>(id: string, render: Render<E>, rtti: Rt
   element(id, render, rtti)
 }
 
-function acquire<E extends HTMLElement>(slot: Slot<E>): void {
-  let e = slot.element
+function acquire<E extends HTMLElement>(elem: Elem<E>): void {
+  let e = elem.mounted
   if (!e) // eslint-disable-next-line @typescript-eslint/no-non-null-assertion
-    e = slot.element = slot.rtti?.mount!(slot)
-  slot.render(e, 0)
+    e = elem.mounted = elem.rtti?.mount!(elem)
+  elem.render(e, 0)
 }
 
-function mount<E extends HTMLElement>(slot: Slot<E>): E {
+function mount<E extends HTMLElement>(elem: Elem<E>): E {
   // eslint-disable-next-line @typescript-eslint/no-non-null-assertion
-  return document.body.appendChild(document.createElement(slot.rtti!.hint)) as E
+  return document.body.appendChild(document.createElement(elem.rtti!.hint)) as E
 }
 
-function unmount<E extends HTMLElement>(slot: Slot<E>): undefined {
+function unmount<E extends HTMLElement>(elem: Elem<E>): undefined {
   // eslint-disable-next-line @typescript-eslint/no-non-null-assertion
-  document.body.removeChild(slot.element!)
+  document.body.removeChild(elem.mounted!)
   return undefined
 }
