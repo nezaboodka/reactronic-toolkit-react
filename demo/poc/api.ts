@@ -5,8 +5,8 @@
 
 // API
 
-export function reactive<T = void>(render: Render<T>, key?: Key, rtti?: Rtti<T>): void {
-  element(render, key, rtti)
+export function reactive<T = void>(key: Key, render: Render<T>, rtti?: Rtti<T>): void {
+  element(key, render, rtti)
   // const outer = buffer
   // try {
   //   console.log(e)
@@ -16,7 +16,7 @@ export function reactive<T = void>(render: Render<T>, key?: Key, rtti?: Rtti<T>)
   // }
 }
 
-export function element<E = void>(render: Render<E>, key?: Key, rtti?: Rtti<E>): void {
+export function element<E = void>(key: Key, render: Render<E>, rtti?: Rtti<E>): void {
   // const ref: Ref<any> = { rtti, key, render }
   // if (!buffer) {
   //   buffer = new Buffer()
@@ -30,7 +30,7 @@ export function flush(): void {
   throw new Error('not implemented')
 }
 
-export type Key = string | number | undefined | null | void
+export type Key = string | number
 export type Render<E = void> = (element: E, cycle: number) => void
 
 export interface Ref<E = void> {

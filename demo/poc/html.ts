@@ -5,16 +5,16 @@
 
 import { element, Key, Ref, Render, Rtti } from './api'
 
-export function div(r: Render<HTMLDivElement>, k?: Key): void {
-  htmlElem<HTMLDivElement>(r, k, HtmlRtti.div)
+export function div(key: Key, render: Render<HTMLDivElement>): void {
+  htmlElem<HTMLDivElement>(key, render, HtmlRtti.div)
 }
 
-export function span(r: Render<HTMLSpanElement>, k?: Key): void {
-  htmlElem<HTMLSpanElement>(r, k, HtmlRtti.span)
+export function span(key: Key, render: Render<HTMLSpanElement>): void {
+  htmlElem<HTMLSpanElement>(key, render, HtmlRtti.span)
 }
 
-export function i(r: Render<HTMLSpanElement>, k?: Key): void {
-  htmlElem<HTMLSpanElement>(r, k, HtmlRtti.i)
+export function i(key: Key, render: Render<HTMLSpanElement>): void {
+  htmlElem<HTMLSpanElement>(key, render, HtmlRtti.i)
 }
 
 export function t(value: string): void {
@@ -29,8 +29,8 @@ const HtmlRtti = {
 
 // Internal
 
-function htmlElem<E extends HTMLElement>(render: Render<E>, k: Key, rtti: Rtti<E>): void {
-  element(render, k, rtti)
+function htmlElem<E extends HTMLElement>(key: Key, render: Render<E>, rtti: Rtti<E>): void {
+  element(key, render, rtti)
 }
 
 function acquire<E extends HTMLElement>(ref: Ref<E>): void {

@@ -6,34 +6,34 @@
 import { flush, Key, reactive } from './api'
 import { div, i, t } from './html'
 
-export function Toolbar(className: string, k?: Key): void {
-  div(e => {
+export function Toolbar(key: Key, className: string): void {
+  div(key, e => {
     e.className = className
-    ToolbarButton('las la-menu', 'Menu')
-    div(e => e.style.flexGrow = '1')
-    ToolbarButton('las la-cog', 'Settings')
-    ToolbarButton('las la-times', 'Close')
-  }, k)
+    ToolbarButton('menu', 'las la-menu', 'Menu')
+    div('spring', e => e.style.flexGrow = '1')
+    ToolbarButton('settings', 'las la-cog', 'Settings')
+    ToolbarButton('close', 'las la-times', 'Close')
+  })
 }
 
-export function ToolbarButton(icon: string, text: string, k?: Key): void {
-  reactive(() => {
+export function ToolbarButton(key: Key, icon: string, text: string): void {
+  reactive(key, () => {
 
     let measure: HTMLDivElement
-    div(e => {
+    div(key, e => {
       e.className = 'fancy-button'
 
-      div(e => {
+      div('icon', e => {
         e.className = 'fancy-button-icon'
-        i(el => el.className = icon)
+        i('sym', el => el.className = icon)
       })
 
-      div(e => {
+      div('text', e => {
         e.className = 'fancy-button-text'
         t(text)
         measure = e
       })
-    }, k)
+    })
 
     flush() // eslint-disable-next-line @typescript-eslint/no-non-null-assertion
     console.log(measure!.clientWidth)
