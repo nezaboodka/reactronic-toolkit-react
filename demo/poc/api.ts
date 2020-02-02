@@ -17,17 +17,17 @@ export function reactive<T = void>(id: string, render: Render<T>, rtti?: Rtti<T>
 }
 
 export function element<E = void>(id: string, render: Render<E>, rtti?: Rtti<E>): void {
-  // const elem: Elem<any> = { rtti, id, render }
-  // if (!buffer) {
-  //   buffer = new Buffer()
-  //   render()
-  // }
-  // else
-  //   buffer.children.push(ref)
+  const elem: Elem<any> = { rtti, id, render }
+  if (!curr) {
+    curr = new ElemBuffer()
+  }
+  else {
+    curr.children.push(elem)
+  }
 }
 
 export function flush(): void {
-  const c = current // shorthand
+  const c = curr // shorthand
   if (c) {
     for (let i = c.flushed; i < c.children.length; i++) {
       // acquire/mount/render
@@ -54,7 +54,7 @@ export interface Rtti<E = void> {
 
 // Internal
 
-class Node {
+class ElemBuffer {
   outer?: unknown = undefined
   parent?: Elem<unknown> = undefined
   self: Elem<unknown> = { render: () => { /* */ }}
@@ -62,13 +62,13 @@ class Node {
   flushed: number = 0
 }
 
-let current: Node | undefined = undefined
+let curr: ElemBuffer | undefined = undefined
 
 function build(elem: Elem<unknown>): void {
-  current = new Node()
+  curr = new ElemBuffer()
   elem.render(elem.mounted, 0)
-  for (const x of current.children) {
+  for (const x of curr.children) {
     //
   }
-  current = undefined
+  curr = undefined
 }
