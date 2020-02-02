@@ -48,18 +48,20 @@ export interface Rtti<E = void> {
 
 // Internal
 
-class Buffer {
+class Stacker {
+  outer?: unknown = undefined
+  parent?: Slot<unknown> = undefined
   self: Slot<unknown> = { render: () => { /* */ }}
   children: Array<Slot<unknown>> = []
 }
 
-let buffer: Buffer | undefined = new Buffer()
+let current: Stacker | undefined = new Stacker()
 
 function build(slot: Slot<unknown>): void {
-  buffer = new Buffer()
+  current = new Stacker()
   slot.render(slot.element, 0)
-  for (const x of buffer.children) {
+  for (const x of current.children) {
     //
   }
-  buffer = undefined
+  current = undefined
 }
