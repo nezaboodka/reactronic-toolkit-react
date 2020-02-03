@@ -3,7 +3,8 @@
 // Copyright (C) 2019-2020 Yury Chetyrko <ychetyrko@gmail.com>
 // License: https://raw.githubusercontent.com/nezaboodka/reactronic/master/LICENSE
 
-// API
+import { Ctx, ElementToken, ElementType, Render } from './api.data'
+export { Render } from './api.data'
 
 export function element<E = void>(id: string, render: Render<E>, type?: ElementType<E>): void {
   const t: ElementToken<any> = { type, id, render }
@@ -36,31 +37,7 @@ export function getOuter<E>(): E {
   return ctx?.outer as E
 }
 
-export type Render<E = void> = (element: E, cycle: number) => void
-
-export interface ElementToken<E = void> {
-  type?: ElementType<E>
-  id: string
-  element?: E
-  render: Render<E>
-}
-
-export interface ElementType<E = void> {
-  hint: string
-  diff?(self: ElementToken<E>, children: Array<ElementToken<unknown>>): Array<ElementToken<unknown>>
-  mount?(self: ElementToken<E>): E
-  unmount?(self: ElementToken<E>): undefined
-}
-
 // Internal
-
-class Ctx {
-  outer?: unknown = undefined
-  parent?: ElementToken<unknown> = undefined
-  self: ElementToken<unknown> = { id: '', render: () => { /* */ } }
-  children: Array<ElementToken<unknown>> = []
-  done: boolean = false
-}
 
 let ctx: Ctx | undefined = undefined
 
