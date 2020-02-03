@@ -3,7 +3,7 @@
 // Copyright (C) 2019-2020 Yury Chetyrko <ychetyrko@gmail.com>
 // License: https://raw.githubusercontent.com/nezaboodka/reactronic/master/LICENSE
 
-import { element, ElementChildren, ElementToken, ElementType, getOuter, Render } from './api'
+import { element, ElementToken, ElementType, getOuter, Render } from './api'
 
 export function div(id: string, render: Render<HTMLDivElement>): void {
   html(id, render, Html.div)
@@ -22,9 +22,9 @@ export function t(value: string): void {
 }
 
 const Html = {
-  div: { hint: 'div', reconcile, mount, unmount },
-  span: { hint: 'span', reconcile, mount, unmount },
-  i: { hint: 'i', reconcile, mount, unmount },
+  div: { hint: 'div', diff, mount, unmount },
+  span: { hint: 'span', diff, mount, unmount },
+  i: { hint: 'i', diff, mount, unmount },
 }
 
 // Internal
@@ -33,7 +33,7 @@ function html<E extends HTMLElement>(id: string, render: Render<E>, type: Elemen
   element(id, render, type)
 }
 
-function reconcile<E extends HTMLElement>(self: ElementToken<E>, children: ElementChildren): ElementChildren {
+function diff<E extends HTMLElement>(self: ElementToken<E>, children: Array<ElementToken<unknown>>): Array<ElementToken<unknown>> {
   const outer = getOuter<HTMLElement>()
   const existing: Array<Element | null> = []
   for (let i = 0; i < outer.children.length; i++)

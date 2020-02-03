@@ -18,7 +18,7 @@ export function renderChildren(): void {
   if (c && !c.done) {
     // TODO: Diff children
     // eslint-disable-next-line @typescript-eslint/no-non-null-assertion
-    const garbage = c.self.type?.reconcile!(c.self, c.children)
+    const garbage = c.self.type?.diff!(c.self, c.children)
     for (let i = 0; i < c.children.length; i++) {
       renderElement(c.children[i])
       // acquire/mount/render
@@ -37,7 +37,6 @@ export function getOuter<E>(): E {
 }
 
 export type Render<E = void> = (element: E, cycle: number) => void
-export type ElementChildren = Array<ElementToken<unknown>>
 
 export interface ElementToken<E = void> {
   type?: ElementType<E>
@@ -48,7 +47,7 @@ export interface ElementToken<E = void> {
 
 export interface ElementType<E = void> {
   hint: string
-  reconcile?(token: ElementToken<E>, children: ElementChildren): ElementChildren
+  diff?(token: ElementToken<E>, children: Array<ElementToken<unknown>>): Array<ElementToken<unknown>>
   mount?(token: ElementToken<E>): E
   unmount?(token: ElementToken<E>): undefined
 }
