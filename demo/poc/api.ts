@@ -24,23 +24,22 @@ export function reactive<E = void>(render: Render<E>, type?: ElementType<E>): vo
 
 export function renderChildren(): void {
   const ctx = context // shorthand
-  if (ctx && !ctx.done) { // eslint-disable-next-line @typescript-eslint/no-non-null-assertion
+  if (ctx && !ctx.done) {
+    ctx.done = true // eslint-disable-next-line @typescript-eslint/no-non-null-assertion
     const garbage = ctx.self.type?.reconcile!(ctx.self, ctx.children)
     // Unmount garbage elements
-    for (const x of garbage) {
-      const unmount = x.type?.unmount
+    for (const child of garbage) {
+      const unmount = child.type?.unmount
       if (unmount)
-        unmount(x)
+        unmount(child)
     }
     // Resolve and (re)render valid elements
-    for (let i = 0; i < ctx.children.length; i++) {
-      const et = ctx.children[i]
-      const mount = et.type?.mount
-      if (!et.element && mount)
-        mount(et)
-      renderElement(et)
+    for (const child of ctx.children) {
+      const mount = child.type?.mount
+      if (!child.element && mount)
+        mount(child)
+      renderElement(child)
     }
-    ctx.done = true
   }
 }
 
