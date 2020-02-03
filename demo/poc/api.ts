@@ -7,11 +7,15 @@ import { Ctx, ElementToken, ElementType, Render } from './api.data'
 export { Render } from './api.data'
 
 export function element<E = void>(id: string, render: Render<E>, type?: ElementType<E>): void {
-  const t: ElementToken<any> = { type, id, render }
-  if (ctx)
-    ctx.children.push(t)
+  const et: ElementToken<any> = { type, id, render }
+  const ctx = context // shorthand
+  if (ctx) {
+    if (ctx.done)
+      throw new Error('element children are rendered already')
+    ctx.children.push(et)
+  }
   else // it's root element
-    renderElement(t)
+    renderElement(et)
 }
 
 export function reactive<E = void>(render: Render<E>, type?: ElementType<E>): void {
@@ -19,38 +23,45 @@ export function reactive<E = void>(render: Render<E>, type?: ElementType<E>): vo
 }
 
 export function renderChildren(): void {
-  const c = ctx // shorthand
-  if (c && !c.done) {
-    // TODO: Diff children
-    // eslint-disable-next-line @typescript-eslint/no-non-null-assertion
-    const garbage = c.self.type?.diff!(c.self, c.children)
-    for (let i = 0; i < c.children.length; i++) {
-      renderElement(c.children[i])
-      // acquire/mount/render
+  const ctx = context // shorthand
+  if (ctx && !ctx.done) { // eslint-disable-next-line @typescript-eslint/no-non-null-assertion
+    const garbage = ctx.self.type?.reconcile!(ctx.self, ctx.children)
+    // Unmount garbage elements
+    for (const x of garbage) {
+      const unmount = x.type?.unmount
+      if (unmount)
+        unmount(x)
     }
-    c.done = true
-    console.log(garbage) // TODO: remove garbage
+    // Resolve and (re)render valid elements
+    for (let i = 0; i < ctx.children.length; i++) {
+      const et = ctx.children[i]
+      const mount = et.type?.mount
+      if (!et.element && mount)
+        mount(et)
+      renderElement(et)
+    }
+    ctx.done = true
   }
 }
 
 export function getOuter<E>(): E {
-  return ctx?.outer as E
+  return context?.outer as E
 }
 
 // Internal
 
-let ctx: Ctx | undefined = undefined
+let context: Ctx | undefined = undefined
 
 function renderElement(self: ElementToken<unknown>): void {
-  const outer = ctx
+  const outer = context
   try {
-    ctx = new Ctx()
-    ctx.self = self // eslint-disable-next-line @typescript-eslint/no-non-null-assertion
+    context = new Ctx()
+    context.self = self // eslint-disable-next-line @typescript-eslint/no-non-null-assertion
     self.type?.mount!(self)
     self.render(self.element, -1) // children are not yet rendered
     renderChildren() // ignored if rendered already
   }
   finally {
-    ctx = outer
+    context = outer
   }
 }

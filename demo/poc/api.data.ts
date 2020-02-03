@@ -14,7 +14,7 @@ export interface ElementToken<E = void> {
 
 export interface ElementType<E = void> {
   hint: string
-  diff?(self: ElementToken<E>, children: Array<ElementToken<unknown>>): Array<ElementToken<unknown>>
+  reconcile?(self: ElementToken<E>, children: Array<ElementToken<unknown>>): Array<ElementToken<unknown>>
   mount?(self: ElementToken<E>): E
   unmount?(self: ElementToken<E>): undefined
 }
