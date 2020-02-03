@@ -34,11 +34,11 @@ function html<E extends HTMLElement>(id: string, render: Render<E>, type: Elemen
 }
 
 function reconcile<E extends HTMLElement>(self: ElementToken<E>, children: ElementChildren): ElementChildren {
-  // const outer = getOuter<HTMLElement>()
-  // let e = outer.children.namedItem(et.id) as E
-  // if (!e) // eslint-disable-next-line @typescript-eslint/no-non-null-assertion
-  //   e = et.type?.mount!(et)
-  // et.impl = e
+  const outer = getOuter<HTMLElement>()
+  const existing: Array<Element | null> = []
+  for (let i = 0; i < outer.children.length; i++)
+    existing.push(outer.children.item(i))
+  existing.sort()
   throw new Error('not implemented')
 }
 
