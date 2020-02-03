@@ -33,7 +33,8 @@ function html<E extends HTMLElement>(id: string, render: Render<E>, type: Elemen
   element(id, render, type)
 }
 
-function diff<E extends HTMLElement>(self: ElementToken<E>, children: Array<ElementToken<unknown>>): Array<ElementToken<unknown>> {
+function diff<E extends HTMLElement>(self: ElementToken<E>,
+  children: Array<ElementToken<unknown>>): Array<ElementToken<unknown>> {
   const outer = getOuter<HTMLElement>()
   const existing: Array<Element | null> = []
   for (let i = 0; i < outer.children.length; i++)

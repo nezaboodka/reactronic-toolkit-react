@@ -47,9 +47,9 @@ export interface ElementToken<E = void> {
 
 export interface ElementType<E = void> {
   hint: string
-  diff?(token: ElementToken<E>, children: Array<ElementToken<unknown>>): Array<ElementToken<unknown>>
-  mount?(token: ElementToken<E>): E
-  unmount?(token: ElementToken<E>): undefined
+  diff?(self: ElementToken<E>, children: Array<ElementToken<unknown>>): Array<ElementToken<unknown>>
+  mount?(self: ElementToken<E>): E
+  unmount?(self: ElementToken<E>): undefined
 }
 
 // Internal
