@@ -3,7 +3,7 @@
 // Copyright (C) 2019-2020 Yury Chetyrko <ychetyrko@gmail.com>
 // License: https://raw.githubusercontent.com/nezaboodka/reactronic/master/LICENSE
 
-import { done, reactive } from './api'
+import { reactive, renderChildren } from './api'
 import { div, i, t } from './html'
 
 export function Toolbar(id: string, className: string): void {
@@ -43,7 +43,7 @@ export function ToolbarButton(id: string, icon: string, caption?: string): void 
       })
     })
 
-    done() // eslint-disable-next-line @typescript-eslint/no-non-null-assertion
+    renderChildren() // eslint-disable-next-line @typescript-eslint/no-non-null-assertion
     console.log(measure!.clientWidth)
   })
 }
