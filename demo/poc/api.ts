@@ -14,6 +14,10 @@ export function element<E = void>(id: string, render: Render<E>, type?: ElementT
     renderElement(t)
 }
 
+export function reactive<E = void>(render: Render<E>, type?: ElementType<E>): void {
+  throw new Error('not implemented')
+}
+
 export function renderChildren(): void {
   const c = ctx // shorthand
   if (c && !c.done) {
@@ -27,10 +31,6 @@ export function renderChildren(): void {
     c.done = true
     console.log(garbage) // TODO: remove garbage
   }
-}
-
-export function reactive<E = void>(render: Render<E>, type?: ElementType<E>): void {
-  throw new Error('not implemented')
 }
 
 export function getOuter<E>(): E {
