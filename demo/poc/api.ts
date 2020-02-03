@@ -23,7 +23,7 @@ export function flush(): void {
   }
 }
 
-export function reactive<E = void>(id: string, render: Render<E>, type?: ElementType<E>): void {
+export function reactive<E = void>(render: Render<E>, type?: ElementType<E>): void {
   throw new Error('not implemented')
 }
 

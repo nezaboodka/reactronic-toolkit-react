@@ -14,10 +14,18 @@ export function Toolbar(id: string, className: string): void {
     ToolbarButton('settings', 'las la-cog', 'Settings')
     ToolbarButton('close', 'las la-times', 'Close')
   })
+  // Same in TSX:
+  // <div id={id} className={className}>
+  //   <ToolbarButton id="menu" icon="las la-menu" caption="Menu"/>
+  //   <div id="spring" style={{flexGrow: 1}}/>
+  //   <ToolbarButton id="settings" icon="las la-cog" caption="Settings"/>
+  //   <ToolbarButton id="close" icon="las la-times" caption="Close"/>
+  //   ...
+  // </div>
 }
 
-export function ToolbarButton(id: string, icon: string, text?: string): void {
-  reactive(id, () => {
+export function ToolbarButton(id: string, icon: string, caption?: string): void {
+  reactive(() => {
 
     let measure: HTMLDivElement
     div(id, e => {
@@ -30,7 +38,7 @@ export function ToolbarButton(id: string, icon: string, text?: string): void {
 
       div('text', e => {
         e.className = 'fancy-button-text'
-        t(text || id)
+        t(caption || id)
         measure = e
       })
     })
