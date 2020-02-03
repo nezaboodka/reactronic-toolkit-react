@@ -9,14 +9,16 @@ export function element<E = void>(id: string, render: Render<E>, type?: ElementT
   const t: ElementToken<any> = { type, id, render }
   if (curr)
     curr.children.push(t)
-  else
+  else // it's root element
     apply(t)
 }
 
-export function flush(): void {
+export function done(): void {
   const c = curr // shorthand
   if (c) {
+    // TODO: Diff children
     for (let i = c.flushed; i < c.children.length; i++) {
+      apply(c.children[i])
       // acquire/mount/render
     }
     c.flushed = c.children.length
@@ -27,18 +29,22 @@ export function reactive<E = void>(render: Render<E>, type?: ElementType<E>): vo
   throw new Error('not implemented')
 }
 
+export function getOuter<E>(): E {
+  return curr?.outer as E
+}
+
 export type Render<E = void> = (element: E, cycle: number) => void
 
 export interface ElementToken<E = void> {
   type?: ElementType<E>
-  id?: string
-  mounted?: E
+  id: string
+  element?: E
   render: Render<E>
 }
 
 export interface ElementType<E = void> {
   hint: string
-  acquire?(token: ElementToken<E>): void
+  resolve?(children: Array<ElementToken<E>>, start: number, count: number): void
   mount?(token: ElementToken<E>): E
   unmount?(token: ElementToken<E>): undefined
 }
@@ -48,22 +54,21 @@ export interface ElementType<E = void> {
 class Renderer {
   outer?: unknown = undefined
   parent?: ElementToken<unknown> = undefined
-  self: ElementToken<unknown> = { render: () => { /* */ }}
+  self: ElementToken<unknown> = { id: '', render: () => { /* */ } }
   children: Array<ElementToken<unknown>> = []
   flushed: number = 0
 }
 
 let curr: Renderer | undefined = undefined
 
-function apply(t: ElementToken<unknown>): void {
+function apply(et: ElementToken<unknown>): void {
   const outer = curr
   try {
     curr = new Renderer()
-    curr.self = t // eslint-disable-next-line @typescript-eslint/no-non-null-assertion
-    t.type?.mount!(t)
-    t.render(t.mounted, -1) // children are not yet rendered
-    // TODO: Diff children
-    // TODO: Render children
+    curr.self = et // eslint-disable-next-line @typescript-eslint/no-non-null-assertion
+    et.type?.mount!(et)
+    et.render(et.element, -1) // children are not yet rendered
+    done()
   }
   finally {
     curr = outer

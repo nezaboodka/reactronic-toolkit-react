@@ -3,7 +3,7 @@
 // Copyright (C) 2019-2020 Yury Chetyrko <ychetyrko@gmail.com>
 // License: https://raw.githubusercontent.com/nezaboodka/reactronic/master/LICENSE
 
-import { element, ElementToken, ElementType, Render } from './api'
+import { element, ElementToken, ElementType, getOuter, Render } from './api'
 
 export function div(id: string, render: Render<HTMLDivElement>): void {
   html(id, render, Html.div)
@@ -22,9 +22,9 @@ export function t(value: string): void {
 }
 
 const Html = {
-  div: { hint: 'div', acquire, mount, unmount },
-  span: { hint: 'span', acquire, mount, unmount },
-  i: { hint: 'i', acquire, mount, unmount },
+  div: { hint: 'div', resolve, mount, unmount },
+  span: { hint: 'span', resolve, mount, unmount },
+  i: { hint: 'i', resolve, mount, unmount },
 }
 
 // Internal
@@ -33,20 +33,25 @@ function html<E extends HTMLElement>(id: string, render: Render<E>, type: Elemen
   element(id, render, type)
 }
 
-function acquire<E extends HTMLElement>(et: ElementToken<E>): void {
-  let mounted = et.mounted
-  if (!mounted) // eslint-disable-next-line @typescript-eslint/no-non-null-assertion
-    mounted = et.mounted = et.type?.mount!(et)
-  et.render(mounted, 0)
+function resolve<E extends HTMLElement>(children: Array<ElementToken<E>>, start: number, count: number): void {
+  // const outer = getOuter<HTMLElement>()
+  // let e = outer.children.namedItem(et.id) as E
+  // if (!e) // eslint-disable-next-line @typescript-eslint/no-non-null-assertion
+  //   e = et.type?.mount!(et)
+  // et.impl = e
+  throw new Error('not implemented')
 }
 
 function mount<E extends HTMLElement>(et: ElementToken<E>): E {
-  // eslint-disable-next-line @typescript-eslint/no-non-null-assertion
-  return document.body.appendChild(document.createElement(et.type!.hint)) as E
+  const outer = getOuter<HTMLElement>() // eslint-disable-next-line @typescript-eslint/no-non-null-assertion
+  const e = document.createElement(et.type!.hint) as E
+  outer.appendChild(e)
+  et.element = e
+  return e
 }
 
 function unmount<E extends HTMLElement>(et: ElementToken<E>): undefined {
   // eslint-disable-next-line @typescript-eslint/no-non-null-assertion
-  document.body.removeChild(et.mounted!)
+  document.body.removeChild(et.element!)
   return undefined
 }
