@@ -3,7 +3,8 @@
 // Copyright (C) 2019-2020 Yury Chetyrko <ychetyrko@gmail.com>
 // License: https://raw.githubusercontent.com/nezaboodka/reactronic/master/LICENSE
 
-import { element, ElementToken, ElementType, getOuter, Render } from './api'
+import { element } from './api'
+import { ElementToken, ElementType, Render } from './api.data'
 
 export function div(id: string, render: Render<HTMLDivElement>): void {
   html(id, render, Html.div)
@@ -22,9 +23,9 @@ export function t(value: string): void {
 }
 
 const Html = {
-  div: { hint: 'div', diff, mount, unmount },
-  span: { hint: 'span', diff, mount, unmount },
-  i: { hint: 'i', diff, mount, unmount },
+  div: { hint: 'div', mount, reconcile, unmount },
+  span: { hint: 'span', mount, reconcile, unmount },
+  i: { hint: 'i', mount, reconcile, unmount },
 }
 
 // Internal
@@ -33,26 +34,28 @@ function html<E extends HTMLElement>(id: string, render: Render<E>, type: Elemen
   element(id, render, type)
 }
 
-function diff<E extends HTMLElement>(self: ElementToken<E>,
-  children: Array<ElementToken<unknown>>): Array<ElementToken<unknown>> {
-  const outer = getOuter<HTMLElement>()
-  const existing: Array<Element | null> = []
-  for (let i = 0; i < outer.children.length; i++)
-    existing.push(outer.children.item(i))
-  existing.sort()
-  throw new Error('not implemented')
-}
-
-function mount<E extends HTMLElement>(self: ElementToken<E>): E {
-  const outer = getOuter<HTMLElement>() // eslint-disable-next-line @typescript-eslint/no-non-null-assertion
+function mount<E extends HTMLElement>(self: ElementToken<E>, parent: ElementToken<unknown>): E {
+  // eslint-disable-next-line @typescript-eslint/no-non-null-assertion
   const e = document.createElement(self.type!.hint) as E
-  outer.appendChild(e)
+  // eslint-disable-next-line @typescript-eslint/no-non-null-assertion
+  (parent.element! as HTMLElement).appendChild(e)
   self.element = e
   return e
 }
 
-function unmount<E extends HTMLElement>(self: ElementToken<E>): undefined {
+function reconcile<E extends HTMLElement>(self: ElementToken<E>,
+  children: Array<ElementToken<unknown>>): Array<ElementToken<unknown>> {
   // eslint-disable-next-line @typescript-eslint/no-non-null-assertion
-  document.body.removeChild(self.element!)
+  const e = self.element!
+  const existing: Array<Element | null> = []
+  for (let i = 0; i < e.children.length; i++)
+    existing.push(e.children.item(i))
+  existing.sort()
+  throw new Error('not implemented')
+}
+
+function unmount<E extends HTMLElement>(self: ElementToken<E>, parent: ElementToken<unknown>): undefined {
+  // eslint-disable-next-line @typescript-eslint/no-non-null-assertion
+  (parent.element! as HTMLElement).removeChild(self.element!)
   return undefined
 }

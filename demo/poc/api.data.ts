@@ -14,15 +14,17 @@ export interface ElementToken<E = void> {
 
 export interface ElementType<E = void> {
   hint: string
+  mount?(self: ElementToken<E>, parent: ElementToken<unknown>): E
   reconcile?(self: ElementToken<E>, children: Array<ElementToken<unknown>>): Array<ElementToken<unknown>>
-  mount?(self: ElementToken<E>): E
-  unmount?(self: ElementToken<E>): undefined
+  unmount?(self: ElementToken<E>, parent: ElementToken<unknown>): undefined
 }
 
-export class Ctx {
+export class Context {
+  static current: Context | undefined = undefined
   outer?: unknown = undefined
   parent?: ElementToken<unknown> = undefined
   self: ElementToken<unknown> = { id: '', render: () => { /* */ } }
   children: Array<ElementToken<unknown>> = []
   done: boolean = false
+  constructor(self: ElementToken<unknown>) { this.self = self }
 }
