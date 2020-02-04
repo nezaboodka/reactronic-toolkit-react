@@ -11,7 +11,6 @@ import { Application } from '~/app/Application'
 import { AppMain } from '~/view/AppMain'
 
 R.setTrace(TraceLevel.Warnings)
-R.repetitiveReadWarningThreshold = 0 // disabled
 
 const app = Action.run('app', () => new Application())
 const root = document.getElementById('root')
