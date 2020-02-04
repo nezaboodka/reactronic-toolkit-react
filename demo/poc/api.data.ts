@@ -11,7 +11,7 @@ export interface Node<E = void> {
   element?: E
   render: Render<E>
   children: Array<Node<unknown>>
-  done: boolean
+  sealed: boolean
 }
 
 export interface Rtti<E = void> {
