@@ -5,26 +5,22 @@
 
 export type Render<E = void> = (element: E, cycle: number) => void
 
-export interface ElementToken<E = void> {
-  type?: ElementType<E>
+export interface Node<E = void> {
+  rtti?: Rtti<E>
   id: string
   element?: E
   render: Render<E>
+  children: Array<Node<unknown>>
+  done: boolean
 }
 
-export interface ElementType<E = void> {
+export interface Rtti<E = void> {
   hint: string
-  mount?(self: ElementToken<E>, parent: ElementToken<unknown>): E
-  reconcile?(self: ElementToken<E>, children: Array<ElementToken<unknown>>): Array<ElementToken<unknown>>
-  unmount?(self: ElementToken<E>, parent: ElementToken<unknown>): undefined
+  mount?(node: Node<E>, parent: Node<unknown>): E
+  reconcile?(node: Node<E>, children: Array<Node<unknown>>): Array<Node<unknown>>
+  unmount?(node: Node<E>, parent: Node<unknown>): undefined
 }
 
 export class Context {
-  static current: Context | undefined = undefined
-  outer?: unknown = undefined
-  parent?: ElementToken<unknown> = undefined
-  self: ElementToken<unknown> = { id: '', render: () => { /* */ } }
-  children: Array<ElementToken<unknown>> = []
-  done: boolean = false
-  constructor(self: ElementToken<unknown>) { this.self = self }
+  static current: Node<unknown> | undefined = undefined
 }

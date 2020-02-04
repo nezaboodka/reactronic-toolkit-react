@@ -3,8 +3,8 @@
 // Copyright (C) 2019-2020 Yury Chetyrko <ychetyrko@gmail.com>
 // License: https://raw.githubusercontent.com/nezaboodka/reactronic/master/LICENSE
 
-import { element } from './api'
-import { ElementToken, ElementType, Render } from './api.data'
+import { declare } from './api'
+import { Node, Render, Rtti } from './api.data'
 
 export function div(id: string, render: Render<HTMLDivElement>): void {
   html(id, render, Html.div)
@@ -30,23 +30,23 @@ const Html = {
 
 // Internal
 
-function html<E extends HTMLElement>(id: string, render: Render<E>, type: ElementType<E>): void {
-  element(id, render, type)
+function html<E extends HTMLElement>(id: string, render: Render<E>, type: Rtti<E>): void {
+  declare(id, render, type)
 }
 
-function mount<E extends HTMLElement>(self: ElementToken<E>, parent: ElementToken<unknown>): E {
+function mount<E extends HTMLElement>(node: Node<E>, parent: Node<unknown>): E {
   // eslint-disable-next-line @typescript-eslint/no-non-null-assertion
-  const e = document.createElement(self.type!.hint) as E
+  const e = document.createElement(node.rtti!.hint) as E
   // eslint-disable-next-line @typescript-eslint/no-non-null-assertion
   (parent.element! as HTMLElement).appendChild(e)
-  self.element = e
+  node.element = e
   return e
 }
 
-function reconcile<E extends HTMLElement>(self: ElementToken<E>,
-  children: Array<ElementToken<unknown>>): Array<ElementToken<unknown>> {
+function reconcile<E extends HTMLElement>(node: Node<E>,
+  children: Array<Node<unknown>>): Array<Node<unknown>> {
   // eslint-disable-next-line @typescript-eslint/no-non-null-assertion
-  const e = self.element!
+  const e = node.element!
   const existing: Array<Element | null> = []
   for (let i = 0; i < e.children.length; i++)
     existing.push(e.children.item(i))
@@ -54,8 +54,8 @@ function reconcile<E extends HTMLElement>(self: ElementToken<E>,
   throw new Error('not implemented')
 }
 
-function unmount<E extends HTMLElement>(self: ElementToken<E>, parent: ElementToken<unknown>): undefined {
+function unmount<E extends HTMLElement>(node: Node<E>, parent: Node<unknown>): undefined {
   // eslint-disable-next-line @typescript-eslint/no-non-null-assertion
-  (parent.element! as HTMLElement).removeChild(self.element!)
+  (parent.element! as HTMLElement).removeChild(node.element!)
   return undefined
 }

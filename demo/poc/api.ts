@@ -3,53 +3,53 @@
 // Copyright (C) 2019-2020 Yury Chetyrko <ychetyrko@gmail.com>
 // License: https://raw.githubusercontent.com/nezaboodka/reactronic/master/LICENSE
 
-import { Context, ElementToken, ElementType, Render } from './api.data'
+import { Context, Node, Render, Rtti } from './api.data'
 export { Render } from './api.data'
 
-export function element<E = void>(id: string, render: Render<E>, type?: ElementType<E>): void {
-  const et: ElementToken<any> = { type, id, render }
-  const ctx = Context.current // shorthand
-  if (ctx) {
-    if (ctx.done)
+export function declare<E = void>(id: string, render: Render<E>, rtti?: Rtti<E>): void {
+  const node: Node<any> = { rtti, id, render, children: [], done: false }
+  const parent = Context.current // shorthand
+  if (parent) {
+    if (parent.done)
       throw new Error('element children are rendered already')
-    ctx.children.push(et)
+    parent.children.push(node)
   }
   else // it's root element
-    renderElement(et)
+    renderNode(node)
 }
 
-export function reactive<E = void>(render: Render<E>, type?: ElementType<E>): void {
+export function reactive<E = void>(render: Render<E>, type?: Rtti<E>): void {
   throw new Error('not implemented')
 }
 
 export function renderChildren(): void {
-  const ctx = Context.current // shorthand
-  if (ctx && !ctx.done) {
-    ctx.done = true // eslint-disable-next-line @typescript-eslint/no-non-null-assertion
-    const garbage = ctx.self.type?.reconcile!(ctx.self, ctx.children)
+  const node = Context.current // shorthand
+  if (node && !node.done) {
+    node.done = true // eslint-disable-next-line @typescript-eslint/no-non-null-assertion
+    const garbage = node.rtti?.reconcile!(node, node.children)
     // Unmount garbage elements
     for (const child of garbage) {
-      const unmount = child.type?.unmount
+      const unmount = child.rtti?.unmount
       if (unmount)
-        unmount(child, ctx.self)
+        unmount(child, node)
     }
     // Resolve and (re)render valid elements
-    for (const child of ctx.children) {
-      const mount = child.type?.mount
+    for (const child of node.children) {
+      const mount = child.rtti?.mount
       if (!child.element && mount)
-        mount(child, ctx.self)
-      renderElement(child)
+        mount(child, node)
+      renderNode(child)
     }
   }
 }
 
 // Internal
 
-function renderElement(self: ElementToken<unknown>): void {
+function renderNode(node: Node<unknown>): void {
   const outer = Context.current
   try {
-    Context.current = new Context(self)
-    self.render(self.element, -1) // children are not yet rendered
+    Context.current = node
+    node.render(node.element, -1) // children are not yet rendered
     renderChildren() // ignored if rendered already
   }
   finally {
