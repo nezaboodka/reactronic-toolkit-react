@@ -10,7 +10,7 @@ export { Render } from './api.data'
 
 export function reactive<E = void>(render: Render<E>, rtti?: Rtti<E>): void {
   const node = declareNode('', render, rtti)
-  Action.run('reactive', () => new ReactiveNode<E>(node))
+  Action.run('reactive', () => new Reactive<E>(node))
 }
 
 export function declareNode<E = void>(id: string, render: Render<E>, rtti?: Rtti<E>): Node<E> {
@@ -30,8 +30,9 @@ export function renderChildren(): void {
   const node = Context.current // shorthand
   if (node && !node.sealed) {
     node.sealed = true
-    node.children.sort((a, b) => a.id.localeCompare(b.id)) // eslint-disable-next-line @typescript-eslint/no-non-null-assertion
-    const garbage = node.rtti.reconcile!(node, node) // TODO: to implement
+    node.children.sort((a, b) => a.id.localeCompare(b.id))
+    const prev = node // eslint-disable-next-line @typescript-eslint/no-non-null-assertion
+    const garbage = node.rtti.reconcile!(node, prev) // TODO: to implement
     // Unmount garbage elements
     for (const child of garbage)
       if (child.rtti.unmount)
@@ -47,19 +48,18 @@ export function renderChildren(): void {
 
 // Internal
 
-class ReactiveNode<E> extends Stateful {
+class Reactive<E> extends Stateful {
   constructor(private readonly node: Node<E>) { super() }
 
   @trigger
   protected pulse(): void {
-    // if (Cache.of(this.render).invalid)
-    //   isolated(this.refresh, {rx: this, cycle: this.cycle + 1})
+    if (Cache.of(this.refresh).invalid)
+      isolated(this.refresh)
   }
 
   @cached
   protected refresh(): void {
-    const n = this.node // eslint-disable-next-line @typescript-eslint/no-non-null-assertion
-    return n.render(n.element!, -1)
+    renderNode(this.node as Node<unknown>)
   }
 }
 
