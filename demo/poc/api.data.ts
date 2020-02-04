@@ -5,24 +5,29 @@
 
 export type Render<E = void> = (element: E, cycle: number) => void
 
+export interface Meta<E = void> {
+  readonly id: string
+  readonly render: Render<E>
+  readonly type: Type<E>
+}
+
 export interface Node<E = void> {
-  rtti: Rtti<E>
-  id: string
+  meta: Meta<E>
   element?: E
-  render: Render<E>
   children: Array<Node<unknown>>
+  pending: Array<Meta<unknown>>
   sealed: boolean
 }
 
-export interface Rtti<E = void> {
-  hint: string
-  mount?(node: Node<E>, parent: Node<unknown>): E
+export interface Type<E = void> {
+  readonly name: string
+  mount?(meta: Meta<E>, parent: Node<unknown>): E
   reconcile?(node: Node<E>, previous: Node<E>): Array<Node<unknown>>
-  unmount?(node: Node<E>, parent: Node<unknown>): undefined
+  unmount?(element: E, meta: Meta<E>, parent: Node<unknown>): void
 }
 
 export class Context {
   static current: Node<unknown> | undefined = undefined
 }
 
-export const DefaultRtti: Rtti<unknown> = { hint: '<unknown>' }
+export const DefaultRtti: Type<unknown> = { name: '<unknown>' }

@@ -5,42 +5,45 @@
 
 import { Action, Cache, cached, isolated, Stateful, trigger } from 'reactronic'
 
-import { Context, DefaultRtti, Node, Render, Rtti } from './api.data'
+import { Context, DefaultRtti, Meta, Node, Render, Type } from './api.data'
 export { Render } from './api.data'
 
-export function reactive<E = void>(render: Render<E>, rtti?: Rtti<E>): void {
-  const node = declareNode('', render, rtti)
-  Action.run('reactive', () => new Reactive<E>(node))
+export function reactive<E = void>(render: Render<E>, rtti?: Type<E>): void {
+  const node = declaration('', render, rtti)
+  Action.run('reactive', () => new Reactive<E>(render))
 }
 
-export function declareNode<E = void>(id: string, render: Render<E>, rtti?: Rtti<E>): Node<E> {
-  const node: Node<any> = { rtti: rtti || DefaultRtti, id, render, children: [], sealed: false }
+export function declaration<E = void>(id: string, render: Render<E>, rtti?: Type<E>): Meta<E> {
+  const meta: Meta<any> = { id, render, type: rtti || DefaultRtti }
   const parent = Context.current // shorthand
   if (parent) {
     if (parent.sealed)
       throw new Error('children are rendered already')
-    parent.children.push(node)
+    parent.pending.push(meta)
   }
   else // it's root element
-    renderNode(node)
-  return node
+    renderNode({ meta, children: [], pending: [], sealed: false })
+  return meta
 }
 
 export function renderChildren(): void {
-  const node = Context.current // shorthand
-  if (node && !node.sealed) {
-    node.sealed = true
-    node.children.sort((a, b) => a.id.localeCompare(b.id))
-    const prev = node // eslint-disable-next-line @typescript-eslint/no-non-null-assertion
-    const garbage = node.rtti.reconcile!(node, prev) // TODO: to implement
+  const self = Context.current // shorthand
+  if (self && !self.sealed) {
+    self.sealed = true
+    self.pending.sort((a, b) => a.id.localeCompare(b.id))
+    const prev = self // eslint-disable-next-line @typescript-eslint/no-non-null-assertion
+    const garbage = self.meta.type.reconcile!(self, prev) // TODO: to implement
     // Unmount garbage elements
-    for (const child of garbage)
-      if (child.rtti.unmount)
-        child.rtti.unmount(child, node)
+    for (const child of garbage) {
+      const unmount = child.meta.type.unmount
+      if (unmount)
+        unmount(child.element, child.meta, self)
+    }
     // Resolve and (re)render valid elements
-    for (const child of node.children) {
-      if (!child.element && child.rtti.mount)
-        child.rtti.mount(child, node)
+    for (const child of self.children) {
+      const mount = child.meta.type.mount
+      if (!child.element && mount)
+        child.element = mount(child.meta, self)
       renderNode(child)
     }
   }
@@ -49,7 +52,7 @@ export function renderChildren(): void {
 // Internal
 
 class Reactive<E> extends Stateful {
-  constructor(private readonly node: Node<E>) { super() }
+  constructor(private readonly render: Render<E>) { super() }
 
   @trigger
   protected pulse(): void {
@@ -59,7 +62,7 @@ class Reactive<E> extends Stateful {
 
   @cached
   protected refresh(): void {
-    renderNode(this.node as Node<unknown>)
+    // renderNode(this.node as Node<unknown>)
   }
 }
 
@@ -67,7 +70,7 @@ function renderNode(node: Node<unknown>): void {
   const outer = Context.current
   try {
     Context.current = node
-    node.render(node.element, -1) // children are not yet rendered
+    node.meta.render(node.element, -1) // children are not yet rendered
     renderChildren() // ignored if rendered already
   }
   finally {
