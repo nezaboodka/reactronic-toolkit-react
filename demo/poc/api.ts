@@ -15,7 +15,7 @@ export function declareNode<E = void>(id: string, render: Render<E>, rtti?: Rtti
   const parent = Context.current // shorthand
   if (parent) {
     if (parent.done)
-      throw new Error('element children are rendered already')
+      throw new Error('children are rendered already')
     parent.children.push(node)
   }
   else // it's root element
