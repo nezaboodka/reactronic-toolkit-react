@@ -3,7 +3,7 @@
 // Copyright (C) 2019-2020 Yury Chetyrko <ychetyrko@gmail.com>
 // License: https://raw.githubusercontent.com/nezaboodka/reactronic/master/LICENSE
 
-import { declare } from './api'
+import { declareNode } from './api'
 import { Node, Render, Rtti } from './api.data'
 
 export function div(id: string, render: Render<HTMLDivElement>): void {
@@ -31,7 +31,7 @@ const Html = {
 // Internal
 
 function html<E extends HTMLElement>(id: string, render: Render<E>, type: Rtti<E>): void {
-  declare(id, render, type)
+  declareNode(id, render, type)
 }
 
 function mount<E extends HTMLElement>(node: Node<E>, parent: Node<unknown>): E {
@@ -44,13 +44,12 @@ function mount<E extends HTMLElement>(node: Node<E>, parent: Node<unknown>): E {
 }
 
 function reconcile<E extends HTMLElement>(node: Node<E>,
-  children: Array<Node<unknown>>): Array<Node<unknown>> {
-  // eslint-disable-next-line @typescript-eslint/no-non-null-assertion
-  const e = node.element!
-  const existing: Array<Element | null> = []
-  for (let i = 0; i < e.children.length; i++)
-    existing.push(e.children.item(i))
-  existing.sort()
+  previous: Node<E>): Array<Node<unknown>> {
+  // const e = node.element!
+  // const existing: Array<Element | null> = []
+  // for (let i = 0; i < e.children.length; i++)
+  //   existing.push(e.children.item(i))
+  // existing.sort()
   throw new Error('not implemented')
 }
 

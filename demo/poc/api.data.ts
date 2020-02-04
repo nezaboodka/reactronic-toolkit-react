@@ -6,7 +6,7 @@
 export type Render<E = void> = (element: E, cycle: number) => void
 
 export interface Node<E = void> {
-  rtti?: Rtti<E>
+  rtti: Rtti<E>
   id: string
   element?: E
   render: Render<E>
@@ -17,10 +17,12 @@ export interface Node<E = void> {
 export interface Rtti<E = void> {
   hint: string
   mount?(node: Node<E>, parent: Node<unknown>): E
-  reconcile?(node: Node<E>, children: Array<Node<unknown>>): Array<Node<unknown>>
+  reconcile?(node: Node<E>, previous: Node<E>): Array<Node<unknown>>
   unmount?(node: Node<E>, parent: Node<unknown>): undefined
 }
 
 export class Context {
   static current: Node<unknown> | undefined = undefined
 }
+
+export const DefaultRtti: Rtti<unknown> = { hint: '<unknown>' }

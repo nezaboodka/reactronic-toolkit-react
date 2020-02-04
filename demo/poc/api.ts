@@ -3,11 +3,15 @@
 // Copyright (C) 2019-2020 Yury Chetyrko <ychetyrko@gmail.com>
 // License: https://raw.githubusercontent.com/nezaboodka/reactronic/master/LICENSE
 
-import { Context, Node, Render, Rtti } from './api.data'
+import { Context, DefaultRtti, Node, Render, Rtti } from './api.data'
 export { Render } from './api.data'
 
-export function declare<E = void>(id: string, render: Render<E>, rtti?: Rtti<E>): void {
-  const node: Node<any> = { rtti, id, render, children: [], done: false }
+export function reactive<E = void>(render: Render<E>, type?: Rtti<E>): void {
+  throw new Error('not implemented')
+}
+
+export function declareNode<E = void>(id: string, render: Render<E>, rtti?: Rtti<E>): void {
+  const node: Node<any> = { rtti: rtti || DefaultRtti, id, render, children: [], done: false }
   const parent = Context.current // shorthand
   if (parent) {
     if (parent.done)
@@ -18,24 +22,21 @@ export function declare<E = void>(id: string, render: Render<E>, rtti?: Rtti<E>)
     renderNode(node)
 }
 
-export function reactive<E = void>(render: Render<E>, type?: Rtti<E>): void {
-  throw new Error('not implemented')
-}
-
 export function renderChildren(): void {
   const node = Context.current // shorthand
   if (node && !node.done) {
-    node.done = true // eslint-disable-next-line @typescript-eslint/no-non-null-assertion
-    const garbage = node.rtti?.reconcile!(node, node.children)
+    node.done = true
+    node.children.sort((a, b) => a.id.localeCompare(b.id)) // eslint-disable-next-line @typescript-eslint/no-non-null-assertion
+    const garbage = node.rtti.reconcile!(node, node) // TODO: to implement
     // Unmount garbage elements
     for (const child of garbage) {
-      const unmount = child.rtti?.unmount
+      const unmount = child.rtti.unmount
       if (unmount)
         unmount(child, node)
     }
     // Resolve and (re)render valid elements
     for (const child of node.children) {
-      const mount = child.rtti?.mount
+      const mount = child.rtti.mount
       if (!child.element && mount)
         mount(child, node)
       renderNode(child)
