@@ -41,8 +41,10 @@ export function renderChildren(): void {
       const a = refs.index[i]
       const b = index2[j]
       if (a.id < b.id) {
-        if (b.type.unmount)
-          b.type.unmount(b, self), b.refs = undefined
+        if (b.type.unmount) {
+          b.type.unmount(b, self)
+          b.refs = undefined
+        }
         i++
       }
       else if (a.id === b.id) {
@@ -50,7 +52,8 @@ export function renderChildren(): void {
           index2[j] = a
         else
           b.refs = a.refs
-        i++, j++
+        i++
+        j++
       }
       else // a.id > b.id
         j++
