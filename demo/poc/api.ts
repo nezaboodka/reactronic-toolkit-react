@@ -15,7 +15,7 @@ export function reactive<E = void>(id: string, render: Render<E>, rtti?: NodeTyp
 
 export function node<E = void>(id: string, render: Render<E>, rtti?: NodeType<E>): Node<E> {
   const n: Node<any> = { id, render, type: rtti || DefaultNodeType }
-  const parent = Context.current // shorthand
+  const parent = Context.self // shorthand
   if (parent) {
     const linker = parent.linker
     if (linker) {
@@ -32,7 +32,7 @@ export function node<E = void>(id: string, render: Render<E>, rtti?: NodeType<E>
 }
 
 export function renderChildren(): void {
-  const self = Context.current
+  const self = Context.self
   const linker = self.linker
   if (linker && reconcile(linker, self)) {
     let prev: Node<unknown> | undefined = undefined
@@ -101,9 +101,9 @@ class Reactive<E> extends Stateful {
 }
 
 function renderNode(node: Node<unknown>): void {
-  const outer = Context.current
+  const outer = Context.self
   try {
-    Context.current = node
+    Context.self = node
     const linker = node.linker
     if (linker) {
       linker.reconciliation = true
@@ -112,6 +112,6 @@ function renderNode(node: Node<unknown>): void {
     }
   }
   finally {
-    Context.current = outer
+    Context.self = outer
   }
 }

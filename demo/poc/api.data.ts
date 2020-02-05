@@ -26,18 +26,14 @@ export interface Linker<E = void> {
   index: Array<Node<unknown>> // sorted children
 }
 
+export const DefaultRender: Render<unknown> = () => { /* nop */ }
 export const DefaultNodeType: NodeType<unknown> = { name: '<unknown>' }
 
 export class Context {
-  static current: Node<unknown> = {
+  static self: Node<unknown> = {
     id: '<root>',
-    render: () => { /* nop */ },
+    render: DefaultRender,
     type: DefaultNodeType,
-    linker: {
-      element: undefined,
-      reconciliation: false,
-      children: [],
-      index: [],
-    }
+    linker: { reconciliation: false, children: [], index: [] }
   }
 }
