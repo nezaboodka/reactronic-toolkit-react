@@ -28,6 +28,7 @@ export function text(value: string): void {
 let currentHtmlElement: HTMLElement | undefined = undefined
 
 function render<E extends HTMLElement>(node: Node<E>, cycle: number): void {
+  console.log(`rendering: ${node.id}...`)
   const outer = currentHtmlElement
   try { // eslint-disable-next-line @typescript-eslint/no-non-null-assertion
     const self = node.linker!.element!
@@ -37,6 +38,7 @@ function render<E extends HTMLElement>(node: Node<E>, cycle: number): void {
   finally {
     currentHtmlElement = outer
   }
+  console.log(`rendered: ${node.id}`)
 }
 
 function mount<E extends HTMLElement>(node: Node<E>, outer: Node<unknown>, after?: Node<unknown>): void {
@@ -48,6 +50,7 @@ function mount<E extends HTMLElement>(node: Node<E>, outer: Node<unknown>, after
   else
     parent.appendChild(e) // eslint-disable-next-line @typescript-eslint/no-non-null-assertion
   node.linker!.element = e
+  console.log(`mounted: ${node.id}`)
 }
 
 function move<E extends HTMLElement>(node: Node<E>, outer: Node<unknown>, after?: Node<unknown>): void {
@@ -56,12 +59,14 @@ function move<E extends HTMLElement>(node: Node<E>, outer: Node<unknown>, after?
   const e = node.linker?.element
   if (e && prev instanceof HTMLElement && prev.nextSibling !== e)
     parent.insertBefore(e, prev.nextSibling)
+  console.log(`moved: ${node.id}`)
 }
 
 function unmount<E extends HTMLElement>(node: Node<E>, outer: Node<unknown>): void {
   const e = node.linker?.element
   if (e && e.parentElement)
     e.parentElement.removeChild(e)
+  console.log(`unmounted: ${node.id}`)
 }
 
 const Html = {

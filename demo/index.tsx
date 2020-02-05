@@ -15,3 +15,14 @@ R.setTrace(TraceLevel.Warnings)
 const app = Action.run('app', () => new Application())
 const root = document.getElementById('root')
 ReactDOM.render(<AppMain app={app}/>, root)
+
+// import { Reactronic as R, TraceLevel } from 'reactronic'
+
+// import { Toolbar } from './viewtronic/example'
+
+// R.setTrace(TraceLevel.Warnings)
+
+// setTimeout(() => {
+//   Toolbar('toolbar', '')
+//   console.log('(!)')
+// }, 1000)

@@ -38,7 +38,7 @@ export function ToolbarButton(id: string, icon: string, caption?: string): void 
 
       div('text', e => {
         e.className = 'fancy-button-text'
-        text(caption || id)
+        // text(caption || id)
         measure = e
       })
     })
