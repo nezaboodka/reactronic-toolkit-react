@@ -105,11 +105,11 @@ function renderNode(node: Node<unknown>): void {
   try {
     Context.self = node
     const linker = node.linker
-    if (linker) {
-      linker.reconciliation = true
-      node.render(linker.element, -1) // children are not yet rendered
-      renderChildren() // ignored if rendered already
-    }
+    if (!linker)
+      throw new Error('node must be mounted before rendering')
+    linker.reconciliation = true
+    node.render(linker.element, -1) // children are not yet rendered
+    renderChildren() // ignored if rendered already
   }
   finally {
     Context.self = outer
