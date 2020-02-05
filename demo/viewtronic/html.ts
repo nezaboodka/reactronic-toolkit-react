@@ -3,7 +3,7 @@
 // Copyright (C) 2019-2020 Yury Chetyrko <ychetyrko@gmail.com>
 // License: https://raw.githubusercontent.com/nezaboodka/reactronic/master/LICENSE
 
-import { define, Node, Render, Type } from './api'
+import { define, Node, Render } from './api'
 
 // Tags
 
@@ -40,32 +40,28 @@ function render<E extends HTMLElement>(node: Node<E>, cycle: number): void {
 }
 
 function mount<E extends HTMLElement>(node: Node<E>, outer: Node<unknown>, after?: Node<unknown>): void {
-  // eslint-disable-next-line @typescript-eslint/no-non-null-assertion
-  const parent = currentHtmlElement!
-  const e = document.createElement(node.type.name) as E
+  const parent = currentHtmlElement || document.body
   const prev = after?.linker?.element
+  const e = document.createElement(node.type.name) as E
   if (prev instanceof HTMLElement)
     parent.insertBefore(e, prev.nextSibling)
   else
-    parent.appendChild(e)
-  // eslint-disable-next-line @typescript-eslint/no-non-null-assertion
+    parent.appendChild(e) // eslint-disable-next-line @typescript-eslint/no-non-null-assertion
   node.linker!.element = e
 }
 
 function move<E extends HTMLElement>(node: Node<E>, outer: Node<unknown>, after?: Node<unknown>): void {
-  // eslint-disable-next-line @typescript-eslint/no-non-null-assertion
-  const parent = currentHtmlElement!
-  // eslint-disable-next-line @typescript-eslint/no-non-null-assertion
-  const e = node.linker?.element!
+  const parent = currentHtmlElement || document.body
   const prev = after?.linker?.element
-  if (prev instanceof HTMLElement && prev.nextSibling !== e)
+  const e = node.linker?.element
+  if (e && prev instanceof HTMLElement && prev.nextSibling !== e)
     parent.insertBefore(e, prev.nextSibling)
 }
 
 function unmount<E extends HTMLElement>(node: Node<E>, outer: Node<unknown>): void {
-  // eslint-disable-next-line @typescript-eslint/no-non-null-assertion
-  const e = node.linker!.element! // eslint-disable-next-line @typescript-eslint/no-non-null-assertion
-  e.parentElement!.removeChild(e)
+  const e = node.linker?.element
+  if (e && e.parentElement)
+    e.parentElement.removeChild(e)
 }
 
 const Html = {
