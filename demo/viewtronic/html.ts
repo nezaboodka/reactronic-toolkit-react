@@ -3,7 +3,7 @@
 // Copyright (C) 2019-2020 Yury Chetyrko <ychetyrko@gmail.com>
 // License: https://raw.githubusercontent.com/nezaboodka/reactronic/master/LICENSE
 
-import { define, Node, Render, renderChildren, renderNode } from './api'
+import { define, Node, Render, renderNode } from '~/viewtronic/api'
 
 // Tags
 
