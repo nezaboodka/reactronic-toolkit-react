@@ -3,7 +3,7 @@
 // Copyright (C) 2019-2020 Yury Chetyrko <ychetyrko@gmail.com>
 // License: https://raw.githubusercontent.com/nezaboodka/reactronic/master/LICENSE
 
-import { define, Node, Render, Type } from './viewtronic'
+import { define, Node, Render, Type } from './api'
 
 export function div(id: string, render: Render<HTMLDivElement>): void {
   defineHtmlTag(id, render, Html.div)
