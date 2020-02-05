@@ -23,9 +23,9 @@ export function t(value: string): void {
 }
 
 const Html = {
-  div: { name: 'div', mount, reconcile, unmount },
-  span: { name: 'span', mount, reconcile, unmount },
-  i: { name: 'i', mount, reconcile, unmount },
+  div: { name: 'div', mount, unmount },
+  span: { name: 'span', mount, unmount },
+  i: { name: 'i', mount, unmount },
 }
 
 // Internal

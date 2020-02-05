@@ -5,7 +5,7 @@
 
 import { Action, Cache, cached, isolated, Stateful, trigger } from 'reactronic'
 
-import { Context, DefaultNodeType, Node, NodeType, Render, Linker } from './api.data'
+import { Context, DefaultNodeType, Linker, Node, NodeType, Render } from './api.data'
 export { Render } from './api.data'
 
 export function reactive<E = void>(id: string, render: Render<E>, rtti?: NodeType<E>): void {
