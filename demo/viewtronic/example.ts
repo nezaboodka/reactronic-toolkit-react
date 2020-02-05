@@ -25,25 +25,26 @@ export function Toolbar(id: string, className: string): void {
 }
 
 export function ToolbarButton(id: string, icon: string, caption?: string): void {
-  reactive(id, () => {
+  // reactive(id, () => {
 
-    let measure: HTMLDivElement
-    div(id, e => {
-      e.className = 'fancy-button'
+  // let measure: HTMLDivElement
+  div(id, e => {
+    e.className = 'fancy-button'
 
-      div('icon', e => {
-        e.className = 'fancy-button-icon'
-        i('sym', el => el.className = icon)
-      })
-
-      div('text', e => {
-        e.className = 'fancy-button-text'
-        // text(caption || id)
-        measure = e
-      })
+    div('icon', e => {
+      e.className = 'fancy-button-icon'
+      i('sym', el => el.className = icon)
     })
 
-    renderChildren() // eslint-disable-next-line @typescript-eslint/no-non-null-assertion
-    console.log(measure!.clientWidth)
+    div('text', e => {
+      e.className = 'fancy-button-text'
+      // text(caption || id)
+      // measure = e
+    })
   })
+
+  // renderChildren() // eslint-disable-next-line @typescript-eslint/no-non-null-assertion
+  // console.log(`measured: ${measure!.clientHeight}`)
+
+  // })
 }

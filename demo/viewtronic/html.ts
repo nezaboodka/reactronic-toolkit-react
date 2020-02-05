@@ -3,7 +3,7 @@
 // Copyright (C) 2019-2020 Yury Chetyrko <ychetyrko@gmail.com>
 // License: https://raw.githubusercontent.com/nezaboodka/reactronic/master/LICENSE
 
-import { define, Node, Render } from './api'
+import { define, Node, Render, renderChildren } from './api'
 
 // Tags
 
@@ -25,24 +25,28 @@ export function text(value: string): void {
 
 // Internal
 
-let currentHtmlElement: HTMLElement | undefined = undefined
+class HtmlContext {
+  static root: HTMLElement = document.body
+  static self = HtmlContext.root
+}
 
-function render<E extends HTMLElement>(node: Node<E>, cycle: number): void {
-  console.log(`rendering: ${node.id}...`)
-  const outer = currentHtmlElement
+function embrace<E extends HTMLElement>(node: Node<E>, cycle: number): void {
+  console.log(`enter: <${node.type.name}> #${node.id}...`)
+  const outer = HtmlContext.self
   try { // eslint-disable-next-line @typescript-eslint/no-non-null-assertion
     const self = node.linker!.element!
-    currentHtmlElement = self
+    HtmlContext.self = self
     node.render(self, cycle)
+    renderChildren()
   }
   finally {
-    currentHtmlElement = outer
+    HtmlContext.self = outer
   }
-  console.log(`rendered: ${node.id}`)
+  console.log(`leave: <${node.type.name}> #${node.id}`)
 }
 
 function mount<E extends HTMLElement>(node: Node<E>, outer: Node<unknown>, after?: Node<unknown>): void {
-  const parent = currentHtmlElement || document.body
+  const parent = HtmlContext.self
   const prev = after?.linker?.element
   const e = document.createElement(node.type.name) as E
   if (prev instanceof HTMLElement)
@@ -50,27 +54,27 @@ function mount<E extends HTMLElement>(node: Node<E>, outer: Node<unknown>, after
   else
     parent.appendChild(e) // eslint-disable-next-line @typescript-eslint/no-non-null-assertion
   node.linker!.element = e
-  console.log(`mounted: ${node.id}`)
+  console.log(`  mounted: <${node.type.name}> #${node.id}`)
 }
 
 function move<E extends HTMLElement>(node: Node<E>, outer: Node<unknown>, after?: Node<unknown>): void {
-  const parent = currentHtmlElement || document.body
+  const parent = HtmlContext.self
   const prev = after?.linker?.element
   const e = node.linker?.element
   if (e && prev instanceof HTMLElement && prev.nextSibling !== e)
     parent.insertBefore(e, prev.nextSibling)
-  console.log(`moved: ${node.id}`)
+  console.log(`  moved: <${node.type.name}> #${node.id}`)
 }
 
 function unmount<E extends HTMLElement>(node: Node<E>, outer: Node<unknown>): void {
   const e = node.linker?.element
   if (e && e.parentElement)
     e.parentElement.removeChild(e)
-  console.log(`unmounted: ${node.id}`)
+  console.log(`  unmounted: <${node.type.name}> #${node.id}`)
 }
 
 const Html = {
-  div: { name: 'div', render, mount, move, unmount },
-  span: { name: 'span', render, mount, move, unmount },
-  i: { name: 'i', render, mount, move, unmount },
+  div: { name: 'div', embrace, mount, move, unmount },
+  span: { name: 'span', embrace, mount, move, unmount },
+  i: { name: 'i', embrace, mount, move, unmount },
 }

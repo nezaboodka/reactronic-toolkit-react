@@ -18,7 +18,7 @@ export interface Node<E = void> {
 
 export interface Type<E = void> {
   readonly name: string
-  render?(node: Node<E>, cycle: number): void
+  embrace?(node: Node<E>, cycle: number): void
   mount?(node: Node<E>, outer: Node<unknown>, after?: Node<unknown>): void
   move?(node: Node<E>, outer: Node<unknown>, after?: Node<unknown>): void
   unmount?(node: Node<E>, outer: Node<unknown>): void
@@ -33,13 +33,13 @@ export interface Linker<E = void> {
 
 // reactive, define, renderChildren
 
-export function reactive<E = void>(id: string, render: Render<E>, rtti?: Type<E>): void {
+export function reactive<E = void>(id: string, render: Render<E>, rtti: Type<E>): void {
   const n = define(id, render, rtti)
-  Action.run('reactive', () => new Reactive<E>(render))
+  // Action.run('reactive', () => new Reactive<E>(render))
 }
 
-export function define<E = void>(id: string, render: Render<E>, rtti?: Type<E>): void {
-  console.log(`defining: ${id}...`)
+export function define<E = void>(id: string, render: Render<E>, rtti: Type<E>): void {
+  console.log(`< defining: <${rtti.name}> #${id}...`)
   const n: Node<any> = { id, render, type: rtti || DefaultNodeType }
   const parent = Context.self // shorthand
   const linker = parent.linker
@@ -48,17 +48,17 @@ export function define<E = void>(id: string, render: Render<E>, rtti?: Type<E>):
   if (!linker.reconciliation && parent !== Context.root)
     throw new Error('children are rendered already') // eslint-disable-next-line @typescript-eslint/no-non-null-assertion
   linker.children.push(n)
+  console.log(`/> defined: <${rtti.name}> #${id}`)
   if (parent === Context.root) {
     // eslint-disable-next-line @typescript-eslint/no-non-null-assertion
     parent.linker!.reconciliation = true
     renderChildren()
   }
-  console.log(`defined: ${id}`)
 }
 
 export function renderChildren(): void {
   const self = Context.self
-  console.log(`rendering children: ${self.id}`)
+  console.log(`rendering children: <${self.type.name}> #${self.id}`)
   const linker = self.linker
   if (linker && reconcile(linker, self)) {
     let prev: Node<unknown> | undefined = undefined
@@ -74,7 +74,7 @@ export function renderChildren(): void {
       prev = child
     }
   }
-  console.log(`rendered children: ${self.id}`)
+  console.log(`rendered children: <${self.type.name}> #${self.id}`)
 }
 
 // Internal: Context
@@ -95,7 +95,7 @@ class Context {
 function reconcile(linker: Linker<unknown>, self: Node<unknown>): boolean {
   let result = false
   if (linker.reconciliation) {
-    console.log(`reconciling: ${self.id}...`)
+    console.log(`  reconciling: <${self.type.name}> #${self.id}...`)
     result = true
     linker.reconciliation = false
     const reindexed = linker.children.slice()
@@ -122,7 +122,7 @@ function reconcile(linker: Linker<unknown>, self: Node<unknown>): boolean {
         j++
     }
     linker.index = reindexed
-    console.log(`reconciled: ${self.id}`)
+    console.log(`  reconciled: <${self.type.name}> #${self.id}`)
   }
   return result
 }
@@ -135,11 +135,12 @@ function renderNode(node: Node<unknown>): void {
     if (!linker)
       throw new Error('node must be mounted before rendering')
     linker.reconciliation = true
-    if (node.type.render)
-      node.type.render(node, -1)
-    else
+    if (!node.type.embrace) {
       node.render(linker.element, -1)
-    renderChildren() // ignored if rendered already
+      renderChildren() // ignored if rendered already
+    }
+    else
+      node.type.embrace(node, -1)
   }
   finally {
     Context.self = outer
