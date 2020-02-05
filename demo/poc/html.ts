@@ -23,9 +23,9 @@ export function t(value: string): void {
 }
 
 const Html = {
-  div: { name: 'div', mount, unmount },
-  span: { name: 'span', mount, unmount },
-  i: { name: 'i', mount, unmount },
+  div: { name: 'div', mount, move, unmount },
+  span: { name: 'span', mount, move, unmount },
+  i: { name: 'i', mount, move, unmount },
 }
 
 // Internal
@@ -48,7 +48,13 @@ function mount<E extends HTMLElement>(node: Node<E>, outer: Node<unknown>, after
 }
 
 function move<E extends HTMLElement>(node: Node<E>, outer: Node<unknown>, after?: Node<unknown>): void {
-  throw new Error('not implemented')
+  // eslint-disable-next-line @typescript-eslint/no-non-null-assertion
+  const parent = outer.linker!.element! as HTMLElement
+  // eslint-disable-next-line @typescript-eslint/no-non-null-assertion
+  const e = node.linker?.element!
+  const a = after?.linker?.element
+  if (a instanceof HTMLElement && a.nextSibling !== e)
+    parent.insertBefore(e, a.nextSibling || null)
 }
 
 function unmount<E extends HTMLElement>(node: Node<E>, outer: Node<unknown>): void {

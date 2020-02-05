@@ -35,13 +35,17 @@ export function renderChildren(): void {
   const self = Context.current
   const linker = self.linker
   if (linker && reconcile(linker, self)) {
+    let prev: Node<unknown> | undefined = undefined
     for (const child of linker.children) {
       if (!child.linker) {
         child.linker = { reconciliation: false, children: [], index: [] }
         if (child.type.mount)
-          child.type.mount(child, self)
+          child.type.mount(child, self, prev)
       }
+      else if (child.type.move)
+        child.type.move(child, self, prev)
       renderNode(child)
+      prev = child
     }
   }
 }
