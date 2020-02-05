@@ -3,19 +3,18 @@
 // Copyright (C) 2019-2020 Yury Chetyrko <ychetyrko@gmail.com>
 // License: https://raw.githubusercontent.com/nezaboodka/reactronic/master/LICENSE
 
-import { node } from './api'
-import { Node, NodeType, Render } from './api.data'
+import { define, Node, Render, Type } from './viewtronic'
 
 export function div(id: string, render: Render<HTMLDivElement>): void {
-  htmlNode(id, render, Html.div)
+  defineHtmlTag(id, render, Html.div)
 }
 
 export function span(id: string, render: Render<HTMLSpanElement>): void {
-  htmlNode(id, render, Html.span)
+  defineHtmlTag(id, render, Html.span)
 }
 
 export function i(id: string, render: Render<HTMLSpanElement>): void {
-  htmlNode(id, render, Html.i)
+  defineHtmlTag(id, render, Html.i)
 }
 
 export function text(value: string): void {
@@ -32,8 +31,8 @@ const Html = {
 
 let htmlParent: HTMLElement | undefined = undefined
 
-function htmlNode<E extends HTMLElement>(id: string, render: Render<E>, type: NodeType<E>): void {
-  node(id, render, type)
+function defineHtmlTag<E extends HTMLElement>(id: string, render: Render<E>, type: Type<E>): void {
+  define(id, render, type)
 }
 
 function render<E extends HTMLElement>(node: Node<E>, cycle: number): void {

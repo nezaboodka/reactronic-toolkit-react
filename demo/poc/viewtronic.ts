@@ -5,15 +5,44 @@
 
 import { Action, Cache, cached, isolated, Stateful, trigger } from 'reactronic'
 
-import { Context, DefaultNodeType, Linker, Node, NodeType, Render } from './api.data'
-export { Node, NodeType, Linker, Render } from './api.data'
+// Node
 
-export function reactive<E = void>(id: string, render: Render<E>, rtti?: NodeType<E>): void {
-  const n = node(id, render, rtti)
+export type Render<E = void> = (element: E, cycle: number) => void
+
+export interface Node<E = void> {
+  readonly id: string
+  readonly render: Render<E>
+  readonly type: Type<E>
+  linker?: Linker<E>
+}
+
+// NodeType
+
+export interface Type<E = void> {
+  readonly name: string
+  render?(node: Node<E>, cycle: number): void
+  mount?(node: Node<E>, outer: Node<unknown>, after?: Node<unknown>): void
+  move?(node: Node<E>, outer: Node<unknown>, after?: Node<unknown>): void
+  unmount?(node: Node<E>, outer: Node<unknown>): void
+}
+
+// Linker
+
+export interface Linker<E = void> {
+  element?: E
+  reconciliation: boolean
+  children: Array<Node<unknown>> // children in natural order
+  index: Array<Node<unknown>> // sorted children
+}
+
+// Context
+
+export function reactive<E = void>(id: string, render: Render<E>, rtti?: Type<E>): void {
+  const n = define(id, render, rtti)
   Action.run('reactive', () => new Reactive<E>(render))
 }
 
-export function node<E = void>(id: string, render: Render<E>, rtti?: NodeType<E>): Node<E> {
+export function define<E = void>(id: string, render: Render<E>, rtti?: Type<E>): Node<E> {
   const n: Node<any> = { id, render, type: rtti || DefaultNodeType }
   const parent = Context.self // shorthand
   if (parent) {
@@ -51,6 +80,18 @@ export function renderChildren(): void {
 }
 
 // Internal
+
+export const DefaultRender: Render<unknown> = () => { /* nop */ }
+export const DefaultNodeType: Type<unknown> = { name: '<unknown>' }
+
+class Context {
+  static self: Node<unknown> = {
+    id: '<root>',
+    render: DefaultRender,
+    type: DefaultNodeType,
+    linker: { reconciliation: false, children: [], index: [] }
+  }
+}
 
 function reconcile(linker: Linker<unknown>, self: Node<unknown>): boolean {
   let result = false
@@ -103,6 +144,8 @@ function renderNode(node: Node<unknown>): void {
     Context.self = outer
   }
 }
+
+// Reactive
 
 class Reactive<E> extends Stateful {
   constructor(private readonly render: Render<E>) { super() }

@@ -3,8 +3,8 @@
 // Copyright (C) 2019-2020 Yury Chetyrko <ychetyrko@gmail.com>
 // License: https://raw.githubusercontent.com/nezaboodka/reactronic/master/LICENSE
 
-import { reactive, renderChildren } from './api'
 import { div, i, text } from './html'
+import { reactive, renderChildren } from './viewtronic'
 
 export function Toolbar(id: string, className: string): void {
   div(id, e => {
