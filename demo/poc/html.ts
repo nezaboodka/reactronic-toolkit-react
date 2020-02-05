@@ -7,15 +7,15 @@ import { node } from './api'
 import { Node, NodeType, Render } from './api.data'
 
 export function div(id: string, render: Render<HTMLDivElement>): void {
-  html(id, render, Html.div)
+  htmlNode(id, render, Html.div)
 }
 
 export function span(id: string, render: Render<HTMLSpanElement>): void {
-  html(id, render, Html.span)
+  htmlNode(id, render, Html.span)
 }
 
 export function i(id: string, render: Render<HTMLSpanElement>): void {
-  html(id, render, Html.i)
+  htmlNode(id, render, Html.i)
 }
 
 export function text(value: string): void {
@@ -23,24 +23,38 @@ export function text(value: string): void {
 }
 
 const Html = {
-  div: { name: 'div', mount, move, unmount },
-  span: { name: 'span', mount, move, unmount },
-  i: { name: 'i', mount, move, unmount },
+  div: { name: 'div', render, mount, move, unmount },
+  span: { name: 'span', render, mount, move, unmount },
+  i: { name: 'i', render, mount, move, unmount },
 }
 
 // Internal
 
-function html<E extends HTMLElement>(id: string, render: Render<E>, type: NodeType<E>): void {
+let htmlOuter: HTMLElement | undefined = undefined
+
+function htmlNode<E extends HTMLElement>(id: string, render: Render<E>, type: NodeType<E>): void {
   node(id, render, type)
+}
+
+function render<E extends HTMLElement>(node: Node<E>, cycle: number): void {
+  const outer = htmlOuter
+  try { // eslint-disable-next-line @typescript-eslint/no-non-null-assertion
+    const self = node.linker!.element!
+    htmlOuter = self
+    node.render(self, cycle)
+  }
+  finally {
+    htmlOuter = outer
+  }
 }
 
 function mount<E extends HTMLElement>(node: Node<E>, outer: Node<unknown>, after?: Node<unknown>): void {
   // eslint-disable-next-line @typescript-eslint/no-non-null-assertion
-  const parent = outer.linker!.element! as HTMLElement
+  const parent = htmlOuter!
   const e = document.createElement(node.type.name) as E
   const a = after?.linker?.element
   if (a instanceof HTMLElement)
-    parent.insertBefore(e, a.nextSibling || null)
+    parent.insertBefore(e, a.nextSibling)
   else
     parent.appendChild(e)
   // eslint-disable-next-line @typescript-eslint/no-non-null-assertion
@@ -49,12 +63,12 @@ function mount<E extends HTMLElement>(node: Node<E>, outer: Node<unknown>, after
 
 function move<E extends HTMLElement>(node: Node<E>, outer: Node<unknown>, after?: Node<unknown>): void {
   // eslint-disable-next-line @typescript-eslint/no-non-null-assertion
-  const parent = outer.linker!.element! as HTMLElement
+  const parent = htmlOuter!
   // eslint-disable-next-line @typescript-eslint/no-non-null-assertion
   const e = node.linker?.element!
   const a = after?.linker?.element
   if (a instanceof HTMLElement && a.nextSibling !== e)
-    parent.insertBefore(e, a.nextSibling || null)
+    parent.insertBefore(e, a.nextSibling)
 }
 
 function unmount<E extends HTMLElement>(node: Node<E>, outer: Node<unknown>): void {

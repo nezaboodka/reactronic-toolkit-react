@@ -93,7 +93,10 @@ function renderNode(node: Node<unknown>): void {
     if (!linker)
       throw new Error('node must be mounted before rendering')
     linker.reconciliation = true
-    node.render(linker.element, -1) // children are not yet rendered
+    if (node.type.render)
+      node.type.render(node, -1)
+    else
+      node.render(linker.element, -1)
     renderChildren() // ignored if rendered already
   }
   finally {
