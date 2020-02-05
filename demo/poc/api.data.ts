@@ -9,7 +9,7 @@ export interface Node<E = void> {
   readonly id: string
   readonly render: Render<E>
   readonly type: NodeType<E>
-  linker?: NodeLinker<E>
+  linker?: Linker<E>
 }
 
 export interface NodeType<E = void> {
@@ -18,7 +18,7 @@ export interface NodeType<E = void> {
   unmount?(node: Node<E>, outer: Node<unknown>): void
 }
 
-export interface NodeLinker<E = void> {
+export interface Linker<E = void> {
   element?: E
   reconciliation: boolean
   children: Array<Node<unknown>> // children in natural order

@@ -34,22 +34,16 @@ function html<E extends HTMLElement>(id: string, render: Render<E>, type: NodeTy
   node(id, render, type)
 }
 
-function mount<E extends HTMLElement>(node: Node<E>, outer: Node<unknown>): E {
-  const e = document.createElement(node.type.name) as E // eslint-disable-next-line @typescript-eslint/no-non-null-assertion
-  (outer.linker!.element! as HTMLElement).appendChild(e)
-  return e
-}
-
-function reconcile<E extends HTMLElement>(node: Node<E>): Array<Node<unknown>> {
-  // const e = node.element!
-  // const existing: Array<Element | null> = []
-  // for (let i = 0; i < e.children.length; i++)
-  //   existing.push(e.children.item(i))
-  // existing.sort()
-  throw new Error('not implemented')
+function mount<E extends HTMLElement>(node: Node<E>, outer: Node<unknown>): void {
+  // eslint-disable-next-line @typescript-eslint/no-non-null-assertion
+  const parent = outer.linker!.element! as HTMLElement
+  const e = document.createElement(node.type.name) as E
+  parent.appendChild(e) // eslint-disable-next-line @typescript-eslint/no-non-null-assertion
+  node.linker!.element = e
 }
 
 function unmount<E extends HTMLElement>(node: Node<E>, outer: Node<unknown>): void {
   // eslint-disable-next-line @typescript-eslint/no-non-null-assertion
-  (outer.linker!.element! as HTMLElement).removeChild(node.linker!.element!)
+  const e = node.linker!.element! // eslint-disable-next-line @typescript-eslint/no-non-null-assertion
+  e.parentElement!.removeChild(e)
 }
