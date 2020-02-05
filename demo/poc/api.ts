@@ -8,8 +8,8 @@ import { Action, Cache, cached, isolated, Stateful, trigger } from 'reactronic'
 import { Context, DefaultNodeType, Node, NodeRefs, NodeType, Render } from './api.data'
 export { Render } from './api.data'
 
-export function reactive<E = void>(render: Render<E>, rtti?: NodeType<E>): void {
-  const n = node('', render, rtti)
+export function reactive<E = void>(id: string, render: Render<E>, rtti?: NodeType<E>): void {
+  const n = node(id, render, rtti)
   Action.run('reactive', () => new Reactive<E>(render))
 }
 
@@ -19,10 +19,10 @@ export function node<E = void>(id: string, render: Render<E>, rtti?: NodeType<E>
   if (parent) {
     if (!parent.refs?.rendering)
       throw new Error('children are rendered already') // eslint-disable-next-line @typescript-eslint/no-non-null-assertion
-    parent.refs!.updatedChildren.push(n)
+    parent.refs!.children.push(n)
   }
   else { // it's root element
-    n.refs = { element: undefined, rendering: false, sortedChildren: [], updatedChildren: [] }
+    n.refs = { element: undefined, rendering: false, index: [], children: [] }
     renderNode(n)
   }
   return n
@@ -34,13 +34,12 @@ export function renderChildren(): void {
   if (self && refs && refs.rendering) {
     refs.rendering = false
     // Reconcile
-    const existing = refs.sortedChildren
-    const updated = refs.updatedChildren.slice()
-    updated.sort((n1, n2) => n1.id.localeCompare(n2.id))
+    const index2 = refs.children.slice()
+    index2.sort((n1, n2) => n1.id.localeCompare(n2.id))
     let i = 0, j = 0
-    while (i < existing.length) {
-      const a = existing[i]
-      const b = updated[j]
+    while (i < refs.index.length) {
+      const a = refs.index[i]
+      const b = index2[j]
       if (a.id < b.id) {
         if (b.type.unmount)
           b.type.unmount(b, self)
@@ -50,7 +49,7 @@ export function renderChildren(): void {
         if (a.type !== b.type || a.render !== b.render)
           b.refs = a.refs
         else
-          updated[j] = a
+          index2[j] = a
         i++
         j++
       }
@@ -58,19 +57,19 @@ export function renderChildren(): void {
         j++
     }
     // Resolve and (re)render valid elements
-    for (const child of refs.updatedChildren) {
+    for (const child of refs.children) {
       if (!child.refs) {
         const mount = child.type.mount
         child.refs = {
           rendering: false,
-          sortedChildren: [],
-          updatedChildren: [],
+          index: [],
+          children: [],
           element: mount ? mount(child, self) : undefined
         }
       }
       renderNode(child)
     }
-    refs.sortedChildren = updated
+    refs.index = index2
   }
 }
 
