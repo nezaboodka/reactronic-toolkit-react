@@ -6,7 +6,7 @@
 import { Action, Cache, cached, isolated, Stateful, trigger } from 'reactronic'
 
 import { Context, DefaultNodeType, Linker, Node, NodeType, Render } from './api.data'
-export { Render } from './api.data'
+export { Node, NodeType, Linker, Render } from './api.data'
 
 export function reactive<E = void>(id: string, render: Render<E>, rtti?: NodeType<E>): void {
   const n = node(id, render, rtti)
@@ -50,6 +50,8 @@ export function renderChildren(): void {
   }
 }
 
+// Internal
+
 function reconcile(linker: Linker<unknown>, self: Node<unknown>): boolean {
   let result = false
   if (linker.reconciliation) {
@@ -83,23 +85,6 @@ function reconcile(linker: Linker<unknown>, self: Node<unknown>): boolean {
   return result
 }
 
-// Internal
-
-class Reactive<E> extends Stateful {
-  constructor(private readonly render: Render<E>) { super() }
-
-  @trigger
-  protected pulse(): void {
-    if (Cache.of(this.refresh).invalid)
-      isolated(this.refresh)
-  }
-
-  @cached
-  protected refresh(): void {
-    // renderNode(this.node as Node<unknown>)
-  }
-}
-
 function renderNode(node: Node<unknown>): void {
   const outer = Context.self
   try {
@@ -113,5 +98,20 @@ function renderNode(node: Node<unknown>): void {
   }
   finally {
     Context.self = outer
+  }
+}
+
+class Reactive<E> extends Stateful {
+  constructor(private readonly render: Render<E>) { super() }
+
+  @trigger
+  protected pulse(): void {
+    if (Cache.of(this.refresh).invalid)
+      isolated(this.refresh)
+  }
+
+  @cached
+  protected refresh(): void {
+    // renderNode(this.node as Node<unknown>)
   }
 }

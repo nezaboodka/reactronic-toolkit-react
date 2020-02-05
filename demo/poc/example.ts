@@ -4,7 +4,7 @@
 // License: https://raw.githubusercontent.com/nezaboodka/reactronic/master/LICENSE
 
 import { reactive, renderChildren } from './api'
-import { div, i, t } from './html'
+import { div, i, text } from './html'
 
 export function Toolbar(id: string, className: string): void {
   div(id, e => {
@@ -38,7 +38,7 @@ export function ToolbarButton(id: string, icon: string, caption?: string): void 
 
       div('text', e => {
         e.className = 'fancy-button-text'
-        t(caption || id)
+        text(caption || id)
         measure = e
       })
     })

@@ -18,7 +18,7 @@ export function i(id: string, render: Render<HTMLSpanElement>): void {
   html(id, render, Html.i)
 }
 
-export function t(value: string): void {
+export function text(value: string): void {
   throw new Error('not implemented')
 }
 
