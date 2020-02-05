@@ -3,7 +3,7 @@
 // Copyright (C) 2019-2020 Yury Chetyrko <ychetyrko@gmail.com>
 // License: https://raw.githubusercontent.com/nezaboodka/reactronic/master/LICENSE
 
-import { define, Node, Render, renderChildren } from './api'
+import { define, Node, Render, renderChildren, renderNode } from './api'
 
 // Tags
 
@@ -36,8 +36,7 @@ function embrace<E extends HTMLElement>(node: Node<E>, cycle: number): void {
   try { // eslint-disable-next-line @typescript-eslint/no-non-null-assertion
     const self = node.linker!.element!
     HtmlContext.self = self
-    node.render(self, cycle)
-    renderChildren()
+    renderNode(node)
   }
   finally {
     HtmlContext.self = outer

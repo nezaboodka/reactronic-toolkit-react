@@ -56,6 +56,15 @@ export function define<E = void>(id: string, render: Render<E>, rtti: Type<E>): 
   }
 }
 
+export function renderNode<E>(node: Node<E>): void {
+  const linker = node.linker
+  if (!linker)
+    throw new Error('node must be mounted before rendering')
+  linker.reconciliation = true // eslint-disable-next-line @typescript-eslint/no-non-null-assertion
+  node.render(linker.element!, -1)
+  renderChildren() // ignored if rendered already
+}
+
 export function renderChildren(): void {
   const self = Context.self
   console.log(`rendering children: <${self.type.name}> #${self.id}`)
@@ -70,7 +79,7 @@ export function renderChildren(): void {
       }
       else if (child.type.move)
         child.type.move(child, self, prev)
-      renderNode(child)
+      embrace(child)
       prev = child
     }
   }
@@ -90,6 +99,20 @@ class Context {
     linker: { reconciliation: false, children: [], index: [] }
   }
   static self = Context.root
+}
+
+function embrace(node: Node<unknown>): void {
+  const outer = Context.self
+  try {
+    Context.self = node
+    if (node.type.embrace)
+      node.type.embrace(node, -1)
+    else
+      renderNode(node)
+  }
+  finally {
+    Context.self = outer
+  }
 }
 
 function reconcile(linker: Linker<unknown>, self: Node<unknown>): boolean {
@@ -125,26 +148,6 @@ function reconcile(linker: Linker<unknown>, self: Node<unknown>): boolean {
     console.log(`  reconciled: <${self.type.name}> #${self.id}`)
   }
   return result
-}
-
-function renderNode(node: Node<unknown>): void {
-  const outer = Context.self
-  try {
-    Context.self = node
-    const linker = node.linker
-    if (!linker)
-      throw new Error('node must be mounted before rendering')
-    linker.reconciliation = true
-    if (!node.type.embrace) {
-      node.render(linker.element, -1)
-      renderChildren() // ignored if rendered already
-    }
-    else
-      node.type.embrace(node, -1)
-  }
-  finally {
-    Context.self = outer
-  }
 }
 
 // Internal: Reactive
