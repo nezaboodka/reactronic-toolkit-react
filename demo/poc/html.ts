@@ -35,8 +35,7 @@ function html<E extends HTMLElement>(id: string, render: Render<E>, type: NodeTy
 }
 
 function mount<E extends HTMLElement>(node: Node<E>, outer: Node<unknown>): E {
-  const e = document.createElement(node.type.name) as E
-  // eslint-disable-next-line @typescript-eslint/no-non-null-assertion
+  const e = document.createElement(node.type.name) as E // eslint-disable-next-line @typescript-eslint/no-non-null-assertion
   (outer.refs!.element! as HTMLElement).appendChild(e)
   return e
 }
