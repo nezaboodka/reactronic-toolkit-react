@@ -9,7 +9,7 @@ export interface Node<E = void> {
   readonly id: string
   readonly render: Render<E>
   readonly type: NodeType<E>
-  refs?: NodeRefs<E>
+  linker?: NodeLinker<E>
 }
 
 export interface NodeType<E = void> {
@@ -18,11 +18,11 @@ export interface NodeType<E = void> {
   unmount?(node: Node<E>, outer: Node<unknown>): void
 }
 
-export interface NodeRefs<E = void> {
+export interface NodeLinker<E = void> {
   element?: E
-  rendering: boolean
-  index: Array<Node<unknown>> // sorted order
-  children: Array<Node<unknown>> // natural order
+  reconciliation: boolean
+  children: Array<Node<unknown>> // children in natural order
+  index: Array<Node<unknown>> // sorted children
 }
 
 export const DefaultNodeType: NodeType<unknown> = { name: '<unknown>' }
@@ -32,11 +32,11 @@ export class Context {
     id: '<root>',
     render: () => { /* nop */ },
     type: DefaultNodeType,
-    refs: {
+    linker: {
       element: undefined,
-      rendering: false,
-      index: [],
+      reconciliation: false,
       children: [],
+      index: [],
     }
   }
 }

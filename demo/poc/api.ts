@@ -5,7 +5,7 @@
 
 import { Action, Cache, cached, isolated, Stateful, trigger } from 'reactronic'
 
-import { Context, DefaultNodeType, Node, NodeRefs, NodeType, Render } from './api.data'
+import { Context, DefaultNodeType, Node, NodeType, Render } from './api.data'
 export { Render } from './api.data'
 
 export function reactive<E = void>(id: string, render: Render<E>, rtti?: NodeType<E>): void {
@@ -17,12 +17,12 @@ export function node<E = void>(id: string, render: Render<E>, rtti?: NodeType<E>
   const n: Node<any> = { id, render, type: rtti || DefaultNodeType }
   const parent = Context.current // shorthand
   if (parent) {
-    if (!parent.refs?.rendering)
+    if (!parent.linker?.reconciliation)
       throw new Error('children are rendered already') // eslint-disable-next-line @typescript-eslint/no-non-null-assertion
-    parent.refs!.children.push(n)
+    parent.linker!.children.push(n)
   }
   else { // it's root element
-    n.refs = { element: undefined, rendering: false, index: [], children: [] }
+    n.linker = { element: undefined, reconciliation: false, children: [], index: [] }
     renderNode(n)
   }
   return n
@@ -30,20 +30,20 @@ export function node<E = void>(id: string, render: Render<E>, rtti?: NodeType<E>
 
 export function renderChildren(): void {
   const self = Context.current
-  const refs = self.refs
-  if (self && refs && refs.rendering) {
-    refs.rendering = false
+  const linker = self.linker
+  if (self && linker && linker.reconciliation) {
+    linker.reconciliation = false
     // Reconcile
-    const index2 = refs.children.slice()
+    const index2 = linker.children.slice()
     index2.sort((n1, n2) => n1.id.localeCompare(n2.id))
     let i = 0, j = 0
-    while (i < refs.index.length) {
-      const a = refs.index[i]
+    while (i < linker.index.length) {
+      const a = linker.index[i]
       const b = index2[j]
       if (a.id < b.id) {
         if (b.type.unmount) {
           b.type.unmount(b, self)
-          b.refs = undefined
+          b.linker = undefined
         }
         i++
       }
@@ -51,27 +51,25 @@ export function renderChildren(): void {
         if (a.type === b.type && a.render !== b.render)
           index2[j] = a
         else
-          b.refs = a.refs
+          b.linker = a.linker
         i++
         j++
       }
       else // a.id > b.id
         j++
     }
-    // Resolve and (re)render valid elements
-    for (const child of refs.children) {
-      if (!child.refs) {
-        const mount = child.type.mount
-        child.refs = {
-          rendering: false,
-          index: [],
+    // (Re)render valid elements
+    for (const child of linker.children) {
+      if (!child.linker)
+        child.linker = {
+          element: child.type.mount ? child.type.mount(child, self) : undefined,
+          reconciliation: false,
           children: [],
-          element: mount ? mount(child, self) : undefined
+          index: [],
         }
-      }
       renderNode(child)
     }
-    refs.index = index2
+    linker.index = index2
   }
 }
 
@@ -96,10 +94,10 @@ function renderNode(node: Node<unknown>): void {
   const outer = Context.current
   try {
     Context.current = node
-    const refs = node.refs
-    if (refs) {
-      refs.rendering = true
-      node.render(refs.element, -1) // children are not yet rendered
+    const linker = node.linker
+    if (linker) {
+      linker.reconciliation = true
+      node.render(linker.element, -1) // children are not yet rendered
       renderChildren() // ignored if rendered already
     }
   }
