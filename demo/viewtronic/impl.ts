@@ -7,7 +7,7 @@ import { Cache, cached, isolated, Stateful, trigger } from 'reactronic'
 
 // Render, Node, Type, Linker
 
-export type Render<E = void> = (element: E, cycle: number) => void
+export type Render<E = void> = (element: E) => void
 
 export interface Node<E = void> {
   readonly id: string
@@ -18,7 +18,7 @@ export interface Node<E = void> {
 
 export interface Type<E = void> {
   readonly name: string
-  embrace?(node: Node<E>, cycle: number): void
+  embrace?(node: Node<E>): void
   mount?(node: Node<E>, outer: Node<unknown>, after?: Node<unknown>): void
   move?(node: Node<E>, outer: Node<unknown>, after?: Node<unknown>): void
   unmount?(node: Node<E>, outer: Node<unknown>): void
@@ -61,7 +61,7 @@ export function renderNode<E>(node: Node<E>): void {
   if (!linker)
     throw new Error('node must be mounted before rendering')
   linker.reconciliation = true // eslint-disable-next-line @typescript-eslint/no-non-null-assertion
-  node.render(linker.element!, -1)
+  node.render(linker.element!)
   renderChildren() // ignored if rendered already
 }
 
@@ -106,7 +106,7 @@ export function apply(node: Node<unknown>): void {
   try {
     Context.self = node
     if (node.type.embrace)
-      node.type.embrace(node, -1)
+      node.type.embrace(node)
     else
       renderNode(node)
   }

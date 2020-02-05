@@ -23,6 +23,6 @@ ReactDOM.render(<AppMain app={app}/>, root)
 // R.setTrace(TraceLevel.Warnings)
 
 // setTimeout(() => {
-//   Toolbar('toolbar', '')
+//   Toolbar('toolbar', 'bar')
 //   console.log('(!)')
 // }, 1000)

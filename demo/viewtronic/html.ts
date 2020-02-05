@@ -19,10 +19,6 @@ export function i(id: string, render: Render<HTMLSpanElement>): void {
   define(id, render, Html.i)
 }
 
-export function text(value: string): void {
-  throw new Error('not implemented')
-}
-
 // Internal
 
 class HtmlContext {
@@ -30,7 +26,7 @@ class HtmlContext {
   static self = HtmlContext.root
 }
 
-function embrace<E extends HTMLElement>(node: Node<E>, cycle: number): void {
+function embrace<E extends HTMLElement>(node: Node<E>): void {
   console.log(`enter: <${node.type.name}> #${node.id}...`)
   const outer = HtmlContext.self
   try { // eslint-disable-next-line @typescript-eslint/no-non-null-assertion
@@ -48,6 +44,7 @@ function mount<E extends HTMLElement>(node: Node<E>, outer: Node<unknown>, after
   const parent = HtmlContext.self
   const prev = after?.linker?.element
   const e = document.createElement(node.type.name) as E
+  e.id = node.id
   if (prev instanceof HTMLElement)
     parent.insertBefore(e, prev.nextSibling)
   else
@@ -77,3 +74,4 @@ const Html = {
   span: { name: 'span', embrace, mount, move, unmount },
   i: { name: 'i', embrace, mount, move, unmount },
 }
+

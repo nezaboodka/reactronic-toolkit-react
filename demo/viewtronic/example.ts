@@ -4,11 +4,14 @@
 // License: https://raw.githubusercontent.com/nezaboodka/reactronic/master/LICENSE
 
 import { reactive, renderChildren } from './api'
-import { div, i, text } from './html'
+import { div, i } from './html'
 
 export function Toolbar(id: string, className: string): void {
   div(id, e => {
     e.className = className
+    e.style.zIndex = '100'
+    e.style.display = 'flex'
+    e.style.flexDirection = 'row'
     ToolbarButton('menu', 'las la-menu', 'Menu')
     div('spring', e => e.style.flexGrow = '1')
     ToolbarButton('settings', 'las la-cog', 'Settings')
@@ -38,7 +41,7 @@ export function ToolbarButton(id: string, icon: string, caption?: string): void 
 
     div('text', e => {
       e.className = 'fancy-button-text'
-      // text(caption || id)
+      e.innerText = caption || ''
       // measure = e
     })
   })
