@@ -30,31 +30,31 @@ const Html = {
 
 // Internal
 
-let htmlOuter: HTMLElement | undefined = undefined
+let htmlParent: HTMLElement | undefined = undefined
 
 function htmlNode<E extends HTMLElement>(id: string, render: Render<E>, type: NodeType<E>): void {
   node(id, render, type)
 }
 
 function render<E extends HTMLElement>(node: Node<E>, cycle: number): void {
-  const outer = htmlOuter
+  const outer = htmlParent
   try { // eslint-disable-next-line @typescript-eslint/no-non-null-assertion
     const self = node.linker!.element!
-    htmlOuter = self
+    htmlParent = self
     node.render(self, cycle)
   }
   finally {
-    htmlOuter = outer
+    htmlParent = outer
   }
 }
 
 function mount<E extends HTMLElement>(node: Node<E>, outer: Node<unknown>, after?: Node<unknown>): void {
   // eslint-disable-next-line @typescript-eslint/no-non-null-assertion
-  const parent = htmlOuter!
+  const parent = htmlParent!
   const e = document.createElement(node.type.name) as E
-  const a = after?.linker?.element
-  if (a instanceof HTMLElement)
-    parent.insertBefore(e, a.nextSibling)
+  const prev = after?.linker?.element
+  if (prev instanceof HTMLElement)
+    parent.insertBefore(e, prev.nextSibling)
   else
     parent.appendChild(e)
   // eslint-disable-next-line @typescript-eslint/no-non-null-assertion
@@ -63,12 +63,12 @@ function mount<E extends HTMLElement>(node: Node<E>, outer: Node<unknown>, after
 
 function move<E extends HTMLElement>(node: Node<E>, outer: Node<unknown>, after?: Node<unknown>): void {
   // eslint-disable-next-line @typescript-eslint/no-non-null-assertion
-  const parent = htmlOuter!
+  const parent = htmlParent!
   // eslint-disable-next-line @typescript-eslint/no-non-null-assertion
   const e = node.linker?.element!
-  const a = after?.linker?.element
-  if (a instanceof HTMLElement && a.nextSibling !== e)
-    parent.insertBefore(e, a.nextSibling)
+  const prev = after?.linker?.element
+  if (prev instanceof HTMLElement && prev.nextSibling !== e)
+    parent.insertBefore(e, prev.nextSibling)
 }
 
 function unmount<E extends HTMLElement>(node: Node<E>, outer: Node<unknown>): void {
