@@ -17,9 +17,12 @@ export function node<E = void>(id: string, render: Render<E>, rtti?: NodeType<E>
   const n: Node<any> = { id, render, type: rtti || DefaultNodeType }
   const parent = Context.current // shorthand
   if (parent) {
-    if (!parent.linker?.reconciliation)
-      throw new Error('children are rendered already') // eslint-disable-next-line @typescript-eslint/no-non-null-assertion
-    parent.linker!.children.push(n)
+    const linker = parent.linker
+    if (linker) {
+      if (linker.reconciliation)
+        throw new Error('children are rendered already') // eslint-disable-next-line @typescript-eslint/no-non-null-assertion
+      linker.children.push(n)
+    }
   }
   else { // it's root element
     n.linker = { element: undefined, reconciliation: false, children: [], index: [] }

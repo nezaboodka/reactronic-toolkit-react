@@ -34,12 +34,21 @@ function html<E extends HTMLElement>(id: string, render: Render<E>, type: NodeTy
   node(id, render, type)
 }
 
-function mount<E extends HTMLElement>(node: Node<E>, outer: Node<unknown>): void {
+function mount<E extends HTMLElement>(node: Node<E>, outer: Node<unknown>, after?: Node<unknown>): void {
   // eslint-disable-next-line @typescript-eslint/no-non-null-assertion
   const parent = outer.linker!.element! as HTMLElement
   const e = document.createElement(node.type.name) as E
-  parent.appendChild(e) // eslint-disable-next-line @typescript-eslint/no-non-null-assertion
+  const a = after?.linker?.element
+  if (a instanceof HTMLElement)
+    parent.insertBefore(e, a.nextSibling || null)
+  else
+    parent.appendChild(e)
+  // eslint-disable-next-line @typescript-eslint/no-non-null-assertion
   node.linker!.element = e
+}
+
+function move<E extends HTMLElement>(node: Node<E>, outer: Node<unknown>, after?: Node<unknown>): void {
+  throw new Error('not implemented')
 }
 
 function unmount<E extends HTMLElement>(node: Node<E>, outer: Node<unknown>): void {

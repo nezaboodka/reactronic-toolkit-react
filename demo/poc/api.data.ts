@@ -14,7 +14,8 @@ export interface Node<E = void> {
 
 export interface NodeType<E = void> {
   readonly name: string
-  mount?(node: Node<E>, outer: Node<unknown>): void
+  mount?(node: Node<E>, outer: Node<unknown>, after?: Node<unknown>): void
+  move?(node: Node<E>, outer: Node<unknown>, after?: Node<unknown>): void
   unmount?(node: Node<E>, outer: Node<unknown>): void
 }
 
