@@ -5,7 +5,7 @@
 
 import { Action, Cache, cached, isolated, Stateful, trigger } from 'reactronic'
 
-// Node
+// Render, Node, Type, Linker
 
 export type Render<E = void> = (element: E, cycle: number) => void
 
@@ -16,8 +16,6 @@ export interface Node<E = void> {
   linker?: Linker<E>
 }
 
-// NodeType
-
 export interface Type<E = void> {
   readonly name: string
   render?(node: Node<E>, cycle: number): void
@@ -26,8 +24,6 @@ export interface Type<E = void> {
   unmount?(node: Node<E>, outer: Node<unknown>): void
 }
 
-// Linker
-
 export interface Linker<E = void> {
   element?: E
   reconciliation: boolean
@@ -35,7 +31,7 @@ export interface Linker<E = void> {
   index: Array<Node<unknown>> // sorted children
 }
 
-// Context
+// reactive, define, renderChildren
 
 export function reactive<E = void>(id: string, render: Render<E>, rtti?: Type<E>): void {
   const n = define(id, render, rtti)
@@ -79,7 +75,7 @@ export function renderChildren(): void {
   }
 }
 
-// Internal
+// Internal: Context
 
 export const DefaultRender: Render<unknown> = () => { /* nop */ }
 export const DefaultNodeType: Type<unknown> = { name: '<unknown>' }
@@ -145,7 +141,7 @@ function renderNode(node: Node<unknown>): void {
   }
 }
 
-// Reactive
+// Internal: Reactive
 
 class Reactive<E> extends Stateful {
   constructor(private readonly render: Render<E>) { super() }
