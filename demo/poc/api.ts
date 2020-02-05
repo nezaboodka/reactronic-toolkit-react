@@ -5,47 +5,72 @@
 
 import { Action, Cache, cached, isolated, Stateful, trigger } from 'reactronic'
 
-import { Context, DefaultRtti, Meta, Node, Render, Type } from './api.data'
+import { Context, DefaultNodeType, Node, NodeRefs, NodeType, Render } from './api.data'
 export { Render } from './api.data'
 
-export function reactive<E = void>(render: Render<E>, rtti?: Type<E>): void {
-  const node = declaration('', render, rtti)
+export function reactive<E = void>(render: Render<E>, rtti?: NodeType<E>): void {
+  const n = node('', render, rtti)
   Action.run('reactive', () => new Reactive<E>(render))
 }
 
-export function declaration<E = void>(id: string, render: Render<E>, rtti?: Type<E>): Meta<E> {
-  const meta: Meta<any> = { id, render, type: rtti || DefaultRtti }
+export function node<E = void>(id: string, render: Render<E>, rtti?: NodeType<E>): Node<E> {
+  const n: Node<any> = { id, render, type: rtti || DefaultNodeType }
   const parent = Context.current // shorthand
   if (parent) {
-    if (parent.sealed)
-      throw new Error('children are rendered already')
-    parent.pending.push(meta)
+    if (!parent.refs?.rendering)
+      throw new Error('children are rendered already') // eslint-disable-next-line @typescript-eslint/no-non-null-assertion
+    parent.refs!.updatedChildren.push(n)
   }
-  else // it's root element
-    renderNode({ meta, children: [], pending: [], sealed: false })
-  return meta
+  else { // it's root element
+    n.refs = { element: undefined, rendering: false, sortedChildren: [], updatedChildren: [] }
+    renderNode(n)
+  }
+  return n
 }
 
 export function renderChildren(): void {
-  const self = Context.current // shorthand
-  if (self && !self.sealed) {
-    self.sealed = true
-    self.pending.sort((a, b) => a.id.localeCompare(b.id))
-    const prev = self // eslint-disable-next-line @typescript-eslint/no-non-null-assertion
-    const garbage = self.meta.type.reconcile!(self, prev) // TODO: to implement
-    // Unmount garbage elements
-    for (const child of garbage) {
-      const unmount = child.meta.type.unmount
-      if (unmount)
-        unmount(child.element, child.meta, self)
+  const self = Context.current
+  const refs = self.refs
+  if (self && refs && refs.rendering) {
+    refs.rendering = false
+    // Reconcile
+    const existing = refs.sortedChildren
+    const updated = refs.updatedChildren.slice()
+    updated.sort((n1, n2) => n1.id.localeCompare(n2.id))
+    let i = 0, j = 0
+    while (i < existing.length) {
+      const a = existing[i]
+      const b = updated[j]
+      if (a.id < b.id) {
+        if (b.type.unmount)
+          b.type.unmount(b, self)
+        i++
+      }
+      else if (a.id === b.id) {
+        if (a.type !== b.type || a.render !== b.render)
+          b.refs = a.refs
+        else
+          updated[j] = a
+        i++
+        j++
+      }
+      else // a.id > b.id
+        j++
     }
     // Resolve and (re)render valid elements
-    for (const child of self.children) {
-      const mount = child.meta.type.mount
-      if (!child.element && mount)
-        child.element = mount(child.meta, self)
+    for (const child of refs.updatedChildren) {
+      if (!child.refs) {
+        const mount = child.type.mount
+        child.refs = {
+          rendering: false,
+          sortedChildren: [],
+          updatedChildren: [],
+          element: mount ? mount(child, self) : undefined
+        }
+      }
       renderNode(child)
     }
+    refs.sortedChildren = updated
   }
 }
 
@@ -70,8 +95,12 @@ function renderNode(node: Node<unknown>): void {
   const outer = Context.current
   try {
     Context.current = node
-    node.meta.render(node.element, -1) // children are not yet rendered
-    renderChildren() // ignored if rendered already
+    const refs = node.refs
+    if (refs) {
+      refs.rendering = true
+      node.render(refs.element, -1) // children are not yet rendered
+      renderChildren() // ignored if rendered already
+    }
   }
   finally {
     Context.current = outer

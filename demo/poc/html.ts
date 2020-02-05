@@ -3,8 +3,8 @@
 // Copyright (C) 2019-2020 Yury Chetyrko <ychetyrko@gmail.com>
 // License: https://raw.githubusercontent.com/nezaboodka/reactronic/master/LICENSE
 
-import { declaration } from './api'
-import { Meta, Node, Render, Type } from './api.data'
+import { node } from './api'
+import { Node, NodeType, Render } from './api.data'
 
 export function div(id: string, render: Render<HTMLDivElement>): void {
   html(id, render, Html.div)
@@ -30,20 +30,18 @@ const Html = {
 
 // Internal
 
-function html<E extends HTMLElement>(id: string, render: Render<E>, type: Type<E>): void {
-  declaration(id, render, type)
+function html<E extends HTMLElement>(id: string, render: Render<E>, type: NodeType<E>): void {
+  node(id, render, type)
 }
 
-function mount<E extends HTMLElement>(meta: Meta<E>, parent: Node<unknown>): E {
+function mount<E extends HTMLElement>(node: Node<E>, outer: Node<unknown>): E {
+  const e = document.createElement(node.type.name) as E
   // eslint-disable-next-line @typescript-eslint/no-non-null-assertion
-  const e = document.createElement(meta.type!.name) as E
-  // eslint-disable-next-line @typescript-eslint/no-non-null-assertion
-  (parent.element! as HTMLElement).appendChild(e)
+  (outer.refs!.element! as HTMLElement).appendChild(e)
   return e
 }
 
-function reconcile<E extends HTMLElement>(node: Node<E>,
-  previous: Node<E>): Array<Node<unknown>> {
+function reconcile<E extends HTMLElement>(node: Node<E>): Array<Node<unknown>> {
   // const e = node.element!
   // const existing: Array<Element | null> = []
   // for (let i = 0; i < e.children.length; i++)
@@ -52,7 +50,7 @@ function reconcile<E extends HTMLElement>(node: Node<E>,
   throw new Error('not implemented')
 }
 
-function unmount<E extends HTMLElement>(element: E, meta: Meta<E>, parent: Node<unknown>): void {
+function unmount<E extends HTMLElement>(node: Node<E>, outer: Node<unknown>): void {
   // eslint-disable-next-line @typescript-eslint/no-non-null-assertion
-  (parent.element! as HTMLElement).removeChild(element)
+  (outer.refs!.element! as HTMLElement).removeChild(node.refs!.element!)
 }
