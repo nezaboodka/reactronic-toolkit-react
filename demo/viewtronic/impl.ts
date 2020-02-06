@@ -71,16 +71,16 @@ export function renderChildren(): void {
   const children = reconcile(self)
   if (children) {
     let prev: Node<unknown> | undefined = undefined
-    for (const child of children) {
-      if (!child.linker) {
-        child.linker = { index: [] }
-        if (child.type.mount)
-          child.type.mount(child, self, prev)
+    for (const x of children) {
+      if (!x.linker) {
+        x.linker = { index: [] }
+        if (x.type.mount)
+          x.type.mount(x, self, prev)
       }
-      else if (child.type.move)
-        child.type.move(child, self, prev)
-      apply(child)
-      prev = child
+      else if (x.type.move)
+        x.type.move(x, self, prev)
+      apply(x)
+      prev = x
     }
   }
   // console.log(`rendered children: <${self.type.name}> #${self.id}`)
