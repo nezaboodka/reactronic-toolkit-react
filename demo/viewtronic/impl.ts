@@ -39,7 +39,7 @@ export function reactive<E = void>(id: string, hint: string, render: Render<E>):
 }
 
 export function define<E = void>(id: string, render: Render<E>, rtti?: Rtti<E>): void {
-  const node: Node<any> = { id, render, rtti: rtti || DefaultNodeType }
+  const node: Node<any> = { id, render, rtti: rtti || LinkerImpl.global.rtti }
   // console.log(`< defining: <${node.rtti.name}> #${node.id}...`)
   const parent = LinkerImpl.self // shorthand
   const linker = parent.linker
@@ -57,31 +57,12 @@ export function define<E = void>(id: string, render: Render<E>, rtti?: Rtti<E>):
   // console.log(`/> defined: <${node.rtti.name}> #${node.id}`)
 }
 
-export function render(node: Node<any>): void {
-  if (node.rtti.reactive)
-    node.linker?.reactiveRender(node)
-  else
-    LinkerImpl.basicRender(node)
-}
-
 export function renderChildren(): void {
   const self = LinkerImpl.self
   // console.log(`rendering children: <${self.rtti.name}> #${self.id}`)
   const children = reconcile(self)
-  if (children) {
-    let prev: Node<unknown> | undefined = undefined
-    for (const x of children) {
-      if (!x.linker) { // if not yet mounted
-        x.linker = new LinkerImpl<unknown>()
-        if (x.rtti.mount)
-          x.rtti.mount(x, self, prev)
-      }
-      else if (x.rtti.ordering)
-        x.rtti.ordering(x, self, prev)
-      render(x)
-      prev = x
-    }
-  }
+  if (children)
+    rerenderChildren(self, children)
   // console.log(`rendered children: <${self.rtti.name}> #${self.id}`)
 }
 
@@ -106,28 +87,18 @@ export function proceed(node: Node<any>): void {
 
 // Internal: Context
 
-const DefaultRender: Render<any> = () => { /* nop */ }
-const DefaultNodeType: Rtti<any> = { name: '<default>', reactive: false }
+function render(node: Node<any>): void {
+  if (node.rtti.reactive)
+    node.linker?.reactiveRender(node)
+  else
+    basicRender(node)
+}
 
-class LinkerImpl<E> implements Linker<E> {
-  element?: E
-  index: Node<unknown>[] = []
-  pending?: Node<unknown>[]
-
-  @trigger
-  reactiveRender(node: Node<E>): void {
-    LinkerImpl.basicRender(node)
-  }
-
-  static basicRender<E>(node: Node<E>): void {
-    if (node.rtti.proceed)
-      node.rtti.proceed(node)
-    else
-      proceed(node)
-  }
-
-  static global: Node<unknown> = { id: '<global>', render: DefaultRender, rtti: DefaultNodeType, linker: new LinkerImpl<unknown>() }
-  static self: Node<unknown> = LinkerImpl.global
+function basicRender<E>(node: Node<E>): void {
+  if (node.rtti.proceed)
+    node.rtti.proceed(node)
+  else
+    proceed(node)
 }
 
 function reconcile(self: Node<unknown>): Array<Node<unknown>> | undefined {
@@ -161,4 +132,38 @@ function reconcile(self: Node<unknown>): Array<Node<unknown>> | undefined {
     // console.log(`  reconciled: <${self.rtti.name}> #${self.id}`)
   }
   return children
+}
+
+function rerenderChildren(self: Node<unknown>, children: Array<Node<unknown>>): void {
+  let prev: Node<unknown> | undefined = undefined
+  for (const x of children) {
+    if (!x.linker) { // if not yet mounted
+      x.linker = new LinkerImpl<unknown>()
+      if (x.rtti.mount)
+        x.rtti.mount(x, self, prev)
+    }
+    else if (x.rtti.ordering) // was mounted before, just re-order if needed
+      x.rtti.ordering(x, self, prev)
+    render(x)
+    prev = x
+  }
+}
+
+class LinkerImpl<E> implements Linker<E> {
+  element?: E
+  index: Node<unknown>[] = []
+  pending?: Node<unknown>[]
+
+  @trigger
+  reactiveRender(node: Node<E>): void {
+    basicRender(node)
+  }
+
+  static global: Node<unknown> = {
+    id: '<global>',
+    render: () => { /* nop */ },
+    rtti: { name: '<default>', reactive: false },
+    linker: new LinkerImpl<unknown>()
+  }
+  static self: Node<unknown> = LinkerImpl.global
 }
