@@ -20,7 +20,7 @@ export interface Type<E = void> {
   readonly name: string
   embrace?(node: Node<E>): void
   mount?(node: Node<E>, outer: Node<unknown>, after?: Node<unknown>): void
-  move?(node: Node<E>, outer: Node<unknown>, after?: Node<unknown>): void
+  resettle?(node: Node<E>, outer: Node<unknown>, after?: Node<unknown>): void
   unmount?(node: Node<E>, outer: Node<unknown>): void
 }
 
@@ -77,8 +77,8 @@ export function renderChildren(): void {
         if (x.type.mount)
           x.type.mount(x, self, prev)
       }
-      else if (x.type.move)
-        x.type.move(x, self, prev)
+      else if (x.type.resettle)
+        x.type.resettle(x, self, prev)
       apply(x)
       prev = x
     }

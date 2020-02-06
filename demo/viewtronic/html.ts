@@ -53,13 +53,13 @@ function mount<E extends HTMLElement>(node: Node<E>, outer: Node<unknown>, after
   // console.log(`  mounted: <${node.type.name}> #${node.id}`)
 }
 
-function move<E extends HTMLElement>(node: Node<E>, outer: Node<unknown>, after?: Node<unknown>): void {
+function resettle<E extends HTMLElement>(node: Node<E>, outer: Node<unknown>, after?: Node<unknown>): void {
   const parent = HtmlContext.self
   const prev = after?.linker?.element
   const e = node.linker?.element
   if (e && prev instanceof HTMLElement && prev.nextSibling !== e)
     parent.insertBefore(e, prev.nextSibling)
-  // console.log(`  moved: <${node.type.name}> #${node.id}`)
+  // console.log(`  resettle: <${node.type.name}> #${node.id}`)
 }
 
 function unmount<E extends HTMLElement>(node: Node<E>, outer: Node<unknown>): void {
@@ -70,8 +70,8 @@ function unmount<E extends HTMLElement>(node: Node<E>, outer: Node<unknown>): vo
 }
 
 const Html = {
-  div: { name: 'div', embrace, mount, move, unmount },
-  span: { name: 'span', embrace, mount, move, unmount },
-  i: { name: 'i', embrace, mount, move, unmount },
+  div: { name: 'div', embrace, mount, resettle, unmount },
+  span: { name: 'span', embrace, mount, resettle, unmount },
+  i: { name: 'i', embrace, mount, resettle, unmount },
 }
 
