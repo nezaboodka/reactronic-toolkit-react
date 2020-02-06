@@ -5,8 +5,8 @@
 
 import { Action, action, Stateful } from 'reactronic'
 
+import { renderChildren } from '~/viewtronic/api'
 import { div, italic, ReactiveDiv } from '~/viewtronic/html'
-import { renderChildren } from '~/viewtronic/impl'
 
 // Model
 

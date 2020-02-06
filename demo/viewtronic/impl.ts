@@ -32,11 +32,7 @@ export interface Linker<E = void> {
   reactiveRender(node: Node<E>): void
 }
 
-// reactive, define, render, renderChildren, continueRender
-
-export function reactive<E = void>(id: string, hint: string, render: Render<E>): void {
-  define(id, render, { name: hint, reactive: true })
-}
+// define, renderChildren, proceed
 
 export function define<E = void>(id: string, render: Render<E>, rtti?: Rtti<E>): void {
   const node: Node<any> = { id, render, rtti: rtti || LinkerImpl.global.rtti }
@@ -60,9 +56,7 @@ export function define<E = void>(id: string, render: Render<E>, rtti?: Rtti<E>):
 export function renderChildren(): void {
   const self = LinkerImpl.self
   // console.log(`rendering children: <${self.rtti.name}> #${self.id}`)
-  const children = reconcile(self)
-  if (children)
-    rerenderChildren(self, children)
+  reconcile(self)
   // console.log(`rendered children: <${self.rtti.name}> #${self.id}`)
 }
 
@@ -120,7 +114,7 @@ function basicRender<E>(node: Node<E>): void {
     proceed(node)
 }
 
-function reconcile(self: Node<unknown>): Array<Node<unknown>> | undefined {
+function reconcile(self: Node<unknown>): void {
   const linker = self.linker
   const children = linker?.pending
   if (linker && children) {
@@ -149,21 +143,18 @@ function reconcile(self: Node<unknown>): Array<Node<unknown>> | undefined {
     }
     linker.index = reindexed
     // console.log(`  reconciled: <${self.rtti.name}> #${self.id}`)
+    let prev: Node<unknown> | undefined = undefined
+    for (const x of children) {
+      if (!x.linker) { // if not yet mounted
+        x.linker = new LinkerImpl<unknown>()
+        if (x.rtti.mount)
+          x.rtti.mount(x, self, prev)
+      }
+      else if (x.rtti.ordering) // was mounted before, just re-order if needed
+        x.rtti.ordering(x, self, prev)
+      render(x)
+      prev = x
+    }
   }
-  return children
 }
 
-function rerenderChildren(self: Node<unknown>, children: Array<Node<unknown>>): void {
-  let prev: Node<unknown> | undefined = undefined
-  for (const x of children) {
-    if (!x.linker) { // if not yet mounted
-      x.linker = new LinkerImpl<unknown>()
-      if (x.rtti.mount)
-        x.rtti.mount(x, self, prev)
-    }
-    else if (x.rtti.ordering) // was mounted before, just re-order if needed
-      x.rtti.ordering(x, self, prev)
-    render(x)
-    prev = x
-  }
-}
