@@ -3,7 +3,7 @@
 // Copyright (C) 2019-2020 Yury Chetyrko <ychetyrko@gmail.com>
 // License: https://raw.githubusercontent.com/nezaboodka/reactronic/master/LICENSE
 
-import { Cache, cached, isolated, Stateful, trigger } from 'reactronic'
+import { Stateful, trigger } from 'reactronic'
 
 // Render, Node, Type, Linker
 
@@ -14,6 +14,7 @@ export interface Node<E = void> {
   readonly render: Render<E>
   readonly type: Type<E>
   linker?: Linker<E>
+  // reactive: Reactive<E>
 }
 
 export interface Type<E = void> {
@@ -149,19 +150,17 @@ function reconcile(self: Node<unknown>): Array<Node<unknown>> | undefined {
   return children
 }
 
-// Internal: Reactive
+// Reactive
 
-export class Reactive<E> extends Stateful {
-  constructor(private readonly render: Render<E>) { super() }
+export class Reactive<E> {
+  private readonly rerender: Render<E>
 
-  @trigger
-  protected pulse(): void {
-    if (Cache.of(this.refresh).invalid)
-      isolated(this.refresh)
+  constructor(render: Render<E>) {
+    this.rerender = render
   }
 
-  @cached
-  protected refresh(): void {
-    // renderNode(this.node as Node<unknown>)
+  @trigger
+  render(element: E): void {
+    this.rerender(element)
   }
 }
