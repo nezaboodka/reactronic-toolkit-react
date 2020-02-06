@@ -66,8 +66,8 @@ export function renderNode<E>(node: Node<E>): void {
 }
 
 export function renderChildren(): void {
-  const self = Context.self
   // console.log(`rendering children: <${self.type.name}> #${self.id}`)
+  const self = Context.self
   const children = reconcile(self)
   if (children) {
     let prev: Node<unknown> | undefined = undefined
@@ -128,7 +128,7 @@ function reconcile(self: Node<unknown>): Array<Node<unknown>> | undefined {
       const b = reindexed[j]
       if (a.id < b.id) {
         if (b.type.unmount)
-          b.type.unmount(b, self)
+          b.type.unmount(b, self) // TODO: mitigate the risk of exception
         b.linker = undefined
         i++
       }
