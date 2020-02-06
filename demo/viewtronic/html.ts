@@ -11,11 +11,23 @@ export function div(id: string, content: Render<HTMLDivElement>): void {
   define(id, content, Html.div)
 }
 
+export function ReactiveDiv(id: string, content: Render<HTMLDivElement>): void {
+  define(id, content, Html.divReactive)
+}
+
 export function span(id: string, render: Render<HTMLSpanElement>): void {
   define(id, render, Html.span)
 }
 
-export function i(id: string, render: Render<HTMLSpanElement>): void {
+export function ReactiveSpan(id: string, render: Render<HTMLSpanElement>): void {
+  define(id, render, Html.span)
+}
+
+export function italic(id: string, render: Render<HTMLSpanElement>): void {
+  define(id, render, Html.i)
+}
+
+export function ReactiveItalic(id: string, render: Render<HTMLSpanElement>): void {
   define(id, render, Html.i)
 }
 
@@ -76,6 +88,9 @@ class HtmlNodeRtti<E extends HTMLElement> implements Rtti<E> {
 
 const Html = {
   div: new HtmlNodeRtti<HTMLDivElement>('div', false),
+  divReactive: new HtmlNodeRtti<HTMLDivElement>('div', true),
   span: new HtmlNodeRtti<HTMLSpanElement>('span', false),
+  spanReactive: new HtmlNodeRtti<HTMLSpanElement>('span', true),
   i: new HtmlNodeRtti<HTMLSpanElement>('i', false),
+  iReactive: new HtmlNodeRtti<HTMLSpanElement>('i', true),
 }

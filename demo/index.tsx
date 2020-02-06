@@ -19,8 +19,8 @@
 import * as React from 'react'
 import { Reactronic as R, TraceLevel } from 'reactronic'
 
-import { Toolbar } from '~/viewtronic/example'
+import { App } from '~/viewtronic/example'
 
 R.setTrace(TraceLevel.Noisy)
 
-Toolbar('toolbar', 'bar')
+App('app', 'fancy-app')
