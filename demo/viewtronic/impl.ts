@@ -85,7 +85,26 @@ export function proceed(node: Node<any>): void {
   }
 }
 
-// Internal: Context
+// Internal
+
+class LinkerImpl<E> implements Linker<E> {
+  element?: E
+  index: Node<unknown>[] = []
+  pending?: Node<unknown>[]
+
+  @trigger
+  reactiveRender(node: Node<E>): void {
+    basicRender(node)
+  }
+
+  static global: Node<unknown> = {
+    id: '<global>',
+    render: () => { /* nop */ },
+    rtti: { name: '<default>', reactive: false },
+    linker: new LinkerImpl<unknown>()
+  }
+  static self: Node<unknown> = LinkerImpl.global
+}
 
 function render(node: Node<any>): void {
   if (node.rtti.reactive)
@@ -147,23 +166,4 @@ function rerenderChildren(self: Node<unknown>, children: Array<Node<unknown>>): 
     render(x)
     prev = x
   }
-}
-
-class LinkerImpl<E> implements Linker<E> {
-  element?: E
-  index: Node<unknown>[] = []
-  pending?: Node<unknown>[]
-
-  @trigger
-  reactiveRender(node: Node<E>): void {
-    basicRender(node)
-  }
-
-  static global: Node<unknown> = {
-    id: '<global>',
-    render: () => { /* nop */ },
-    rtti: { name: '<default>', reactive: false },
-    linker: new LinkerImpl<unknown>()
-  }
-  static self: Node<unknown> = LinkerImpl.global
 }
