@@ -3,7 +3,7 @@
 // Copyright (C) 2019-2020 Yury Chetyrko <ychetyrko@gmail.com>
 // License: https://raw.githubusercontent.com/nezaboodka/reactronic/master/LICENSE
 
-import { trigger } from 'reactronic'
+import { Cache, trigger } from 'reactronic'
 
 // Render, Node, Rtti, Linker
 
@@ -27,9 +27,9 @@ export interface Rtti<E = void> {
 
 export interface Linker<E = void> {
   element?: E
-  reconciling?: Array<Node<unknown>> // children in natural order
+  pending?: Array<Node<unknown>> // children in natural order
   index: Array<Node<unknown>> // sorted children
-  reactive?: Reactive<E>
+  reactiveRender(node: Node<E>): void
 }
 
 // reactive, define, render, renderChildren, continueRender
@@ -41,17 +41,17 @@ export function reactive<E = void>(id: string, hint: string, render: Render<E>):
 export function define<E = void>(id: string, render: Render<E>, rtti?: Rtti<E>): void {
   const node: Node<any> = { id, render, rtti: rtti || DefaultNodeType }
   // console.log(`< defining: <${node.rtti.name}> #${node.id}...`)
-  const parent = Context.self // shorthand
+  const parent = LinkerImpl.self // shorthand
   const linker = parent.linker
   if (!linker)
     throw new Error('node must be mounted before rendering')
-  if (parent !== Context.global) {
-    if (!linker.reconciling)
+  if (parent !== LinkerImpl.global) {
+    if (!linker.pending)
       throw new Error('children are rendered already') // eslint-disable-next-line @typescript-eslint/no-non-null-assertion
-    linker.reconciling.push(node)
+    linker.pending.push(node)
   }
   else { // render root immediately
-    linker.reconciling = [node]
+    linker.pending = [node]
     renderChildren()
   }
   // console.log(`/> defined: <${node.rtti.name}> #${node.id}`)
@@ -65,14 +65,14 @@ export function render(node: Node<any>): void {
 }
 
 export function renderChildren(): void {
-  const self = Context.self
+  const self = LinkerImpl.self
   // console.log(`rendering children: <${self.rtti.name}> #${self.id}`)
   const children = reconcile(self)
   if (children) {
     let prev: Node<unknown> | undefined = undefined
     for (const x of children) {
       if (!x.linker) { // if not yet mounted
-        x.linker = { index: [] }
+        x.linker = new LinkerImpl<unknown>()
         if (x.rtti.mount)
           x.rtti.mount(x, self, prev)
       }
@@ -86,21 +86,16 @@ export function renderChildren(): void {
 }
 
 export function proceed(node: Node<any>): void {
-  const outer = Context.self
+  const outer = LinkerImpl.self
   try {
-    Context.self = node
-    const linker = node.linker
-    if (!linker)
-      throw new Error('node must be mounted before rendering')
-    linker.reconciling = []
-    // console.log(` (!) rendering ${node.rtti.name} #${node.id}...`)
-    // eslint-disable-next-line @typescript-eslint/no-non-null-assertion
-    node.render(linker.element!)
-    renderChildren() // ignored if rendered already
-    // console.log(` (!) rendered ${node.rtti.name} #${node.id}`)
+    LinkerImpl.self = node
+    if (node.rtti.reactive)
+      node.linker?.reactiveRender(node)
+    else
+      renderImpl(node)
   }
   finally {
-    Context.self = outer
+    LinkerImpl.self = outer
   }
 }
 
@@ -109,22 +104,44 @@ export function proceed(node: Node<any>): void {
 const DefaultRender: Render<any> = () => { /* nop */ }
 const DefaultNodeType: Rtti<any> = { name: '<default>', reactive: false }
 
-class Context {
+export class LinkerImpl<E> implements Linker<E> {
+  element?: E | undefined
+  pending?: Node<unknown>[] | undefined
+  index: Node<unknown>[] = []
+  reactive?: any
+
+  @trigger
+  reactiveRender(node: Node<E>): void {
+    renderImpl(node)
+  }
+
   static global: Node<unknown> = {
     id: '<global>',
     render: DefaultRender,
     rtti: DefaultNodeType,
-    linker: { index: [] }
+    linker: new LinkerImpl<unknown>()
   }
-  static self = Context.global
+  static self = LinkerImpl.global
+}
+
+function renderImpl(node: Node<any>): void {
+  const linker = node.linker
+  if (!linker)
+    throw new Error('node must be mounted before rendering')
+  linker.pending = []
+  // console.log(` (!) rendering ${node.rtti.name} #${node.id}...`)
+  // eslint-disable-next-line @typescript-eslint/no-non-null-assertion
+  node.render(linker.element!)
+  renderChildren() // ignored if rendered already
+  // console.log(` (!) rendered ${node.rtti.name} #${node.id}`)
 }
 
 function reconcile(self: Node<unknown>): Array<Node<unknown>> | undefined {
   const linker = self.linker
-  const children = linker?.reconciling
+  const children = linker?.pending
   if (linker && children) {
     // console.log(`  reconciling: <${self.rtti.name}> #${self.id}...`)
-    linker.reconciling = undefined
+    linker.pending = undefined
     const reindexed = children.slice().sort((n1, n2) => n1.id.localeCompare(n2.id))
     let i = 0, j = 0
     while (i < linker.index.length) {
@@ -133,6 +150,8 @@ function reconcile(self: Node<unknown>): Array<Node<unknown>> | undefined {
       if (a.id < b.id) {
         if (b.rtti.unmount)
           b.rtti.unmount(b, self) // TODO: mitigate the risk of exception
+        if (b.rtti.reactive)
+          Cache.unmount(b.linker)
         b.linker = undefined
         i++
       }
@@ -149,19 +168,3 @@ function reconcile(self: Node<unknown>): Array<Node<unknown>> | undefined {
   }
   return children
 }
-
-// RxNode
-
-export class Reactive<E> {
-  @trigger
-  protected render(node: Node<E>): void {
-    proceed(node)
-  }
-
-  static render(node: Node<any>): void {
-    // eslint-disable-next-line @typescript-eslint/no-non-null-assertion
-    node.linker?.reactive!.render(node)
-  }
-}
-
-
