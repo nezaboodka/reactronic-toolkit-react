@@ -20,7 +20,7 @@ export interface Type<E = void> {
   readonly name: string
   embrace?(node: Node<E>): void
   mount?(node: Node<E>, outer: Node<unknown>, after?: Node<unknown>): void
-  reorder?(node: Node<E>, outer: Node<unknown>, after?: Node<unknown>): void
+  ordering?(node: Node<E>, outer: Node<unknown>, after?: Node<unknown>): void
   unmount?(node: Node<E>, outer: Node<unknown>): void
 }
 
@@ -72,13 +72,13 @@ export function applyChildren(): void {
   if (children) {
     let prev: Node<unknown> | undefined = undefined
     for (const x of children) {
-      if (!x.linker) {
+      if (!x.linker) { // if not yet mounted
         x.linker = { index: [] }
         if (x.type.mount)
           x.type.mount(x, self, prev)
       }
-      else if (x.type.reorder)
-        x.type.reorder(x, self, prev)
+      else if (x.type.ordering)
+        x.type.ordering(x, self, prev)
       apply(x)
       prev = x
     }

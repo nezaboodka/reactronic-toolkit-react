@@ -52,13 +52,13 @@ function mount<E extends HTMLElement>(node: Node<E>, outer: Node<unknown>, after
   // console.log(`  mounted: <${node.type.name}> #${node.id}`)
 }
 
-function reorder<E extends HTMLElement>(node: Node<E>, outer: Node<unknown>, after?: Node<unknown>): void {
+function ordering<E extends HTMLElement>(node: Node<E>, outer: Node<unknown>, after?: Node<unknown>): void {
   const parent = HtmlContext.self
   const prev = after?.linker?.element
   const e = node.linker?.element
   if (e && prev instanceof HTMLElement && prev.nextSibling !== e) {
     parent.insertBefore(e, prev.nextSibling)
-    // console.log(`  move: <${node.type.name}> #${node.id}`)
+    // console.log(`  reordered: <${node.type.name}> #${node.id}`)
   }
 }
 
@@ -70,8 +70,8 @@ function unmount<E extends HTMLElement>(node: Node<E>, outer: Node<unknown>): vo
 }
 
 const Html = {
-  div: { name: 'div', embrace, mount, reorder, unmount },
-  span: { name: 'span', embrace, mount, reorder, unmount },
-  i: { name: 'i', embrace, mount, reorder, unmount },
+  div: { name: 'div', embrace, mount, ordering, unmount },
+  span: { name: 'span', embrace, mount, ordering, unmount },
+  i: { name: 'i', embrace, mount, ordering, unmount },
 }
 
