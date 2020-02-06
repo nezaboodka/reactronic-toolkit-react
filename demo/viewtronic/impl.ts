@@ -26,8 +26,7 @@ export interface Type<E = void> {
 
 export interface Linker<E = void> {
   element?: E
-  reconciliation: boolean
-  children: Array<Node<unknown>> // children in natural order
+  reconciling?: Array<Node<unknown>> // children in natural order
   index: Array<Node<unknown>> // sorted children
 }
 
@@ -45,22 +44,23 @@ export function define<E = void>(id: string, render: Render<E>, rtti: Type<E>): 
   const linker = parent.linker
   if (!linker)
     throw new Error('node must be mounted before rendering')
-  if (!linker.reconciliation && parent !== Context.root)
-    throw new Error('children are rendered already') // eslint-disable-next-line @typescript-eslint/no-non-null-assertion
-  linker.children.push(n)
-  // console.log(`/> defined: <${rtti.name}> #${id}`)
-  if (parent === Context.root) {
-    // eslint-disable-next-line @typescript-eslint/no-non-null-assertion
-    parent.linker!.reconciliation = true
+  if (parent !== Context.root) {
+    if (!linker.reconciling)
+      throw new Error('children are rendered already') // eslint-disable-next-line @typescript-eslint/no-non-null-assertion
+    linker.reconciling.push(n)
+  }
+  else {
+    linker.reconciling = [n]
     renderChildren()
   }
+  // console.log(`/> defined: <${rtti.name}> #${id}`)
 }
 
 export function renderNode<E>(node: Node<E>): void {
   const linker = node.linker
   if (!linker)
     throw new Error('node must be mounted before rendering')
-  linker.reconciliation = true // eslint-disable-next-line @typescript-eslint/no-non-null-assertion
+  linker.reconciling = [] // eslint-disable-next-line @typescript-eslint/no-non-null-assertion
   node.render(linker.element!)
   renderChildren() // ignored if rendered already
 }
@@ -68,12 +68,12 @@ export function renderNode<E>(node: Node<E>): void {
 export function renderChildren(): void {
   const self = Context.self
   // console.log(`rendering children: <${self.type.name}> #${self.id}`)
-  const linker = self.linker
-  if (linker && reconcile(linker, self)) {
+  const children = reconcile(self)
+  if (children) {
     let prev: Node<unknown> | undefined = undefined
-    for (const child of linker.children) {
+    for (const child of children) {
       if (!child.linker) {
-        child.linker = { reconciliation: false, children: [], index: [] }
+        child.linker = { index: [] }
         if (child.type.mount)
           child.type.mount(child, self, prev)
       }
@@ -96,7 +96,7 @@ export class Context {
     id: '<root>',
     render: DefaultRender,
     type: DefaultNodeType,
-    linker: { reconciliation: false, children: [], index: [] }
+    linker: { index: [] }
   }
   static self = Context.root
 }
@@ -115,14 +115,13 @@ export function apply(node: Node<unknown>): void {
   }
 }
 
-export function reconcile(linker: Linker<unknown>, self: Node<unknown>): boolean {
-  let result = false
-  if (linker.reconciliation) {
+export function reconcile(self: Node<unknown>): Array<Node<unknown>> | undefined {
+  const linker = self.linker
+  const children = linker?.reconciling
+  if (linker && children) {
     // console.log(`  reconciling: <${self.type.name}> #${self.id}...`)
-    result = true
-    linker.reconciliation = false
-    const reindexed = linker.children.slice()
-    reindexed.sort((n1, n2) => n1.id.localeCompare(n2.id))
+    linker.reconciling = undefined
+    const reindexed = children.slice().sort((n1, n2) => n1.id.localeCompare(n2.id))
     let i = 0, j = 0
     while (i < linker.index.length) {
       const a = linker.index[i]
@@ -147,7 +146,7 @@ export function reconcile(linker: Linker<unknown>, self: Node<unknown>): boolean
     linker.index = reindexed
     // console.log(`  reconciled: <${self.type.name}> #${self.id}`)
   }
-  return result
+  return children
 }
 
 // Internal: Reactive
