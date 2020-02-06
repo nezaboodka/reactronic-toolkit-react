@@ -4,4 +4,4 @@
 // License: https://raw.githubusercontent.com/nezaboodka/reactronic/master/LICENSE
 
 export { Linker, Node, Render, Rtti } from '~/viewtronic/impl'
-export { reactive, define, renderNodeAndChildren, continueRender } from '~/viewtronic/impl'
+export { reactive, define, render as renderNodeAndChildren, proceed as continueRender } from '~/viewtronic/impl'
