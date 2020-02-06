@@ -23,6 +23,4 @@ import { Toolbar } from '~/viewtronic/example'
 
 R.setTrace(TraceLevel.Noisy)
 
-setTimeout(() => {
-  Toolbar('toolbar', 'bar')
-}, 1000)
+Toolbar('toolbar', 'bar')
