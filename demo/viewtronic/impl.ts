@@ -19,7 +19,7 @@ export interface Node<E = void> {
 export interface Rtti<E = void> {
   readonly name: string
   readonly reactive: boolean
-  render?(node: Node<E>): void
+  proceed?(node: Node<E>): void
   mount?(node: Node<E>, outer: Node<unknown>, after?: Node<unknown>): void
   ordering?(node: Node<E>, outer: Node<unknown>, after?: Node<unknown>): void
   unmount?(node: Node<E>, outer: Node<unknown>): void
@@ -58,10 +58,10 @@ export function define<E = void>(id: string, render: Render<E>, rtti?: Rtti<E>):
 }
 
 export function render(node: Node<any>): void {
-  if (node.rtti.render)
-    node.rtti.render(node)
+  if (node.rtti.proceed)
+    node.rtti.proceed(node)
   else
-    proceed(node)
+    proceed(node) // default
 }
 
 export function renderChildren(): void {
