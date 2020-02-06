@@ -20,7 +20,7 @@ export interface Type<E = void> {
   readonly name: string
   embrace?(node: Node<E>): void
   mount?(node: Node<E>, outer: Node<unknown>, after?: Node<unknown>): void
-  resettle?(node: Node<E>, outer: Node<unknown>, after?: Node<unknown>): void
+  reorder?(node: Node<E>, outer: Node<unknown>, after?: Node<unknown>): void
   unmount?(node: Node<E>, outer: Node<unknown>): void
 }
 
@@ -51,21 +51,21 @@ export function define<E = void>(id: string, render: Render<E>, rtti: Type<E>): 
   }
   else { // render root immediately
     linker.reconciling = [n]
-    renderChildren()
+    applyChildren()
   }
   // console.log(`/> defined: <${rtti.name}> #${id}`)
 }
 
-export function renderNode<E>(node: Node<E>): void {
+export function applyNode<E>(node: Node<E>): void {
   const linker = node.linker
   if (!linker)
     throw new Error('node must be mounted before rendering')
   linker.reconciling = [] // eslint-disable-next-line @typescript-eslint/no-non-null-assertion
   node.render(linker.element!)
-  renderChildren() // ignored if rendered already
+  applyChildren() // ignored if rendered already
 }
 
-export function renderChildren(): void {
+export function applyChildren(): void {
   // console.log(`rendering children: <${self.type.name}> #${self.id}`)
   const self = Context.self
   const children = reconcile(self)
@@ -77,8 +77,8 @@ export function renderChildren(): void {
         if (x.type.mount)
           x.type.mount(x, self, prev)
       }
-      else if (x.type.resettle)
-        x.type.resettle(x, self, prev)
+      else if (x.type.reorder)
+        x.type.reorder(x, self, prev)
       apply(x)
       prev = x
     }
@@ -108,7 +108,7 @@ function apply(node: Node<unknown>): void {
     if (node.type.embrace)
       node.type.embrace(node)
     else
-      renderNode(node)
+      applyNode(node)
   }
   finally {
     Context.self = outer

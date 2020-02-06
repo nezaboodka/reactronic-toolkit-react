@@ -3,7 +3,7 @@
 // Copyright (C) 2019-2020 Yury Chetyrko <ychetyrko@gmail.com>
 // License: https://raw.githubusercontent.com/nezaboodka/reactronic/master/LICENSE
 
-import { define, Node, Render, renderNode } from '~/viewtronic/api'
+import { applyNode, define, Node, Render } from '~/viewtronic/api'
 
 // Tags
 
@@ -30,9 +30,8 @@ function embrace<E extends HTMLElement>(node: Node<E>): void {
   // console.log(`enter: <${node.type.name}> #${node.id}...`)
   const outer = HtmlContext.self
   try { // eslint-disable-next-line @typescript-eslint/no-non-null-assertion
-    const self = node.linker!.element!
-    HtmlContext.self = self
-    renderNode(node)
+    HtmlContext.self = node.linker!.element!
+    applyNode(node)
   }
   finally {
     HtmlContext.self = outer
@@ -53,13 +52,14 @@ function mount<E extends HTMLElement>(node: Node<E>, outer: Node<unknown>, after
   // console.log(`  mounted: <${node.type.name}> #${node.id}`)
 }
 
-function resettle<E extends HTMLElement>(node: Node<E>, outer: Node<unknown>, after?: Node<unknown>): void {
+function reorder<E extends HTMLElement>(node: Node<E>, outer: Node<unknown>, after?: Node<unknown>): void {
   const parent = HtmlContext.self
   const prev = after?.linker?.element
   const e = node.linker?.element
-  if (e && prev instanceof HTMLElement && prev.nextSibling !== e)
+  if (e && prev instanceof HTMLElement && prev.nextSibling !== e) {
     parent.insertBefore(e, prev.nextSibling)
-  // console.log(`  resettle: <${node.type.name}> #${node.id}`)
+    // console.log(`  move: <${node.type.name}> #${node.id}`)
+  }
 }
 
 function unmount<E extends HTMLElement>(node: Node<E>, outer: Node<unknown>): void {
@@ -70,8 +70,8 @@ function unmount<E extends HTMLElement>(node: Node<E>, outer: Node<unknown>): vo
 }
 
 const Html = {
-  div: { name: 'div', embrace, mount, resettle, unmount },
-  span: { name: 'span', embrace, mount, resettle, unmount },
-  i: { name: 'i', embrace, mount, resettle, unmount },
+  div: { name: 'div', embrace, mount, reorder, unmount },
+  span: { name: 'span', embrace, mount, reorder, unmount },
+  i: { name: 'i', embrace, mount, reorder, unmount },
 }
 
