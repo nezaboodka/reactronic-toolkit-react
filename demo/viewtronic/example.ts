@@ -42,7 +42,7 @@ export function Toolbar(id: string, className: string): void {
 }
 
 export function ToolbarButton(id: string, icon: string, caption?: string): void {
-  reactive(id, () => {
+  reactive(id, ToolbarButton.name, () => {
     // let measure: HTMLDivElement
 
     div(id, e => {
