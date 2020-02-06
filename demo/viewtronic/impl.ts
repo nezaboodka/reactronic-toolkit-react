@@ -34,8 +34,8 @@ export interface Linker<E = void> {
 
 // reactive, define, render, renderChildren, continueRender
 
-export function reactive<E = void>(id: string, render: Render<E>, rtti?: Rtti<E>): void {
-  define(id, render, rtti)
+export function reactive<E = void>(id: string, hint: string, render: Render<E>): void {
+  define(id, render, { name: hint, reactive: true })
 }
 
 export function define<E = void>(id: string, render: Render<E>, rtti?: Rtti<E>): void {
