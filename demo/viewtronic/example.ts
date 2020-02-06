@@ -35,10 +35,10 @@ export function Toolbar(id: string, className: string): void {
     e.style.flexDirection = 'row'
     e.onclick = e => model.click()
     e.onmousemove = e => model.mouse(e.x, e.y)
-    ToolbarButton('menu', 'las la-menu', 'Menu')
+    ToolbarButton('menu', true, 'las la-menu', 'Menu')
     div('spring', e => e.style.flexGrow = '1')
-    ToolbarButton('settings', 'las la-cog', 'Settings')
-    ToolbarButton('close', 'las la-times', 'Close')
+    ToolbarButton('settings', false, 'las la-cog', 'Settings')
+    ToolbarButton('close', false, 'las la-times', 'Close')
   })
   // Same in TSX:
   // <div id={id} className={className}>
@@ -50,7 +50,7 @@ export function Toolbar(id: string, className: string): void {
   // </div>
 }
 
-export function ToolbarButton(id: string, icon: string, caption?: string): void {
+export function ToolbarButton(id: string, mouse: boolean, icon: string, caption?: string): void {
   reactive(id, ToolbarButton.name, () => {
     // let measure: HTMLDivElement
 
@@ -65,7 +65,7 @@ export function ToolbarButton(id: string, icon: string, caption?: string): void 
 
       div('text', e => {
         e.className = 'fancy-button-text'
-        e.innerText = `${caption || ''} ${model.tick} : ${model.x}, ${model.y}`
+        e.innerText = mouse ? `${caption || ''} ${model.tick} : ${model.x}, ${model.y}` : `${caption || ''} ${model.tick}`
         // measure = e
       })
     })
