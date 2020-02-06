@@ -8,6 +8,8 @@ import { Action, action, Stateful } from 'reactronic'
 import { div, italic, ReactiveDiv } from '~/viewtronic/html'
 import { renderChildren } from '~/viewtronic/impl'
 
+// Model
+
 export class Model extends Stateful {
   x: number = 0
   y: number = 0
@@ -33,6 +35,8 @@ export class Model extends Stateful {
 
 const model = Action.run('init', () => new Model())
 
+// Views
+
 export function App(id: string, className: string): void {
   div(id, e => {
     const css = e.style
@@ -52,15 +56,13 @@ export function App(id: string, className: string): void {
 
 export function Toolbar(id: string, className: string): void {
   div(id, e => {
-    // Self properties
     const css = e.style
     e.className = className
     css.zIndex = '100'
     css.display = 'flex'
     css.flexDirection = 'row'
     css.border = '0.5px dashed gray'
-
-    // Children elements
+    // Children
     ToolbarButton('Menu', 'las la-menu', true)
     ReactiveDiv('space', e => {
       const css = e.style
