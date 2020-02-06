@@ -39,7 +39,7 @@ export function reactive<E = void>(id: string, render: Render<E>, rtti: Type<E>)
 }
 
 export function define<E = void>(id: string, render: Render<E>, rtti: Type<E>): void {
-  console.log(`< defining: <${rtti.name}> #${id}...`)
+  // console.log(`< defining: <${rtti.name}> #${id}...`)
   const n: Node<any> = { id, render, type: rtti || DefaultNodeType }
   const parent = Context.self // shorthand
   const linker = parent.linker
@@ -48,7 +48,7 @@ export function define<E = void>(id: string, render: Render<E>, rtti: Type<E>): 
   if (!linker.reconciliation && parent !== Context.root)
     throw new Error('children are rendered already') // eslint-disable-next-line @typescript-eslint/no-non-null-assertion
   linker.children.push(n)
-  console.log(`/> defined: <${rtti.name}> #${id}`)
+  // console.log(`/> defined: <${rtti.name}> #${id}`)
   if (parent === Context.root) {
     // eslint-disable-next-line @typescript-eslint/no-non-null-assertion
     parent.linker!.reconciliation = true
@@ -67,7 +67,7 @@ export function renderNode<E>(node: Node<E>): void {
 
 export function renderChildren(): void {
   const self = Context.self
-  console.log(`rendering children: <${self.type.name}> #${self.id}`)
+  // console.log(`rendering children: <${self.type.name}> #${self.id}`)
   const linker = self.linker
   if (linker && reconcile(linker, self)) {
     let prev: Node<unknown> | undefined = undefined
@@ -83,7 +83,7 @@ export function renderChildren(): void {
       prev = child
     }
   }
-  console.log(`rendered children: <${self.type.name}> #${self.id}`)
+  // console.log(`rendered children: <${self.type.name}> #${self.id}`)
 }
 
 // Internal: Context
@@ -118,7 +118,7 @@ export function apply(node: Node<unknown>): void {
 export function reconcile(linker: Linker<unknown>, self: Node<unknown>): boolean {
   let result = false
   if (linker.reconciliation) {
-    console.log(`  reconciling: <${self.type.name}> #${self.id}...`)
+    // console.log(`  reconciling: <${self.type.name}> #${self.id}...`)
     result = true
     linker.reconciliation = false
     const reindexed = linker.children.slice()
@@ -145,7 +145,7 @@ export function reconcile(linker: Linker<unknown>, self: Node<unknown>): boolean
         j++
     }
     linker.index = reindexed
-    console.log(`  reconciled: <${self.type.name}> #${self.id}`)
+    // console.log(`  reconciled: <${self.type.name}> #${self.id}`)
   }
   return result
 }

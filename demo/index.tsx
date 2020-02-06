@@ -3,26 +3,26 @@
 // Copyright (C) 2019-2020 Yury Chetyrko <ychetyrko@gmail.com>
 // License: https://raw.githubusercontent.com/nezaboodka/reactronic/master/LICENSE
 
-import * as React from 'react'
-import * as ReactDOM from 'react-dom'
-import { Action, Reactronic as R, TraceLevel } from 'reactronic'
+// import * as React from 'react'
+// import * as ReactDOM from 'react-dom'
+// import { Action, Reactronic as R, TraceLevel } from 'reactronic'
 
-import { Application } from '~/app/Application'
-import { AppMain } from '~/view/AppMain'
-
-R.setTrace(TraceLevel.Warnings)
-
-const app = Action.run('app', () => new Application())
-const root = document.getElementById('root')
-ReactDOM.render(<AppMain app={app}/>, root)
-
-// import { Reactronic as R, TraceLevel } from 'reactronic'
-
-// import { Toolbar } from '~/viewtronic/example'
+// import { Application } from '~/app/Application'
+// import { AppMain } from '~/view/AppMain'
 
 // R.setTrace(TraceLevel.Warnings)
 
-// setTimeout(() => {
-//   Toolbar('toolbar', 'bar')
-//   console.log('(!)')
-// }, 1000)
+// const app = Action.run('app', () => new Application())
+// const root = document.getElementById('root')
+// ReactDOM.render(<AppMain app={app}/>, root)
+
+import { Reactronic as R, TraceLevel } from 'reactronic'
+
+import { Toolbar } from '~/viewtronic/example'
+
+R.setTrace(TraceLevel.Warnings)
+
+setTimeout(() => {
+  Toolbar('toolbar', 'bar')
+  console.log('(!)')
+}, 1000)
