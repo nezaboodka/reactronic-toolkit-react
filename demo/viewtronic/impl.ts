@@ -88,10 +88,10 @@ export function renderChildren(): void {
 
 // Internal: Context
 
-export const DefaultRender: Render<unknown> = () => { /* nop */ }
-export const DefaultNodeType: Type<unknown> = { name: '<unknown>' }
+const DefaultRender: Render<unknown> = () => { /* nop */ }
+const DefaultNodeType: Type<unknown> = { name: '<unknown>' }
 
-export class Context {
+class Context {
   static global: Node<unknown> = {
     id: '<global>',
     render: DefaultRender,
@@ -101,7 +101,7 @@ export class Context {
   static self = Context.global
 }
 
-export function apply(node: Node<unknown>): void {
+function apply(node: Node<unknown>): void {
   const outer = Context.self
   try {
     Context.self = node
@@ -115,7 +115,7 @@ export function apply(node: Node<unknown>): void {
   }
 }
 
-export function reconcile(self: Node<unknown>): Array<Node<unknown>> | undefined {
+function reconcile(self: Node<unknown>): Array<Node<unknown>> | undefined {
   const linker = self.linker
   const children = linker?.reconciling
   if (linker && children) {
