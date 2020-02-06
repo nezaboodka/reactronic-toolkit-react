@@ -42,7 +42,7 @@ export function define<E = void>(id: string, render: Render<E>, type?: Type<E>):
   def(node)
 }
 
-export function renderAll(node: Node<any>): void {
+export function renderNodeAndChildren(node: Node<any>): void {
   if (node.type.render)
     node.type.render(node)
   else
@@ -50,8 +50,8 @@ export function renderAll(node: Node<any>): void {
 }
 
 export function renderChildren(): void {
-  // console.log(`rendering children: <${self.type.name}> #${self.id}`)
   const self = Context.self
+  // console.log(`rendering children: <${self.type.name}> #${self.id}`)
   const children = reconcile(self)
   if (children) {
     let prev: Node<unknown> | undefined = undefined
@@ -63,7 +63,7 @@ export function renderChildren(): void {
       }
       else if (x.type.ordering)
         x.type.ordering(x, self, prev)
-      renderAll(x)
+      renderNodeAndChildren(x)
       prev = x
     }
   }
@@ -77,9 +77,12 @@ export function continueRender(node: Node<any>): void {
     const linker = node.linker
     if (!linker)
       throw new Error('node must be mounted before rendering')
-    linker.reconciling = [] // eslint-disable-next-line @typescript-eslint/no-non-null-assertion
+    linker.reconciling = []
+    // console.log(` (!) rendering ${node.type.name} #${node.id}...`)
+    // eslint-disable-next-line @typescript-eslint/no-non-null-assertion
     node.reactiveRender(linker.element!)
     renderChildren() // ignored if rendered already
+    // console.log(` (!) rendered ${node.type.name} #${node.id}`)
   }
   finally {
     Context.self = outer
@@ -102,7 +105,7 @@ class Context {
 }
 
 function def(node: Node<unknown>): void {
-  // console.log(`< defining: <${rtti.name}> #${id}...`)
+  // console.log(`< defining: <${node.type.name}> #${node.id}...`)
   const parent = Context.self // shorthand
   const linker = parent.linker
   if (!linker)
@@ -116,7 +119,7 @@ function def(node: Node<unknown>): void {
     linker.reconciling = [node]
     renderChildren()
   }
-  // console.log(`/> defined: <${rtti.name}> #${id}`)
+  // console.log(`/> defined: <${node.type.name}> #${node.id}`)
 }
 
 function reconcile(self: Node<unknown>): Array<Node<unknown>> | undefined {
@@ -137,10 +140,7 @@ function reconcile(self: Node<unknown>): Array<Node<unknown>> | undefined {
         i++
       }
       else if (a.id === b.id) {
-        if (a.type === b.type && a.reactiveRender !== b.reactiveRender)
-          reindexed[j] = a // reuse existing instance in whole
-        else
-          b.linker = a.linker // reuse existing linker only
+        b.linker = a.linker
         i++
         j++
       }
