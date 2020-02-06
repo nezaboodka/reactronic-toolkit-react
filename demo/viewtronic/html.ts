@@ -43,7 +43,7 @@ class HtmlNodeRtti<E extends HTMLElement> implements Rtti<E> {
     // console.log(`leave: <${node.rtti.name}> #${node.id}`)
   }
 
-  mount(node: Node<E>, outer: Node<unknown>, after?: Node<unknown>): void {
+  mount(node: Node<E>, owner: Node<unknown>, after?: Node<unknown>): void {
     const parent = HtmlNodeRtti.self
     const prev = after?.linker?.element
     const e = document.createElement(node.rtti.name) as E
@@ -56,7 +56,7 @@ class HtmlNodeRtti<E extends HTMLElement> implements Rtti<E> {
     // console.log(`  mounted: <${node.rtti.name}> #${node.id}`)
   }
 
-  ordering(node: Node<E>, outer: Node<unknown>, after?: Node<unknown>): void {
+  ordering(node: Node<E>, owner: Node<unknown>, after?: Node<unknown>): void {
     const parent = HtmlNodeRtti.self
     const prev = after?.linker?.element
     const e = node.linker?.element
@@ -66,7 +66,7 @@ class HtmlNodeRtti<E extends HTMLElement> implements Rtti<E> {
     }
   }
 
-  unmount(node: Node<E>, outer: Node<unknown>): void {
+  unmount(node: Node<E>, owner: Node<unknown>): void {
     const e = node.linker?.element
     if (e && e.parentElement)
       e.parentElement.removeChild(e)

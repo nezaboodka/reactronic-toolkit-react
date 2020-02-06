@@ -20,9 +20,9 @@ export interface Rtti<E = void> {
   readonly name: string
   readonly reactive: boolean
   proceed?(node: Node<E>): void
-  mount?(node: Node<E>, outer: Node<unknown>, after?: Node<unknown>): void
-  ordering?(node: Node<E>, outer: Node<unknown>, after?: Node<unknown>): void
-  unmount?(node: Node<E>, outer: Node<unknown>): void
+  mount?(node: Node<E>, owner: Node<unknown>, after?: Node<unknown>): void
+  ordering?(node: Node<E>, owner: Node<unknown>, after?: Node<unknown>): void
+  unmount?(node: Node<E>, owner: Node<unknown>): void
 }
 
 export interface Linker<E = void> {
