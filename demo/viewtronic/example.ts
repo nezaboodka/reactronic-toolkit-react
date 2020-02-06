@@ -76,10 +76,10 @@ export function Toolbar(id: string, className: string): void {
   })
   // Similar in TSX:
   // <div id={id} className={className}>
-  //   <ToolbarButton id="menu" icon="las la-menu" caption="Menu"/>
-  //   <div id="spring" style={{flexGrow: 1}}/>
-  //   <ToolbarButton id="settings" icon="las la-cog" caption="Settings"/>
-  //   <ToolbarButton id="close" icon="las la-times" caption="Close"/>
+  //   <ToolbarButton id="Menu" icon="las la-menu">Menu</ToolbarButton>
+  //   <div id="space" style={{flexGrow: 1}}/>
+  //   <ToolbarButton id="Settings" icon="las la-cog"/>Settings</ToolbarButton>
+  //   <ToolbarButton id="Close" icon="las la-times">Close</ToolbarButton>
   //   ...
   // </div>
 }
