@@ -11,14 +11,14 @@ export type Render<E = void> = (element: E) => void
 
 export interface Node<E = void> {
   readonly id: string
-  readonly render: Render<E>
+  readonly reactiveRender: Render<E>
   readonly type: Type<E>
   linker?: Linker<E>
 }
 
 export interface Type<E = void> {
   readonly name: string
-  embrace?(node: Node<E>): void
+  render?(node: Node<E>): void
   mount?(node: Node<E>, outer: Node<unknown>, after?: Node<unknown>): void
   ordering?(node: Node<E>, outer: Node<unknown>, after?: Node<unknown>): void
   unmount?(node: Node<E>, outer: Node<unknown>): void
@@ -30,28 +30,26 @@ export interface Linker<E = void> {
   index: Array<Node<unknown>> // sorted children
 }
 
-// reactive, define, renderNode, renderChildren
+// reactive, define, renderAll, renderChildren, continueRender
 
-export function reactive<E = void>(id: string, render: Render<E>, type: Type<E>): void {
-  const node: Node<any> = new RxNode<E>(id, render, type)
+export function reactive<E = void>(id: string, render: Render<E>, type?: Type<E>): void {
+  const node: Node<any> = new RxNode<E>(id, render, type || DefaultRxNodeType)
   def(node)
 }
 
-export function define<E = void>(id: string, render: Render<E>, type: Type<E>): void {
-  const node: Node<any> = { id, render, type: type || DefaultNodeType }
+export function define<E = void>(id: string, render: Render<E>, type?: Type<E>): void {
+  const node: Node<any> = { id, reactiveRender: render, type: type || DefaultNodeType }
   def(node)
 }
 
-export function applyNode<E>(node: Node<E>): void {
-  const linker = node.linker
-  if (!linker)
-    throw new Error('node must be mounted before rendering')
-  linker.reconciling = [] // eslint-disable-next-line @typescript-eslint/no-non-null-assertion
-  node.render(linker.element!)
-  applyChildren() // ignored if rendered already
+export function renderAll(node: Node<any>): void {
+  if (node.type.render)
+    node.type.render(node)
+  else
+    continueRender(node)
 }
 
-export function applyChildren(): void {
+export function renderChildren(): void {
   // console.log(`rendering children: <${self.type.name}> #${self.id}`)
   const self = Context.self
   const children = reconcile(self)
@@ -65,22 +63,38 @@ export function applyChildren(): void {
       }
       else if (x.type.ordering)
         x.type.ordering(x, self, prev)
-      apply(x)
+      renderAll(x)
       prev = x
     }
   }
   // console.log(`rendered children: <${self.type.name}> #${self.id}`)
 }
 
+export function continueRender(node: Node<any>): void {
+  const outer = Context.self
+  try {
+    Context.self = node
+    const linker = node.linker
+    if (!linker)
+      throw new Error('node must be mounted before rendering')
+    linker.reconciling = [] // eslint-disable-next-line @typescript-eslint/no-non-null-assertion
+    node.reactiveRender(linker.element!)
+    renderChildren() // ignored if rendered already
+  }
+  finally {
+    Context.self = outer
+  }
+}
+
 // Internal: Context
 
-const DefaultRender: Render<unknown> = () => { /* nop */ }
-const DefaultNodeType: Type<unknown> = { name: '<unknown>' }
+const DefaultRender: Render<any> = () => { /* nop */ }
+const DefaultNodeType: Type<any> = { name: '<unknown>' }
 
 class Context {
   static global: Node<unknown> = {
     id: '<global>',
-    render: DefaultRender,
+    reactiveRender: DefaultRender,
     type: DefaultNodeType,
     linker: { index: [] }
   }
@@ -100,23 +114,9 @@ function def(node: Node<unknown>): void {
   }
   else { // render root immediately
     linker.reconciling = [node]
-    applyChildren()
+    renderChildren()
   }
   // console.log(`/> defined: <${rtti.name}> #${id}`)
-}
-
-function apply(node: Node<unknown>): void {
-  const outer = Context.self
-  try {
-    Context.self = node
-    if (node.type.embrace)
-      node.type.embrace(node)
-    else
-      applyNode(node)
-  }
-  finally {
-    Context.self = outer
-  }
 }
 
 function reconcile(self: Node<unknown>): Array<Node<unknown>> | undefined {
@@ -137,7 +137,7 @@ function reconcile(self: Node<unknown>): Array<Node<unknown>> | undefined {
         i++
       }
       else if (a.id === b.id) {
-        if (a.type === b.type && a.render !== b.render)
+        if (a.type === b.type && a.reactiveRender !== b.reactiveRender)
           reindexed[j] = a // reuse existing instance in whole
         else
           b.linker = a.linker // reuse existing linker only
@@ -157,19 +157,26 @@ function reconcile(self: Node<unknown>): Array<Node<unknown>> | undefined {
 
 export class RxNode<E> implements Node<E> {
   readonly id: string
-  readonly rerender: Render<E>
+  readonly reactiveRender: Render<E>
   readonly type: Type<E>
   linker?: Linker<E> | undefined
 
   constructor(id: string, render: Render<E>, type: Type<E>) {
     this.id = id
     this.type = type
-    this.rerender = render
+    this.reactiveRender = render
     this.linker = undefined
   }
 
   @trigger
-  render(element: E): void {
-    this.rerender(element)
+  protected refresh(): void {
+    continueRender(this)
+  }
+
+  static reactiveRender(node: RxNode<any>): void {
+    node.refresh()
   }
 }
+
+const DefaultRxNodeType: Type<any> = { name: '<RxNode>', render: RxNode.reactiveRender }
+

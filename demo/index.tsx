@@ -16,13 +16,13 @@
 // const root = document.getElementById('root')
 // ReactDOM.render(<AppMain app={app}/>, root)
 
+import * as React from 'react'
 import { Reactronic as R, TraceLevel } from 'reactronic'
 
 import { Toolbar } from '~/viewtronic/example'
 
-R.setTrace(TraceLevel.Warnings)
+R.setTrace(TraceLevel.Noisy)
 
 setTimeout(() => {
   Toolbar('toolbar', 'bar')
-  console.log('(!)')
 }, 1000)

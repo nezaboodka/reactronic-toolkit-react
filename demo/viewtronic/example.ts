@@ -3,9 +3,21 @@
 // Copyright (C) 2019-2020 Yury Chetyrko <ychetyrko@gmail.com>
 // License: https://raw.githubusercontent.com/nezaboodka/reactronic/master/LICENSE
 
-import { div, i } from '~/viewtronic/html'
+import { Action, action, Stateful } from 'reactronic'
 
-// import { reactive, renderChildren } from './api'
+import { div, i } from '~/viewtronic/html'
+import { reactive } from '~/viewtronic/impl'
+
+class Model extends Stateful {
+  tick: number = 0
+
+  @action
+  click(): void {
+    this.tick++
+  }
+}
+
+const model = Action.run('init', () => new Model())
 
 export function Toolbar(id: string, className: string): void {
   div(id, e => {
@@ -13,6 +25,7 @@ export function Toolbar(id: string, className: string): void {
     e.style.zIndex = '100'
     e.style.display = 'flex'
     e.style.flexDirection = 'row'
+    e.onclick = () => model.click()
     ToolbarButton('menu', 'las la-menu', 'Menu')
     div('spring', e => e.style.flexGrow = '1')
     ToolbarButton('settings', 'las la-cog', 'Settings')
@@ -29,26 +42,25 @@ export function Toolbar(id: string, className: string): void {
 }
 
 export function ToolbarButton(id: string, icon: string, caption?: string): void {
-  // reactive(id, () => {
+  reactive(id, () => {
+    // let measure: HTMLDivElement
 
-  // let measure: HTMLDivElement
-  div(id, e => {
-    e.className = 'fancy-button'
+    div(id, e => {
+      e.className = 'fancy-button'
 
-    div('icon', e => {
-      e.className = 'fancy-button-icon'
-      i('sym', el => el.className = icon)
+      div('icon', e => {
+        e.className = 'fancy-button-icon'
+        i('sym', el => el.className = icon)
+      })
+
+      div('text', e => {
+        e.className = 'fancy-button-text'
+        e.innerText = `${caption || ''} ${model.tick}`
+        // measure = e
+      })
     })
 
-    div('text', e => {
-      e.className = 'fancy-button-text'
-      e.innerText = caption || ''
-      // measure = e
-    })
+    // renderChildren() // eslint-disable-next-line @typescript-eslint/no-non-null-assertion
+    // console.log(`measured: ${measure!.clientHeight}`)
   })
-
-  // renderChildren() // eslint-disable-next-line @typescript-eslint/no-non-null-assertion
-  // console.log(`measured: ${measure!.clientHeight}`)
-
-  // })
 }
