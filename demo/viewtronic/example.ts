@@ -94,7 +94,7 @@ export function ToolbarButton(id: string, icon: string, mouse: boolean): void {
 
     div('icon', e => {
       e.className = 'fancy-button-icon'
-      italic('sym', el => el.className = icon)
+      italic('la', el => el.className = icon)
     })
 
     div('text', e => {
