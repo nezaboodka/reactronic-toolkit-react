@@ -58,10 +58,10 @@ export function define<E = void>(id: string, render: Render<E>, rtti?: Rtti<E>):
 }
 
 export function render(node: Node<any>): void {
-  if (node.rtti.proceed)
-    node.rtti.proceed(node)
+  if (node.rtti.reactive)
+    node.linker?.reactiveRender(node)
   else
-    proceed(node) // default
+    LinkerImpl.basicRender(node)
 }
 
 export function renderChildren(): void {
@@ -89,10 +89,15 @@ export function proceed(node: Node<any>): void {
   const outer = LinkerImpl.self
   try {
     LinkerImpl.self = node
-    if (node.rtti.reactive)
-      node.linker?.reactiveRender(node)
-    else
-      renderImpl(node)
+    const linker = node.linker
+    if (!linker)
+      throw new Error('node must be mounted before rendering')
+    linker.pending = []
+    // console.log(` (!) rendering ${node.rtti.name} #${node.id}...`)
+    // eslint-disable-next-line @typescript-eslint/no-non-null-assertion
+    node.render(linker.element!)
+    renderChildren() // ignored if rendered already
+    // console.log(` (!) rendered ${node.rtti.name} #${node.id}`)
   }
   finally {
     LinkerImpl.self = outer
@@ -111,23 +116,18 @@ class LinkerImpl<E> implements Linker<E> {
 
   @trigger
   reactiveRender(node: Node<E>): void {
-    renderImpl(node)
+    LinkerImpl.basicRender(node)
+  }
+
+  static basicRender<E>(node: Node<E>): void {
+    if (node.rtti.proceed)
+      node.rtti.proceed(node)
+    else
+      proceed(node)
   }
 
   static global: Node<unknown> = { id: '<global>', render: DefaultRender, rtti: DefaultNodeType, linker: new LinkerImpl<unknown>() }
   static self: Node<unknown> = LinkerImpl.global
-}
-
-function renderImpl(node: Node<any>): void {
-  const linker = node.linker
-  if (!linker)
-    throw new Error('node must be mounted before rendering')
-  linker.pending = []
-  // console.log(` (!) rendering ${node.rtti.name} #${node.id}...`)
-  // eslint-disable-next-line @typescript-eslint/no-non-null-assertion
-  node.render(linker.element!)
-  renderChildren() // ignored if rendered already
-  // console.log(` (!) rendered ${node.rtti.name} #${node.id}`)
 }
 
 function reconcile(self: Node<unknown>): Array<Node<unknown>> | undefined {

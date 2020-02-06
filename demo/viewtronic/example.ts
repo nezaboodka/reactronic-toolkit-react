@@ -10,10 +10,18 @@ import { reactive } from '~/viewtronic/impl'
 
 class Model extends Stateful {
   tick: number = 0
+  x: number = 0
+  y: number = 0
 
   @action
   click(): void {
     this.tick++
+  }
+
+  @action
+  mouse(x: number, y: number): void {
+    this.x = x
+    this.y = y
   }
 }
 
@@ -25,7 +33,8 @@ export function Toolbar(id: string, className: string): void {
     e.style.zIndex = '100'
     e.style.display = 'flex'
     e.style.flexDirection = 'row'
-    e.onclick = () => model.click()
+    e.onclick = e => model.click()
+    e.onmousemove = e => model.mouse(e.x, e.y)
     ToolbarButton('menu', 'las la-menu', 'Menu')
     div('spring', e => e.style.flexGrow = '1')
     ToolbarButton('settings', 'las la-cog', 'Settings')
@@ -47,6 +56,7 @@ export function ToolbarButton(id: string, icon: string, caption?: string): void 
 
     div(id, e => {
       e.className = 'fancy-button'
+      e.style.margin = '1em'
 
       div('icon', e => {
         e.className = 'fancy-button-icon'
@@ -55,7 +65,7 @@ export function ToolbarButton(id: string, icon: string, caption?: string): void 
 
       div('text', e => {
         e.className = 'fancy-button-text'
-        e.innerText = `${caption || ''} ${model.tick}`
+        e.innerText = `${caption || ''} ${model.tick} : ${model.x}, ${model.y}`
         // measure = e
       })
     })
