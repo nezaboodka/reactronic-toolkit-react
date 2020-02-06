@@ -45,8 +45,7 @@ export function App(id: string, className: string): void {
     css.top = css.bottom = css.left = css.right = '0'
     css.display = 'flex'
     css.flexDirection = 'column'
-    css.margin = '1em'
-    css.padding = '1em'
+    css.margin = css.padding = '1em'
     css.border = '0.5px dashed gray'
     e.onclick = e => model.click()
     e.onmousemove = e => model.move(e.x, e.y)
