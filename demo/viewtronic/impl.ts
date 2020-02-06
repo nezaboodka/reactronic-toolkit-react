@@ -14,7 +14,6 @@ export interface Node<E = void> {
   readonly render: Render<E>
   readonly type: Type<E>
   linker?: Linker<E>
-  // reactive: Reactive<E>
 }
 
 export interface Type<E = void> {
@@ -33,28 +32,14 @@ export interface Linker<E = void> {
 
 // reactive, define, renderNode, renderChildren
 
-export function reactive<E = void>(id: string, render: Render<E>, rtti: Type<E>): void {
-  const n = define(id, render, rtti)
-  // Action.run('reactive', () => new Reactive<E>(render))
+export function reactive<E = void>(id: string, render: Render<E>, type: Type<E>): void {
+  const node: Node<any> = new RxNode<E>(id, render, type)
+  def(node)
 }
 
-export function define<E = void>(id: string, render: Render<E>, rtti: Type<E>): void {
-  // console.log(`< defining: <${rtti.name}> #${id}...`)
-  const n: Node<any> = { id, render, type: rtti || DefaultNodeType }
-  const parent = Context.self // shorthand
-  const linker = parent.linker
-  if (!linker)
-    throw new Error('node must be mounted before rendering')
-  if (parent !== Context.global) {
-    if (!linker.reconciling)
-      throw new Error('children are rendered already') // eslint-disable-next-line @typescript-eslint/no-non-null-assertion
-    linker.reconciling.push(n)
-  }
-  else { // render root immediately
-    linker.reconciling = [n]
-    applyChildren()
-  }
-  // console.log(`/> defined: <${rtti.name}> #${id}`)
+export function define<E = void>(id: string, render: Render<E>, type: Type<E>): void {
+  const node: Node<any> = { id, render, type: type || DefaultNodeType }
+  def(node)
 }
 
 export function applyNode<E>(node: Node<E>): void {
@@ -100,6 +85,24 @@ class Context {
     linker: { index: [] }
   }
   static self = Context.global
+}
+
+function def(node: Node<unknown>): void {
+  // console.log(`< defining: <${rtti.name}> #${id}...`)
+  const parent = Context.self // shorthand
+  const linker = parent.linker
+  if (!linker)
+    throw new Error('node must be mounted before rendering')
+  if (parent !== Context.global) {
+    if (!linker.reconciling)
+      throw new Error('children are rendered already') // eslint-disable-next-line @typescript-eslint/no-non-null-assertion
+    linker.reconciling.push(node)
+  }
+  else { // render root immediately
+    linker.reconciling = [node]
+    applyChildren()
+  }
+  // console.log(`/> defined: <${rtti.name}> #${id}`)
 }
 
 function apply(node: Node<unknown>): void {
@@ -150,13 +153,19 @@ function reconcile(self: Node<unknown>): Array<Node<unknown>> | undefined {
   return children
 }
 
-// Reactive
+// RxNode
 
-export class Reactive<E> {
-  private readonly rerender: Render<E>
+export class RxNode<E> implements Node<E> {
+  readonly id: string
+  readonly rerender: Render<E>
+  readonly type: Type<E>
+  linker?: Linker<E> | undefined
 
-  constructor(render: Render<E>) {
+  constructor(id: string, render: Render<E>, type: Type<E>) {
+    this.id = id
+    this.type = type
     this.rerender = render
+    this.linker = undefined
   }
 
   @trigger
