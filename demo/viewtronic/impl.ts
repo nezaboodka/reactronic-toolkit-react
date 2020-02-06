@@ -3,20 +3,20 @@
 // Copyright (C) 2019-2020 Yury Chetyrko <ychetyrko@gmail.com>
 // License: https://raw.githubusercontent.com/nezaboodka/reactronic/master/LICENSE
 
-import { Stateful, trigger } from 'reactronic'
+import { trigger } from 'reactronic'
 
-// Render, Node, Type, Linker
+// Render, Node, Rtti, Linker
 
 export type Render<E = void> = (element: E) => void
 
 export interface Node<E = void> {
   readonly id: string
-  readonly reactiveRender: Render<E>
-  readonly type: Type<E>
+  readonly render: Render<E>
+  readonly type: Rtti<E>
   linker?: Linker<E>
 }
 
-export interface Type<E = void> {
+export interface Rtti<E = void> {
   readonly name: string
   render?(node: Node<E>): void
   mount?(node: Node<E>, outer: Node<unknown>, after?: Node<unknown>): void
@@ -32,13 +32,13 @@ export interface Linker<E = void> {
 
 // reactive, define, renderAll, renderChildren, continueRender
 
-export function reactive<E = void>(id: string, render: Render<E>, type?: Type<E>): void {
+export function reactive<E = void>(id: string, render: Render<E>, type?: Rtti<E>): void {
   const node: Node<any> = new RxNode<E>(id, render, type || DefaultRxNodeType)
   def(node)
 }
 
-export function define<E = void>(id: string, render: Render<E>, type?: Type<E>): void {
-  const node: Node<any> = { id, reactiveRender: render, type: type || DefaultNodeType }
+export function define<E = void>(id: string, render: Render<E>, type?: Rtti<E>): void {
+  const node: Node<any> = { id, render, type: type || DefaultNodeType }
   def(node)
 }
 
@@ -80,7 +80,7 @@ export function continueRender(node: Node<any>): void {
     linker.reconciling = []
     // console.log(` (!) rendering ${node.type.name} #${node.id}...`)
     // eslint-disable-next-line @typescript-eslint/no-non-null-assertion
-    node.reactiveRender(linker.element!)
+    node.render(linker.element!)
     renderChildren() // ignored if rendered already
     // console.log(` (!) rendered ${node.type.name} #${node.id}`)
   }
@@ -92,12 +92,12 @@ export function continueRender(node: Node<any>): void {
 // Internal: Context
 
 const DefaultRender: Render<any> = () => { /* nop */ }
-const DefaultNodeType: Type<any> = { name: '<unknown>' }
+const DefaultNodeType: Rtti<any> = { name: '<unknown>' }
 
 class Context {
   static global: Node<unknown> = {
     id: '<global>',
-    reactiveRender: DefaultRender,
+    render: DefaultRender,
     type: DefaultNodeType,
     linker: { index: [] }
   }
@@ -157,14 +157,14 @@ function reconcile(self: Node<unknown>): Array<Node<unknown>> | undefined {
 
 export class RxNode<E> implements Node<E> {
   readonly id: string
-  readonly reactiveRender: Render<E>
-  readonly type: Type<E>
+  readonly render: Render<E>
+  readonly type: Rtti<E>
   linker?: Linker<E> | undefined
 
-  constructor(id: string, render: Render<E>, type: Type<E>) {
+  constructor(id: string, render: Render<E>, type: Rtti<E>) {
     this.id = id
     this.type = type
-    this.reactiveRender = render
+    this.render = render
     this.linker = undefined
   }
 
@@ -178,5 +178,5 @@ export class RxNode<E> implements Node<E> {
   }
 }
 
-const DefaultRxNodeType: Type<any> = { name: '<RxNode>', render: RxNode.reactiveRender }
+const DefaultRxNodeType: Rtti<any> = { name: '<RxNode>', render: RxNode.reactiveRender }
 

@@ -3,5 +3,5 @@
 // Copyright (C) 2019-2020 Yury Chetyrko <ychetyrko@gmail.com>
 // License: https://raw.githubusercontent.com/nezaboodka/reactronic/master/LICENSE
 
-export { Linker, Node, Render, Type } from '~/viewtronic/impl'
+export { Linker, Node, Render, Rtti } from '~/viewtronic/impl'
 export { reactive, define, renderNodeAndChildren, continueRender } from '~/viewtronic/impl'
