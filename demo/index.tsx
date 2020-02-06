@@ -18,7 +18,7 @@ ReactDOM.render(<AppMain app={app}/>, root)
 
 // import { Reactronic as R, TraceLevel } from 'reactronic'
 
-// import { Toolbar } from './viewtronic/example'
+// import { Toolbar } from '~/viewtronic/example'
 
 // R.setTrace(TraceLevel.Warnings)
 
