@@ -27,8 +27,8 @@ export interface Rtti<E = void> {
 
 export interface Linker<E = void> {
   element?: E
-  pending?: Array<Node<unknown>> // children in natural order
   index: Array<Node<unknown>> // sorted children
+  pending?: Array<Node<unknown>> // children in natural order
   reactiveRender(node: Node<E>): void
 }
 
@@ -105,23 +105,17 @@ const DefaultRender: Render<any> = () => { /* nop */ }
 const DefaultNodeType: Rtti<any> = { name: '<default>', reactive: false }
 
 export class LinkerImpl<E> implements Linker<E> {
-  element?: E | undefined
-  pending?: Node<unknown>[] | undefined
+  element?: E
   index: Node<unknown>[] = []
-  reactive?: any
+  pending?: Node<unknown>[]
 
   @trigger
   reactiveRender(node: Node<E>): void {
     renderImpl(node)
   }
 
-  static global: Node<unknown> = {
-    id: '<global>',
-    render: DefaultRender,
-    rtti: DefaultNodeType,
-    linker: new LinkerImpl<unknown>()
-  }
-  static self = LinkerImpl.global
+  static global: Node<unknown> = { id: '<global>', render: DefaultRender, rtti: DefaultNodeType, linker: new LinkerImpl<unknown>() }
+  static self: Node<unknown> = LinkerImpl.global
 }
 
 function renderImpl(node: Node<any>): void {
