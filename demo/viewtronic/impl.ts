@@ -44,12 +44,12 @@ export function define<E = void>(id: string, render: Render<E>, rtti: Type<E>): 
   const linker = parent.linker
   if (!linker)
     throw new Error('node must be mounted before rendering')
-  if (parent !== Context.root) {
+  if (parent !== Context.global) {
     if (!linker.reconciling)
       throw new Error('children are rendered already') // eslint-disable-next-line @typescript-eslint/no-non-null-assertion
     linker.reconciling.push(n)
   }
-  else {
+  else { // render root immediately
     linker.reconciling = [n]
     renderChildren()
   }
@@ -92,13 +92,13 @@ export const DefaultRender: Render<unknown> = () => { /* nop */ }
 export const DefaultNodeType: Type<unknown> = { name: '<unknown>' }
 
 export class Context {
-  static root: Node<unknown> = {
-    id: '<root>',
+  static global: Node<unknown> = {
+    id: '<global>',
     render: DefaultRender,
     type: DefaultNodeType,
     linker: { index: [] }
   }
-  static self = Context.root
+  static self = Context.global
 }
 
 export function apply(node: Node<unknown>): void {
