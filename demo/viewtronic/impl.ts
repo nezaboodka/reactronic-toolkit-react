@@ -104,7 +104,7 @@ export function proceed(node: Node<any>): void {
 const DefaultRender: Render<any> = () => { /* nop */ }
 const DefaultNodeType: Rtti<any> = { name: '<default>', reactive: false }
 
-export class LinkerImpl<E> implements Linker<E> {
+class LinkerImpl<E> implements Linker<E> {
   element?: E
   index: Node<unknown>[] = []
   pending?: Node<unknown>[]
