@@ -6,8 +6,7 @@
 import { css, cx } from 'emotion'
 import { Action, action, Stateful } from 'reactronic'
 
-import { renderChildren } from '~/viewtronic/api'
-import { div, italic, ReactiveDiv } from '~/viewtronic/html'
+import { div, ReactiveDiv } from '~/viewtronic/html'
 
 import { restyle } from '../../source/tools/restyle'
 
