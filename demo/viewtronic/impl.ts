@@ -54,9 +54,8 @@ export function define<E = void>(id: string, render: Render<E>, rtti?: Rtti<E>):
 }
 
 export function renderChildren(): void {
-  const self = LinkerImpl.self
   // console.log(`rendering children: <${self.rtti.name}> #${self.id}`)
-  reconcile(self)
+  reconcile(LinkerImpl.self)
   // console.log(`rendered children: <${self.rtti.name}> #${self.id}`)
 }
 
