@@ -3,7 +3,7 @@
 // Copyright (C) 2019-2020 Yury Chetyrko <ychetyrko@gmail.com>
 // License: https://raw.githubusercontent.com/nezaboodka/reactronic/master/LICENSE
 
-import { Action, action, Stateful } from 'reactronic'
+import { action, Stateful } from 'reactronic'
 
 export class Model extends Stateful {
   x: number = 0
@@ -27,5 +27,3 @@ export class Model extends Stateful {
     this.size = value
   }
 }
-
-export const model = Action.run('init', () => new Model())

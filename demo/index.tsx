@@ -17,10 +17,12 @@
 // ReactDOM.render(<AppMain app={app}/>, root)
 
 import * as React from 'react'
-import { Reactronic as R, TraceLevel } from 'reactronic'
+import { Action, Reactronic as R, TraceLevel } from 'reactronic'
 
+import { Model } from '~/viewtronic/example.model'
 import { App } from '~/viewtronic/example.view'
 
 R.setTrace(TraceLevel.Noisy)
 
-App('Viewtronic Demo')
+const model = Action.run('init', () => new Model())
+App('demo', model)

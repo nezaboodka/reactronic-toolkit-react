@@ -5,35 +5,35 @@
 
 import { cx } from 'emotion'
 
-import { model } from '~/viewtronic/example.model'
+import { Model } from '~/viewtronic/example.model'
 import { style } from '~/viewtronic/example.style'
 import { div } from '~/viewtronic/html'
 
-export function App(id: string): void {
+export function App(id: string, m: Model): void {
   div(id, e => {
     e.className = style.classes.app
-    e.onclick = e => model.click()
-    e.onmousemove = e => model.move(e.x, e.y)
-    Toolbar('toolbar')
+    e.onclick = e => m.click()
+    e.onmousemove = e => m.move(e.x, e.y)
+    Toolbar('toolbar', m)
   })
 }
 
-export function Toolbar(id: string): void {
+export function Toolbar(id: string, m: Model): void {
   div(id, e => {
     e.className = style.classes.toolbar
     div('(mouse)', e => {
       e.className = style.classes.toolbarItem
       e.style.border = 'none'
       e.style.borderBottom = '0.5px solid white'
-      e.innerText = `Mouse: ${model.x}, ${model.y} (${model.clicks})`
-      model.setSize(e.clientWidth)
+      e.innerText = `Mouse: ${m.x}, ${m.y} (${m.clicks})`
+      m.setSize(e.clientWidth)
     })
     div('(space)', e => {
       e.className = style.classes.toolbarItem
       e.style.border = 'none'
       e.style.flexGrow = '1'
       e.style.textAlign = 'right'
-      e.innerText = `Width: ${model.size}`
+      e.innerText = `Width: ${m.size}`
     })
     ToolbarButton('Settings', 'las la-cog')
     ToolbarButton('Close', 'las la-times')

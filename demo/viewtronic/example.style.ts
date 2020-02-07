@@ -30,16 +30,16 @@ export const style = restyle(() => {
       border: 0.5px dashed gray;
     `,
     toolbarItem: css`
-      label: toolbarButton;
+      label: toolbarItem;
       margin: 1em;
       padding: 0.5em;
       border: 0.5px dashed gray;
     `,
     toolbarIcon: css`
-      label: toolbarButtonIcon;
+      label: toolbarIcon;
     `,
     toolbarText: css`
-      label: toolbarButtonText;
+      label: toolbarText;
     `,
   }
 })
