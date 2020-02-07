@@ -105,7 +105,7 @@ class LinkerImpl<E> implements Linker<E> {
   static self: Node<unknown> = LinkerImpl.global
 }
 
-function render(node: Node<any>): void {
+function renderNodeNow(node: Node<any>): void {
   if (node.rtti.reactive)
     node.linker?.reactiveRender(node)
   else
@@ -158,7 +158,7 @@ function reconcile(self: Node<unknown>): void {
         }
         else if (x.rtti.ordering) // was mounted before, just re-order if needed
           x.rtti.ordering(x, self, prev)
-        render(x)
+        renderNodeNow(x)
         prev = x
       }
     })
