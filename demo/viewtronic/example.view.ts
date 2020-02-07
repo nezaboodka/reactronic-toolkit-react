@@ -38,14 +38,6 @@ export function Toolbar(id: string): void {
     ToolbarButton('Settings', 'las la-cog')
     ToolbarButton('Close', 'las la-times')
   })
-  // Similar in TSX:
-  // <div id={id} className={className}>
-  //   <ToolbarButton id="Menu" icon="las la-menu">Menu</ToolbarButton>
-  //   <div id="space" style={{flexGrow: 1}}/>
-  //   <ToolbarButton id="Settings" icon="las la-cog"/>Settings</ToolbarButton>
-  //   <ToolbarButton id="Close" icon="las la-times">Close</ToolbarButton>
-  //   ...
-  // </div>
 }
 
 export function ToolbarButton(id: string, icon: string): void {
