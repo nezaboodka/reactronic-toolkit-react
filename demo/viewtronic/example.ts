@@ -27,14 +27,14 @@ export function Toolbar(id: string): void {
       e.style.border = 'none'
       e.style.borderBottom = '0.5px solid white'
       e.innerText = `Mouse: ${model.x}, ${model.y} (${model.clicks})`
-      model.setMeasure(e.clientWidth)
+      model.setSize(e.clientWidth)
     })
     ReactiveDiv('(space)', e => {
       e.className = style.classes.toolbarItem
       e.style.border = 'none'
       e.style.flexGrow = '1'
       e.style.textAlign = 'right'
-      e.innerText = `Width: ${model.measure}`
+      e.innerText = `Width: ${model.size}`
     })
     ToolbarButton('Settings', 'las la-cog')
     ToolbarButton('Close', 'las la-times')

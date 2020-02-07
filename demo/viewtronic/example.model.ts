@@ -9,7 +9,7 @@ export class Model extends Stateful {
   x: number = 0
   y: number = 0
   clicks: number = 0
-  measure: number = 0
+  size: number = 0
 
   @action
   move(x: number, y: number): void {
@@ -23,8 +23,8 @@ export class Model extends Stateful {
   }
 
   @action
-  setMeasure(value: number): void {
-    this.measure = value
+  setSize(value: number): void {
+    this.size = value
   }
 }
 
