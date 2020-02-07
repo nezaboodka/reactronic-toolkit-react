@@ -32,7 +32,9 @@ export function Toolbar(id: string, m: Model): void {
       e.style.position = 'absolute'
       e.style.left = `${m.x}px`
       e.style.top = `${m.y}px`
+      e.style.color = 'yellow'
       e.innerText = `(${m.x}, ${m.y})`
+      m.setSize(e.clientWidth)
     })
     div('(space)', e => {
       e.className = style.classes.toolbarItem

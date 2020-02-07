@@ -21,6 +21,7 @@ export const style = restyle(() => {
       margin: 1em;
       padding: 1em;
       border: 0.5px dashed gray;
+      cursor: default;
     `,
     toolbar: css`
       label: toolbar;
