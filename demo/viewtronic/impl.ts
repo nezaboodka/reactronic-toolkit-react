@@ -5,13 +5,13 @@
 
 import { Cache, isolated, trigger } from 'reactronic'
 
-// Render, Node, Rtti, Linker
+// Apply, Node, Rtti, Linker
 
-export type Render<E = void> = (element: E) => void
+export type Apply<E = void> = (element: E) => void
 
 export interface Node<E = void> {
   readonly id: string
-  readonly render: Render<E>
+  readonly apply: Apply<E>
   readonly rtti: Rtti<E>
   linker?: Linker<E>
 }
@@ -30,13 +30,13 @@ export interface Linker<E = void> {
   element?: E
   index: Array<Node<unknown>> // sorted children
   pending?: Array<Node<unknown>> // children in natural order
-  reactiveRender(node: Node<E>): void
+  reactiveApply(node: Node<E>): void
 }
 
-// define, renderChildren, proceed
+// define, applyChildren, proceed
 
-export function define<E = void>(id: string, render: Render<E>, rtti?: Rtti<E>): void {
-  const node: Node<any> = { id, render, rtti: rtti || LinkerImpl.global.rtti }
+export function define<E = void>(id: string, apply: Apply<E>, rtti?: Rtti<E>): void {
+  const node: Node<any> = { id, apply, rtti: rtti || LinkerImpl.global.rtti }
   // console.log(`< defining: <${node.rtti.name}> #${node.id}...`)
   const parent = LinkerImpl.self // shorthand
   const linker = parent.linker
@@ -44,20 +44,20 @@ export function define<E = void>(id: string, render: Render<E>, rtti?: Rtti<E>):
     throw new Error('node must be mounted before rendering')
   if (parent !== LinkerImpl.global) {
     if (!linker.pending)
-      throw new Error('children are rendered already') // eslint-disable-next-line @typescript-eslint/no-non-null-assertion
+      throw new Error('children are applied already') // eslint-disable-next-line @typescript-eslint/no-non-null-assertion
     linker.pending.push(node)
   }
-  else { // render root immediately
+  else { // apply root immediately
     linker.pending = [node]
-    renderChildren()
+    applyChildren()
   }
   // console.log(`/> defined: <${node.rtti.name}> #${node.id}`)
 }
 
-export function renderChildren(): void {
-  // console.log(`rendering children: <${self.rtti.name}> #${self.id}`)
+export function applyChildren(): void {
+  // console.log(`applying children: <${self.rtti.name}> #${self.id}`)
   reconcile(LinkerImpl.self)
-  // console.log(`rendered children: <${self.rtti.name}> #${self.id}`)
+  // console.log(`applied children: <${self.rtti.name}> #${self.id}`)
 }
 
 export function proceed(node: Node<any>): void {
@@ -68,8 +68,8 @@ export function proceed(node: Node<any>): void {
     if (!linker)
       throw new Error('node must be mounted before rendering')
     linker.pending = [] // eslint-disable-next-line @typescript-eslint/no-non-null-assertion
-    node.render(linker.element!)
-    renderChildren() // ignored if rendered already
+    node.apply(linker.element!)
+    applyChildren() // ignored if applied already
   }
   finally {
     LinkerImpl.self = outer
@@ -89,27 +89,27 @@ class LinkerImpl<E> implements Linker<E> {
   }
 
   @trigger
-  reactiveRender(node: Node<E>): void {
-    basicRender(node)
+  reactiveApply(node: Node<E>): void {
+    basicApply(node)
   }
 
   static global: Node<unknown> = {
     id: '<global>',
-    render: () => { /* nop */ },
+    apply: () => { /* nop */ },
     rtti: { name: '<default>', reactive: false },
     linker: new LinkerImpl<unknown>(0)
   }
   static self: Node<unknown> = LinkerImpl.global
 }
 
-function renderNodeNow(node: Node<any>): void {
+function applyNodeNow(node: Node<any>): void {
   if (node.rtti.reactive)
-    node.linker?.reactiveRender(node)
+    node.linker?.reactiveApply(node)
   else
-    basicRender(node)
+    basicApply(node)
 }
 
-function basicRender<E>(node: Node<E>): void {
+function basicApply<E>(node: Node<E>): void {
   if (node.rtti.proceed)
     node.rtti.proceed(node)
   else
@@ -148,14 +148,14 @@ function reconcile(self: Node<unknown>): void {
       for (const x of children) {
         if (!x.linker) { // if not yet mounted
           const xLinker = new LinkerImpl<unknown>(linker.level + 1)
-          Cache.of(xLinker.reactiveRender).setup({ priority: xLinker.level })
+          Cache.of(xLinker.reactiveApply).setup({ priority: xLinker.level })
           x.linker = xLinker
           if (x.rtti.mount)
             x.rtti.mount(x, self, prev)
         }
         else if (x.rtti.ordering) // was mounted before, just re-order if needed
           x.rtti.ordering(x, self, prev)
-        renderNodeNow(x)
+        applyNodeNow(x)
         prev = x
       }
     })
