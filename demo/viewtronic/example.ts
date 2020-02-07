@@ -3,10 +3,13 @@
 // Copyright (C) 2019-2020 Yury Chetyrko <ychetyrko@gmail.com>
 // License: https://raw.githubusercontent.com/nezaboodka/reactronic/master/LICENSE
 
+import { css, cx } from 'emotion'
 import { Action, action, Stateful } from 'reactronic'
 
 import { renderChildren } from '~/viewtronic/api'
 import { div, italic, ReactiveDiv } from '~/viewtronic/html'
+
+import { restyle } from '../../source/tools/restyle'
 
 // Model
 
@@ -37,33 +40,20 @@ const model = Action.run('init', () => new Model())
 
 // Views
 
-export function App(id: string, className: string): void {
+export function App(id: string): void {
   div(id, e => {
-    const css = e.style
-    e.className = className
-    css.position = 'absolute'
-    css.top = css.bottom = css.left = css.right = '0'
-    css.display = 'flex'
-    css.flexDirection = 'column'
-    css.margin = css.padding = '1em'
-    css.border = '0.5px dashed gray'
+    e.className = style.classes.app
     e.onclick = e => model.click()
     e.onmousemove = e => model.move(e.x, e.y)
-    Toolbar('toolbar', 'fancy-toolbar')
+    Toolbar('toolbar')
   })
 }
 
-export function Toolbar(id: string, className: string): void {
+export function Toolbar(id: string): void {
   div(id, e => {
-    const css = e.style
-    e.className = className
-    css.zIndex = '100'
-    css.display = 'flex'
-    css.flexDirection = 'row'
-    css.border = '0.5px dashed gray'
-    // Children
+    e.className = style.classes.toolbar
     ToolbarButton('Menu', 'las la-menu', true)
-    ReactiveDiv('space', e => {
+    ReactiveDiv('(space)', e => {
       const css = e.style
       css.flexGrow = '1'
       css.textAlign = 'center'
@@ -86,24 +76,52 @@ export function Toolbar(id: string, className: string): void {
 export function ToolbarButton(id: string, icon: string, mouse: boolean): void {
   ReactiveDiv(id, e => {
     let measure: HTMLDivElement
-
-    e.className = 'fancy-button'
-    e.style.margin = '1em'
-    e.style.border = '0.5px dashed gray'
-
-    div('icon', e => {
-      e.className = 'fancy-button-icon'
-      italic('la', el => el.className = icon)
-    })
-
+    e.className = style.classes.toolbarButton
+    div('icon', e => e.className = cx(icon, style.classes.toolbarButtonIcon))
     div('text', e => {
-      e.className = 'fancy-button-text'
+      e.className = style.classes.toolbarButtonText
       e.innerText = mouse ? `${id || ''} ${model.clicks} : ${model.x}, ${model.y}` : `${id || ''} ${model.clicks}`
       measure = e
     })
-
+    // Measure rendered elements
     renderChildren()
     if (mouse) // eslint-disable-next-line @typescript-eslint/no-non-null-assertion
       model.setMeasure(measure!.clientWidth)
   })
 }
+
+export const style = restyle(() => {
+  return {
+    app: css`
+      label: app;
+      position: absolute;
+      top: 0;
+      bottom: 0;
+      left: 0;
+      right: 0;
+      display: flex;
+      flex-direction: column;
+      margin: 1em;
+      padding: 1em;
+      border: 0.5px dashed gray;
+    `,
+    toolbar: css`
+      label: toolbar;
+      z-index: 100;
+      display: flex;
+      flex-direction: row;
+      border: 0.5px dashed gray;
+    `,
+    toolbarButton: css`
+      label: toolbarButton;
+      margin: 1em;
+      border: 0.5px dashed gray;
+    `,
+    toolbarButtonIcon: css`
+      label: toolbarButtonIcon;
+    `,
+    toolbarButtonText: css`
+      label: toolbarButtonText;
+    `,
+  }
+})
