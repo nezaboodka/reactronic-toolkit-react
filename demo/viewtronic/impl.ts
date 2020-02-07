@@ -26,6 +26,7 @@ export interface Rtti<E = void> {
 }
 
 export interface Linker<E = void> {
+  level: number
   element?: E
   index: Array<Node<unknown>> // sorted children
   pending?: Array<Node<unknown>> // children in natural order
@@ -81,6 +82,7 @@ export function proceed(node: Node<any>): void {
 // Internal
 
 class LinkerImpl<E> implements Linker<E> {
+  level: number = 0
   element?: E
   index: Node<unknown>[] = []
   pending?: Node<unknown>[]
@@ -117,10 +119,10 @@ function reconcile(self: Node<unknown>): void {
   const linker = self.linker
   const children = linker?.pending
   if (linker && children) {
-    // console.log(`  reconciling: <${self.rtti.name}> #${self.id}...`)
     linker.pending = undefined
     const reindexed = children.slice().sort((n1, n2) => n1.id.localeCompare(n2.id))
     isolated(() => {
+      // Unmount
       let i = 0, j = 0
       while (i < linker.index.length) {
         const a = linker.index[i]
@@ -141,13 +143,13 @@ function reconcile(self: Node<unknown>): void {
         else // a.id > b.id
           j++
       }
-      linker.index = reindexed
-      // console.log(`  reconciled: <${self.rtti.name}> #${self.id}`)
+      // Mount
       let prev: Node<unknown> | undefined = undefined
       for (const x of children) {
         if (!x.linker) { // if not yet mounted
           x.linker = new LinkerImpl<unknown>()
-          Cache.of(x.linker.reactiveRender).setup({ priority: 0 })
+          x.linker.level = linker.level + 1
+          Cache.of(x.linker.reactiveRender).setup({ priority: x.linker.level })
           if (x.rtti.mount)
             x.rtti.mount(x, self, prev)
         }
@@ -157,5 +159,6 @@ function reconcile(self: Node<unknown>): void {
         prev = x
       }
     })
+    linker.index = reindexed
   }
 }
