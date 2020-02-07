@@ -19,7 +19,7 @@ export interface Node<E = void> {
 export interface Rtti<E = void> {
   readonly name: string
   readonly reactive: boolean
-  proceed?(node: Node<E>): void
+  apply?(node: Node<E>): void
   mount?(node: Node<E>, owner: Node<unknown>, after?: Node<unknown>): void
   ordering?(node: Node<E>, owner: Node<unknown>, after?: Node<unknown>): void
   unmount?(node: Node<E>, owner: Node<unknown>): void
@@ -60,7 +60,7 @@ export function applyChildren(): void {
   // console.log(`applied children: <${self.rtti.name}> #${self.id}`)
 }
 
-export function proceed(node: Node<any>): void {
+export function apply(node: Node<any>): void {
   const outer = LinkerImpl.self
   try {
     LinkerImpl.self = node
@@ -102,18 +102,11 @@ class LinkerImpl<E> implements Linker<E> {
   static self: Node<unknown> = LinkerImpl.global
 }
 
-function applyNodeNow(node: Node<any>): void {
-  if (node.rtti.reactive)
-    node.linker?.reactiveApply(node)
-  else
-    basicApply(node)
-}
-
 function basicApply<E>(node: Node<E>): void {
-  if (node.rtti.proceed)
-    node.rtti.proceed(node)
+  if (node.rtti.apply)
+    node.rtti.apply(node)
   else
-    proceed(node)
+    apply(node)
 }
 
 function reconcile(self: Node<unknown>): void {
@@ -155,7 +148,10 @@ function reconcile(self: Node<unknown>): void {
         }
         else if (x.rtti.ordering) // was mounted before, just re-order if needed
           x.rtti.ordering(x, self, prev)
-        applyNodeNow(x)
+        if (x.rtti.reactive)
+          x.linker?.reactiveApply(x)
+        else
+          basicApply(x)
         prev = x
       }
     })

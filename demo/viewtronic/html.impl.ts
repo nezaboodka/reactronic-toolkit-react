@@ -3,7 +3,7 @@
 // Copyright (C) 2019-2020 Yury Chetyrko <ychetyrko@gmail.com>
 // License: https://raw.githubusercontent.com/nezaboodka/reactronic/master/LICENSE
 
-import { Node, proceed, Rtti } from '~/viewtronic/api'
+import { apply, Node, Rtti } from '~/viewtronic/api'
 
 export class HtmlNodeRtti<E extends HTMLElement> implements Rtti<E> {
   constructor(
@@ -11,12 +11,12 @@ export class HtmlNodeRtti<E extends HTMLElement> implements Rtti<E> {
     readonly reactive: boolean) {
   }
 
-  proceed(node: Node<E>): void {
+  apply(node: Node<E>): void {
     // console.log(`enter: <${node.rtti.name}> #${node.id}...`)
     const outer = HtmlNodeRtti.self
     try { // eslint-disable-next-line @typescript-eslint/no-non-null-assertion
       HtmlNodeRtti.self = node.linker!.element!
-      proceed(node)
+      apply(node)
     }
     finally {
       HtmlNodeRtti.self = outer
