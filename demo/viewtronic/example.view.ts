@@ -21,12 +21,18 @@ export function App(id: string, m: Model): void {
 export function Toolbar(id: string, m: Model): void {
   div(id, e => {
     e.className = style.classes.toolbar
-    div('(mouse)', e => {
-      e.className = style.classes.toolbarItem
-      e.style.border = 'none'
-      e.style.borderBottom = '0.5px solid white'
-      e.innerText = `Mouse: ${m.x}, ${m.y} (${m.clicks})`
-      m.setSize(e.clientWidth)
+    // div('(mouse)', e => {
+    //   e.className = style.classes.toolbarItem
+    //   e.style.border = 'none'
+    //   e.style.borderBottom = '0.5px solid white'
+    //   e.innerText = `Mouse: ${m.x}, ${m.y} (${m.clicks})`
+    //   m.setSize(e.clientWidth)
+    // })
+    div('(pointer)', e => {
+      e.style.position = 'absolute'
+      e.style.left = `${m.x}px`
+      e.style.top = `${m.y}px`
+      e.innerText = `(${m.x}, ${m.y})`
     })
     div('(space)', e => {
       e.className = style.classes.toolbarItem
