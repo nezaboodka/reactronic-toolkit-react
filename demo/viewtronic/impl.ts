@@ -121,13 +121,13 @@ function reconcile(self: Node<unknown>): void {
   const children = linker?.pending
   if (linker && children) {
     linker.pending = undefined
-    const reindexed = children.slice().sort((n1, n2) => n1.id.localeCompare(n2.id))
+    const nextIndex = children.slice().sort((n1, n2) => n1.id.localeCompare(n2.id))
     isolated(() => {
       // Unmount
       let i = 0, j = 0
       while (i < linker.index.length) {
         const a = linker.index[i]
-        const b = reindexed[j]
+        const b = nextIndex[j]
         if (!b || a.id < b.id) {
           if (a.rtti.unmount)
             a.rtti.unmount(a, self) // TODO: mitigate the risk of exception
@@ -159,6 +159,6 @@ function reconcile(self: Node<unknown>): void {
         prev = x
       }
     })
-    linker.index = reindexed
+    linker.index = nextIndex
   }
 }
