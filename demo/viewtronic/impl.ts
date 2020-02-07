@@ -116,7 +116,7 @@ function basicRender<E>(node: Node<E>): void {
 function reconcile(self: Node<unknown>): void {
   const linker = self.linker
   const children = linker?.pending
-  if (linker && children && children.length > 0) {
+  if (linker && children) {
     isolated(() => {
       // console.log(`  reconciling: <${self.rtti.name}> #${self.id}...`)
       linker.pending = undefined
