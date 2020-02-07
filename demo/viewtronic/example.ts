@@ -3,41 +3,12 @@
 // Copyright (C) 2019-2020 Yury Chetyrko <ychetyrko@gmail.com>
 // License: https://raw.githubusercontent.com/nezaboodka/reactronic/master/LICENSE
 
-import { css, cx } from 'emotion'
-import { Action, action, Stateful } from 'reactronic'
+import { cx } from 'emotion'
 
 import { div, ReactiveDiv } from '~/viewtronic/html'
 
-import { restyle } from '../../source/tools/restyle'
-
-// Model
-
-export class Model extends Stateful {
-  x: number = 0
-  y: number = 0
-  clicks: number = 0
-  measure: number = 0
-
-  @action
-  move(x: number, y: number): void {
-    this.x = x
-    this.y = y
-  }
-
-  @action
-  click(): void {
-    this.clicks++
-  }
-
-  @action
-  setMeasure(value: number): void {
-    this.measure = value
-  }
-}
-
-const model = Action.run('init', () => new Model())
-
-// Views
+import { style } from './example.css'
+import { model } from './example.model'
 
 export function App(id: string): void {
   div(id, e => {
@@ -88,40 +59,3 @@ export function ToolbarButton(id: string, icon: string): void {
     })
   })
 }
-
-export const style = restyle(() => {
-  return {
-    app: css`
-      label: app;
-      position: absolute;
-      top: 0;
-      bottom: 0;
-      left: 0;
-      right: 0;
-      display: flex;
-      flex-direction: column;
-      margin: 1em;
-      padding: 1em;
-      border: 0.5px dashed gray;
-    `,
-    toolbar: css`
-      label: toolbar;
-      z-index: 100;
-      display: flex;
-      flex-direction: row;
-      border: 0.5px dashed gray;
-    `,
-    toolbarItem: css`
-      label: toolbarButton;
-      margin: 1em;
-      padding: 0.5em;
-      border: 0.5px dashed gray;
-    `,
-    toolbarIcon: css`
-      label: toolbarButtonIcon;
-    `,
-    toolbarText: css`
-      label: toolbarButtonText;
-    `,
-  }
-})
