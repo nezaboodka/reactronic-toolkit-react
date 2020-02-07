@@ -30,6 +30,22 @@ export function spot(sizeX: number, sizeY: number, posX?: number, posY?: number)
   return p
 }
 
+export function setFrame(e: HTMLElement, sizeX: number, sizeY: number, posX?: number, posY?: number): void {
+  const css = e.style
+  css.width = css.minWidth = css.maxWidth = `${sizeX}px`
+  css.height = css.minHeight = css.maxHeight = `${sizeY}px`
+  if (posX !== undefined && posY !== undefined) {
+    css.position = 'absolute'
+    css.left = `${posX}px`
+    css.top = `${posY}px`
+  }
+  else {
+    css.position = 'relative'
+    css.overflow = 'hidden'
+    css.boxSizing = 'border-box'
+  }
+}
+
 export function animationFrame(): Promise<number> {
   return new Promise(function (resolve: any) {
     requestAnimationFrame(resolve.bind(null, (time: number) => resolve(time)))
