@@ -52,16 +52,22 @@ export function App(id: string): void {
 export function Toolbar(id: string): void {
   div(id, e => {
     e.className = style.classes.toolbar
-    ToolbarButton('Menu', 'las la-menu', true)
-    ReactiveDiv('(space)', e => {
-      const css = e.style
-      css.flexGrow = '1'
-      css.textAlign = 'center'
-      css.margin = '1em'
-      e.innerText = `Menu Item Width: ${model.measure}`
+    ReactiveDiv('(mouse)', e => {
+      e.className = style.classes.toolbarItem
+      e.style.border = 'none'
+      e.style.borderBottom = '0.5px solid white'
+      e.innerText = `Mouse: ${model.x}, ${model.y} (${model.clicks})`
+      model.setMeasure(e.clientWidth)
     })
-    ToolbarButton('Settings', 'las la-cog', false)
-    ToolbarButton('Close', 'las la-times', false)
+    ReactiveDiv('(space)', e => {
+      e.className = style.classes.toolbarItem
+      e.style.border = 'none'
+      e.style.flexGrow = '1'
+      e.style.textAlign = 'right'
+      e.innerText = `Width: ${model.measure}`
+    })
+    ToolbarButton('Settings', 'las la-cog')
+    ToolbarButton('Close', 'las la-times')
   })
   // Similar in TSX:
   // <div id={id} className={className}>
@@ -73,20 +79,14 @@ export function Toolbar(id: string): void {
   // </div>
 }
 
-export function ToolbarButton(id: string, icon: string, mouse: boolean): void {
+export function ToolbarButton(id: string, icon: string): void {
   ReactiveDiv(id, e => {
-    let measure: HTMLDivElement
-    e.className = style.classes.toolbarButton
-    div('icon', e => e.className = cx(icon, style.classes.toolbarButtonIcon))
+    e.className = style.classes.toolbarItem
+    div('icon', e => e.className = cx(icon, style.classes.toolbarIcon))
     div('text', e => {
-      e.className = style.classes.toolbarButtonText
-      e.innerText = mouse ? `${id || ''} ${model.clicks} : ${model.x}, ${model.y}` : `${id || ''} ${model.clicks}`
-      measure = e
+      e.className = style.classes.toolbarText
+      e.innerText = `${id}`
     })
-    // Measure rendered elements
-    renderChildren()
-    if (mouse) // eslint-disable-next-line @typescript-eslint/no-non-null-assertion
-      model.setMeasure(measure!.clientWidth)
   })
 }
 
@@ -112,15 +112,16 @@ export const style = restyle(() => {
       flex-direction: row;
       border: 0.5px dashed gray;
     `,
-    toolbarButton: css`
+    toolbarItem: css`
       label: toolbarButton;
       margin: 1em;
+      padding: 0.5em;
       border: 0.5px dashed gray;
     `,
-    toolbarButtonIcon: css`
+    toolbarIcon: css`
       label: toolbarButtonIcon;
     `,
-    toolbarButtonText: css`
+    toolbarText: css`
       label: toolbarButtonText;
     `,
   }
