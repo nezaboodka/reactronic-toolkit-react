@@ -125,12 +125,12 @@ function reconcile(self: Node<unknown>): void {
       while (i < linker.index.length) {
         const a = linker.index[i]
         const b = reindexed[j]
-        if (a.id < b.id) {
-          if (b.rtti.unmount)
-            b.rtti.unmount(b, self) // TODO: mitigate the risk of exception
-          if (b.rtti.reactive)
-            Cache.unmount(b.linker)
-          b.linker = undefined
+        if (!b || a.id < b.id) {
+          if (a.rtti.unmount)
+            a.rtti.unmount(a, self) // TODO: mitigate the risk of exception
+          if (a.rtti.reactive)
+            Cache.unmount(a.linker)
+          a.linker = undefined
           i++
         }
         else if (a.id === b.id) {

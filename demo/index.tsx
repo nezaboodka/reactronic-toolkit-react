@@ -25,4 +25,5 @@ import { App } from '~/viewtronic/example.view'
 R.setTrace(TraceLevel.Off)
 
 const model = Action.run('init', () => new Model())
+App('demo fake', model)
 App('demo', model)
