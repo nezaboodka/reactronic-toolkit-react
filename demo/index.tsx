@@ -23,4 +23,4 @@ import { App } from '~/viewtronic/example.view'
 
 R.setTrace(TraceLevel.Noisy)
 
-App('app')
+App('Viewtronic Demo')
