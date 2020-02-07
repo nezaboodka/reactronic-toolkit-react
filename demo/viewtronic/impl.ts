@@ -67,12 +67,9 @@ export function proceed(node: Node<any>): void {
     const linker = node.linker
     if (!linker)
       throw new Error('node must be mounted before rendering')
-    linker.pending = []
-    // console.log(` (!) rendering ${node.rtti.name} #${node.id}...`)
-    // eslint-disable-next-line @typescript-eslint/no-non-null-assertion
+    linker.pending = [] // eslint-disable-next-line @typescript-eslint/no-non-null-assertion
     node.render(linker.element!)
     renderChildren() // ignored if rendered already
-    // console.log(` (!) rendered ${node.rtti.name} #${node.id}`)
   }
   finally {
     LinkerImpl.self = outer
