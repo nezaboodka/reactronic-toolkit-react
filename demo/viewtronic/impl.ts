@@ -117,10 +117,10 @@ function reconcile(self: Node<unknown>): void {
   const linker = self.linker
   const children = linker?.pending
   if (linker && children) {
+    // console.log(`  reconciling: <${self.rtti.name}> #${self.id}...`)
+    linker.pending = undefined
+    const reindexed = children.slice().sort((n1, n2) => n1.id.localeCompare(n2.id))
     isolated(() => {
-      // console.log(`  reconciling: <${self.rtti.name}> #${self.id}...`)
-      linker.pending = undefined
-      const reindexed = children.slice().sort((n1, n2) => n1.id.localeCompare(n2.id))
       let i = 0, j = 0
       while (i < linker.index.length) {
         const a = linker.index[i]
