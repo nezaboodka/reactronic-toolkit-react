@@ -8,7 +8,7 @@ import { define, Node, proceed, Render, Rtti } from '~/viewtronic/api'
 // Tags
 
 export function div(id: string, content: Render<HTMLDivElement>): void {
-  define(id, content, Html.div)
+  define(id, content, Html.divReactive)
 }
 
 export function ReactiveDiv(id: string, content: Render<HTMLDivElement>): void {
@@ -16,19 +16,19 @@ export function ReactiveDiv(id: string, content: Render<HTMLDivElement>): void {
 }
 
 export function span(id: string, render: Render<HTMLSpanElement>): void {
-  define(id, render, Html.span)
+  define(id, render, Html.spanReactive)
 }
 
 export function ReactiveSpan(id: string, render: Render<HTMLSpanElement>): void {
-  define(id, render, Html.span)
+  define(id, render, Html.spanReactive)
 }
 
 export function italic(id: string, render: Render<HTMLSpanElement>): void {
-  define(id, render, Html.i)
+  define(id, render, Html.iReactive)
 }
 
 export function ReactiveItalic(id: string, render: Render<HTMLSpanElement>): void {
-  define(id, render, Html.i)
+  define(id, render, Html.iReactive)
 }
 
 // Internal

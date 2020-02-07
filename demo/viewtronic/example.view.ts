@@ -22,14 +22,14 @@ export function App(id: string): void {
 export function Toolbar(id: string): void {
   div(id, e => {
     e.className = style.classes.toolbar
-    ReactiveDiv('(mouse)', e => {
+    div('(mouse)', e => {
       e.className = style.classes.toolbarItem
       e.style.border = 'none'
       e.style.borderBottom = '0.5px solid white'
       e.innerText = `Mouse: ${model.x}, ${model.y} (${model.clicks})`
       model.setSize(e.clientWidth)
     })
-    ReactiveDiv('(space)', e => {
+    div('(space)', e => {
       e.className = style.classes.toolbarItem
       e.style.border = 'none'
       e.style.flexGrow = '1'
@@ -50,7 +50,7 @@ export function Toolbar(id: string): void {
 }
 
 export function ToolbarButton(id: string, icon: string): void {
-  ReactiveDiv(id, e => {
+  div(id, e => {
     e.className = style.classes.toolbarItem
     div('icon', e => e.className = cx(icon, style.classes.toolbarIcon))
     div('text', e => {
