@@ -137,8 +137,7 @@ function reconcile(self: Node<unknown>): void {
         }
         else if (a.id === b.id) {
           b.linker = a.linker
-          i++
-          j++
+          i++, j++
         }
         else // a.id > b.id
           j++
