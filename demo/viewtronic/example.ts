@@ -7,8 +7,8 @@ import { cx } from 'emotion'
 
 import { div, ReactiveDiv } from '~/viewtronic/html'
 
-import { style } from './example.css'
 import { model } from './example.model'
+import { style } from './example.style'
 
 export function App(id: string): void {
   div(id, e => {
