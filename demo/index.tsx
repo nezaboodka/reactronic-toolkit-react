@@ -19,7 +19,7 @@
 import * as React from 'react'
 import { Reactronic as R, TraceLevel } from 'reactronic'
 
-import { App } from '~/viewtronic/example'
+import { App } from '~/viewtronic/example.view'
 
 R.setTrace(TraceLevel.Noisy)
 
