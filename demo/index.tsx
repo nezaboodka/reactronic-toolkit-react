@@ -22,7 +22,7 @@ import { Action, Reactronic as R, TraceLevel } from 'reactronic'
 import { Model } from '~/viewtronic/example.model'
 import { App } from '~/viewtronic/example.view'
 
-R.setTrace(TraceLevel.Noisy)
+R.setTrace(TraceLevel.Off)
 
 const model = Action.run('init', () => new Model())
 App('demo', model)

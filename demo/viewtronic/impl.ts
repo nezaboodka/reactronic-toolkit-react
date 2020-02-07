@@ -85,6 +85,10 @@ class LinkerImpl<E> implements Linker<E> {
   index: Node<unknown>[] = []
   pending?: Node<unknown>[]
 
+  constructor(priority: number) {
+    // Cache.of(this.reactiveRender).setup({ priority })
+  }
+
   @trigger
   reactiveRender(node: Node<E>): void {
     basicRender(node)
@@ -94,7 +98,7 @@ class LinkerImpl<E> implements Linker<E> {
     id: '<global>',
     render: () => { /* nop */ },
     rtti: { name: '<default>', reactive: false },
-    linker: new LinkerImpl<unknown>()
+    linker: new LinkerImpl<unknown>(0)
   }
   static self: Node<unknown> = LinkerImpl.global
 }
@@ -145,7 +149,7 @@ function reconcile(self: Node<unknown>): void {
     let prev: Node<unknown> | undefined = undefined
     for (const x of children) {
       if (!x.linker) { // if not yet mounted
-        x.linker = new LinkerImpl<unknown>()
+        x.linker = new LinkerImpl<unknown>(0)
         if (x.rtti.mount)
           x.rtti.mount(x, self, prev)
       }
