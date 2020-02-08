@@ -90,10 +90,7 @@ class Inst<E = unknown> implements Instance<E> {
   }
 
   apply(self: Node<E>): void {
-    if (this.priority >= 0)
-      this.reapply(self)
-    else
-      this.doApply(self)
+    this.priority >= 0 ? this.reapply(self) : this.doApply(self)
   }
 
   @trigger
@@ -102,10 +99,8 @@ class Inst<E = unknown> implements Instance<E> {
   }
 
   private doApply<E>(self: Node<E>): void {
-    if (self.rtti.apply)
-      self.rtti.apply(self)
-    else
-      apply(self)
+    const rtti = self.rtti
+    rtti.apply ? rtti.apply(self) : apply(self)
   }
 
   static global: Node = {
@@ -134,7 +129,8 @@ function reconcile(self: Node): void {
         }
         else if (a.id === b.id) { // then retain existing instance
           b.instance = a.instance
-          i++, j++
+          i++
+          j++
         }
         else // then will mount
           j++
