@@ -155,9 +155,9 @@ function reconcileOrdered(self: Node): void {
       while (i < t.children.length) {
         const old = t.children[i]
         const fresh = children[j]
-        if (!fresh || old.id < fresh.id)
+        if (!fresh || fresh.id > old.id)
           unmount(old, self, old), i++
-        else if (old.id === fresh.id)
+        else if (fresh.id === old.id)
           fresh.instance = old.instance, i++, j++
         else
           j++ // will mount/order below
@@ -187,9 +187,9 @@ function reconcileUnordered(self: Node): void {
         const fresh = children[j]
         if (!old || old.id > fresh.id)
           mount(fresh, self).apply(fresh), j++
-        else if (!fresh || old.id < fresh.id)
+        else if (!fresh || fresh.id > old.id)
           unmount(old, self, old), i++
-        else if (old.id === fresh.id)
+        else if (fresh.id === old.id)
           fresh.instance = old.instance, i++, j++
         else
           console.log('ugh - logic is broken')
