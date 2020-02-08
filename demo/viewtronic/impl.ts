@@ -112,6 +112,38 @@ class Inst<E = unknown> implements Instance<E> {
   static current: Node = Inst.global
 }
 
+function mount(self: Node, outer: Node, prev?: Node): Instance {
+  // TODO: Make the code below exception-safe
+  const rtti = self.rtti
+  if (rtti.reactive) {
+    // eslint-disable-next-line @typescript-eslint/no-non-null-assertion
+    const priority = outer.instance!.priority + 1
+    const t = new Inst(priority)
+    Cache.of(t.reapply).setup({ priority })
+    if (Reactronic.isTraceOn) Reactronic.setTraceHint(t, `<${rtti.name}:${self.id}>`)
+    self.instance = t
+  }
+  else
+    self.instance = new Inst(-1) // non-reactive
+  if (rtti.mount)
+    rtti.mount(self, outer, prev)
+  return self.instance
+}
+
+function unmount(self: Node, outer: Node, cause: Node): void {
+  // TODO: Make the code below exception-safe
+  const rtti = self.rtti
+  if (rtti.unmount)
+    rtti.unmount(self, outer, cause)
+  // eslint-disable-next-line @typescript-eslint/no-non-null-assertion
+  const inst = self.instance!
+  if (rtti.reactive)
+    Cache.unmount(inst)
+  for (const t of inst.children)
+    unmount(t, self, cause)
+  self.instance = undefined
+}
+
 function reconcile(self: Node): void {
   const t = self.instance
   if (t && t.pending) {
@@ -148,34 +180,33 @@ function reconcile(self: Node): void {
   }
 }
 
-function mount(self: Node, outer: Node, prev?: Node): Instance {
-  // TODO: Make the code below exception-safe
-  const rtti = self.rtti
-  if (rtti.reactive) {
-    // eslint-disable-next-line @typescript-eslint/no-non-null-assertion
-    const priority = outer.instance!.priority + 1
-    const t = new Inst(priority)
-    Cache.of(t.reapply).setup({ priority })
-    if (Reactronic.isTraceOn) Reactronic.setTraceHint(t, `<${rtti.name}:${self.id}>`)
-    self.instance = t
+function reconcileUnordered(self: Node): void {
+  const t = self.instance
+  if (t && t.pending) {
+    const children = t.pending.sort((n1, n2) => n1.id.localeCompare(n2.id))
+    t.pending = undefined
+    isolated(() => {
+      let i = 0, j = 0
+      while (i < t.children.length || j < children.length) {
+        const a = t.children[i]
+        const b = children[j]
+        if (!b || a.id < b.id) {
+          unmount(a, self, a)
+          i++
+        }
+        else if (!a || a.id > b.id) {
+          mount(b, self).apply(b)
+          j++
+        }
+        else if (a.id === b.id) {
+          b.instance = a.instance
+          i++
+          j++
+        }
+        else
+          console.log('ugh - logic is broken')
+      }
+    })
+    t.children = children
   }
-  else
-    self.instance = new Inst(-1) // non-reactive
-  if (rtti.mount)
-    rtti.mount(self, outer, prev)
-  return self.instance
-}
-
-function unmount(self: Node, outer: Node, cause: Node): void {
-  // TODO: Make the code below exception-safe
-  const rtti = self.rtti
-  if (rtti.unmount)
-    rtti.unmount(self, outer, cause)
-  // eslint-disable-next-line @typescript-eslint/no-non-null-assertion
-  const inst = self.instance!
-  if (rtti.reactive)
-    Cache.unmount(inst)
-  for (const t of inst.children)
-    unmount(t, self, cause)
-  self.instance = undefined
 }
