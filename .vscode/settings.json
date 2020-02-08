@@ -60,6 +60,7 @@
     "nothrow",
     "notran",
     "notype",
+    "nowrap",
     "npmjs",
     "npmrc",
     "parens",

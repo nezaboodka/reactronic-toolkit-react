@@ -21,11 +21,17 @@ export const style = restyle(() => {
       margin: 1em;
       padding: 1em;
       border: 0.5px dashed gray;
+      border-radius: 0.2em;
       cursor: default;
     `,
     pointer: css`
       position: absolute;
       color: yellow;
+      white-space: nowrap;
+      padding: 0.25em 0.5em;
+      border-radius: 0.2em;
+      background-color: rgba(0, 0, 0, 0.2);
+      border: 1px solid black;
     `,
     toolbar: css`
       label: toolbar;
@@ -33,12 +39,14 @@ export const style = restyle(() => {
       display: flex;
       flex-direction: row;
       border: 0.5px dashed gray;
+      border-radius: 0.2em;
     `,
     toolbarItem: css`
       label: toolbarItem;
       margin: 1em;
       padding: 0.5em;
       border: 0.5px dashed gray;
+      border-radius: 0.2em;
     `,
     toolbarIcon: css`
       label: toolbarIcon;
