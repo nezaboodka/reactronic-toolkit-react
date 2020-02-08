@@ -26,23 +26,23 @@ export class HtmlNodeRtti<E extends HTMLElement> implements Rtti<E> {
 
   mount(self: Node<E>, outer: Node, after?: Node): void {
     const parent = HtmlNodeRtti.current
-    const prev = after?.instance?.element
+    const prevSibling = after?.instance?.element
     const e = document.createElement(self.rtti.name) as E
     e.id = self.id
-    if (prev instanceof HTMLElement)
-      parent.insertBefore(e, prev.nextSibling)
+    if (prevSibling instanceof HTMLElement)
+      parent.insertBefore(e, prevSibling.nextSibling)
     else
       parent.appendChild(e) // eslint-disable-next-line @typescript-eslint/no-non-null-assertion
     self.instance!.element = e
     // console.log(`  mounted: <${node.rtti.name}> #${node.id}`)
   }
 
-  ordering(self: Node<E>, outer: Node, after?: Node): void {
+  order(self: Node<E>, outer: Node, after?: Node): void {
     const parent = HtmlNodeRtti.current
-    const prev = after?.instance?.element
+    const prevSibling = after?.instance?.element
     const e = self.instance?.element
-    if (e && prev instanceof HTMLElement && prev.nextSibling !== e) {
-      parent.insertBefore(e, prev.nextSibling)
+    if (e && prevSibling instanceof HTMLElement && prevSibling.nextSibling !== e) {
+      parent.insertBefore(e, prevSibling.nextSibling)
       // console.log(`  reordered: <${node.rtti.name}> #${node.id}`)
     }
   }

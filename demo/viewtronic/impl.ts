@@ -21,7 +21,7 @@ export interface Rtti<E = unknown> {
   readonly reactive: boolean
   apply?(self: Node<E>): void
   mount?(self: Node<E>, outer: Node, after?: Node): void
-  ordering?(self: Node<E>, outer: Node, after?: Node): void
+  order?(self: Node<E>, outer: Node, after?: Node): void
   unmount?(self: Node<E>, outer: Node, cause: Node): void
 }
 
@@ -159,16 +159,16 @@ function reconcile(self: Node): void {
           unmount(old, self, old), i++
         else if (old.id === fresh.id)
           fresh.instance = old.instance, i++, j++
-        else // will mount/ordered below
-          j++
+        else
+          j++ // will mount/order below
       }
-      let sibling: Node | undefined = undefined
+      let prevSibling: Node | undefined = undefined
       for (const x of pending) {
-        if (!x.instance) // then mount and first-time apply
-          mount(x, self, sibling).apply(x)
-        else if (x.rtti.ordering) // then re-order if needed
-          x.rtti.ordering(x, self, sibling)
-        sibling = x
+        if (!x.instance)
+          mount(x, self, prevSibling).apply(x)
+        else if (x.rtti.order)
+          x.rtti.order(x, self, prevSibling)
+        prevSibling = x
       }
     })
     t.children = children
