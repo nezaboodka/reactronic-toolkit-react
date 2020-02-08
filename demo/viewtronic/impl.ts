@@ -135,7 +135,7 @@ function reconcile(self: Node): void {
         else // will mount
           j++
       }
-      let prev: Node<unknown> | undefined = undefined
+      let prev: Node | undefined = undefined
       for (const x of children) {
         if (!x.linker) { // then mount
           const xLinker = new LinkerImpl(linker.level + 1)
