@@ -136,12 +136,12 @@ function reconcile(self: Node): void {
           b.instance = a.instance
           i++, j++
         }
-        else // will mount
+        else // then will mount
           j++
       }
       let prev: Node | undefined = undefined
       for (const b of pending) {
-        if (!b.instance) // mount and first-time apply
+        if (!b.instance) // then mount and first-time apply
           mount(b, self, prev).apply(b)
         else if (b.rtti.ordering) // then re-order if needed
           b.rtti.ordering(b, self, prev)
