@@ -100,7 +100,7 @@ class LinkerImpl<E = unknown> implements Linker<E> {
     this.basicApply(self)
   }
 
-  private basicApply<E>(self: Node<E>): void {
+  basicApply<E>(self: Node<E>): void {
     if (self.rtti.apply)
       self.rtti.apply(self)
     else
