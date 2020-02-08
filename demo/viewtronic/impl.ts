@@ -78,7 +78,7 @@ export function apply(node: Node<any>): void {
 
 // Internal
 
-class LinkerImpl<E> implements Linker<E> {
+class LinkerImpl<E = unknown> implements Linker<E> {
   level: number
   element?: E
   index: Node<unknown>[] = []
@@ -97,7 +97,7 @@ class LinkerImpl<E> implements Linker<E> {
     id: '<global>',
     apply: () => { /* nop */ },
     rtti: { name: '<default>', reactive: false },
-    linker: new LinkerImpl<unknown>(0)
+    linker: new LinkerImpl(0)
   }
   static self: Node<unknown> = LinkerImpl.global
 }
@@ -138,7 +138,7 @@ function reconcile(self: Node<unknown>): void {
       let prev: Node<unknown> | undefined = undefined
       for (const x of children) {
         if (!x.linker) { // then mount
-          const xLinker = new LinkerImpl<unknown>(linker.level + 1)
+          const xLinker = new LinkerImpl(linker.level + 1)
           Cache.of(xLinker.reactiveApply).setup({ priority: xLinker.level })
           x.linker = xLinker
           if (x.rtti.mount)
