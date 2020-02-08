@@ -157,16 +157,18 @@ function reconcile(self: Node): void {
 }
 
 function mount(self: Node, outer: Node, prev?: Node): void {
-  if (self.rtti.reactive) {
+  const rtti = self.rtti
+  if (rtti.reactive) {
     // eslint-disable-next-line @typescript-eslint/no-non-null-assertion
-    const x = new Inst(outer.instance!.priority + 1)
-    Cache.of(x.reactiveApply).setup({ priority: x.priority })
+    const priority = outer.instance!.priority + 1
+    const x = new Inst(priority)
+    Cache.of(x.reactiveApply).setup({ priority })
     self.instance = x
   }
   else
     self.instance = new Inst(-1)
-  if (self.rtti.mount)
-    self.rtti.mount(self, outer, prev)
+  if (rtti.mount)
+    rtti.mount(self, outer, prev)
 }
 
 function unmount(self: Node, outer: Node, cause: Node): void {
