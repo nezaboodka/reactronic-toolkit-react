@@ -19,10 +19,10 @@ export interface Node<E = unknown> {
 export interface Rtti<E = unknown> {
   readonly name: string
   readonly reactive: boolean
-  apply?(node: Node<E>): void
-  mount?(node: Node<E>, owner: Node, after?: Node): void
-  ordering?(node: Node<E>, owner: Node, after?: Node): void
-  unmount?(node: Node<E>, owner: Node): void
+  apply?(self: Node<E>): void
+  mount?(self: Node<E>, outer: Node, after?: Node): void
+  ordering?(self: Node<E>, outer: Node, after?: Node): void
+  unmount?(self: Node<E>, outer: Node): void
 }
 
 export interface Linker<E = void> {
@@ -30,25 +30,25 @@ export interface Linker<E = void> {
   element?: E
   index: Array<Node> // sorted children
   pending?: Array<Node> // children in natural order
-  reactiveApply(node: Node<E>): void
+  reactiveApply(self: Node<E>): void
 }
 
 // fragment, apple, applyChildren
 
 export function fragment<E = unknown>(id: string, apply: Apply<E>, rtti?: Rtti<E>): void {
-  const node: Node<any> = { id, apply, rtti: rtti || LinkerImpl.global.rtti }
+  const self: Node<any> = { id, apply, rtti: rtti || LinkerImpl.global.rtti }
   // console.log(`< defining: <${node.rtti.name}> #${node.id}...`)
-  const owner = LinkerImpl.self // shorthand
-  const linker = owner.linker
+  const outer = LinkerImpl.current // shorthand
+  const linker = outer.linker
   if (!linker)
     throw new Error('node must be mounted before rendering')
-  if (owner !== LinkerImpl.global) {
+  if (outer !== LinkerImpl.global) {
     if (!linker.pending)
       throw new Error('children are applied already') // eslint-disable-next-line @typescript-eslint/no-non-null-assertion
-    linker.pending.push(node)
+    linker.pending.push(self)
   }
   else { // apply root immediately
-    linker.pending = [node]
+    linker.pending = [self]
     applyChildren()
   }
   // console.log(`/> defined: <${node.rtti.name}> #${node.id}`)
@@ -56,14 +56,14 @@ export function fragment<E = unknown>(id: string, apply: Apply<E>, rtti?: Rtti<E
 
 export function applyChildren(): void {
   // console.log(`applying children: <${self.rtti.name}> #${self.id}`)
-  reconcile(LinkerImpl.self)
+  reconcile(LinkerImpl.current)
   // console.log(`applied children: <${self.rtti.name}> #${self.id}`)
 }
 
 export function apply(self: Node<any>): void {
-  const outer = LinkerImpl.self
+  const outer = LinkerImpl.current
   try {
-    LinkerImpl.self = self
+    LinkerImpl.current = self
     const linker = self.linker
     if (!linker)
       throw new Error('node must be mounted before rendering')
@@ -72,7 +72,7 @@ export function apply(self: Node<any>): void {
     applyChildren() // ignored if applied already
   }
   finally {
-    LinkerImpl.self = outer
+    LinkerImpl.current = outer
   }
 }
 
@@ -89,8 +89,8 @@ class LinkerImpl<E = unknown> implements Linker<E> {
   }
 
   @trigger
-  reactiveApply(node: Node<E>): void {
-    basicApply(node)
+  reactiveApply(self: Node<E>): void {
+    basicApply(self)
   }
 
   static global: Node = {
@@ -99,14 +99,14 @@ class LinkerImpl<E = unknown> implements Linker<E> {
     rtti: { name: '<default>', reactive: false },
     linker: new LinkerImpl(0)
   }
-  static self: Node = LinkerImpl.global
+  static current: Node = LinkerImpl.global
 }
 
-function basicApply<E>(node: Node<E>): void {
-  if (node.rtti.apply)
-    node.rtti.apply(node)
+function basicApply<E>(self: Node<E>): void {
+  if (self.rtti.apply)
+    self.rtti.apply(self)
   else
-    apply(node)
+    apply(self)
 }
 
 function reconcile(self: Node): void {

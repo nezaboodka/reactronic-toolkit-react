@@ -11,49 +11,49 @@ export class HtmlNodeRtti<E extends HTMLElement> implements Rtti<E> {
     readonly reactive: boolean) {
   }
 
-  apply(node: Node<E>): void {
+  apply(self: Node<E>): void {
     // console.log(`enter: <${node.rtti.name}> #${node.id}...`)
-    const outer = HtmlNodeRtti.self
+    const outer = HtmlNodeRtti.current
     try { // eslint-disable-next-line @typescript-eslint/no-non-null-assertion
-      HtmlNodeRtti.self = node.linker!.element!
-      apply(node)
+      HtmlNodeRtti.current = self.linker!.element!
+      apply(self)
     }
     finally {
-      HtmlNodeRtti.self = outer
+      HtmlNodeRtti.current = outer
     }
     // console.log(`leave: <${node.rtti.name}> #${node.id}`)
   }
 
-  mount(node: Node<E>, owner: Node<unknown>, after?: Node<unknown>): void {
-    const parent = HtmlNodeRtti.self
+  mount(self: Node<E>, outer: Node<unknown>, after?: Node<unknown>): void {
+    const parent = HtmlNodeRtti.current
     const prev = after?.linker?.element
-    const e = document.createElement(node.rtti.name) as E
-    e.id = node.id
+    const e = document.createElement(self.rtti.name) as E
+    e.id = self.id
     if (prev instanceof HTMLElement)
       parent.insertBefore(e, prev.nextSibling)
     else
       parent.appendChild(e) // eslint-disable-next-line @typescript-eslint/no-non-null-assertion
-    node.linker!.element = e
+    self.linker!.element = e
     // console.log(`  mounted: <${node.rtti.name}> #${node.id}`)
   }
 
-  ordering(node: Node<E>, owner: Node<unknown>, after?: Node<unknown>): void {
-    const parent = HtmlNodeRtti.self
+  ordering(self: Node<E>, outer: Node<unknown>, after?: Node<unknown>): void {
+    const parent = HtmlNodeRtti.current
     const prev = after?.linker?.element
-    const e = node.linker?.element
+    const e = self.linker?.element
     if (e && prev instanceof HTMLElement && prev.nextSibling !== e) {
       parent.insertBefore(e, prev.nextSibling)
       // console.log(`  reordered: <${node.rtti.name}> #${node.id}`)
     }
   }
 
-  unmount(node: Node<E>, owner: Node<unknown>): void {
-    const e = node.linker?.element
+  unmount(self: Node<E>, outer: Node<unknown>): void {
+    const e = self.linker?.element
     if (e && e.parentElement)
       e.parentElement.removeChild(e)
     // console.log(`  unmounted: <${node.rtti.name}> #${node.id}`)
   }
 
   static root: HTMLElement = document.body
-  static self = HtmlNodeRtti.root
+  static current = HtmlNodeRtti.root
 }
