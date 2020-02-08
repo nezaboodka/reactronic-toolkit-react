@@ -3,7 +3,7 @@
 // Copyright (C) 2019-2020 Yury Chetyrko <ychetyrko@gmail.com>
 // License: https://raw.githubusercontent.com/nezaboodka/reactronic/master/LICENSE
 
-import { Cache, isolated, trigger } from 'reactronic'
+import { Cache, isolated, Reactronic, trigger } from 'reactronic'
 
 // Apply, Node, Rtti, Linker
 
@@ -25,7 +25,7 @@ export interface Rtti<E = unknown> {
   unmount?(self: Node<E>, outer: Node, cause: Node): void
 }
 
-export interface Instance<E = void> {
+export interface Instance<E = unknown> {
   readonly priority: number
   element?: E
   children: Array<Node>
@@ -91,17 +91,17 @@ class Inst<E = unknown> implements Instance<E> {
 
   apply(self: Node<E>): void {
     if (this.priority >= 0)
-      this.reactiveApply(self)
+      this.reapply(self)
     else
-      this.basicApply(self)
+      this.doApply(self)
   }
 
   @trigger
-  reactiveApply(self: Node<E>): void {
-    this.basicApply(self)
+  reapply(self: Node<E>): void {
+    this.doApply(self)
   }
 
-  basicApply<E>(self: Node<E>): void {
+  private doApply<E>(self: Node<E>): void {
     if (self.rtti.apply)
       self.rtti.apply(self)
     else
@@ -111,7 +111,7 @@ class Inst<E = unknown> implements Instance<E> {
   static global: Node = {
     id: '<global>',
     apply: () => { /* nop */ },
-    rtti: { name: '<default>', reactive: false },
+    rtti: { name: '<notype>', reactive: false },
     instance: new Inst(0)
   }
   static current: Node = Inst.global
@@ -141,14 +141,10 @@ function reconcile(self: Node): void {
       }
       let prev: Node | undefined = undefined
       for (const b of pending) {
-        if (!b.instance)
-          mount(b, self, prev)
+        if (!b.instance) // mount and apply for the first time
+          mount(b, self, prev).apply(b)
         else if (b.rtti.ordering) // then re-order if needed
           b.rtti.ordering(b, self, prev)
-        // Apply
-        // eslint-disable-next-line prefer-spread
-        // eslint-disable-next-line @typescript-eslint/no-non-null-assertion
-        b.instance!.apply(b)
         prev = b
       }
     })
@@ -156,20 +152,22 @@ function reconcile(self: Node): void {
   }
 }
 
-function mount(self: Node, outer: Node, prev?: Node): void {
+function mount(self: Node, outer: Node, prev?: Node): Instance {
   // TODO: Make the code below exception-safe
   const rtti = self.rtti
   if (rtti.reactive) {
     // eslint-disable-next-line @typescript-eslint/no-non-null-assertion
     const priority = outer.instance!.priority + 1
     const t = new Inst(priority)
-    Cache.of(t.reactiveApply).setup({ priority })
+    Cache.of(t.reapply).setup({ priority })
+    if (Reactronic.isTraceOn) Reactronic.setTraceHint(t, `<${rtti.name}:${self.id}>`)
     self.instance = t
   }
   else
     self.instance = new Inst(-1)
   if (rtti.mount)
     rtti.mount(self, outer, prev)
+  return self.instance
 }
 
 function unmount(self: Node, outer: Node, cause: Node): void {
