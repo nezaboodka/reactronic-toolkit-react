@@ -33,7 +33,7 @@ export interface Linker<E = void> {
   reactiveApply(node: Node<E>): void
 }
 
-// define, applyChildren, proceed
+// fragment, apple, applyChildren
 
 export function fragment<E = unknown>(id: string, apply: Apply<E>, rtti?: Rtti<E>): void {
   const node: Node<any> = { id, apply, rtti: rtti || LinkerImpl.global.rtti }
