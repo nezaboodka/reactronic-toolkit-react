@@ -13,7 +13,7 @@ export interface Node<E = unknown> {
   readonly id: string
   readonly apply: Apply<E>
   readonly rtti: Rtti<E>
-  linker?: Linker<E>
+  instance?: Instance<E>
 }
 
 export interface Rtti<E = unknown> {
@@ -22,67 +22,67 @@ export interface Rtti<E = unknown> {
   apply?(self: Node<E>): void
   mount?(self: Node<E>, outer: Node, after?: Node): void
   ordering?(self: Node<E>, outer: Node, after?: Node): void
-  unmount?(self: Node<E>, outer: Node): void
+  unmount?(self: Node<E>, outer: Node, cause: Node): void
 }
 
-export interface Linker<E = void> {
+export interface Instance<E = void> {
   readonly priority: number
   element?: E
-  sortedChildren: Array<Node>
-  pendingChildren?: Array<Node> // in natural order
+  children: Array<Node>
+  pending?: Array<Node> // in natural order
   apply(self: Node<E>): void
 }
 
 // fragment, apply applyChildren
 
 export function fragment<E = unknown>(id: string, apply: Apply<E>, rtti?: Rtti<E>): void {
-  const self: Node<any> = { id, apply, rtti: rtti || LinkerImpl.global.rtti }
+  const self: Node<any> = { id, apply, rtti: rtti || Inst.global.rtti }
   // console.log(`< defining: <${node.rtti.name}> #${node.id}...`)
-  const outer = LinkerImpl.current // shorthand
-  const linker = outer.linker
-  if (!linker)
+  const outer = Inst.current // shorthand
+  const x = outer.instance
+  if (!x)
     throw new Error('node must be mounted before rendering')
-  if (outer !== LinkerImpl.global) {
-    if (!linker.pendingChildren)
+  if (outer !== Inst.global) {
+    if (!x.pending)
       throw new Error('children are applied already') // eslint-disable-next-line @typescript-eslint/no-non-null-assertion
-    linker.pendingChildren.push(self)
+    x.pending.push(self)
   }
   else { // apply root immediately
-    linker.pendingChildren = [self]
+    x.pending = [self]
     applyChildren()
   }
   // console.log(`/> defined: <${node.rtti.name}> #${node.id}`)
 }
 
 export function apply(self: Node<any>): void {
-  const outer = LinkerImpl.current
+  const outer = Inst.current
   try {
-    LinkerImpl.current = self
-    const linker = self.linker
-    if (!linker)
+    Inst.current = self
+    const x = self.instance
+    if (!x)
       throw new Error('node must be mounted before rendering')
-    linker.pendingChildren = [] // eslint-disable-next-line @typescript-eslint/no-non-null-assertion
-    self.apply(linker.element!)
+    x.pending = [] // eslint-disable-next-line @typescript-eslint/no-non-null-assertion
+    self.apply(x.element!)
     applyChildren() // ignored if applied already
   }
   finally {
-    LinkerImpl.current = outer
+    Inst.current = outer
   }
 }
 
 export function applyChildren(): void {
   // console.log(`applying children: <${self.rtti.name}> #${self.id}`)
-  reconcile(LinkerImpl.current)
+  reconcile(Inst.current)
   // console.log(`applied children: <${self.rtti.name}> #${self.id}`)
 }
 
 // Internal
 
-class LinkerImpl<E = unknown> implements Linker<E> {
+class Inst<E = unknown> implements Instance<E> {
   priority: number
   element?: E
-  sortedChildren: Node[] = []
-  pendingChildren?: Node[]
+  children: Node[] = []
+  pending?: Node[]
 
   constructor(priority: number) {
     this.priority = priority
@@ -111,28 +111,28 @@ class LinkerImpl<E = unknown> implements Linker<E> {
     id: '<global>',
     apply: () => { /* nop */ },
     rtti: { name: '<default>', reactive: false },
-    linker: new LinkerImpl(0)
+    instance: new Inst(0)
   }
-  static current: Node = LinkerImpl.global
+  static current: Node = Inst.global
 }
 
 function reconcile(self: Node): void {
-  const linker = self.linker
-  const pending = linker?.pendingChildren
-  if (linker && pending) {
-    linker.pendingChildren = undefined
+  const x = self.instance
+  const pending = x?.pending
+  if (x && pending) {
+    x.pending = undefined
     const sorted = pending.slice().sort((n1, n2) => n1.id.localeCompare(n2.id))
     isolated(() => {
       let i = 0, j = 0
-      while (i < linker.sortedChildren.length) {
-        const a = linker.sortedChildren[i]
+      while (i < x.children.length) {
+        const a = x.children[i]
         const b = sorted[j]
         if (!b || a.id < b.id) { // then unmount
-          unmount(a, self)
+          unmount(a, self, a)
           i++
         }
         else if (a.id === b.id) { // then preserve
-          b.linker = a.linker
+          b.instance = a.instance
           i++, j++
         }
         else // will mount
@@ -140,39 +140,42 @@ function reconcile(self: Node): void {
       }
       let prev: Node | undefined = undefined
       for (const x of pending) {
-        if (!x.linker)
+        if (!x.instance)
           mount(x, self, prev)
         else if (x.rtti.ordering) // then re-order if needed
           x.rtti.ordering(x, self, prev)
         // Apply
         // eslint-disable-next-line prefer-spread
         // eslint-disable-next-line @typescript-eslint/no-non-null-assertion
-        x.linker!.apply(x)
+        x.instance!.apply(x)
         prev = x
       }
     })
-    linker.sortedChildren = sorted
+    x.children = sorted
   }
 }
 
-function mount(x: Node, outer: Node, prev?: Node): void {
-  if (x.rtti.reactive) {
+function mount(self: Node, outer: Node, prev?: Node): void {
+  if (self.rtti.reactive) {
     // eslint-disable-next-line @typescript-eslint/no-non-null-assertion
-    const xl = new LinkerImpl(outer.linker!.priority + 1)
-    Cache.of(xl.reactiveApply).setup({ priority: xl.priority })
-    x.linker = xl
+    const x = new Inst(outer.instance!.priority + 1)
+    Cache.of(x.reactiveApply).setup({ priority: x.priority })
+    self.instance = x
   }
   else
-    x.linker = new LinkerImpl(-1)
-  if (x.rtti.mount)
-    x.rtti.mount(x, outer, prev)
+    self.instance = new Inst(-1)
+  if (self.rtti.mount)
+    self.rtti.mount(self, outer, prev)
 }
 
-function unmount(node: Node, outer: Node): void {
-  const rtti = node.rtti
+function unmount(self: Node, outer: Node, cause: Node): void {
+  const rtti = self.rtti
   if (rtti.unmount)
-    rtti.unmount(node, outer) // TODO: mitigate the risk of exception
+    rtti.unmount(self, outer, cause) // TODO: mitigate the risk of exception
   if (rtti.reactive)
-    Cache.unmount(node.linker)
-  node.linker = undefined
+    Cache.unmount(self.instance)
+  // eslint-disable-next-line @typescript-eslint/no-non-null-assertion
+  for (const x of self.instance!.children)
+    unmount(x, self, cause)
+  self.instance = undefined
 }

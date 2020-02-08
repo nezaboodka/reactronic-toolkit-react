@@ -15,7 +15,7 @@ export class HtmlNodeRtti<E extends HTMLElement> implements Rtti<E> {
     // console.log(`enter: <${node.rtti.name}> #${node.id}...`)
     const outer = HtmlNodeRtti.current
     try { // eslint-disable-next-line @typescript-eslint/no-non-null-assertion
-      HtmlNodeRtti.current = self.linker!.element!
+      HtmlNodeRtti.current = self.instance!.element!
       apply(self)
     }
     finally {
@@ -24,34 +24,36 @@ export class HtmlNodeRtti<E extends HTMLElement> implements Rtti<E> {
     // console.log(`leave: <${node.rtti.name}> #${node.id}`)
   }
 
-  mount(self: Node<E>, outer: Node<unknown>, after?: Node<unknown>): void {
+  mount(self: Node<E>, outer: Node, after?: Node): void {
     const parent = HtmlNodeRtti.current
-    const prev = after?.linker?.element
+    const prev = after?.instance?.element
     const e = document.createElement(self.rtti.name) as E
     e.id = self.id
     if (prev instanceof HTMLElement)
       parent.insertBefore(e, prev.nextSibling)
     else
       parent.appendChild(e) // eslint-disable-next-line @typescript-eslint/no-non-null-assertion
-    self.linker!.element = e
+    self.instance!.element = e
     // console.log(`  mounted: <${node.rtti.name}> #${node.id}`)
   }
 
-  ordering(self: Node<E>, outer: Node<unknown>, after?: Node<unknown>): void {
+  ordering(self: Node<E>, outer: Node, after?: Node): void {
     const parent = HtmlNodeRtti.current
-    const prev = after?.linker?.element
-    const e = self.linker?.element
+    const prev = after?.instance?.element
+    const e = self.instance?.element
     if (e && prev instanceof HTMLElement && prev.nextSibling !== e) {
       parent.insertBefore(e, prev.nextSibling)
       // console.log(`  reordered: <${node.rtti.name}> #${node.id}`)
     }
   }
 
-  unmount(self: Node<E>, outer: Node<unknown>): void {
-    const e = self.linker?.element
-    if (e && e.parentElement)
-      e.parentElement.removeChild(e)
-    // console.log(`  unmounted: <${node.rtti.name}> #${node.id}`)
+  unmount(self: Node<E>, outer: Node, cause: Node): void {
+    if (cause.instance === self.instance) {
+      const e = self.instance?.element
+      if (e && e.parentElement)
+        e.parentElement.removeChild(e)
+      // console.log(`  unmounted: <${node.rtti.name}> #${node.id}`)
+    }
   }
 
   static root: HTMLElement = document.body
