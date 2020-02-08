@@ -157,6 +157,7 @@ function reconcile(self: Node): void {
 }
 
 function mount(self: Node, outer: Node, prev?: Node): void {
+  // TODO: Make the code below exception-safe
   const rtti = self.rtti
   if (rtti.reactive) {
     // eslint-disable-next-line @typescript-eslint/no-non-null-assertion
@@ -172,9 +173,10 @@ function mount(self: Node, outer: Node, prev?: Node): void {
 }
 
 function unmount(self: Node, outer: Node, cause: Node): void {
+  // TODO: Make the code below exception-safe
   const rtti = self.rtti
   if (rtti.unmount)
-    rtti.unmount(self, outer, cause) // TODO: mitigate the risk of exception
+    rtti.unmount(self, outer, cause)
   // eslint-disable-next-line @typescript-eslint/no-non-null-assertion
   const inst = self.instance!
   if (rtti.reactive)
