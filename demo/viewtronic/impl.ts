@@ -120,8 +120,7 @@ function reconcile(self: Node<unknown>): void {
       while (i < linker.index.length) {
         const a = linker.index[i]
         const b = nextIndex[j]
-        if (!b || a.id < b.id) {
-          // Unmount
+        if (!b || a.id < b.id) { // then unmount
           if (a.rtti.unmount)
             a.rtti.unmount(a, self) // TODO: mitigate the risk of exception
           if (a.rtti.reactive)
@@ -129,26 +128,23 @@ function reconcile(self: Node<unknown>): void {
           a.linker = undefined
           i++
         }
-        else if (a.id === b.id) {
-          // Preserve
+        else if (a.id === b.id) { // then preserve
           b.linker = a.linker
           i++, j++
         }
-        else // a.id > b.id
+        else // will mount
           j++
       }
-
       let prev: Node<unknown> | undefined = undefined
       for (const x of children) {
-        if (!x.linker) {
-          // Mount
+        if (!x.linker) { // then mount
           const xLinker = new LinkerImpl<unknown>(linker.level + 1)
           Cache.of(xLinker.reactiveApply).setup({ priority: xLinker.level })
           x.linker = xLinker
           if (x.rtti.mount)
             x.rtti.mount(x, self, prev)
         }
-        else if (x.rtti.ordering) // was mounted before, just re-order if needed
+        else if (x.rtti.ordering) // then re-order if needed
           x.rtti.ordering(x, self, prev)
         // Apply
         if (x.rtti.reactive)
