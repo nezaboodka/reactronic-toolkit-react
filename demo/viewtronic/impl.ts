@@ -173,10 +173,11 @@ function unmount(self: Node, outer: Node, cause: Node): void {
   const rtti = self.rtti
   if (rtti.unmount)
     rtti.unmount(self, outer, cause) // TODO: mitigate the risk of exception
-  if (rtti.reactive)
-    Cache.unmount(self.instance)
   // eslint-disable-next-line @typescript-eslint/no-non-null-assertion
-  for (const x of self.instance!.children)
-    unmount(x, self, cause)
+  const inst = self.instance!
+  if (rtti.reactive)
+    Cache.unmount(inst)
+  for (const t of inst.children)
+    unmount(t, self, cause)
   self.instance = undefined
 }
