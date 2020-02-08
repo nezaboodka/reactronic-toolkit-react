@@ -39,16 +39,16 @@ export function fragment<E = unknown>(id: string, apply: Apply<E>, rtti?: Rtti<E
   const self: Node<any> = { id, apply, rtti: rtti || Inst.global.rtti }
   // console.log(`< defining: <${node.rtti.name}> #${node.id}...`)
   const outer = Inst.current // shorthand
-  const x = outer.instance
-  if (!x)
+  const t = outer.instance
+  if (!t)
     throw new Error('node must be mounted before rendering')
   if (outer !== Inst.global) {
-    if (!x.pending)
+    if (!t.pending)
       throw new Error('children are applied already') // eslint-disable-next-line @typescript-eslint/no-non-null-assertion
-    x.pending.push(self)
+    t.pending.push(self)
   }
   else { // apply root immediately
-    x.pending = [self]
+    t.pending = [self]
     applyChildren()
   }
   // console.log(`/> defined: <${node.rtti.name}> #${node.id}`)
@@ -58,11 +58,11 @@ export function apply(self: Node<any>): void {
   const outer = Inst.current
   try {
     Inst.current = self
-    const x = self.instance
-    if (!x)
+    const t = self.instance
+    if (!t)
       throw new Error('node must be mounted before rendering')
-    x.pending = [] // eslint-disable-next-line @typescript-eslint/no-non-null-assertion
-    self.apply(x.element!)
+    t.pending = [] // eslint-disable-next-line @typescript-eslint/no-non-null-assertion
+    self.apply(t.element!)
     applyChildren() // ignored if applied already
   }
   finally {
@@ -118,15 +118,15 @@ class Inst<E = unknown> implements Instance<E> {
 }
 
 function reconcile(self: Node): void {
-  const x = self.instance
-  const pending = x?.pending
-  if (x && pending) {
-    x.pending = undefined
+  const t = self.instance
+  const pending = t?.pending
+  if (t && pending) {
+    t.pending = undefined
     const children = pending.slice().sort((n1, n2) => n1.id.localeCompare(n2.id))
     isolated(() => {
       let i = 0, j = 0
-      while (i < x.children.length) {
-        const a = x.children[i]
+      while (i < t.children.length) {
+        const a = t.children[i]
         const b = children[j]
         if (!b || a.id < b.id) { // then unmount
           unmount(a, self, a)
@@ -152,7 +152,7 @@ function reconcile(self: Node): void {
         prev = b
       }
     })
-    x.children = children
+    t.children = children
   }
 }
 
@@ -162,9 +162,9 @@ function mount(self: Node, outer: Node, prev?: Node): void {
   if (rtti.reactive) {
     // eslint-disable-next-line @typescript-eslint/no-non-null-assertion
     const priority = outer.instance!.priority + 1
-    const x = new Inst(priority)
-    Cache.of(x.reactiveApply).setup({ priority })
-    self.instance = x
+    const t = new Inst(priority)
+    Cache.of(t.reactiveApply).setup({ priority })
+    self.instance = t
   }
   else
     self.instance = new Inst(-1)
