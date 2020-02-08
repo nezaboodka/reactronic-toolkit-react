@@ -60,15 +60,15 @@ export function applyChildren(): void {
   // console.log(`applied children: <${self.rtti.name}> #${self.id}`)
 }
 
-export function apply(node: Node<any>): void {
+export function apply(self: Node<any>): void {
   const outer = LinkerImpl.self
   try {
-    LinkerImpl.self = node
-    const linker = node.linker
+    LinkerImpl.self = self
+    const linker = self.linker
     if (!linker)
       throw new Error('node must be mounted before rendering')
     linker.pending = [] // eslint-disable-next-line @typescript-eslint/no-non-null-assertion
-    node.apply(linker.element!)
+    self.apply(linker.element!)
     applyChildren() // ignored if applied already
   }
   finally {
