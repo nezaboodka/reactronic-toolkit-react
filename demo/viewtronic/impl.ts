@@ -72,7 +72,7 @@ export function apply(self: Node<any>): void {
 
 export function applyChildren(): void {
   // console.log(`applying children: <${self.rtti.name}> #${self.id}`)
-  reconcile(Inst.current)
+  reconcileOrdered(Inst.current)
   // console.log(`applied children: <${self.rtti.name}> #${self.id}`)
 }
 
@@ -144,7 +144,7 @@ function unmount(self: Node, outer: Node, cause: Node): void {
   self.instance = undefined
 }
 
-function reconcile(self: Node): void {
+function reconcileOrdered(self: Node): void {
   const t = self.instance
   if (t && t.pending) {
     const pending = t.pending
