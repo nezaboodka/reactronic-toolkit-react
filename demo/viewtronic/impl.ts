@@ -28,12 +28,12 @@ export interface Rtti<E = unknown> {
 export interface Linker<E = void> {
   readonly priority: number
   element?: E
-  index: Array<Node> // sorted children
-  pending?: Array<Node> // children in natural order
+  sortedChildren: Array<Node>
+  pendingChildren?: Array<Node> // in natural order
   apply(self: Node<E>, reactive: boolean): void
 }
 
-// fragment, apple, applyChildren
+// fragment, apply applyChildren
 
 export function fragment<E = unknown>(id: string, apply: Apply<E>, rtti?: Rtti<E>): void {
   const self: Node<any> = { id, apply, rtti: rtti || LinkerImpl.global.rtti }
@@ -43,21 +43,15 @@ export function fragment<E = unknown>(id: string, apply: Apply<E>, rtti?: Rtti<E
   if (!linker)
     throw new Error('node must be mounted before rendering')
   if (outer !== LinkerImpl.global) {
-    if (!linker.pending)
+    if (!linker.pendingChildren)
       throw new Error('children are applied already') // eslint-disable-next-line @typescript-eslint/no-non-null-assertion
-    linker.pending.push(self)
+    linker.pendingChildren.push(self)
   }
   else { // apply root immediately
-    linker.pending = [self]
+    linker.pendingChildren = [self]
     applyChildren()
   }
   // console.log(`/> defined: <${node.rtti.name}> #${node.id}`)
-}
-
-export function applyChildren(): void {
-  // console.log(`applying children: <${self.rtti.name}> #${self.id}`)
-  reconcile(LinkerImpl.current)
-  // console.log(`applied children: <${self.rtti.name}> #${self.id}`)
 }
 
 export function apply(self: Node<any>): void {
@@ -67,7 +61,7 @@ export function apply(self: Node<any>): void {
     const linker = self.linker
     if (!linker)
       throw new Error('node must be mounted before rendering')
-    linker.pending = [] // eslint-disable-next-line @typescript-eslint/no-non-null-assertion
+    linker.pendingChildren = [] // eslint-disable-next-line @typescript-eslint/no-non-null-assertion
     self.apply(linker.element!)
     applyChildren() // ignored if applied already
   }
@@ -76,13 +70,19 @@ export function apply(self: Node<any>): void {
   }
 }
 
+export function applyChildren(): void {
+  // console.log(`applying children: <${self.rtti.name}> #${self.id}`)
+  reconcile(LinkerImpl.current)
+  // console.log(`applied children: <${self.rtti.name}> #${self.id}`)
+}
+
 // Internal
 
 class LinkerImpl<E = unknown> implements Linker<E> {
   priority: number
   element?: E
-  index: Node[] = []
-  pending?: Node[]
+  sortedChildren: Node[] = []
+  pendingChildren?: Node[]
 
   constructor(priority: number) {
     this.priority = priority
@@ -118,15 +118,15 @@ class LinkerImpl<E = unknown> implements Linker<E> {
 
 function reconcile(self: Node): void {
   const linker = self.linker
-  const children = linker?.pending
-  if (linker && children) {
-    linker.pending = undefined
-    const nextIndex = children.slice().sort((n1, n2) => n1.id.localeCompare(n2.id))
+  const pending = linker?.pendingChildren
+  if (linker && pending) {
+    linker.pendingChildren = undefined
+    const sorted = pending.slice().sort((n1, n2) => n1.id.localeCompare(n2.id))
     isolated(() => {
       let i = 0, j = 0
-      while (i < linker.index.length) {
-        const a = linker.index[i]
-        const b = nextIndex[j]
+      while (i < linker.sortedChildren.length) {
+        const a = linker.sortedChildren[i]
+        const b = sorted[j]
         if (!b || a.id < b.id) { // then unmount
           if (a.rtti.unmount)
             a.rtti.unmount(a, self) // TODO: mitigate the risk of exception
@@ -143,11 +143,12 @@ function reconcile(self: Node): void {
           j++
       }
       let prev: Node | undefined = undefined
-      for (const x of children) {
+      for (const x of pending) {
         if (!x.linker) { // then mount
-          const xLinker = new LinkerImpl(linker.priority + 1)
-          Cache.of(xLinker.reactiveApply).setup({ priority: xLinker.priority })
-          x.linker = xLinker
+          const xl = new LinkerImpl(linker.priority + 1)
+          if (x.rtti.reactive)
+            Cache.of(xl.reactiveApply).setup({ priority: xl.priority })
+          x.linker = xl
           if (x.rtti.mount)
             x.rtti.mount(x, self, prev)
         }
@@ -159,6 +160,6 @@ function reconcile(self: Node): void {
         prev = x
       }
     })
-    linker.index = nextIndex
+    linker.sortedChildren = sorted
   }
 }
