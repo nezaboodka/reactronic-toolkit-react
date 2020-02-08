@@ -30,7 +30,7 @@ export interface Linker<E = void> {
   element?: E
   sortedChildren: Array<Node>
   pendingChildren?: Array<Node> // in natural order
-  apply(self: Node<E>, reactive: boolean): void
+  apply(self: Node<E>): void
 }
 
 // fragment, apply applyChildren
@@ -88,8 +88,8 @@ class LinkerImpl<E = unknown> implements Linker<E> {
     this.priority = priority
   }
 
-  apply(self: Node<E>, reactive: boolean): void {
-    if (reactive)
+  apply(self: Node<E>): void {
+    if (this.priority >= 0)
       this.reactiveApply(self)
     else
       this.basicApply(self)
@@ -145,10 +145,13 @@ function reconcile(self: Node): void {
       let prev: Node | undefined = undefined
       for (const x of pending) {
         if (!x.linker) { // then mount
-          const xl = new LinkerImpl(linker.priority + 1)
-          if (x.rtti.reactive)
+          if (x.rtti.reactive) {
+            const xl = new LinkerImpl(linker.priority + 1)
             Cache.of(xl.reactiveApply).setup({ priority: xl.priority })
-          x.linker = xl
+            x.linker = xl
+          }
+          else
+            x.linker = new LinkerImpl(-1)
           if (x.rtti.mount)
             x.rtti.mount(x, self, prev)
         }
@@ -156,7 +159,7 @@ function reconcile(self: Node): void {
           x.rtti.ordering(x, self, prev)
         // Apply
         // eslint-disable-next-line prefer-spread
-        x.linker.apply(x, x.rtti.reactive)
+        x.linker.apply(x)
         prev = x
       }
     })
