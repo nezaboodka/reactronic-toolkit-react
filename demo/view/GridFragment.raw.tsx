@@ -15,7 +15,7 @@ export function GridFragment(p: {
   loader: GridFragmentLoader,
   className?: string}): JSX.Element {
   return reactive(cycle => {
-    const css = style.classes
+    const css = style.css
     const area = p.loader.readyArea
     const html = p.loader.html(cx(css.cell, css.rollout))
     return (

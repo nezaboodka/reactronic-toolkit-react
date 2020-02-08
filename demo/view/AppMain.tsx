@@ -13,7 +13,7 @@ import { style } from './AppMain.css'
 
 export function AppMain(p: {app: Application}): JSX.Element {
   return reactive(() => {
-    const css = style.classes
+    const css = style.css
     return (
       <div className={css.main}>
         <AppWindow app={p.app}/>

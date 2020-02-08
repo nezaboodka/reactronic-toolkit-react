@@ -10,7 +10,7 @@ import { div } from '~/viewtronic/html'
 
 export function AppMain(id: string, app: Application): void {
   div(id, e => {
-    const css = style.classes
+    const css = style.css
     e.className = css.main
     AppWindow(AppWindow.name, app)
   })

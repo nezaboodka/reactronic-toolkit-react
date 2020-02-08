@@ -11,7 +11,7 @@ import { div } from '~/viewtronic/html'
 
 export function App(id: string, m: Model): void {
   div(id, e => {
-    e.className = style.classes.app
+    e.className = style.css.app
     e.onclick = event => m.click()
     e.onmousemove = event => m.move(event.x, event.y)
     Toolbar('toolbar', m)
@@ -20,7 +20,7 @@ export function App(id: string, m: Model): void {
 
 export function Toolbar(id: string, m: Model): void {
   div(id, e => {
-    e.className = style.classes.toolbar
+    e.className = style.css.toolbar
     // div('(mouse)', e => {
     //   e.className = style.classes.toolbarItem
     //   e.style.border = 'none'
@@ -30,14 +30,14 @@ export function Toolbar(id: string, m: Model): void {
     // })
     if (m.x > 100 && m.y > 100)
       div('pointer', e => {
-        e.className = style.classes.pointer
+        e.className = style.css.pointer
         e.style.left = `${m.x}px`
         e.style.top = `${m.y}px`
         e.innerText = `(${m.x}, ${m.y})`
         m.setSize(e.clientWidth)
       })
     div('space', e => {
-      e.className = style.classes.toolbarItem
+      e.className = style.css.toolbarItem
       e.style.border = 'none'
       e.style.flexGrow = '1'
       e.style.textAlign = 'right'
@@ -50,10 +50,10 @@ export function Toolbar(id: string, m: Model): void {
 
 export function ToolbarButton(id: string, icon: string): void {
   div(id, e => {
-    e.className = style.classes.toolbarItem
-    div('icon', e => e.className = cx(icon, style.classes.toolbarIcon))
+    e.className = style.css.toolbarItem
+    div('icon', e => e.className = cx(icon, style.css.toolbarIcon))
     div('text', e => {
-      e.className = style.classes.toolbarText
+      e.className = style.css.toolbarText
       e.innerText = `${id}`
     })
   })

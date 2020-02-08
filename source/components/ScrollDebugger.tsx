@@ -15,7 +15,7 @@ import { style } from './ScrollDebugger.css'
 
 export function ScrollDebugger(p: {grid: VirtualGrid}): JSX.Element {
   return reactive(cycle => {
-    const css = style.classes
+    const css = style.css
     const g = p.grid
     const sf = g.surfaceArea
     const vp = g.viewportArea

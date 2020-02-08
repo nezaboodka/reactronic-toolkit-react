@@ -15,7 +15,7 @@ export function GridFragment(p: {
   loader: GridFragmentLoader,
   className?: string}): JSX.Element {
   return reactive(cycle => {
-    const css = style.classes
+    const css = style.css
     const grid = p.loader.grid
     const area = p.loader.readyArea
     // console.log(`id: ${grid.spotId}, cycle=${cycle}, why: ${window.rWhy}`)
@@ -33,7 +33,7 @@ export function GridFragment(p: {
 }
 
 function GridCell(p: {hint: string, row: number, col: number, text: string, style?: React.CSSProperties}): JSX.Element {
-  const css = style.classes
+  const css = style.css
   const place: React.CSSProperties = {
     ...p.style,
     gridRow: p.row + 1,

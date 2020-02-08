@@ -11,7 +11,7 @@ import { style } from '~/view/GridFragment.css'
 import { div } from '~/viewtronic/html'
 
 export function GridFragment(loader: GridFragmentLoader, className?: string): void {
-  const css = style.classes
+  const css = style.css
   const area = loader.readyArea
   const html = loader.html(cx(css.cell, css.rollout))
   div('fragment', e => {

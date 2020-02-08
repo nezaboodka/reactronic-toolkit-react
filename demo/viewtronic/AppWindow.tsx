@@ -11,7 +11,7 @@ import { button, div } from '~/viewtronic/html'
 
 export function AppWindow(id: string, app: Application): void {
   div(id, e => {
-    const css = style.classes
+    const css = style.css
     const grid = app.grid
     const c = grid.component
     const loader = app.loader

@@ -14,7 +14,7 @@ import { style } from './AppWindow.css'
 
 export function AppWindow(p: {app: Application}): JSX.Element {
   return reactive(() => {
-    const css = style.classes
+    const css = style.css
     const grid = p.app.grid
     const c = grid.component
     const loader = p.app.loader

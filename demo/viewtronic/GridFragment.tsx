@@ -12,7 +12,7 @@ import { div } from '~/viewtronic/html'
 
 export function GridFragment(loader: GridFragmentLoader, className?: string): void {
   const cycle = 0
-  const css = style.classes
+  const css = style.css
   const grid = loader.grid
   const area = loader.readyArea
   // console.log(`id: ${grid.spotId}, cycle=${cycle}, why: ${window.rWhy}`)

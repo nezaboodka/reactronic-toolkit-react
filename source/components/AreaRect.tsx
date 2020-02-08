@@ -21,7 +21,7 @@ export function AreaRect(p: {
   style?: React.CSSProperties,
   children?: JSX.Element}): JSX.Element {
   return reactive(cycle => {
-    const css = style.classes
+    const css = style.css
     return (
       <div className={cx(css.area, p.className)} style={p.style}>
         <div title={`Rows x Columns: ${num(p.area.size.y, -3)} x ${num(p.area.size.x, -3)}`}

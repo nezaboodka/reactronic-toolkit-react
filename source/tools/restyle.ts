@@ -5,20 +5,20 @@
 
 import { cached, Transaction } from 'reactronic'
 
-export function restyle<T>(generate: () => T): ReactiveStyle<T> {
-  return Transaction.run('restyle', () => new ReactiveStyle<T>(generate))
+export function restyle<T>(generate: () => T): Restyler<T> {
+  return Transaction.run('restyle', () => new Restyler<T>(generate))
 }
 
-export class ReactiveStyle<T> {
+export class Restyler<T> {
   constructor(private readonly restyler: () => T) {
   }
 
   @cached
-  protected restyle(): T {
+  protected style(): T {
     return this.restyler()
   }
 
-  get classes(): T {
-    return this.restyle()
+  get css(): T {
+    return this.style()
   }
 }
