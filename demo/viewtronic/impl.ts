@@ -153,22 +153,22 @@ function reconcile(self: Node): void {
     isolated(() => {
       let i = 0, j = 0
       while (i < t.children.length) {
-        const a = t.children[i]
-        const b = children[j]
-        if (!b || a.id < b.id)
-          unmount(a, self, a), i++
-        else if (a.id === b.id)
-          b.instance = a.instance, i++, j++
+        const old = t.children[i]
+        const fresh = children[j]
+        if (!fresh || old.id < fresh.id)
+          unmount(old, self, old), i++
+        else if (old.id === fresh.id)
+          fresh.instance = old.instance, i++, j++
         else // will mount/ordered below
           j++
       }
-      let prev: Node | undefined = undefined
-      for (const b of pending) {
-        if (!b.instance) // then mount and first-time apply
-          mount(b, self, prev).apply(b)
-        else if (b.rtti.ordering) // then re-order if needed
-          b.rtti.ordering(b, self, prev)
-        prev = b
+      let sibling: Node | undefined = undefined
+      for (const x of pending) {
+        if (!x.instance) // then mount and first-time apply
+          mount(x, self, sibling).apply(x)
+        else if (x.rtti.ordering) // then re-order if needed
+          x.rtti.ordering(x, self, sibling)
+        sibling = x
       }
     })
     t.children = children
@@ -183,14 +183,14 @@ function reconcileUnordered(self: Node): void {
     isolated(() => {
       let i = 0, j = 0
       while (i < t.children.length || j < children.length) {
-        const a = t.children[i]
-        const b = children[j]
-        if (!a || a.id > b.id)
-          mount(b, self).apply(b), j++
-        else if (!b || a.id < b.id)
-          unmount(a, self, a), i++
-        else if (a.id === b.id)
-          b.instance = a.instance, i++, j++
+        const old = t.children[i]
+        const fresh = children[j]
+        if (!old || old.id > fresh.id)
+          mount(fresh, self).apply(fresh), j++
+        else if (!fresh || old.id < fresh.id)
+          unmount(old, self, old), i++
+        else if (old.id === fresh.id)
+          fresh.instance = old.instance, i++, j++
         else
           console.log('ugh - logic is broken')
       }
