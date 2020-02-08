@@ -7,35 +7,35 @@ import { Cache, isolated, trigger } from 'reactronic'
 
 // Apply, Node, Rtti, Linker
 
-export type Apply<E = void> = (element: E) => void
+export type Apply<E = unknown> = (element: E) => void
 
-export interface Node<E = void> {
+export interface Node<E = unknown> {
   readonly id: string
   readonly apply: Apply<E>
   readonly rtti: Rtti<E>
   linker?: Linker<E>
 }
 
-export interface Rtti<E = void> {
+export interface Rtti<E = unknown> {
   readonly name: string
   readonly reactive: boolean
   apply?(node: Node<E>): void
-  mount?(node: Node<E>, owner: Node<unknown>, after?: Node<unknown>): void
-  ordering?(node: Node<E>, owner: Node<unknown>, after?: Node<unknown>): void
-  unmount?(node: Node<E>, owner: Node<unknown>): void
+  mount?(node: Node<E>, owner: Node, after?: Node): void
+  ordering?(node: Node<E>, owner: Node, after?: Node): void
+  unmount?(node: Node<E>, owner: Node): void
 }
 
 export interface Linker<E = void> {
   readonly level: number
   element?: E
-  index: Array<Node<unknown>> // sorted children
-  pending?: Array<Node<unknown>> // children in natural order
+  index: Array<Node> // sorted children
+  pending?: Array<Node> // children in natural order
   reactiveApply(node: Node<E>): void
 }
 
 // define, applyChildren, proceed
 
-export function define<E = void>(id: string, apply: Apply<E>, rtti?: Rtti<E>): void {
+export function define<E = unknown>(id: string, apply: Apply<E>, rtti?: Rtti<E>): void {
   const node: Node<any> = { id, apply, rtti: rtti || LinkerImpl.global.rtti }
   // console.log(`< defining: <${node.rtti.name}> #${node.id}...`)
   const parent = LinkerImpl.self // shorthand
@@ -81,8 +81,8 @@ export function apply(node: Node<any>): void {
 class LinkerImpl<E = unknown> implements Linker<E> {
   level: number
   element?: E
-  index: Node<unknown>[] = []
-  pending?: Node<unknown>[]
+  index: Node[] = []
+  pending?: Node[]
 
   constructor(level: number) {
     this.level = level
@@ -93,13 +93,13 @@ class LinkerImpl<E = unknown> implements Linker<E> {
     basicApply(node)
   }
 
-  static global: Node<unknown> = {
+  static global: Node = {
     id: '<global>',
     apply: () => { /* nop */ },
     rtti: { name: '<default>', reactive: false },
     linker: new LinkerImpl(0)
   }
-  static self: Node<unknown> = LinkerImpl.global
+  static self: Node = LinkerImpl.global
 }
 
 function basicApply<E>(node: Node<E>): void {
@@ -109,7 +109,7 @@ function basicApply<E>(node: Node<E>): void {
     apply(node)
 }
 
-function reconcile(self: Node<unknown>): void {
+function reconcile(self: Node): void {
   const linker = self.linker
   const children = linker?.pending
   if (linker && children) {
