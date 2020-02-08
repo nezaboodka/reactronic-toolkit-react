@@ -132,7 +132,7 @@ function reconcile(self: Node): void {
           unmount(a, self, a)
           i++
         }
-        else if (a.id === b.id) { // then preserve
+        else if (a.id === b.id) { // then retain existing instance
           b.instance = a.instance
           i++, j++
         }
