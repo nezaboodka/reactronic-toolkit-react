@@ -164,7 +164,7 @@ function mount(self: Node, outer: Node, prev?: Node): Instance {
     self.instance = t
   }
   else
-    self.instance = new Inst(-1)
+    self.instance = new Inst(-1) // non-reactive
   if (rtti.mount)
     rtti.mount(self, outer, prev)
   return self.instance
