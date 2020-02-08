@@ -21,7 +21,7 @@ import { Reactronic as R, TraceLevel, Transaction as Tran } from 'reactronic'
 import { Model } from '~/viewtronic/example.model'
 import { App } from '~/viewtronic/example.view'
 
-R.setTrace(TraceLevel.Minimal)
+R.setTrace(TraceLevel.Normal)
 
 const model = Tran.run('init', () => new Model())
 App('demo fake', model)
