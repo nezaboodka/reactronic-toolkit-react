@@ -26,11 +26,11 @@ export interface Rtti<E = unknown> {
 }
 
 export interface Linker<E = void> {
-  readonly level: number
+  readonly priority: number
   element?: E
   index: Array<Node> // sorted children
   pending?: Array<Node> // children in natural order
-  reactiveApply(self: Node<E>): void
+  apply(self: Node<E>, reactive: boolean): void
 }
 
 // fragment, apple, applyChildren
@@ -79,18 +79,32 @@ export function apply(self: Node<any>): void {
 // Internal
 
 class LinkerImpl<E = unknown> implements Linker<E> {
-  level: number
+  priority: number
   element?: E
   index: Node[] = []
   pending?: Node[]
 
-  constructor(level: number) {
-    this.level = level
+  constructor(priority: number) {
+    this.priority = priority
+  }
+
+  apply(self: Node<E>, reactive: boolean): void {
+    if (reactive)
+      this.reactiveApply(self)
+    else
+      this.basicApply(self)
   }
 
   @trigger
   reactiveApply(self: Node<E>): void {
-    basicApply(self)
+    this.basicApply(self)
+  }
+
+  private basicApply<E>(self: Node<E>): void {
+    if (self.rtti.apply)
+      self.rtti.apply(self)
+    else
+      apply(self)
   }
 
   static global: Node = {
@@ -100,13 +114,6 @@ class LinkerImpl<E = unknown> implements Linker<E> {
     linker: new LinkerImpl(0)
   }
   static current: Node = LinkerImpl.global
-}
-
-function basicApply<E>(self: Node<E>): void {
-  if (self.rtti.apply)
-    self.rtti.apply(self)
-  else
-    apply(self)
 }
 
 function reconcile(self: Node): void {
@@ -138,8 +145,8 @@ function reconcile(self: Node): void {
       let prev: Node | undefined = undefined
       for (const x of children) {
         if (!x.linker) { // then mount
-          const xLinker = new LinkerImpl(linker.level + 1)
-          Cache.of(xLinker.reactiveApply).setup({ priority: xLinker.level })
+          const xLinker = new LinkerImpl(linker.priority + 1)
+          Cache.of(xLinker.reactiveApply).setup({ priority: xLinker.priority })
           x.linker = xLinker
           if (x.rtti.mount)
             x.rtti.mount(x, self, prev)
@@ -147,10 +154,8 @@ function reconcile(self: Node): void {
         else if (x.rtti.ordering) // then re-order if needed
           x.rtti.ordering(x, self, prev)
         // Apply
-        if (x.rtti.reactive)
-          x.linker.reactiveApply(x)
-        else
-          basicApply(x)
+        // eslint-disable-next-line prefer-spread
+        x.linker.apply(x, x.rtti.reactive)
         prev = x
       }
     })
