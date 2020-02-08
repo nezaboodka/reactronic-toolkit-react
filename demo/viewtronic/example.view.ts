@@ -28,13 +28,14 @@ export function Toolbar(id: string, m: Model): void {
     //   e.innerText = `Mouse: ${m.x}, ${m.y} (${m.clicks})`
     //   m.setSize(e.clientWidth)
     // })
-    div('(pointer)', e => {
-      e.className = style.classes.pointer
-      e.style.left = `${m.x}px`
-      e.style.top = `${m.y}px`
-      e.innerText = `(${m.x}, ${m.y})`
-      m.setSize(e.clientWidth)
-    })
+    if (m.x > 100 && m.y > 100)
+      div('(pointer)', e => {
+        e.className = style.classes.pointer
+        e.style.left = `${m.x}px`
+        e.style.top = `${m.y}px`
+        e.innerText = `(${m.x}, ${m.y})`
+        m.setSize(e.clientWidth)
+      })
     div('(space)', e => {
       e.className = style.classes.toolbarItem
       e.style.border = 'none'
