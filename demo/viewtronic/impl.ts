@@ -155,16 +155,11 @@ function reconcile(self: Node): void {
       while (i < t.children.length) {
         const a = t.children[i]
         const b = children[j]
-        if (!b || a.id < b.id) { // then unmount
-          unmount(a, self, a)
-          i++
-        }
-        else if (a.id === b.id) { // then retain existing instance
-          b.instance = a.instance
-          i++
-          j++
-        }
-        else // then will mount
+        if (!b || a.id < b.id)
+          unmount(a, self, a), i++
+        else if (a.id === b.id)
+          b.instance = a.instance, i++, j++
+        else // will mount/ordered below
           j++
       }
       let prev: Node | undefined = undefined
@@ -190,19 +185,12 @@ function reconcileUnordered(self: Node): void {
       while (i < t.children.length || j < children.length) {
         const a = t.children[i]
         const b = children[j]
-        if (!b || a.id < b.id) {
-          unmount(a, self, a)
-          i++
-        }
-        else if (!a || a.id > b.id) {
-          mount(b, self).apply(b)
-          j++
-        }
-        else if (a.id === b.id) {
-          b.instance = a.instance
-          i++
-          j++
-        }
+        if (!a || a.id > b.id)
+          mount(b, self).apply(b), j++
+        else if (!b || a.id < b.id)
+          unmount(a, self, a), i++
+        else if (a.id === b.id)
+          b.instance = a.instance, i++, j++
         else
           console.log('ugh - logic is broken')
       }
