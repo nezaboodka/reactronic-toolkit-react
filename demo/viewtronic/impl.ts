@@ -128,11 +128,7 @@ function reconcile(self: Node): void {
         const a = linker.sortedChildren[i]
         const b = sorted[j]
         if (!b || a.id < b.id) { // then unmount
-          if (a.rtti.unmount)
-            a.rtti.unmount(a, self) // TODO: mitigate the risk of exception
-          if (a.rtti.reactive)
-            Cache.unmount(a.linker)
-          a.linker = undefined
+          unmount(a, self)
           i++
         }
         else if (a.id === b.id) { // then preserve
@@ -144,25 +140,39 @@ function reconcile(self: Node): void {
       }
       let prev: Node | undefined = undefined
       for (const x of pending) {
-        if (!x.linker) { // then mount
-          if (x.rtti.reactive) {
-            const xl = new LinkerImpl(linker.priority + 1)
-            Cache.of(xl.reactiveApply).setup({ priority: xl.priority })
-            x.linker = xl
-          }
-          else
-            x.linker = new LinkerImpl(-1)
-          if (x.rtti.mount)
-            x.rtti.mount(x, self, prev)
-        }
+        if (!x.linker)
+          mount(x, self, prev)
         else if (x.rtti.ordering) // then re-order if needed
           x.rtti.ordering(x, self, prev)
         // Apply
         // eslint-disable-next-line prefer-spread
-        x.linker.apply(x)
+        // eslint-disable-next-line @typescript-eslint/no-non-null-assertion
+        x.linker!.apply(x)
         prev = x
       }
     })
     linker.sortedChildren = sorted
   }
+}
+
+function mount(x: Node, outer: Node, prev?: Node): void {
+  if (x.rtti.reactive) {
+    // eslint-disable-next-line @typescript-eslint/no-non-null-assertion
+    const xl = new LinkerImpl(outer.linker!.priority + 1)
+    Cache.of(xl.reactiveApply).setup({ priority: xl.priority })
+    x.linker = xl
+  }
+  else
+    x.linker = new LinkerImpl(-1)
+  if (x.rtti.mount)
+    x.rtti.mount(x, outer, prev)
+}
+
+function unmount(node: Node, outer: Node): void {
+  const rtti = node.rtti
+  if (rtti.unmount)
+    rtti.unmount(node, outer) // TODO: mitigate the risk of exception
+  if (rtti.reactive)
+    Cache.unmount(node.linker)
+  node.linker = undefined
 }
