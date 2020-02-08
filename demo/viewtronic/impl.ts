@@ -35,14 +35,14 @@ export interface Linker<E = void> {
 
 // define, applyChildren, proceed
 
-export function define<E = unknown>(id: string, apply: Apply<E>, rtti?: Rtti<E>): void {
+export function fragment<E = unknown>(id: string, apply: Apply<E>, rtti?: Rtti<E>): void {
   const node: Node<any> = { id, apply, rtti: rtti || LinkerImpl.global.rtti }
   // console.log(`< defining: <${node.rtti.name}> #${node.id}...`)
-  const parent = LinkerImpl.self // shorthand
-  const linker = parent.linker
+  const owner = LinkerImpl.self // shorthand
+  const linker = owner.linker
   if (!linker)
     throw new Error('node must be mounted before rendering')
-  if (parent !== LinkerImpl.global) {
+  if (owner !== LinkerImpl.global) {
     if (!linker.pending)
       throw new Error('children are applied already') // eslint-disable-next-line @typescript-eslint/no-non-null-assertion
     linker.pending.push(node)
@@ -148,7 +148,7 @@ function reconcile(self: Node): void {
           x.rtti.ordering(x, self, prev)
         // Apply
         if (x.rtti.reactive)
-          x.linker?.reactiveApply(x)
+          x.linker.reactiveApply(x)
         else
           basicApply(x)
         prev = x

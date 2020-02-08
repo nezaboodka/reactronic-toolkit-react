@@ -16,14 +16,17 @@
 // const root = document.getElementById('root')
 // ReactDOM.render(<AppMain app={app}/>, root)
 
-import * as React from 'react'
 import { Action, Reactronic as R, TraceLevel } from 'reactronic'
 
+import { fragment } from '~/viewtronic/api'
 import { Model } from '~/viewtronic/example.model'
 import { App } from '~/viewtronic/example.view'
 
 R.setTrace(TraceLevel.Off)
 
 const model = Action.run('init', () => new Model())
-App('demo fake', model)
-App('demo', model)
+fragment('root', () => {
+  App('demo fake', model)
+  App('demo', model)
+})
+

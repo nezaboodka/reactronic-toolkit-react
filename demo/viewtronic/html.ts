@@ -3,41 +3,41 @@
 // Copyright (C) 2019-2020 Yury Chetyrko <ychetyrko@gmail.com>
 // License: https://raw.githubusercontent.com/nezaboodka/reactronic/master/LICENSE
 
-import { Apply, define } from '~/viewtronic/api'
+import { Apply, fragment } from '~/viewtronic/api'
 import { HtmlNodeRtti } from '~/viewtronic/html.impl'
 
 export function div(id: string, apply: Apply<HTMLDivElement>): void {
-  define(id, apply, HtmlRtti.div)
+  fragment(id, apply, HtmlRtti.div)
 }
 
 export function button(id: string, apply: Apply<HTMLButtonElement>): void {
-  define(id, apply, HtmlRtti.button)
+  fragment(id, apply, HtmlRtti.button)
 }
 
 export function span(id: string, apply: Apply<HTMLSpanElement>): void {
-  define(id, apply, HtmlRtti.span)
+  fragment(id, apply, HtmlRtti.span)
 }
 
 export function italic(id: string, apply: Apply<HTMLSpanElement>): void {
-  define(id, apply, HtmlRtti.italic)
+  fragment(id, apply, HtmlRtti.italic)
 }
 
 // Static (non-reactive)
 
 export function staticDiv(id: string, apply: Apply<HTMLDivElement>): void {
-  define(id, apply, HtmlRtti.StaticDiv)
+  fragment(id, apply, HtmlRtti.StaticDiv)
 }
 
 export function staticButton(id: string, apply: Apply<HTMLButtonElement>): void {
-  define(id, apply, HtmlRtti.StaticButton)
+  fragment(id, apply, HtmlRtti.StaticButton)
 }
 
 export function staticSpan(id: string, apply: Apply<HTMLSpanElement>): void {
-  define(id, apply, HtmlRtti.StaticSpan)
+  fragment(id, apply, HtmlRtti.StaticSpan)
 }
 
 export function staticItalic(id: string, apply: Apply<HTMLSpanElement>): void {
-  define(id, apply, HtmlRtti.StaticItalic)
+  fragment(id, apply, HtmlRtti.StaticItalic)
 }
 
 // Run-Time Type Information
