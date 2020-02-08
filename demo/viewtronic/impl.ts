@@ -119,8 +119,8 @@ class Inst<E = unknown> implements Instance<E> {
 
 function reconcile(self: Node): void {
   const t = self.instance
-  const pending = t?.pending
-  if (t && pending) {
+  if (t && t.pending) {
+    const pending = t.pending
     t.pending = undefined
     const children = pending.slice().sort((n1, n2) => n1.id.localeCompare(n2.id))
     isolated(() => {
