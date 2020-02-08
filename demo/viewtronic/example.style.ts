@@ -23,6 +23,10 @@ export const style = restyle(() => {
       border: 0.5px dashed gray;
       cursor: default;
     `,
+    pointer: css`
+      position: absolute;
+      color: yellow;
+    `,
     toolbar: css`
       label: toolbar;
       z-index: 100;

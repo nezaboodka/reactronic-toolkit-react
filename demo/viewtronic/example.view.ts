@@ -12,8 +12,8 @@ import { div } from '~/viewtronic/html'
 export function App(id: string, m: Model): void {
   div(id, e => {
     e.className = style.classes.app
-    e.onclick = e => m.click()
-    e.onmousemove = e => m.move(e.x, e.y)
+    e.onclick = event => m.click()
+    e.onmousemove = event => m.move(event.x, event.y)
     Toolbar('toolbar', m)
   })
 }
@@ -29,10 +29,9 @@ export function Toolbar(id: string, m: Model): void {
     //   m.setSize(e.clientWidth)
     // })
     div('(pointer)', e => {
-      e.style.position = 'absolute'
+      e.className = style.classes.pointer
       e.style.left = `${m.x}px`
       e.style.top = `${m.y}px`
-      e.style.color = 'yellow'
       e.innerText = `(${m.x}, ${m.y})`
       m.setSize(e.clientWidth)
     })
