@@ -79,13 +79,14 @@ export function applyChildren(): void {
 // Internal
 
 class Inst<E = unknown> implements Instance<E> {
-  priority: number
+  readonly priority: number
   element?: E
-  children: Node[] = []
+  children: Node[] // TODO: nullable
   pending?: Node[]
 
   constructor(priority: number) {
     this.priority = priority
+    this.children = []
   }
 
   apply(self: Node<E>): void {
@@ -121,12 +122,12 @@ function reconcile(self: Node): void {
   const pending = x?.pending
   if (x && pending) {
     x.pending = undefined
-    const sorted = pending.slice().sort((n1, n2) => n1.id.localeCompare(n2.id))
+    const children = pending.slice().sort((n1, n2) => n1.id.localeCompare(n2.id))
     isolated(() => {
       let i = 0, j = 0
       while (i < x.children.length) {
         const a = x.children[i]
-        const b = sorted[j]
+        const b = children[j]
         if (!b || a.id < b.id) { // then unmount
           unmount(a, self, a)
           i++
@@ -139,19 +140,19 @@ function reconcile(self: Node): void {
           j++
       }
       let prev: Node | undefined = undefined
-      for (const x of pending) {
-        if (!x.instance)
-          mount(x, self, prev)
-        else if (x.rtti.ordering) // then re-order if needed
-          x.rtti.ordering(x, self, prev)
+      for (const b of pending) {
+        if (!b.instance)
+          mount(b, self, prev)
+        else if (b.rtti.ordering) // then re-order if needed
+          b.rtti.ordering(b, self, prev)
         // Apply
         // eslint-disable-next-line prefer-spread
         // eslint-disable-next-line @typescript-eslint/no-non-null-assertion
-        x.instance!.apply(x)
-        prev = x
+        b.instance!.apply(b)
+        prev = b
       }
     })
-    x.children = sorted
+    x.children = children
   }
 }
 
