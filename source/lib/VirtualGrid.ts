@@ -3,7 +3,7 @@
 // Copyright (C) 2019-2020 Yury Chetyrko <ychetyrko@gmail.com>
 // License: https://raw.githubusercontent.com/nezaboodka/reactronic/master/LICENSE
 
-import { action, Cache, Monitor, nonreactive, Stateful, trigger } from 'reactronic'
+import { Cache, Monitor, nonreactive, Stateful, transaction, trigger } from 'reactronic'
 
 import { Area, area, XY, xy } from './Area'
 
@@ -103,7 +103,7 @@ export class VirtualGrid extends Stateful {
 
   // Actions
 
-  @action
+  @transaction
   mount(width: number, height: number, resolution: number, component: IComponent): void {
     this.ppcX = resolution * 4
     this.ppcY = resolution
@@ -142,7 +142,7 @@ export class VirtualGrid extends Stateful {
     }
   }
 
-  @action
+  @transaction
   impulse(key?: string): void {
     const i = ++this.interaction
     if (key === 'Home' || key === 'End')
@@ -152,7 +152,7 @@ export class VirtualGrid extends Stateful {
 
   // prevScroll: number = performance.now()
 
-  @action
+  @transaction
   scroll(x: number, y: number): void {
     const c = this.component
     if (c) {
@@ -165,7 +165,7 @@ export class VirtualGrid extends Stateful {
     }
   }
 
-  @action
+  @transaction
   loaded(cells: Area): void {
     // console.log(`\nready: ${cells.y}..${cells.till.y}`)
     this.loadedCells = cells

@@ -3,7 +3,7 @@
 // Copyright (C) 2019-2020 Yury Chetyrko <ychetyrko@gmail.com>
 // License: https://raw.githubusercontent.com/nezaboodka/reactronic/master/LICENSE
 
-import { action, Stateful } from 'reactronic'
+import { Stateful, transaction } from 'reactronic'
 
 export enum KeyboardModifiers {
     None = 0,
@@ -95,7 +95,7 @@ export class UserInput extends Stateful {
       this.resultOperation = UserOperation.None
     }
 
-    @action
+    @transaction
     setElement(element: HTMLElement | undefined, listen: boolean): void {
       const existing = this.element
       if (element !== existing) {
@@ -131,12 +131,12 @@ export class UserInput extends Stateful {
       }
     }
 
-    @action
+    @transaction
     onBlur(e: FocusEvent): void {
       this.clearAll()
     }
 
-    @action
+    @transaction
     onPointerEnter(e: PointerEvent): void {
       this.updateButtonDown(e)
       this.updatePosition(e, true)
@@ -145,7 +145,7 @@ export class UserInput extends Stateful {
       this.active = true
     }
 
-    @action
+    @transaction
     onPointerLeave(e: PointerEvent): void {
       this.updateButtonDown(e)
       this.updatePosition(e)
@@ -154,7 +154,7 @@ export class UserInput extends Stateful {
       this.active = false
     }
 
-    @action
+    @transaction
     onPointerDown(e: PointerEvent): void {
       this.updateButtonDown(e)
       if (this.pointerButtonDown !== PointerButton.None) {
@@ -172,7 +172,7 @@ export class UserInput extends Stateful {
       this.clearResult()
     }
 
-    @action
+    @transaction
     onPointerMove(e: PointerEvent): void {
       this.updatePosition(e)
       if (this.captured && this.pointerButtonDown !== PointerButton.None && this.pointerButtonDown === e.buttons) {
@@ -190,7 +190,7 @@ export class UserInput extends Stateful {
       }
     }
 
-    @action
+    @transaction
     onPointerUp(e: PointerEvent): void {
       this.updatePosition(e)
       const clickOrDrop = this.captured &&
@@ -208,7 +208,7 @@ export class UserInput extends Stateful {
       e.preventDefault()
     }
 
-    @action
+    @transaction
     onWheel(e: WheelEvent): void {
       this.updatePosition(e)
       if (!this.dragging && this.pointerButtonDown === PointerButton.None) {
@@ -219,7 +219,7 @@ export class UserInput extends Stateful {
       e.preventDefault()
     }
 
-    @action
+    @transaction
     onKeyDown(e: KeyboardEvent): void {
       this.keyDown = e.key
       if (e.key === 'Escape') {
@@ -235,7 +235,7 @@ export class UserInput extends Stateful {
         this.modifiers = this.modifiers | KeyboardModifiers.Alt
     }
 
-    @action
+    @transaction
     onKeyUp(e: KeyboardEvent): void {
       if (e.key === 'Control')
         this.modifiers = this.modifiers & ~KeyboardModifiers.Control
@@ -245,17 +245,17 @@ export class UserInput extends Stateful {
         this.modifiers = this.modifiers & ~KeyboardModifiers.Alt
     }
 
-    @action
+    @transaction
     onTouchStart(e: Event): void {
       this.touched = true
     }
 
-    @action
+    @transaction
     onTouchEnd(e: Event): void {
       this.touched = false
     }
 
-    @action
+    @transaction
     clearResult(): void {
       this.scrollDeltaX = 0
       this.scrollDeltaY = 0

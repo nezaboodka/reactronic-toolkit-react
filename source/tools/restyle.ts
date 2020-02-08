@@ -3,10 +3,10 @@
 // Copyright (C) 2019-2020 Yury Chetyrko <ychetyrko@gmail.com>
 // License: https://raw.githubusercontent.com/nezaboodka/reactronic/master/LICENSE
 
-import { Action, cached } from 'reactronic'
+import { cached, Transaction } from 'reactronic'
 
 export function restyle<T>(generate: () => T): ReactiveStyle<T> {
-  return Action.run('restyle', () => new ReactiveStyle<T>(generate))
+  return Transaction.run('restyle', () => new ReactiveStyle<T>(generate))
 }
 
 export class ReactiveStyle<T> {

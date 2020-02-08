@@ -4,13 +4,13 @@
 // License: https://raw.githubusercontent.com/nezaboodka/reactronic/master/LICENSE
 
 import * as React from 'react'
-import { Action, Cache, cached, isolated, Reactronic as R, Stateful, stateless, Trace, trigger } from 'reactronic'
+import { Cache, cached, isolated, Reactronic as R, Stateful, stateless, Trace, Transaction, trigger } from 'reactronic'
 
 export type ReactiveOptions = {
   hint: string,
   trace: Partial<Trace>,
   priority: number,
-  action: Action
+  transaction: Transaction
 }
 
 export function reactive(render: (cycle: number) => JSX.Element, options?: Partial<ReactiveOptions>): JSX.Element {
@@ -20,7 +20,7 @@ export function reactive(render: (cycle: number) => JSX.Element, options?: Parti
   rx.cycle = state.cycle
   rx.refresh = refresh // just in case React will change refresh on each rendering
   React.useEffect(rx.unmount, [])
-  return rx.render(render, options ? options.action : undefined)
+  return rx.render(render, options ? options.transaction : undefined)
 }
 
 // export function reactiveJs<E>(run: (element: E) => void, trace?: Partial<Trace>, action?: Action): (element: E) => void {
@@ -42,8 +42,8 @@ type ReactState<V> = { rx: Rx<V>, cycle: number }
 
 class Rx<V> extends Stateful {
   @cached
-  render(render: (cycle: number) => V, action?: Action): V {
-    return action ? action.inspect(() => render(this.cycle)) : render(this.cycle)
+  render(render: (cycle: number) => V, tran?: Transaction): V {
+    return tran ? tran.inspect(() => render(this.cycle)) : render(this.cycle)
   }
 
   @trigger
@@ -74,7 +74,7 @@ class Rx<V> extends Stateful {
 
 function createReactState<V>(hint?: string, trace?: Partial<Trace>, priority?: number): ReactState<V> {
   const h = hint || (R.isTraceOn ? getComponentName() : '<rx>')
-  const rx = Action.runAs<Rx<V>>(h, false, trace, undefined, Rx.create, h, trace, priority)
+  const rx = Transaction.runAs<Rx<V>>(h, false, trace, undefined, Rx.create, h, trace, priority)
   return {rx, cycle: 0}
 }
 

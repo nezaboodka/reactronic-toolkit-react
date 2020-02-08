@@ -7196,10 +7196,10 @@ react@^16.12.0:
     object-assign "^4.1.1"
     prop-types "^15.6.2"
 
-reactronic@^0.20.11:
-  version "0.20.11"
-  resolved "https://registry.yarnpkg.com/reactronic/-/reactronic-0.20.11.tgz#3717703741154db97879ef8caddfd54022928c9a"
-  integrity sha512-8N7ZQiT2jtvvHkboAbazMRFJs2onColxb+4m98pKMXOv0cR2lmkdZZl1WraQAD9F6ISV8jcjaYrEY//dI+Nmew==
+reactronic@^0.20.12:
+  version "0.20.12"
+  resolved "https://registry.yarnpkg.com/reactronic/-/reactronic-0.20.12.tgz#e342c740285b1ab0bd1e5a08c2c85e1f1c79f7df"
+  integrity sha512-DhayNKtMLNNrIDpwsmjzT50kcORuEoiqSk9VfzgJF2My7IgwXq41As7HgZZQIYVTc9bG8WY59SjY4NvfGNzb+g==
 
 "readable-stream@1 || 2", readable-stream@^2.0.0, readable-stream@^2.0.1, readable-stream@^2.0.2, readable-stream@^2.1.5, readable-stream@^2.2.2, readable-stream@^2.3.3, readable-stream@^2.3.6, readable-stream@~2.3.3, readable-stream@~2.3.6:
   version "2.3.6"

@@ -3,7 +3,7 @@
 // Copyright (C) 2019-2020 Yury Chetyrko <ychetyrko@gmail.com>
 // License: https://raw.githubusercontent.com/nezaboodka/reactronic/master/LICENSE
 
-import { action, Stateful } from 'reactronic'
+import { Stateful, transaction } from 'reactronic'
 
 export class Model extends Stateful {
   x: number = 0
@@ -11,18 +11,18 @@ export class Model extends Stateful {
   clicks: number = 0
   size: number = 0
 
-  @action
+  @transaction
   move(x: number, y: number): void {
     this.x = x
     this.y = y
   }
 
-  @action
+  @transaction
   click(): void {
     this.clicks++
   }
 
-  @action
+  @transaction
   setSize(value: number): void {
     this.size = value
   }
