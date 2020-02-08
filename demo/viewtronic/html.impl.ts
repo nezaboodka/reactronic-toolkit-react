@@ -56,6 +56,5 @@ export class HtmlNodeRtti<E extends HTMLElement> implements Rtti<E> {
     }
   }
 
-  static root: HTMLElement = document.body
-  static current = HtmlNodeRtti.root
+  static current = document.body
 }
