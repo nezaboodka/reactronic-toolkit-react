@@ -4,7 +4,7 @@
 // License: https://raw.githubusercontent.com/nezaboodka/reactronic/master/LICENSE
 
 import * as React from 'react'
-import { Cache, cached, isolated, trigger } from 'reactronic'
+import { Cache, cached, isolated, Transaction, trigger } from 'reactronic'
 
 export class RComponent<P> extends React.Component<P> {
   @cached
@@ -27,7 +27,7 @@ export class RComponent<P> extends React.Component<P> {
   }
 
   componentWillUnmount(): void {
-    isolated(Cache.unmount, this)
+    isolated(Transaction.run, 'unmount', Cache.unmount, this)
   }
 
   static refresh<P>(self: RComponent<P>): void {

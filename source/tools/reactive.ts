@@ -55,7 +55,7 @@ class Rx<V> extends Stateful {
   @stateless cycle: number = 0
   @stateless refresh: (next: ReactState<V>) => void = nop
   @stateless readonly unmount = (): (() => void) => {
-    return (): void => { isolated(Cache.unmount, this) }
+    return (): void => { isolated(Transaction.run, 'unmount', Cache.unmount, this) }
   }
 
   static create<V>(hint?: string, trace?: Trace, priority?: number): Rx<V> {
