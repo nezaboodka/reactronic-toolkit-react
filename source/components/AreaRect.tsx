@@ -5,7 +5,7 @@
 
 import { cx } from 'emotion'
 import * as React from 'react'
-import { TraceLevel } from 'reactronic'
+import { LogLevel } from 'reactronic'
 
 import { Area, num } from '../lib/Area'
 import { region } from '../tools/etc'
@@ -48,5 +48,5 @@ export function AreaRect(p: {
         <div className={css.center} style={region(5, 5, 6, 6)}>{p.children}</div>
       </div>
     )
-  }, {trace: TraceLevel.Suppress})
+  }, {logging: LogLevel.Suppress})
 }

@@ -4,18 +4,18 @@
 // License: https://raw.githubusercontent.com/nezaboodka/reactronic/master/LICENSE
 
 import * as React from 'react'
-import { Cache, cached, isolated, Reactronic as R, Stateful, stateless, Trace, Transaction, trigger } from 'reactronic'
+import { Cache, cached, isolated, LoggingOptions, Reactronic as R, Stateful, stateless, Transaction, trigger } from 'reactronic'
 
 export type ReactiveOptions = {
   hint: string,
-  trace: Partial<Trace>,
+  logging: Partial<LoggingOptions>,
   priority: number,
   transaction: Transaction
 }
 
 export function reactive(render: (cycle: number) => JSX.Element, options?: Partial<ReactiveOptions>): JSX.Element {
   const [state, refresh] = React.useState<ReactState<JSX.Element>>(
-    !options ? createReactState : () => createReactState(options.hint, options.trace, options.priority))
+    !options ? createReactState : () => createReactState(options.hint, options.logging, options.priority))
   const rx = state.rx
   rx.cycle = state.cycle
   rx.refresh = refresh // just in case React will change refresh on each rendering
@@ -58,13 +58,13 @@ class Rx<V> extends Stateful {
     return (): void => { isolated(Transaction.run, 'unmount', Cache.unmount, this) }
   }
 
-  static create<V>(hint?: string, trace?: Trace, priority?: number): Rx<V> {
+  static create<V>(hint?: string, logging?: LoggingOptions, priority?: number): Rx<V> {
     const rx = new Rx<V>()
     if (hint)
-      R.setTraceHint(rx, hint)
-    if (trace) {
-      Cache.of(rx.render).setup({trace})
-      Cache.of(rx.pulse).setup({trace, priority})
+      R.setLoggingHint(rx, hint)
+    if (logging) {
+      Cache.of(rx.render).setup({logging})
+      Cache.of(rx.pulse).setup({logging, priority})
     }
     else if (priority !== undefined)
       Cache.of(rx.pulse).setup({priority})
@@ -72,9 +72,9 @@ class Rx<V> extends Stateful {
   }
 }
 
-function createReactState<V>(hint?: string, trace?: Partial<Trace>, priority?: number): ReactState<V> {
-  const h = hint || (R.isTraceOn ? getComponentName() : '<rx>')
-  const rx = Transaction.runAs<Rx<V>>(h, false, trace, undefined, Rx.create, h, trace, priority)
+function createReactState<V>(hint?: string, logging?: Partial<LoggingOptions>, priority?: number): ReactState<V> {
+  const h = hint || (R.isLogging ? getComponentName() : '<rx>')
+  const rx = Transaction.runAs<Rx<V>>(h, false, logging, undefined, Rx.create, h, logging, priority)
   return {rx, cycle: 0}
 }
 
