@@ -5,7 +5,6 @@
 
 export * from './lib/Area'
 export * from './lib/GroupEvents'
-export * from './lib/VirtualGrid'
 export * from './lib/UserInput'
 
 export * from './tools/reactive'
@@ -13,5 +12,3 @@ export * from './tools/restyle'
 export * from './tools/etc'
 
 export * from './components/RComponent'
-export * from './components/ScrollBox'
-export * from './components/ScrollDebugger'
