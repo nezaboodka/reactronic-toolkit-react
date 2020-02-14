@@ -80,11 +80,6 @@
   "scripts": {
     "build": "eslint **/*.ts **/*.tsx && tsc",
     "fix": "eslint --fix **/*.ts **/*.tsx",
-    "pack": "eslint **/*.ts **/*.tsx && tsc --sourceMap false --removeComments true",
-    "webpack-start": "cross-env NODE_ENV=development node server.js",
-    "webpack-start-prod": "cross-env NODE_ENV=production node server.js",
-    "webpack-build": "webpack build",
-    "parcel-start": "parcel ./demo/index.html --out-dir build/demo --cache-dir build/demo.cache",
-    "parcel-build": "parcel build ./demo/index.html --out-dir build/demo-publish --cache-dir build/demo.cache"
+    "pack": "eslint **/*.ts **/*.tsx && tsc --sourceMap false --removeComments true"
   }
 }

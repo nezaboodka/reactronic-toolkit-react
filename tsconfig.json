@@ -33,9 +33,6 @@
     "emitDecoratorMetadata": true,
     "experimentalDecorators": true,
     "jsx": "react",
-    "paths": {
-      "~/*": ["../demo/*"],
-    },
     "plugins": [
       {
           "name": "typescript-styled-plugin",

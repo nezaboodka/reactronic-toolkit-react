@@ -10,11 +10,7 @@
       "request": "launch",
       "url": "http://localhost:1234",
       "sourceMaps": true,
-      "webRoot": "${workspaceRoot}",
-      // "sourceMapPathOverrides": {
-      //   "*": "${webRoot}/demo*"
-      // },
-      "skipFiles": [
+      "webRoot": "${workspaceRoot}",      "skipFiles": [
         "${workspaceFolder}/node_modules/**/*.js",
         "<node_internals>/**/*.js"
       ]
