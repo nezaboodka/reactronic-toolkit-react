@@ -304,7 +304,7 @@ export class UserInput extends Stateful {
   private updateResult(operation: UserOperation): void {
     this.resultModifiers = this.modifiers
     this.resultPointerButton = operation === UserOperation.Scroll ? PointerButton.None : this.pointerButtonDown
-    this.resultHotKey = operation === UserOperation.HotKey ? this.getHotKey() : '';
+    this.resultHotKey = operation === UserOperation.HotKey ? this.getHotKey() : ''
     this.resultOperation = operation
   }
 
