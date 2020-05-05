@@ -4,7 +4,7 @@
 // License: https://raw.githubusercontent.com/nezaboodka/reactronic/master/LICENSE
 
 import * as React from 'react'
-import { Cache, cached, isolated, LoggingOptions, Reactronic as R, Stateful, stateless, Transaction, trigger } from 'reactronic'
+import { Cache, cached, isolated, LoggingOptions, Reactronic as R, Reactronic, Stateful, stateless, Transaction, trigger } from 'reactronic'
 
 export type ReactiveOptions = {
   hint: string,
@@ -48,14 +48,14 @@ class Rx<V> extends Stateful {
 
   @trigger
   protected pulse(): void {
-    if (Cache.of(this.render).invalid)
+    if (Reactronic.getCache(this.render).invalid)
       isolated(this.refresh, {rx: this, cycle: this.cycle + 1})
   }
 
   @stateless cycle: number = 0
   @stateless refresh: (next: ReactState<V>) => void = nop
   @stateless readonly unmount = (): (() => void) => {
-    return (): void => { isolated(Transaction.run, 'unmount', Cache.unmount, this) }
+    return (): void => { isolated(Transaction.run, 'unmount', Reactronic.unmount, this) }
   }
 
   static create<V>(hint?: string, logging?: LoggingOptions, priority?: number): Rx<V> {
@@ -63,11 +63,11 @@ class Rx<V> extends Stateful {
     if (hint)
       R.setLoggingHint(rx, hint)
     if (logging) {
-      Cache.of(rx.render).setup({logging})
-      Cache.of(rx.pulse).setup({logging, priority})
+      Reactronic.getCache(rx.render).configure({logging})
+      Reactronic.getCache(rx.pulse).configure({logging, priority})
     }
     else if (priority !== undefined)
-      Cache.of(rx.pulse).setup({priority})
+      Reactronic.getCache(rx.pulse).configure({priority})
     return rx
   }
 }
