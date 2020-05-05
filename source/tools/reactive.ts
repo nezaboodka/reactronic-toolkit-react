@@ -4,7 +4,7 @@
 // License: https://raw.githubusercontent.com/nezaboodka/reactronic/master/LICENSE
 
 import * as React from 'react'
-import { Cache, cached, isolated, LoggingOptions, Reactronic as R, Reactronic, Stateful, stateless, Transaction, trigger } from 'reactronic'
+import { cached, isolated, LoggingOptions, Reactronic as R, Reactronic, Reentrance, reentrance, Stateful, stateless, Transaction, trigger } from 'reactronic'
 
 export type ReactiveOptions = {
   hint: string,
@@ -18,7 +18,7 @@ export function reactive(render: (cycle: number) => JSX.Element, options?: Parti
     !options ? createReactState : () => createReactState(options.hint, options.logging, options.priority))
   const rx = state.rx
   rx.cycle = state.cycle
-  rx.refresh = refresh // just in case React will change refresh on each rendering
+  rx.doRefresh = refresh // just in case React will change refresh on each rendering
   React.useEffect(rx.unmount, [])
   return rx.render(render, options ? options.transaction : undefined)
 }
@@ -46,14 +46,14 @@ class Rx<V> extends Stateful {
     return tran ? tran.inspect(() => render(this.cycle)) : render(this.cycle)
   }
 
-  @trigger
-  protected pulse(): void {
+  @trigger @reentrance(Reentrance.RunSideBySide)
+  protected refresh(): void {
     if (Reactronic.getCache(this.render).invalid)
-      isolated(this.refresh, {rx: this, cycle: this.cycle + 1})
+      isolated(this.doRefresh, {rx: this, cycle: this.cycle + 1})
   }
 
   @stateless cycle: number = 0
-  @stateless refresh: (next: ReactState<V>) => void = nop
+  @stateless doRefresh: (next: ReactState<V>) => void = nop
   @stateless readonly unmount = (): (() => void) => {
     return (): void => { isolated(Transaction.run, 'unmount', Reactronic.unmount, this) }
   }
@@ -64,10 +64,10 @@ class Rx<V> extends Stateful {
       R.setLoggingHint(rx, hint)
     if (logging) {
       Reactronic.getCache(rx.render).configure({logging})
-      Reactronic.getCache(rx.pulse).configure({logging, priority})
+      Reactronic.getCache(rx.refresh).configure({logging, priority})
     }
     else if (priority !== undefined)
-      Reactronic.getCache(rx.pulse).configure({priority})
+      Reactronic.getCache(rx.refresh).configure({priority})
     return rx
   }
 }

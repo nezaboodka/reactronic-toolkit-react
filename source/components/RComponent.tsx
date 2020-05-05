@@ -4,7 +4,7 @@
 // License: https://raw.githubusercontent.com/nezaboodka/reactronic/master/LICENSE
 
 import * as React from 'react'
-import { Cache, cached, isolated, Reactronic, Transaction, trigger } from 'reactronic'
+import { cached, isolated, Reactronic, Reentrance, reentrance, Transaction, trigger } from 'reactronic'
 
 export class RComponent<P> extends React.Component<P> {
   @cached
@@ -12,8 +12,8 @@ export class RComponent<P> extends React.Component<P> {
     return <div>to be overridden in derived class</div>
   }
 
-  @trigger
-  pulse(): void {
+  @trigger @reentrance(Reentrance.RunSideBySide)
+  refresh(): void {
     if (this.shouldComponentUpdate())
       isolated(RComponent.refresh, this)
   }
@@ -23,7 +23,7 @@ export class RComponent<P> extends React.Component<P> {
   }
 
   componentDidMount(): void {
-    this.pulse() // initial trigger run
+    this.refresh() // initial trigger run
   }
 
   componentWillUnmount(): void {
