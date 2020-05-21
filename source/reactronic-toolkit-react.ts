@@ -3,7 +3,6 @@
 // Copyright (C) 2019-2020 Yury Chetyrko <ychetyrko@gmail.com>
 // License: https://raw.githubusercontent.com/nezaboodka/reactronic/master/LICENSE
 
-export * from './lib/Area'
 export * from './lib/GroupEvents'
 export * from './lib/UserInput'
 
