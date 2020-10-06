@@ -53,6 +53,7 @@
     "awesome-typescript-loader": "5.2.1",
     "eslint-loader": "4.0.2",
     "braces": "2.3.2",
+    "node-forge": "0.10.0",
     "babel-cli": "6.26.0",
     "babel-core": "6.26.3",
     "babel-loader": "7.1.5",
@@ -66,7 +67,8 @@
     "cross-env": "7.0.2"
   },
   "resolutions": {
-    "braces": "2.3.2"
+    "braces": "2.3.2",
+    "node-forge": "0.10.0"
   },
   "browserslist": {
     "production": [
