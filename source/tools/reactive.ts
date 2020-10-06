@@ -48,14 +48,14 @@ class Rx<V> extends Stateful {
 
   @trigger @reentrance(Reentrance.RunSideBySide)
   protected refresh(): void {
-    if (Reactronic.getCache(this.render).invalid)
+    if (Reactronic.getMethodCache(this.render).invalid)
       isolated(this.doRefresh, {rx: this, cycle: this.cycle + 1})
   }
 
   @stateless cycle: number = 0
   @stateless doRefresh: (next: ReactState<V>) => void = nop
   @stateless readonly unmount = (): (() => void) => {
-    return (): void => { isolated(Transaction.run, 'unmount', Reactronic.unmount, this) }
+    return (): void => { isolated(Transaction.run, Reactronic.dispose, this) }
   }
 
   static create<V>(hint?: string, logging?: LoggingOptions, priority?: number): Rx<V> {
@@ -63,18 +63,18 @@ class Rx<V> extends Stateful {
     if (hint)
       R.setLoggingHint(rx, hint)
     if (logging) {
-      Reactronic.getCache(rx.render).configure({logging})
-      Reactronic.getCache(rx.refresh).configure({logging, priority})
+      Reactronic.getMethodCache(rx.render).configure({logging})
+      Reactronic.getMethodCache(rx.refresh).configure({logging, priority})
     }
     else if (priority !== undefined)
-      Reactronic.getCache(rx.refresh).configure({priority})
+      Reactronic.getMethodCache(rx.refresh).configure({priority})
     return rx
   }
 }
 
 function createReactState<V>(hint?: string, logging?: Partial<LoggingOptions>, priority?: number): ReactState<V> {
   const h = hint || (R.isLogging ? getComponentName() : '<rx>')
-  const rx = Transaction.runAs<Rx<V>>(h, false, logging, undefined, Rx.create, h, logging, priority)
+  const rx = Transaction.runAs<Rx<V>>({ hint: h, logging }, Rx.create, logging, priority)
   return {rx, cycle: 0}
 }
 

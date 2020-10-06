@@ -19,7 +19,7 @@ export class RComponent<P> extends React.Component<P> {
   }
 
   shouldComponentUpdate(): boolean {
-    return Reactronic.getCache(this.render).invalid
+    return Reactronic.getMethodCache(this.render).invalid
   }
 
   componentDidMount(): void {
@@ -27,7 +27,7 @@ export class RComponent<P> extends React.Component<P> {
   }
 
   componentWillUnmount(): void {
-    isolated(Transaction.run, 'unmount', Reactronic.unmount, this)
+    isolated(Transaction.run, Reactronic.dispose, this)
   }
 
   static refresh<P>(self: RComponent<P>): void {
